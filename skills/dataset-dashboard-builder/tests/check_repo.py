@@ -9,6 +9,7 @@ regression = (ROOT / "tests" / "regression-cases.md").read_text(encoding="utf-8"
 assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skill frontmatter"
 
 for path in [
+    ROOT / "references" / "source-authority.md",
     ROOT / "references" / "analysis-depth.md",
     ROOT / "references" / "visualization-registry.md",
     ROOT / "references" / "regression-loop.md",
@@ -27,6 +28,9 @@ critical = [
     "Analysis Depth Gate",
     "Visual Plan",
     "Renderer Capability Gate",
+    "Table Role Gate",
+    "Metric Authority Gate",
+    "Unit Authority Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -37,6 +41,11 @@ for anchor in ["144,444 USDT", "83.48%", "8 / 9 = 88.89%", "exact-date 匹配：
 assert "sql-business-thinking" in readme, "boundary with existing skill must be documented"
 assert "一张表一个看板" in skill, "theme split guard missing"
 
+source_authority = (ROOT / "references" / "source-authority.md").read_text(encoding="utf-8")
+for rule in ["Table Role Gate", "Authority Order", "Double-count Gate", "Unit & Aggregation Authority"]:
+    assert rule in source_authority, f"source authority rule missing: {rule}"
+assert "dashboard / output" in source_authority and "backup / archive" in source_authority
+
 analysis_depth = (ROOT / "references" / "analysis-depth.md").read_text(encoding="utf-8")
 for rule in ["Question Map", "L2 · 分布与分层", "L4 · 关系、流程与跨表", "L5 · 驱动、集中度与异常"]:
     assert rule in analysis_depth, f"analysis depth rule missing: {rule}"
@@ -46,7 +55,7 @@ for chart in ["histogram", "box plot", "scatter", "heatmap", "Pareto", "waterfal
     assert chart in viz, f"visualization family missing: {chart}"
 assert "原生支持目标图形" in viz and "自定义 SVG / Canvas" in viz, "renderer capability fallback missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")
