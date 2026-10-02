@@ -33,10 +33,10 @@ Analysis Events
 当用户明确要求：
 
 - 人物会话是主体验；
-- 代码必须在 star / Lucy 讨论过程中逐步产生；
+- 代码必须在本轮绑定的 Analysis Owner / Reviewer 讨论过程中逐步产生；
 - 不要提前汇总、不要连续累计结论；
 
-则本节覆盖“正文四层按决策价值排序”的默认顺序。
+则本节覆盖“正文四层按决策价值排序”的默认顺序，同时覆盖 §4 的首屏 KPI 要求与 §7 的 SQL 默认折叠规则。
 
 正文改为：
 
@@ -81,7 +81,9 @@ Assignment
 
 ## 4. 首屏
 
-1440×900 打开 10 秒内必须回答：
+**Dialogue-Driven 模式不适用下面的 KPI 首屏规则。** 该模式首屏只展示任务、绑定角色、初始化状态或当前问题，不得出现尚未由前序 Result 产生的最终数字。
+
+普通报告在 1440×900 打开 10 秒内必须回答：
 
 - 分析了什么；
 - 最重要的数字；
@@ -132,7 +134,7 @@ Top N 按 active population 自适应，覆盖全体样本的 Top N 不进核心
 
 人物会话升级为正文 Answer Block，按 `references/dialogue-rendering.md` 渲染完整 Conversation Arc，而不是独立纠错卡。若用户要求代码在会话中产生，启用 Code-in-Conversation：`对白 → SQL → Result → 判断修正` 原位交错，禁止再建独立 SQL 验证台。
 
-如果任务中存在领导 / 任务发起人，必须正文可见地形成：任务下达 → star/Lucy 推演 → star report-back。star 最终汇报的每个关键结论要能回指前序证据节点。
+如果任务中存在领导 / 任务发起人，必须正文可见地形成：任务下达 → Analysis Owner / Reviewer 推演 → Analysis Owner report-back。角色名使用本轮 Role Binding Gate 的绑定结果；最终汇报的每个关键结论都要能回指前序证据节点。
 
 Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill”“关卡通过”。SQL 验证与 Skill Trace 分栏展示；正文已经完整展示权威会话时，不再保留另一个旧版人物全文。
 
@@ -181,7 +183,7 @@ Renderer 只读，不重新分析。
 - 主阅读区约 1000～1160px；
 - 正文少用大面积彩色卡片，优先留白、分隔线、表格层级；
 - 警告色只标真正改变解释的限制；
-- star 左、Lucy 右；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
+- Analysis Owner 左、Reviewer 右，并显示本轮绑定后的实际角色名；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
 - SQL 深色等宽；
 - 交互必须有 hover/focus/disabled；
 - 提供打印/PDF 时加 print CSS，附录默认不打印。
@@ -195,7 +197,7 @@ Renderer 只读，不重新分析。
 3. 移动端检查：无整页横向溢出；表格可局部滚动；
 4. 功能检查：JS 语法、SQL 按钮映射、fallback、错误显示；
 5. 内容检查：每个问题有 Answer Block；关键数字一致；限制没有被视觉弱化；显式要求的人物会话正文可见。
-6. Dialogue QA（如适用）：Conversation Arc 完整；star 是 Owner、Lucy 是 Reviewer；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式则必须验证对白→SQL→Result→修正判断的邻接顺序。
+6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Owner / Reviewer 职责正确；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式则必须验证对白→SQL→Result→修正判断的邻接顺序。
 7. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
 
 **重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。**
