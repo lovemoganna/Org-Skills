@@ -43,3 +43,10 @@
 | 看板虽然分析层级更多，但发现一个差异后仍会直接画图，缺少“为什么”的连续调查 | Analysis Depth 只规定查哪些层，没有规定一个发现何时才算解释完成 | 新增 Hypothesis-driven Investigation Loop | Pattern 必须经过竞争解释、Diagnostic Test、Robustness 后才允许晋级 |
 | Top1/Top3、KYC 占比、ACH 时延等容易被直接包装成结论 | 缺少 Finding Promotion Gate | 新增 Pattern / Finding 分离 | 指标和差异不是洞察；核心 Finding 必须排除至少一个替代解释并做稳健性检查 |
 | 深挖容易退化成“再按一个维度切一下” | 缺少 Question Frontier 与信息增益停止规则 | 新增 Question Quality Gate / Information Gain Stop Rule | 下一问必须改变解释或路径；结果不改变 Frontier 的查询默认淘汰 |
+
+
+## V6：Explicit Scope Gate
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 用户本轮明确只允许 4 张表，但 Source Authority 仍写“扫描工作簿每张表”，同一工作簿还存在 expected / QA / dashboard / backup | 缺少显式输入范围优先级 | 新增 Explicit Scope Gate | 用户指定范围是硬边界；metadata 可用于解析表名，但范围外内容不得读取、引用或影响当前分析 |
