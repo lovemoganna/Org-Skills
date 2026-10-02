@@ -38,16 +38,16 @@
 
 - 先核对当前请求的角色绑定；显式人物名必须原样保留，未指定时才回退到默认 `star/Lucy`；
 
-- 是否有完整 Conversation Arc：任务下达 → 推演 → star report-back；
-- star 是否承担综合、判断和收敛，而不是只负责犯错；
-- Lucy 是否只补充 / 质疑 / 验证，没有提前知道未验证答案；
+- 是否有完整 Conversation Arc：任务下达 → 推演 → Analysis Owner report-back；
+- 本轮绑定的 Analysis Owner 是否承担综合、判断和收敛，而不是只负责犯错；
+- 本轮绑定的 Reviewer 是否只补充 / 质疑 / 验证，没有提前知道未验证答案；
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION；
 - 是否存在无信息确认句、重复最终数字的假对白；
 - 最终汇报能否逐项反查到前序证据；
 - 是否把“调用 Skill / 关卡”写进人物台词；
 - 对话是否被 SQL、结果表、Skill Trace 打碎；
 - 正文与附录是否存在两个不一致的人物版本；
-- 移动端是否仍能清楚区分 star / Lucy。
+- 移动端是否仍能清楚区分本轮绑定的 Analysis Owner / Reviewer。
 
 ### D. 数据逻辑
 
