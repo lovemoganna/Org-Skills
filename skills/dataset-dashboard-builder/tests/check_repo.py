@@ -64,7 +64,7 @@ for rule in ["Candidate Triage Gate", "Goal Alignment", "Question Frontier", "Qu
 assert "Pattern 只是“发生了什么”，不是“为什么”" in investigation
 
 quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(encoding="utf-8")
-for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Gate", "Anti-AI Dashboard Rules"]:
+for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Gate", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
     assert rule in quality, f"dashboard quality rule missing: {rule}"
 
 dashboard_eval = (ROOT / "eval" / "dashboard-quality.md").read_text(encoding="utf-8")
