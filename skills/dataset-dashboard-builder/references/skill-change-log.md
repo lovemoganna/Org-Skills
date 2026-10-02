@@ -70,3 +70,14 @@
 | Rendered QA 能发现溢出、标签碰撞，却不能判断“这是不是一个好 Dashboard” | 评估集中在技术渲染和局部视觉，没有业务价值 / 分析闭环 / IA / 交互严重度 | 新增 `eval/dashboard-quality.md` | Critical / Major 必须清零；Minor 后处理；禁止简单平均分 |
 | KPI、Finding、证据都正确，但页面仍可能无清晰工作路径 | 缺少从 What 到 Evidence 的信息架构约束 | 新增 Dashboard IA Plan | 首屏必须给状态、重点和下一步入口，后续形成解释→定位→证据 |
 | 移动端完整筛选区使用 sticky 后会持续挤压分析视口 | UI Gate 只检查响应式宽度，没有检查控制区占屏 | 增加 Mobile Control Viewport 规则 | 窄屏 sticky filter 必须折叠、收起或取消 sticky，不能长期压住核心内容 |
+
+
+## V9：Dashboard Context / Comparison / Drill Semantics
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 当前真实 HTML 把历史覆盖期模块写成“当前状态”，但没有 as-of / period 语义 | Dashboard Mission 缺少 Population / Period / Comparison / Cadence | 扩展 Mission Contract | 没有当前语义时必须写 scope snapshot / 截至某日，禁止伪造“当前” |
+| KPI 有数值但角色混杂，Context / Diagnostic 容易与真正 Primary KPI 同权 | 只有指标选择，没有 Metric Role | 新增 Metric Role Gate | Primary KPI / Driver / Guardrail / Diagnostic / Context 明确分层；卡片不是默认容器 |
+| “定位异常记录”点击后落到用户 Fiat 详情；“查看 ACH 明细”只选用户后展示全部 Fiat | Interaction Gate 只要求存在交互，没有上下文保真 | 新增 Interaction Semantics + context-preserving drill | Drill 必须携带对象键、筛选、触发条件和记录键，落到正确证据 |
+| 最终 Dashboard 显示 Dashboard Quality Evaluation 模块 | 缺少 Internal Analysis Boundary | 新增内部分析与最终内容边界 | Evaluation / Hypothesis / Regression 默认不进入最终 Dashboard |
+| 主要比较可能依赖用户切换 Filter | 缺少 Comparison Context Gate | 新增 Comparison Gate | 核心比较同时可见；Filter 不能替代比较 |
