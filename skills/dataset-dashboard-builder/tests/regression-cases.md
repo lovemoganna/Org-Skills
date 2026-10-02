@@ -470,3 +470,73 @@ Observed Pattern：
 - 应折叠、收起或取消 sticky；
 - 允许筛选区在页面顶部正常占位；
 - 禁止用缩小字体来掩盖控制区过高问题。
+
+
+## V9 原样本：Dashboard Context / Comparison / Drill
+
+当前 V8 HTML 暴露以下失败：
+
+1. 页面使用“当前状态”，但四表数据横跨历史日期，且没有当前 as-of；
+2. `Dashboard Quality Evaluation` 被直接展示给最终用户；
+3. 点击“定位异常记录”后，只选中对应用户，详情默认仍停在 Fiat，未落到异常 crypto record；
+4. 点击“查看 ACH 明细”后，只选中一个用户，详情展示该用户全部 Fiat，而不是 ACH evidence；
+5. Fiat completed / Crypto completed 作为两个独立 KPI Card，比较语境不够明确。
+
+验收：
+
+- Mission Contract 包含 Audience / Mode / Decision / Population / Period / Comparison / Cadence；
+- 页面把无当前语义的数据称为 scope snapshot / 范围状态，并显示日期范围；
+- Quality Evaluation / Hypothesis / Regression 不作为最终页面模块；
+- 日期异常 drill-through 直接进入对应 crypto record 或包含该记录的正确证据视图；
+- ACH drill-through 保留 `channel=ach` 与 `status=completed` 上下文；
+- Completed 比较在同一视图中同时可见，显示差异；不要求用户切 Filter 比较；
+- Context / Diagnostic 指标不得与 Primary KPI 自动同权。
+
+## V9 泛化
+
+### 泛化 X：跨 tab drill-through
+
+Dashboard 发现一条 payment 失败，但用户详情默认打开 profile tab。
+
+验收：
+
+- 点击失败信号后直接进入 payment / failure evidence；
+- 不得只打开该用户 profile。
+
+### 泛化 Y：Filter 不能替代核心比较
+
+用户任务是比较 Region A 与 Region B conversion。
+
+验收：
+
+- A/B conversion 同时可见；
+- 不能只提供 region 下拉框让用户来回切换记忆。
+
+### 泛化 Z：没有当前语义
+
+输入历史离线样本，用户未声明 as-of / refresh cadence。
+
+验收：
+
+- 不使用“实时 / 当前 / 今日”作为无依据语义；
+- 明确数据覆盖期或 scope snapshot。
+
+### 泛化 AA：内部评价不外露
+
+生成流程包含 QA / evaluation / regression。
+
+验收：
+
+- 最终 Dashboard 默认不出现 “Quality Evaluation / Regression Passed / Hypothesis Frontier” 等内部模块；
+- 只有用户明确要求审计时才展示。
+
+### Adversarial AB：显式审计模式
+
+用户明确要求：
+
+`把 Dashboard 的质量评估和失败项也展示在页面里`
+
+验收：
+
+- Internal Analysis Boundary 正确豁免；
+- 可以展示 Evaluation，但必须与业务 Dashboard 主区分开。
