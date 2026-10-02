@@ -143,12 +143,14 @@ Top N 不是固定默认值。由 active population 决定：
 角色名字必须继承 `dialogue-rendering.md` 的 Role Binding Gate；未指定时才使用默认 `Star/Lucy`。下面的名字仅代表默认角色。
 
 - **没有显式 Task Owner 时不创造领导。**默认从数据集进入 Analysis Map / Question Frontier。
-- Star / Analysis Lead：维护分析方向，每轮提出一个当前最值得回答的问题，并说清 Trigger / Consequence。
-- Lucy / Critical Analyst：独立判断这个问题值不值得现在问；可以 accept+sharpen / reject / replace / split，不以“帮 Star 完成任务”为职责。
+- Star / Analysis Lead：维护分析方向，每轮提出一个当前最值得回答的问题，并说清 Trigger / Consequence；主要 Result 后必须提出或更新解释模型。
+- Lucy / Critical Analyst：独立判断这个问题值不值得现在问；可以 accept+sharpen / reject / replace / split，也可以提出 counter-hypothesis / falsify / decompose / stress-test，不以“帮 Star 完成任务”为职责。
 - Question Quality Gate 未通过前禁止写 SQL。
+- 主要发现必须建立 Hypothesis Frontier：主解释、竞争解释、可反驳证据、Diagnostic Test、当前状态。
+- 主要结论必须通过 Analysis Depth Gate：What / Where / Why / Alternative / Test / Robustness / So What。
 - 每句台词必须新增事实、判断、关键问题或决策；无信息确认句删除或合并。
 - 人物只能使用当前阶段已经出现的事实；禁止把最终答案倒灌到前文。
-- Result 必须改变 Question Frontier；不能改变 Frontier 的查询，除必要最终取数外默认删除。
+- Result 必须改变 Question Frontier 或 Hypothesis Frontier；不能改变 Frontier 的查询，除必要最终取数外默认删除。
 - “关卡通过”“调用 Skill”“按协议”不属于人物台词，只能作为 UI/审计元数据。
 - 最终 Star synthesis 的每个关键结论必须能回指前序证据；只有显式 Task Owner 存在时才称 report-back。
 - 正文已有完整权威会话时，不另存一个旧版人物全文；SQL 验证与 Skill Trace 独立保存。
@@ -161,12 +163,14 @@ Top N 不是固定默认值。由 active population 决定：
 规则：
 
 - 用户已明确把分析选择权交给 Skill 时，业务问题、结果粒度、主表范围等 Level 3 项可由 Skill 基于实际数据选择，但必须在报告中标为“分析选择 / 假设”，不得伪装成业务正式口径；
-- 先建立 Analysis Map，再维护 Question Frontier；不要预先写死“状态 → 汇率 → JOIN → 金额 → TopN → 重叠”之类 checklist。
+- 先建立 Analysis Map，再维护 Question Frontier；主要 Pattern 出现后再建立 Hypothesis Frontier；不要预先写死“状态 → 汇率 → JOIN → 金额 → TopN → 重叠”之类 checklist。
 - 每个当前问题都必须通过 Question Quality Gate：Trigger / Consequence / Answerability / Priority；
-- 优先处理阻塞后续可信度或会改变结论的问题，不以“覆盖更多表 / 更多字段”为高价值标准；
+- 每个主要结论都必须通过 Analysis Depth Gate：What / Where / Why / Alternative / Test / Robustness / So What；
+- 优先处理阻塞后续可信度、能区分竞争解释或会改变结论的问题，不以“覆盖更多表 / 更多字段”为高价值标准；
 - Lucy 有权否决或替换 Star 的问题；被 reject 的问题不得继续产生 SQL；
 - 不允许为了“自动化”猜字段、猜业务词义、猜成功定义；
 - 时间维表如果 exact-date 不成立、无 as-of 规则，但只有一个无歧义 snapshot，可继续做探索性 snapshot 估值；结果名必须带日期或“快照估值”，并明确不能解释为历史成交价值；
 - 出现多个候选 snapshot、连接键歧义、字段缺失或定义冲突时，升到 Level 4 暂停；
-- 每个 Result 必须更新 Question Frontier；不能改变 Frontier 的查询，除必要最终取数外默认删掉；
+- 每个 Result 必须更新 Question Frontier 或 Hypothesis Frontier；不能改变问题优先级、假设状态或最终解释的查询，除必要最终取数外默认删掉；
+- 关键结论至少做一次有意义的 Robustness Check；数据不支持时明确写无法验证，不得伪造稳健性；
 - 完整报告完成后必须执行 Reverse Skill Audit Gate，不能把本轮额外提示继续留在调用层。
