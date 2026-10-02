@@ -28,7 +28,9 @@ Generate
 检查：
 
 - 是否有明确 Dashboard Mission；
-- 第一屏是否让用户快速知道当前最重要的状态；
+- Audience / Mode / Decision / Population / Period / Comparison / Cadence 是否清楚；
+- 如果数据无“当前”语义，页面是否避免误称“当前状态”；
+- 第一屏是否让用户快速知道范围内最重要的状态；
 - 是否回答真正业务问题；
 - 是否存在纯展示模块；
 - 是否能支持下一步判断或行动。
@@ -59,6 +61,17 @@ Generate
 
 检查：
 
+- 是否区分 Primary KPI / Driver / Guardrail / Diagnostic / Context；
+- KPI Card 是否只保留真正需要突出的指标；
+- Primary KPI / Finding 是否有明确 Comparison Basis；
+- 需要比较的对象是否同时可见；
+- Filter 是否被错误当成比较工具；
+- 无合理基线时是否明确说明，而不是硬造同比 / 环比；
+
+
+
+检查：
+
 - 指标是否有业务意义；
 - 聚合是否合理；
 - 分母是否明确；
@@ -81,10 +94,12 @@ Generate
 
 检查：
 
+- Filter / Highlight / Drill-down / Drill-through / Navigation 是否语义清楚；
 - 筛选是否有用；
 - 相关模块是否同步；
 - 是否支持必要下钻；
-- 是否能从异常到对象再到证据；
+- Drill 是否保留对象键、当前筛选、触发维度和记录上下文；
+- 是否能从异常准确落到对应对象和证据，而不是跳到泛化详情；
 - 交互是否明显可发现；
 - 静态输出是否是用户明确要求。
 
@@ -120,6 +135,10 @@ Generate
 必须修改：
 
 - 核心业务问题没有回答；
+- 默认视图必须交互后才完成 Primary Job；
+- 核心比较需要用户来回切筛选器才能完成；
+- Drill 丢失触发上下文，进入错误对象、错误 tab 或无关明细；
+- 内部 Evaluation / QA 过程被当成 Dashboard 主模块；
 - 信息架构混乱；
 - 页面更像报告而不是 Dashboard；
 - 图表选择错误；
