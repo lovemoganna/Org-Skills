@@ -69,3 +69,4 @@
 | 当前页面可读但不能从异常继续定位对象或验证明细 | 交互只写“可选”，没有任务条件下的 Interaction Gate | 新增 Interaction Gate | 当任务需要定位/验证且存在稳定对象键时，静态页面默认不足；静态汇报任务除外 |
 | Rendered QA 能发现溢出、标签碰撞，却不能判断“这是不是一个好 Dashboard” | 评估集中在技术渲染和局部视觉，没有业务价值 / 分析闭环 / IA / 交互严重度 | 新增 `eval/dashboard-quality.md` | Critical / Major 必须清零；Minor 后处理；禁止简单平均分 |
 | KPI、Finding、证据都正确，但页面仍可能无清晰工作路径 | 缺少从 What 到 Evidence 的信息架构约束 | 新增 Dashboard IA Plan | 首屏必须给状态、重点和下一步入口，后续形成解释→定位→证据 |
+| 移动端完整筛选区使用 sticky 后会持续挤压分析视口 | UI Gate 只检查响应式宽度，没有检查控制区占屏 | 增加 Mobile Control Viewport 规则 | 窄屏 sticky filter 必须折叠、收起或取消 sticky，不能长期压住核心内容 |
