@@ -3,7 +3,7 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → 语义理解 → 主题拆分 → 指标 → 图表 → HTML → 回归
+扫描 → 质检 → Question Map → Candidate Triage → Investigation → Portfolio Synthesis → Visual Plan → HTML → 回归
 ```
 
 ## 文件
@@ -11,7 +11,7 @@
 - [`SKILL.md`](SKILL.md)：主协议。
 - [`references/source-authority.md`](references/source-authority.md)：表角色、来源权威性、重复计数与单位聚合边界。
 - [`references/analysis-depth.md`](references/analysis-depth.md)：Question Map、分析深度阶梯与停止条件。
-- [`references/investigation-loop.md`](references/investigation-loop.md)：Question Frontier、竞争解释、稳健性与 Finding 晋级。
+- [`references/investigation-loop.md`](references/investigation-loop.md)：候选优先级、Question/Hypothesis Frontier、稳健性、Finding 晋级与 Portfolio Synthesis。
 - [`references/visualization-registry.md`](references/visualization-registry.md)：图表能力注册表、选图规则与 Renderer Capability Gate。
 - [`references/regression-loop.md`](references/regression-loop.md)：真实样本、泛化与渲染回归规则。
 - [`references/skill-change-log.md`](references/skill-change-log.md)：真实缺陷及泛化修正记录。
