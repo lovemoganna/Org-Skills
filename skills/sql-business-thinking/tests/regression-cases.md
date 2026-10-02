@@ -92,3 +92,15 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 ### 泛化 D：人物会话但无代码要求
 
 如果用户只要求人物推演，没有要求“代码在会话里逐步产生”，会话仍需连续 Conversation Arc，但不应机械强制每个阶段显示草稿 SQL。
+
+
+### 泛化 E：显式角色名覆盖默认角色
+
+输入明确要求 `Yone/Carmen` 完成同一人物协作流程。
+
+验收：
+
+- 输出和代码会话原样使用 `Yone/Carmen`，不得擅自改回默认 `star/Lucy`；
+- Yone 仍承担 Analysis Owner 职责，Carmen 仍承担 Reviewer 职责；
+- 未指定人物名的历史样本仍默认使用 `star/Lucy`；
+- 换成任意其他明确名字时，同样只替换名字，不改变角色职责和 Conversation Arc。

@@ -36,10 +36,12 @@ haystack = skill + "\n" + "\n".join(
 for rule in critical_rules:
     assert rule in haystack, f"critical rule missing: {rule}"
 
-for deprecated_role in ("Yo" + "ne", "Car" + "men"):
-    assert deprecated_role not in haystack, f"deprecated role name remains: {deprecated_role}"
+assert "Role Binding Gate" in haystack, "role binding rule missing"
+for default_role in ("star", "Lucy"):
+    assert default_role in haystack, f"default role name missing: {default_role}"
 
-for current_role in ("star", "Lucy"):
-    assert current_role in haystack, f"current role name missing: {current_role}"
+regression = (ROOT / "tests" / "regression-cases.md").read_text(encoding="utf-8")
+assert "显式角色名覆盖默认角色" in regression, "explicit role override regression missing"
+assert "Yone/Carmen" in regression, "explicit role override sample missing"
 
 print("OK: sql-business-thinking repository integrity")

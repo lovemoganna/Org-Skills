@@ -27,6 +27,9 @@ Analysis Events
 
 ## 2A. Dialogue-Driven Report Override
 
+角色名必须从 `dialogue-rendering.md` 的 Role Binding Gate 读取。当前请求显式给出人物名时，Renderer 必须使用绑定后的名字；不得硬编码默认 `star/Lucy`。
+
+
 当用户明确要求：
 
 - 人物会话是主体验；
