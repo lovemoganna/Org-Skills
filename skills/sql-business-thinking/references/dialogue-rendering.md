@@ -1,15 +1,15 @@
-# 人物会话与教学回放协议 V7
+# 人物会话与教学回放协议 V8
 
 用于用户明确要求人物会话、学习者 / 分析师、领导下任务后的讨论推演、师生、角色模拟或从头推演的任务。
 
-核心原则：**人物会话不是把结果拆成对白，而是把“任务如何经过质疑、核事实、修判断，最终变成可汇报结论”完整呈现出来。**
+核心原则：**人物会话不是把结果拆成对白，也不是 Star 做任务、Lucy 帮忙查漏；它要呈现“数据如何不断产生更好的问题，问题如何经过挑战后进入 SQL，再由证据改变下一问”。**
 
 ## 0. Role Binding Gate
 
 角色职责与角色名字分离：
 
 1. 用户在当前请求中显式给出人物名时，原样使用用户给定名称；不得为了套默认模板擅自改名。
-2. 用户未指定名字时，默认 `Star = Analysis Owner`、`Lucy = Reviewer`。
+2. 用户未指定名字时，默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`。
 3. 下文所有 `Star/Lucy` 只表示默认角色示例；若本轮已绑定其他名字，全文语义等价替换，但角色职责、Conversation Arc、QA 规则不变。
 4. Renderer、测试和回归规则读取“本轮绑定角色”，不得把默认名字写死成验收条件。
 5. 角色名变化不等于新 Skill 版本；只有角色职责或协作机制变化才需要修改角色协议。
@@ -18,27 +18,43 @@
 
 ## 1. Conversation Arc Contract
 
-当用户要求“领导 → Star → Lucy → Star 汇报”或类似工作讨论时，正文必须形成一条连续状态链：
+### 默认：Dataset-Driven Arc
+
+用户只提供数据集 / 表，没有显式 Task Owner 时，**禁止虚构领导任务**。正文形成：
 
 ```text
-Assignment
-→ Framing
-→ Decomposition
-→ Evidence
-→ Disagreement
-→ Revision
+Dataset Intake
+→ Analysis Map
+→ Question Frontier
+→ Star 提出当前最值得回答的问题
+→ Lucy 挑战问题质量 / 提出替代问题
+→ Question Quality Gate
+→ SQL / Result
+→ Frontier Update
+→ 下一问题
+→ ...
 → Synthesis
-→ Report-back
+→ Final SQL Analysis Report
 ```
 
-每个阶段可以合并，但以下四个节点不可缺：
+不可缺：
 
-1. **任务起点**：谁让 Star 判断什么；
-2. **证据形成**：Star / Lucy 实际核到了什么；
-3. **判断修正**：至少一次原判断因为证据而改变；
-4. **任务终点**：最终由 Star 把结论汇报回任务发起人。
+1. **数据起点**：当前能看到什么数据与约束；
+2. **问题选择**：Star 为什么现在问这个，答案会改变什么；
+3. **问题挑战**：Lucy 必须从问题价值、可回答性或优先级上独立判断，而不是只补 SQL；
+4. **证据形成**：通过 Gate 的问题才进入 SQL / Result；
+5. **Frontier 更新**：Result 改变下一问；
+6. **分析终点**：Star 综合成 SQL 分析报告。
 
-禁止把会话做成彼此独立的“错题卡”或“知识点卡片”。后一段必须继承前一段已经确认的事实与决策。
+### 显式任务：Task-Driven Arc
+
+只有用户真的给出领导 / Task Owner / 明确任务发起人时，才在上面外层增加：
+
+```text
+Assignment → Dataset-Driven Arc → Report-back
+```
+
+禁止为了“有故事感”默认创造领导，也禁止把 Lucy 写成帮助 Star 完成领导任务的陪练。
 
 ---
 
@@ -54,30 +70,82 @@ Assignment
 
 不要让领导参与 SQL 细节，也不要把领导写成旁白。
 
-### Star / Analysis Owner
+### Star / Analysis Lead
 
-Star 是任务负责人，不是“专门犯错的新手”。他必须：
+Star 负责**分析方向**，不是“执行领导任务的人”：
 
-- 先复述和收住任务；
-- 主动提出第一版分析口径或假设；
-- 在拿到新事实后更新判断；
-- 能主动识别至少一个问题，而不是所有问题都等 Lucy 指出；
-- 最终自己整合结论并向领导汇报。
+- 读取数据并维护 Analysis Map / Question Frontier；
+- 每轮只提出一个当前最值得回答的问题；
+- 说清 **为什么现在问**、**可能答案会改变什么**；
+- 选择当前分析路径，并在 Result 后更新优先级；
+- 能主动放弃自己原来的低价值问题；
+- 最终整合成 SQL 分析报告。
 
-Star 可以犯新手错误，但错误必须符合其水平且真的会改变数字、粒度、JOIN、口径或结论。
+Star 可以提出差问题，但差问题应被 Gate 淘汰，而不是靠 Lucy 陪着把它做完。
 
-### Lucy / Reviewer
+### Lucy / Critical Analyst
 
-Lucy 负责：
+Lucy 是独立分析者，不是 Reviewer、SQL 助手或陪练。她负责：
 
-- 补充遗漏；
-- 质疑未经验证的假设；
-- 提醒需要核对的事实；
-- 验证 Star 的新判断是否被证据支持。
+- 挑战 Star **问的问题本身**是否值得；
+- 识别更高优先级的未知量；
+- 提出竞争解释、替代问题或更短的验证路径；
+- 检查问题是否真的能由当前数据回答；
+- 问题通过后，才对 SQL 边界进行必要质疑。
 
-Lucy 不是“提前知道最终答案的全知专家”。没有证据时，Lucy 只能指出要检查什么，不能提前宣布最终数字。
+Lucy 可以直接说“这个问题现在不值得查”，但必须指出为什么、替代什么。她不提前知道结果，也不为了制造分歧强行反驳。
 
 ---
+
+## 2A. Question Frontier
+
+人物会话的真正共享状态是 Question Frontier：
+
+```text
+Confirmed  已确认事实
+Unknowns   会改变判断但尚未确认的未知
+Candidates 可消除 Unknown 的候选问题
+Current    当前唯一问题
+```
+
+Frontier 内部持续更新，但正文禁止每轮完整复述它。页面只需要让读者看懂：
+
+```text
+为什么现在问这个
+→ Lucy 是否同意这个优先级
+→ 查询结果改变了什么
+→ 所以下一问为什么变了
+```
+
+## 2B. Question Quality Gate
+
+Star 的问题在出现 SQL 前必须通过：
+
+1. **Trigger**：由哪个已有事实、上一轮 Result 或阻塞触发？
+2. **Consequence**：可能结果分别会改变什么判断 / 口径 / 路径？
+3. **Answerability**：现有数据真的能回答吗？
+4. **Priority**：为什么它比其他 Unknown 更值得先查？
+
+Lucy 至少执行一种动作：
+
+- **accept + sharpen**：问题值得，但需要收紧边界；
+- **reject**：问题无论答案如何都不改变下一步，直接淘汰；
+- **replace**：提出更高优先级的问题，并说明它会改变什么；
+- **split**：问题一次问了两件事，拆成一个当前问题。
+
+**禁止：**Lucy 只是说“对，再补一个字段 / 再查一下 / 我同意”。如果 Lucy 的作用只剩补 SQL，她已经退化成陪练。
+
+## 2C. Question Consequence Gate
+
+Result 后必须能完成至少一种 Frontier 变化：
+
+- 关闭一个 Unknown；
+- 新增一个真正会改变方向的 Unknown；
+- 改变候选问题优先级；
+- 终止一条分析路径；
+- 或完成最终答案所需的必要取数。
+
+如果 Result 出来后“下一步还是原计划，判断也完全不变”，这条查询默认删除，除非它是最终结果本身。
 
 ## 3. Turn Delta Gate
 
@@ -146,13 +214,16 @@ DECISION  新口径 / 新动作 / 新边界
 每阶段结构：
 
 ```text
-当前问题
-→ Star 提出判断 / 下一步
-→ Lucy 补充或质疑
-→ 数据 / SQL 给出新事实
-→ Star 更新判断
-→ （必要时）Lucy 验证边界
+当前 Unknown / 为什么现在必须处理
+→ Star 提出当前问题 + Consequence
+→ Lucy accept / reject / replace / split
+→ Question Quality Gate 通过
+→ SQL / Result
+→ Star 说明 Frontier 如何变化
+→ 下一问题
 ```
+
+如果 Lucy reject / replace，**被淘汰的问题不得继续写 SQL**。
 
 正文可以在阶段末尾显示一条非角色元信息：
 
@@ -173,7 +244,7 @@ DECISION  新口径 / 新动作 / 新边界
 ```text
 当前问题
 → Star 提出判断 / 查询意图
-→ Lucy 补充、质疑或收紧边界
+→ Lucy 先挑战问题质量；通过后才补充、质疑或收紧 SQL 边界
 → 生成只解决当前问题的 SQL
 → 记录/实时结果
 → Star 基于结果更新判断
@@ -183,7 +254,7 @@ DECISION  新口径 / 新动作 / 新边界
 
 硬规则：
 
-1. **SQL 前必须有动机。**代码出现前，人物已经说清“为什么查、查什么、结果用于决定什么”。
+1. **SQL 前必须先过 Question Quality Gate。**代码出现前，Star 已说清“为什么现在问、不同结果会改变什么”，Lucy 已完成 accept / reject / replace / split；只有通过的问题才进入 SQL。
 2. **Result 后必须有状态变化。**结果出现后，至少有一句人物台词把新证据转成 FACT / JUDGMENT / DECISION；否则这段 SQL 是脱离叙事的日志。
 3. **一段 SQL 只解决当前问题。**禁止为了省事把后面几个阶段的计算一次写进来。
 4. **不事后补代码。**如果人物已经说出结论，再在页面后面集中放 SQL，判失败。
@@ -263,7 +334,7 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 允许：
 - 当前一步的局部判断；
 - 下一步要验证的问题；
-- 最终 report-back。
+- 最终 synthesis；若显式存在 Task Owner，则为 report-back。
 
 禁止：
 - 首屏提前展示最终 KPI；
@@ -288,11 +359,11 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 
 ---
 
-## 8. Report-back Traceability Gate
+## 8. Synthesis / Report-back Traceability Gate
 
-最终必须由 Star 向任务发起人汇报，而不是让 Lucy 替 Star 下最终结论。
+最终必须由 Star 完成 synthesis；只有显式存在 Task Owner 时，才向任务发起人 report-back。Lucy 不替 Star 下最终综合结论。
 
-最终汇报至少分：
+最终 synthesis / report-back 至少分：
 
 ```text
 结果
@@ -310,7 +381,7 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 | 数据质量限制 | 对应质检事实 |
 | 不能外推的判断 | 明确的结论边界 |
 
-如果最终汇报出现前面从未讨论 / 验证过的新数字、新口径或新判断，判失败。
+如果最终 synthesis / report-back 出现前面从未讨论 / 验证过的新数字、新口径或新判断，判失败。
 
 ---
 
@@ -358,9 +429,17 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 - 中间阶段是否真的继承前一步状态？
 
 ### Role Balance
-- Star 是否承担综合、判断与收敛，而不只是犯错？
-- Lucy 是否负责挑战与验证，而不是提前公布所有答案？
-- 去掉姓名后，角色职责是否仍然能从语言中区分？
+- Star 是否真的在选择分析方向和当前问题，而不只是顺着固定 checklist 执行？
+- Lucy 是否挑战“问题是否值得问”，而不是只帮 Star 补 SQL / 查漏？
+- Lucy 是否至少有一次真实 accept+sharpen / reject / replace / split；但没有为了戏剧性强行反驳？
+- 去掉姓名后，是否仍能看出 Star = Analysis Lead、Lucy = Critical Analyst？
+
+### Question Quality
+- 每个 SQL 前的问题是否能说清 Trigger / Consequence / Answerability / Priority？
+- 是否存在“查了也不会改变下一步”的低价值问题？
+- 是否有字段清单式、为了完整而查的机械问题？
+- Result 是否真的改变 Question Frontier？
+- 下一问是否由上一轮证据触发，而不是预先排好的 checklist？
 
 ### Turn Delta
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION？

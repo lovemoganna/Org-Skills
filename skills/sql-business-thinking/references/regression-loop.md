@@ -34,20 +34,24 @@
 - 颜色是否只承担层级/状态；
 - Meta 信息是否抢主任务。
 
-### C2. 人物会话（任务明确要求时）
+### C2. 人物会话 / 问题质量（任务明确要求或 Autopilot Dialogue 时）
 
 - 先核对当前请求的角色绑定；显式人物名必须原样保留，未指定时才回退到默认 `Star/Lucy`；
-
-- 是否有完整 Conversation Arc：任务下达 → 推演 → Analysis Owner report-back；
-- 本轮绑定的 Analysis Owner 是否承担综合、判断和收敛，而不是只负责犯错；
-- 本轮绑定的 Reviewer 是否只补充 / 质疑 / 验证，没有提前知道未验证答案；
+- 无显式 Task Owner 时是否错误创造了“领导任务”；如有，判为角色框架回归；
+- Conversation Arc 是否按 Dataset → Analysis Map → Question Frontier → Question Challenge → SQL/Result → Frontier Update → Synthesis 推进；
+- 本轮绑定的 Analysis Lead 是否真的在选择分析方向和当前问题；
+- 本轮绑定的 Critical Analyst 是否挑战问题价值 / 优先级，而不是只补 SQL、查漏或陪练；
+- 每个进入 SQL 的问题是否通过 Trigger / Consequence / Answerability / Priority；
+- 是否存在“结果无论怎样都不改变下一步”的低价值查询；
+- Result 是否实际改变 Question Frontier；
+- 下一问是否由上一轮 Result 触发，而不是预写 checklist；
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION；
 - 是否存在无信息确认句、重复最终数字的假对白；
-- 最终汇报能否逐项反查到前序证据；
+- 最终 synthesis / report-back 能否逐项反查到前序证据；
 - 是否把“调用 Skill / 关卡”写进人物台词；
 - 对话是否被 SQL、结果表、Skill Trace 打碎；
 - 正文与附录是否存在两个不一致的人物版本；
-- 移动端是否仍能清楚区分本轮绑定的 Analysis Owner / Reviewer。
+- 移动端是否仍能清楚区分本轮绑定的 Analysis Lead / Critical Analyst。
 
 ### D. 数据逻辑
 
@@ -88,6 +92,8 @@ P3：纯审美微调，不做，除非它影响理解。
 - 渲染烟测；
 - 移动端结构：实际测量 `scrollWidth <= clientWidth + 1`；Grid/Flex 内的代码/表格容器检查 `min-width:0` 与局部 `overflow-x:auto`；
 - 人物会话结构与角色约束（如适用）；
+- Question Frontier：当前问题来源、Lucy 的问题挑战、Result 后 Frontier 变化；
+- 低价值查询扫描：删除“查完也不改变下一步”的非必要查询；
 - 与上一版业务结论 diff。
 - HTML 实体文件交付：默认路径存在、文件非空、最终回复链接与实际文件一致（如适用）。
 
@@ -112,4 +118,5 @@ P3：纯审美微调，不做，除非它影响理解。
 - 运行时/交互无明显阻断；
 - 桌面/移动端结构成立；
 - Skills 缺陷已回写并由当前报告反向验证；
+- 不再存在 Lucy 陪练化、预写 checklist 或低价值问题推进；
 - 继续修改只会变成纯审美偏好。

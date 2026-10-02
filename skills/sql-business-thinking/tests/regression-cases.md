@@ -67,6 +67,40 @@
 
 验收：非业务预期的一对多未解决前禁止进入 `SUM`。
 
+### Case 4：Lucy 退化成陪练 / SQL 助手
+
+失败样本：
+
+```text
+Star：我先查各国家用户数。
+Lucy：可以，再把 account_status 带上。
+[SQL]
+Star：接着查 status 分布。
+Lucy：好，再按 source 分组。
+[SQL]
+```
+
+如果当前主分析目标并不依赖国家分布，且这些结果不会改变后续路径，则即使 SQL 正确也判失败。
+
+验收：
+
+- Star 提问前必须存在 Trigger / Consequence；
+- Lucy 必须先判断“这个问题现在值不值得问”，不能直接进入补字段 / 补 SQL；
+- Lucy 至少能执行 accept+sharpen / reject / replace / split 中的一种；
+- 被 reject / replace 的问题不得生成 SQL；
+- Result 必须改变 Question Frontier，必要最终取数除外。
+
+### Case 5：无 Task Owner 却虚构领导任务
+
+输入只有“数据集 + 分析表 + 生成完整 SQL 分析报告”，没有领导、老板、任务发起人。
+
+验收：
+
+- 不得生成“领导下任务 / 向领导汇报”的剧情；
+- 会话必须从 Dataset Intake / Analysis Map / Question Frontier 开始；
+- 最终由 Star 做 synthesis / final report；
+- 只有输入显式存在 Task Owner 时才使用 Assignment / Report-back 外框。
+
 ## 历史通过样本
 
 - 每个客户一行：先定 UID 粒度，再 `GROUP BY uid`。
@@ -101,7 +135,7 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 验收：
 
 - 输出和代码会话原样使用 `Yone/Carmen`，不得擅自改回默认 `Star/Lucy`；
-- Yone 仍承担 Analysis Owner 职责，Carmen 仍承担 Reviewer 职责；
+- Yone 仍承担 Analysis Lead 职责，Carmen 仍承担 Critical Analyst 职责；
 - 未指定人物名的历史样本仍默认使用 `Star/Lucy`；
 - 换成任意其他明确名字时，同样只替换名字，不改变角色职责和 Conversation Arc。
 
@@ -157,3 +191,30 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 - SQL 与表格只在各自 wrapper 内横向滚动；
 - 禁止用缩小正文字号掩盖结构性溢出；
 - 桌面端布局与历史 Dialogue-Driven 顺序不得退化。
+
+
+### 泛化 J：低价值问题必须被淘汰
+
+给一个同时含用户地域、交易、价格时间维表的数据集。当前目标需要统一估值。
+
+Star 候选问题：
+
+1. “各国家用户数是多少？”
+2. “价格时间点能否对应交易时间？”
+
+若地域分布不会改变估值路径，而价格时间匹配会决定“历史价值 / snapshot / 暂停”，则：
+
+- Lucy 应优先 reject / postpone 问题 1；
+- 当前问题应切换为问题 2；
+- 问题 1 不得为了“分析完整”先跑 SQL；
+- 问题 2 的 Result 应决定后续估值口径。
+
+### 泛化 K：Question Frontier 非预写 checklist
+
+同一套表换一种数据形态：价格表新增完整交易日价格。
+
+验收：
+
+- exact-date 一旦通过，后续不应继续机械查询“是否允许 snapshot”；
+- 下一问必须根据 Result 动态变化；
+- 禁止无论数据怎样都固定执行同一套“状态 → 时间 → JOIN → 金额 → TopN → 重叠”流程。

@@ -33,7 +33,7 @@ Analysis Events
 当用户明确要求：
 
 - 人物会话是主体验；
-- 代码必须在本轮绑定的 Analysis Owner / Reviewer 讨论过程中逐步产生；
+- 代码必须在本轮绑定的 Analysis Lead / Critical Analyst 讨论过程中逐步产生；
 - 不要提前汇总、不要连续累计结论；
 
 则本节覆盖“正文四层按决策价值排序”的默认顺序，同时覆盖 §4 的首屏 KPI 要求与 §7 的 SQL 默认折叠规则。
@@ -41,18 +41,22 @@ Analysis Events
 正文改为：
 
 ```text
-Assignment
-→ Current Question
-→ Dialogue
+Dataset / Assignment（仅显式存在时）
+→ Analysis Map
+→ Question Frontier
+→ Current Unknown
+→ Star: Why now + What changes
+→ Lucy: accept / reject / replace / split
+→ Question Quality Gate
 → Draft Code A
-→ Dialogue / Challenge
+→ SQL Boundary Challenge（如需要）
 → Draft Code B
 → Executable SQL
 → Result
-→ Revised Judgment
+→ Frontier Update
 → Next Question
 → ...
-→ Report-back
+→ Synthesis / Report-back（仅显式存在 Task Owner 时）
 ```
 
 此模式：
@@ -62,6 +66,9 @@ Assignment
 - SQL / Result 不进入独立验证台，而是与触发它的对话原位相邻；
 - 若用户要求“代码逐步产生”，每个推进点必须展示由对白触发的代码增量，最后才出现唯一可执行 SQL；
 - 每个推进点只允许一个当前问题和一个最终可执行 SQL；第二个独立查询必须另起推进点；
+- 当前问题前必须能看出“为什么现在问、答案会改变什么”；Lucy 不能只补 SQL，必须先对问题质量做 accept / reject / replace / split；
+- 被 reject / replace 的问题不得继续渲染 SQL；
+- Result 后必须显示它如何改变 Question Frontier；不能改变 Frontier 的查询除必要最终取数外不进入正文；
 - 删除“这一步确认 / 暂时不能推出 / 截至目前”式元摘要，Result 后由角色自己完成状态更新；
 - 最终汇报之后才允许出现汇总卡片、最终附表；
 - Skill Trace、运行日志仍属于二级审计信息。
@@ -134,7 +141,7 @@ Top N 按 active population 自适应，覆盖全体样本的 Top N 不进核心
 
 人物会话升级为正文 Answer Block，按 `references/dialogue-rendering.md` 渲染完整 Conversation Arc，而不是独立纠错卡。若用户要求代码在会话中产生，启用 Code-in-Conversation：`对白 → SQL → Result → 判断修正` 原位交错，禁止再建独立 SQL 验证台。
 
-如果任务中存在领导 / 任务发起人，必须正文可见地形成：任务下达 → Analysis Owner / Reviewer 推演 → Analysis Owner report-back。角色名使用本轮 Role Binding Gate 的绑定结果；最终汇报的每个关键结论都要能回指前序证据节点。
+默认不创造领导 / Task Owner。无显式任务发起人时，正文从 Dataset Intake / Analysis Map 开始，最终由 Analysis Lead 做 synthesis。只有显式存在 Task Owner 时，才形成：任务下达 → Analysis Lead / Critical Analyst 推演 → Analysis Lead report-back。角色名使用本轮 Role Binding Gate 的绑定结果；最终结论都要能回指前序证据节点。
 
 Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill”“关卡通过”。SQL 验证与 Skill Trace 分栏展示；正文已经完整展示权威会话时，不再保留另一个旧版人物全文。
 
@@ -196,7 +203,7 @@ Renderer 只读，不重新分析。
 - 主阅读区约 1000～1160px；
 - 正文少用大面积彩色卡片，优先留白、分隔线、表格层级；
 - 警告色只标真正改变解释的限制；
-- Analysis Owner 左、Reviewer 右，并显示本轮绑定后的实际角色名；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
+- Analysis Lead 左、Critical Analyst 右，并显示本轮绑定后的实际角色名；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
 - SQL 深色等宽；
 - 交互必须有 hover/focus/disabled；
 - **Mobile Width Gate：**任何 Grid/Flex 内容列只要包含 `pre/code/table`，内容子项必须允许收缩（例如 `min-width: 0`）；代码块和表格只能在自己的 wrapper 内横向滚动，wrapper 必须 `max-width: 100%`。禁止让宽表/长 SQL 把 `body/documentElement` 撑宽；
@@ -211,8 +218,9 @@ Renderer 只读，不重新分析。
 3. 移动端检查：无整页横向溢出；表格可局部滚动；必须实际断言 `document.documentElement.scrollWidth <= document.documentElement.clientWidth`（允许 1px 取整误差）；若失败，先定位最大溢出元素，不得只缩字号；
 4. 功能检查：JS 语法、SQL 按钮映射、fallback、错误显示；
 5. 内容检查：每个问题有 Answer Block；关键数字一致；限制没有被视觉弱化；显式要求的人物会话正文可见。
-6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Owner / Reviewer 职责正确；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式则必须验证对白→SQL→Result→修正判断的邻接顺序。
+6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
 7. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
+8. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
 
 **重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。**
 

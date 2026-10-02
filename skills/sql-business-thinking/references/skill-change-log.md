@@ -88,3 +88,13 @@
 | 暴露缺陷 | 本轮修正 | 可泛化规则 |
 |---|---|---|
 | 390px 实际渲染时页面被 Grid 内容列中的宽表/长 SQL 撑到 816px；虽然表格 wrapper 已设置局部滚动，但父 Grid item 默认 `min-width:auto` 仍阻止收缩 | Renderer 增加 Mobile Width Gate：Grid/Flex 内容列含代码/表格时必须允许收缩（如 `min-width:0`），并用实际 `scrollWidth/clientWidth` 做验收 | **“有 overflow:auto”不等于“不会整页溢出”。** 响应式验收必须测最终几何尺寸，并同时约束父布局项与子滚动容器 |
+
+
+## V14：问题驱动分析而非陪练协作
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Star 被固定在“完成任务”的执行位，Lucy 只负责补充、质疑、验证，长期会退化成陪练 / SQL 助手 | Star 改为 Analysis Lead；Lucy 改为 Critical Analyst；Lucy 先挑战“问题值不值得现在问”，可以 accept+sharpen / reject / replace / split | **角色差异应体现在问题选择权，而不只是代码分工。** Critical Analyst 必须能改变分析方向，而不是只帮主分析师把既定方向做完 |
+| Autopilot 虽然能自己选题，但缺少“为什么这个问题优先”的机制，容易把字段清单机械翻译成 SQL checklist | 新增 Analysis Map → Question Frontier → Question Quality Gate；SQL 只能回答通过 Gate 的当前问题 | **SQL 不是推进器，问题才是。** 每个查询前必须说明 Trigger / Consequence / Answerability / Priority |
+| Result 经常只是验证流程步骤，查完后下一步仍按预设顺序继续 | 新增 Question Consequence Gate：Result 必须关闭 Unknown、产生新 Unknown、改变优先级、终止路径或完成必要最终取数 | **查询必须改变分析状态。** 查完也不改变 Frontier 的非必要查询应删除 |
+| 旧 Conversation Arc 默认从“领导下任务”开始，导致无 Task Owner 的数据分析也被包装成替领导办事 | Dataset-Driven Arc 设为默认；只有用户显式给出 Task Owner 时才增加 Assignment / Report-back | **不要为角色会话虚构组织关系。** 任意数据集分析应默认从数据与问题开始 |

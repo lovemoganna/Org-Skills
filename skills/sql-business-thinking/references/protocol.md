@@ -138,18 +138,19 @@ Top N 不是固定默认值。由 active population 决定：
 
 ## 13. 角色会话协议
 
-用户明确要求模拟人物会话时，读取 `dialogue-rendering.md`。
+用户明确要求模拟人物会话，或 Autopilot 输出 Question-Driven Dialogue HTML 时，读取 `dialogue-rendering.md`。
 
 角色名字必须继承 `dialogue-rendering.md` 的 Role Binding Gate；未指定时才使用默认 `Star/Lucy`。下面的名字仅代表默认角色。
 
-- 先建立 Conversation Arc：任务下达 → Star 收住目标 → Star/Lucy 核事实与修判断 → Star 综合 → report-back。
-- Star / Analysis Owner：主动提出口径、吸收证据、更新判断并负责最终汇报，不得只当“犯错角色”。
-- Lucy / Reviewer：负责补充、质疑和验证；未拿到证据前不得提前宣布最终数字。
+- **没有显式 Task Owner 时不创造领导。**默认从数据集进入 Analysis Map / Question Frontier。
+- Star / Analysis Lead：维护分析方向，每轮提出一个当前最值得回答的问题，并说清 Trigger / Consequence。
+- Lucy / Critical Analyst：独立判断这个问题值不值得现在问；可以 accept+sharpen / reject / replace / split，不以“帮 Star 完成任务”为职责。
+- Question Quality Gate 未通过前禁止写 SQL。
 - 每句台词必须新增事实、判断、关键问题或决策；无信息确认句删除或合并。
 - 人物只能使用当前阶段已经出现的事实；禁止把最终答案倒灌到前文。
-- 每阶段最多反问 2 次；连续两轮反问后必须推进到 SQL、数据检查或阶段结论。
+- Result 必须改变 Question Frontier；不能改变 Frontier 的查询，除必要最终取数外默认删除。
 - “关卡通过”“调用 Skill”“按协议”不属于人物台词，只能作为 UI/审计元数据。
-- 最终 Star 汇报的每个关键结论必须能回指前序证据。
+- 最终 Star synthesis 的每个关键结论必须能回指前序证据；只有显式 Task Owner 存在时才称 report-back。
 - 正文已有完整权威会话时，不另存一个旧版人物全文；SQL 验证与 Skill Trace 独立保存。
 
 
@@ -160,8 +161,12 @@ Top N 不是固定默认值。由 active population 决定：
 规则：
 
 - 用户已明确把分析选择权交给 Skill 时，业务问题、结果粒度、主表范围等 Level 3 项可由 Skill 基于实际数据选择，但必须在报告中标为“分析选择 / 假设”，不得伪装成业务正式口径；
-- 优先选择能覆盖多张指定表、会改变后续分析路径、且不依赖隐含业务语义的问题；
+- 先建立 Analysis Map，再维护 Question Frontier；不要预先写死“状态 → 汇率 → JOIN → 金额 → TopN → 重叠”之类 checklist。
+- 每个当前问题都必须通过 Question Quality Gate：Trigger / Consequence / Answerability / Priority；
+- 优先处理阻塞后续可信度或会改变结论的问题，不以“覆盖更多表 / 更多字段”为高价值标准；
+- Lucy 有权否决或替换 Star 的问题；被 reject 的问题不得继续产生 SQL；
 - 不允许为了“自动化”猜字段、猜业务词义、猜成功定义；
 - 时间维表如果 exact-date 不成立、无 as-of 规则，但只有一个无歧义 snapshot，可继续做探索性 snapshot 估值；结果名必须带日期或“快照估值”，并明确不能解释为历史成交价值；
 - 出现多个候选 snapshot、连接键歧义、字段缺失或定义冲突时，升到 Level 4 暂停；
+- 每个 Result 必须更新 Question Frontier；不能改变 Frontier 的查询，除必要最终取数外默认删掉；
 - 完整报告完成后必须执行 Reverse Skill Audit Gate，不能把本轮额外提示继续留在调用层。
