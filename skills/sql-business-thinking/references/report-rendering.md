@@ -199,6 +199,7 @@ Renderer 只读，不重新分析。
 - Analysis Owner 左、Reviewer 右，并显示本轮绑定后的实际角色名；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
 - SQL 深色等宽；
 - 交互必须有 hover/focus/disabled；
+- **Mobile Width Gate：**任何 Grid/Flex 内容列只要包含 `pre/code/table`，内容子项必须允许收缩（例如 `min-width: 0`）；代码块和表格只能在自己的 wrapper 内横向滚动，wrapper 必须 `max-width: 100%`。禁止让宽表/长 SQL 把 `body/documentElement` 撑宽；
 - 提供打印/PDF 时加 print CSS，附录默认不打印。
 
 ## 13. Rendered QA
@@ -207,7 +208,7 @@ Renderer 只读，不重新分析。
 
 1. DOM 结构检查：关键区块非空、ID 唯一、按钮映射完整；
 2. 桌面渲染烟测：首屏、核心图表、数据质量、Skills 评估；
-3. 移动端检查：无整页横向溢出；表格可局部滚动；
+3. 移动端检查：无整页横向溢出；表格可局部滚动；必须实际断言 `document.documentElement.scrollWidth <= document.documentElement.clientWidth`（允许 1px 取整误差）；若失败，先定位最大溢出元素，不得只缩字号；
 4. 功能检查：JS 语法、SQL 按钮映射、fallback、错误显示；
 5. 内容检查：每个问题有 Answer Block；关键数字一致；限制没有被视觉弱化；显式要求的人物会话正文可见。
 6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Owner / Reviewer 职责正确；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式则必须验证对白→SQL→Result→修正判断的邻接顺序。
