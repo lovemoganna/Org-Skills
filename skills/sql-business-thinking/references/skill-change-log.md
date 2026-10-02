@@ -81,3 +81,10 @@
 |---|---|---|
 | 用户已经明确默认人物应为 `Star/Lucy`，但 Skill 主协议仍使用小写 `star`，导致报告需要靠调用提示或生成器额外修正 | 将默认角色统一为 `Star/Lucy`，角色职责仍由 Role Binding Gate 管理 | **默认展示名也是输出契约。** 如果每次都靠外部提示纠正大小写，说明配置仍未真正内建 |
 | HTML 文件名、落盘位置和下载链接仍依赖用户额外声明 | 新增 Default HTML Delivery Contract：默认 `/mnt/data/sql_business_thinking_report.html`，单文件交付并返回 sandbox 链接 | **交付形式属于 Skill 输出契约。** 稳定的文件名、位置和链接不应成为每次调用的外挂输入 |
+
+
+## V13：移动端真实宽度门槛
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 390px 实际渲染时页面被 Grid 内容列中的宽表/长 SQL 撑到 816px；虽然表格 wrapper 已设置局部滚动，但父 Grid item 默认 `min-width:auto` 仍阻止收缩 | Renderer 增加 Mobile Width Gate：Grid/Flex 内容列含代码/表格时必须允许收缩（如 `min-width:0`），并用实际 `scrollWidth/clientWidth` 做验收 | **“有 overflow:auto”不等于“不会整页溢出”。** 响应式验收必须测最终几何尺寸，并同时约束父布局项与子滚动容器 |
