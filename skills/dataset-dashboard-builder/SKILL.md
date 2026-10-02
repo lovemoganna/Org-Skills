@@ -7,10 +7,10 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Question Map → Investigation → Promoted Findings → Visual Plan → 看板 → 质检
+多表数据 → 来源权威 → 数据可信度 → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Information Architecture → Visual Plan → Interaction → UI → Quality Evaluation → Final
 ```
 
-核心原则：**先决定什么值得看，再决定怎么画。**禁止把字段机械转成图表。
+核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
 
 ## 1. 扫描数据集
 
@@ -71,6 +71,20 @@ exact-date / exact-time 是否匹配？
 ```
 
 禁止把单日汇率套到跨期交易后继续命名为“历史成交额”。
+
+## 3A. Dashboard Mission Gate
+
+完成 Source Map / Dataset Map / Quality Gate 后，必须读取 `references/dashboard-quality-framework.md`，建立 Dashboard Mission Contract：
+
+- Primary Business Question；
+- Primary User / Mode；
+- Core Objects；
+- Key Decisions；
+- Key Actions；
+- Evidence Path；
+- Known Limits。
+
+如果用户没有明确业务问题，只能从数据与任务推导最合理的分析任务，并明确推导依据。禁止编造业务目标。
 
 ## 4. 按业务主题拆分，而不是按表拆分
 
@@ -164,6 +178,35 @@ Top N 由有效样本数决定：
 
 如果 Top N 覆盖全部对象，它不能作为“集中度”核心结论。
 
+## 6A. Information Architecture Gate
+
+Portfolio Synthesis 完成后，必须再次使用 `references/dashboard-quality-framework.md` 生成 Dashboard IA Plan。
+
+Dashboard 必须尽量形成：
+
+```text
+What
+→ So What
+→ Why
+→ Who / Where
+→ Evidence
+```
+
+模块按功能定义：状态、变化、异常、解释、定位、下钻。不是固定模板，也不是固定数量。
+
+首屏必须优先完成：
+
+- 当前最重要状态；
+- P0 / P1 问题；
+- 进入解释、对象或明细的下一步入口。
+
+禁止：
+
+- KPI / Finding 同权卡片堆砌；
+- 长篇文字先于核心状态；
+- 所有模块使用相同视觉权重；
+- 把 supporting evidence 当首屏主体。
+
 ## 7. 图表与布局
 
 每张图先写一句：`这张图回答什么问题？`
@@ -189,6 +232,21 @@ Top N 由有效样本数决定：
 
 禁止为视觉丰富度凑图、重复 KPI、滥用饼图或用装饰卡片替代分析。
 
+## 7A. Interaction Gate
+
+如果 Mission Contract 需要定位、验证或继续调查，且数据存在稳定对象键，必须提供至少一种真实分析交互，例如：
+
+- 筛选；
+- 点击交叉筛选；
+- drill-down / drill-through；
+- 对象详情；
+- 明细抽屉 / 明细表；
+- TopN 展开。
+
+交互后相关 KPI、图表和明细必须使用一致数据范围。
+
+如果用户明确要求静态导出、截图或汇报页，可以不强制交互。
+
 ## 8. 页面层级
 
 默认阅读顺序：
@@ -204,6 +262,8 @@ Executive Thesis / 关键限制
 ```
 
 首屏不得只是 KPI 或 Finding 卡片集合。Executive Thesis 必须来自 Portfolio Synthesis，并能回指 supporting Finding、Pattern、竞争解释、Diagnostic Test 和 Robustness。
+
+页面还必须提供从 Thesis / 异常到具体对象或证据的清晰路径。
 
 如果数据质量问题会改变核心数字，限制必须靠近 KPI，不得藏在页尾。
 
@@ -230,7 +290,23 @@ Executive Thesis / 关键限制
 - 不依赖外部库也应保留可读 fallback（如果成品要求离线可用）；
 - 执行 Visualization Registry 的 Renderer Capability Gate：原生支持 → 等价变体 → 自定义实现 → 表格 fallback；禁止为了“能画”而改变分析语义。
 
-生成后必须执行 `references/regression-loop.md`。
+生成后必须执行：
+
+1. `eval/dashboard-quality.md`；
+2. `references/regression-loop.md`。
+
+执行：
+
+```text
+Generate
+→ Evaluate
+→ Detect Problems
+→ Revise
+→ Evaluate Again
+→ Final
+```
+
+任何 Critical 或 Major Dashboard Quality 问题未清零，禁止 Final。
 
 ## 11. 停止条件
 
@@ -241,10 +317,14 @@ Executive Thesis / 关键限制
 - Investigation Gate 已完成；
 - 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
 - Candidate Triage 与 Portfolio Synthesis 已完成；
+- Dashboard Mission Contract 已完成；
+- Information Architecture Gate 已完成；
+- 需要定位/验证时 Interaction Gate 已完成；
 - 首屏 Thesis 已合并重复驱动并按价值排序；
 - 每个核心图表都回答明确问题；
 - Visual Plan 与 Renderer Capability Gate 已完成；
 - 关键指标口径可追溯；
 - 无重复/装饰性图表；
+- Dashboard Quality Evaluation：Critical=0 且 Major=0；
 - Rendered QA 通过；
 - 新发现的可泛化缺陷已回写 Skill 并复测。
