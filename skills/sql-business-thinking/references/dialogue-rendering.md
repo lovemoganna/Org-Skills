@@ -334,7 +334,7 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 允许：
 - 当前一步的局部判断；
 - 下一步要验证的问题；
-- 最终 report-back。
+- 最终 synthesis；若显式存在 Task Owner，则为 report-back。
 
 禁止：
 - 首屏提前展示最终 KPI；
@@ -359,11 +359,11 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 
 ---
 
-## 8. Report-back Traceability Gate
+## 8. Synthesis / Report-back Traceability Gate
 
-最终必须由 Star 向任务发起人汇报，而不是让 Lucy 替 Star 下最终结论。
+最终必须由 Star 完成 synthesis；只有显式存在 Task Owner 时，才向任务发起人 report-back。Lucy 不替 Star 下最终综合结论。
 
-最终汇报至少分：
+最终 synthesis / report-back 至少分：
 
 ```text
 结果
@@ -381,7 +381,7 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 | 数据质量限制 | 对应质检事实 |
 | 不能外推的判断 | 明确的结论边界 |
 
-如果最终汇报出现前面从未讨论 / 验证过的新数字、新口径或新判断，判失败。
+如果最终 synthesis / report-back 出现前面从未讨论 / 验证过的新数字、新口径或新判断，判失败。
 
 ---
 
