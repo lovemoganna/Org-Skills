@@ -37,7 +37,7 @@ for rule in critical_rules:
     assert rule in haystack, f"critical rule missing: {rule}"
 
 assert "Role Binding Gate" in haystack, "role binding rule missing"
-for default_role in ("star", "Lucy"):
+for default_role in ("Star", "Lucy"):
     assert default_role in haystack, f"default role name missing: {default_role}"
 
 regression = (ROOT / "tests" / "regression-cases.md").read_text(encoding="utf-8")
@@ -56,6 +56,10 @@ assert "Dataset-to-Report Autopilot" in skill, "autopilot input contract missing
 assert "Reverse Skill Audit Gate" in skill, "reverse skill audit gate missing"
 assert "最小输入 Autopilot" in regression, "minimal-input autopilot regression missing"
 assert "不提供业务问题、JOIN、粒度、SQL" in regression, "minimal-input payload missing"
+assert "Default HTML Delivery Contract" in skill, "default html delivery contract missing"
+assert "/mnt/data/sql_business_thinking_report.html" in skill, "default html path missing"
+assert "默认 HTML 实体交付" in regression, "html artifact delivery regression missing"
+
 
 
 print("OK: sql-business-thinking repository integrity")
