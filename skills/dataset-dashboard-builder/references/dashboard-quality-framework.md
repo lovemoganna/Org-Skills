@@ -37,14 +37,20 @@ L1–L3 决定“有没有用”；L4–L5 决定“好不好用”。
 | 字段 | 内容 |
 |---|---|
 | Primary Business Question | 这个 Dashboard 主要解决什么问题 |
-| Primary User / Mode | monitoring / investigation / review / operational analysis |
+| Audience | 谁使用它，具备什么背景 |
+| Dashboard Mode | monitoring / investigation / operational / executive / exploration / entity |
+| Decision / Action | 用户看完后需要判断或执行什么 |
+| Population | 当前分析人口 / 对象范围 |
+| Period / As-of | 数据覆盖期、截止时间或 snapshot 语义 |
+| Comparison Basis | target / prior period / peer / segment / benchmark / none |
+| Cadence | one-off / daily / weekly / monthly / event-driven |
 | Core Objects | 用户、订单、交易、渠道、产品等真实业务对象 |
-| Key Decisions | 用户看完后需要判断什么 |
-| Key Actions | 需要继续定位、筛选、下钻或核查什么 |
 | Evidence Path | 结论如何回到对象和明细 |
 | Known Limits | 哪些判断当前数据不能支持 |
 
 若用户没有明确业务问题，只能根据数据推导“最合理的分析任务”，并标明推导依据。禁止编造业务目标。
+
+若数据没有“当前”语义，不得把历史覆盖期页面命名为“当前状态”。应改用“范围内状态 / scope snapshot / 截至某日”，并把 Period / As-of 放在默认视图可见位置。
 
 ## 3. Dashboard Information Chain
 
@@ -74,7 +80,66 @@ What
 KPI → 饼图 → 柱状图 → 折线图 → 表格
 ```
 
-## 4. 功能模块
+## 4. Dashboard Mode
+
+Mode 决定默认工作路径，不是装饰标签。
+
+| Mode | 默认主任务 |
+|---|---|
+| monitoring | 状态 → 变化 → 例外 |
+| investigation | 问题 → 驱动 → 对象 → 证据 |
+| operational | 队列 → 优先级 → 对象 → 动作 |
+| executive | 结果 → 变化 → 驱动 → 风险 / 决策 |
+| exploration | 比较 → 发现 → 下钻 |
+| entity | 单对象状态 → 历史 → 异常 → 证据 |
+
+如果用户未指定 Mode，根据 Decision / Action 与 Evidence Path 选择一个最匹配的 Mode。不得因为用了筛选器就把页面称为 operational。
+
+## 5. Metric Role Gate
+
+每个指标先分配角色：
+
+- **Primary KPI**：直接决定“当前是否值得关注”；
+- **Driver**：解释 Primary KPI 为什么变化；
+- **Guardrail**：防止局部优化掩盖其他风险；
+- **Diagnostic**：用于定位问题；
+- **Context**：帮助理解，但不直接驱动决策。
+
+规则：
+
+1. KPI Card 优先留给 Primary KPI 或极少量关键 Guardrail；
+2. Driver / Diagnostic / Context 不得因为“能算出来”就自动升成卡片；
+3. 同一指标在不同组件中角色必须一致；
+4. 如果没有足够证据定义 Primary KPI，可以只保留 Context / Diagnostic，不强造“核心 KPI”。
+
+## 6. Comparison Context Gate
+
+每个 Primary KPI / Primary Finding 都必须明确：
+
+```text
+Current
+→ Compared With What
+→ Delta / Difference
+→ Why This Comparison Matters
+```
+
+允许的 Comparison Basis：
+
+- previous period；
+- target / SLA；
+- peer / segment；
+- historical baseline；
+- same-view side-by-side comparison；
+- 明确写 `no meaningful comparison available`。
+
+硬规则：
+
+- 主要比较必须同时可见；
+- 不能要求用户切换筛选器并凭记忆比较；
+- Filter 不能替代核心比较视图；
+- 没有合理基线时禁止硬造同比、环比或目标。
+
+## 7. 功能模块
 
 模块按作用定义，不按固定数量定义。
 
@@ -116,7 +181,7 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 
 不是所有页面都需要全部模块。由 Mission Contract 和数据决定。
 
-## 5. Information Architecture Gate
+## 8. Information Architecture Gate
 
 渲染前先生成 Dashboard IA Plan：
 
@@ -131,9 +196,11 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 - 共享同一驱动的模块必须靠近或合并；
 - 不允许长篇文字先于核心状态和重点；
 - 不允许所有模块使用相同视觉权重；
-- 可以滚动，但首屏必须完成“状态 + 重点 + 下一步入口”。
+- 可以滚动，但首屏必须完成“状态 + 重点 + 下一步入口”；
+- Default View 在用户不操作任何控件时，就必须完成 Primary Job；
+- 需要做核心比较时，相关对象必须同时可见，不能靠切换过滤器代替。
 
-## 6. Visualization Gate
+## 9. Visualization Gate
 
 图表选择继续遵守 `visualization-registry.md`。
 
@@ -145,7 +212,7 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 - 不为视觉多样性切换图表类型；
 - 不允许图表取代 Evidence Path。
 
-## 7. Interaction Gate
+## 10. Interaction Gate
 
 交互只在能推进分析时存在。
 
@@ -160,15 +227,26 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 - 明细抽屉 / 明细表；
 - 重置筛选。
 
+### Interaction Semantics
+
+- **Filter**：改变当前分析人口；
+- **Highlight**：保留总体上下文，只突出对象；
+- **Drill-down**：进入更细粒度；
+- **Drill-through**：带着当前对象与触发条件进入详情 / 证据；
+- **Navigation**：切换分析任务。
+
 硬规则：
 
 1. 用户需要“定位 / 验证”且数据存在稳定对象键时，静态页面默认不足；
 2. 点击或筛选后，相关 KPI / 图 / 表必须使用一致范围；
 3. 交互必须明显可发现；
 4. 不为“像产品”添加无意义控件；
-5. 如果输出明确是静态导出、截图或汇报页，可以不强制交互。
+5. 如果输出明确是静态导出、截图或汇报页，可以不强制交互；
+6. Drill 必须保留触发上下文：对象键 + 当前筛选 + 触发维度 / 条件 + 可用的记录键；
+7. “查看 ACH 明细”必须进入 ACH 证据，不得只选中某个 ACH 用户后展示该用户全部无关交易；
+8. “定位异常记录”必须落到异常记录或包含该记录的正确明细视图，不得跳到错误 tab / 粒度。
 
-## 8. UI Gate
+## 11. UI Gate
 
 目标视觉：专业分析工具，而不是营销页面。
 
@@ -195,7 +273,7 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 - 装饰性地图 / 仪表盘；
 - 用空白和大标题制造“高级感”。
 
-## 9. Anti-AI Dashboard Rules
+## 12. Anti-AI Dashboard Rules
 
 禁止：
 
@@ -210,9 +288,35 @@ KPI → 饼图 → 柱状图 → 折线图 → 表格
 9. 补造数据；
 10. 页面“看起来像 Dashboard”但不能回答业务问题；
 11. 用长篇分析文字替代可操作的信息架构；
-12. 把所有 Finding 都塞进首页。
+12. 把所有 Finding 都塞进首页；
+13. 把 Hypothesis Frontier、Diagnostic Test、Quality Evaluation、Regression 状态等内部生成过程直接展示为 Dashboard 主内容。
 
-## 10. Dashboard Build Pipeline
+## 13. Internal Analysis Boundary
+
+以下内容默认属于生成机制，不属于最终 Dashboard：
+
+- Question / Hypothesis Frontier；
+- Diagnostic Test 过程；
+- Robustness 工作日志；
+- Quality Evaluation；
+- Regression / QA 状态；
+- 内部 Prompt / Rule / Skill 说明。
+
+最终 Dashboard 只显示用户完成任务需要的：
+
+```text
+状态
+→ 比较
+→ 问题 / 变化
+→ 解释
+→ 对象
+→ 证据
+→ 必要限制
+```
+
+除非用户明确要求审计过程，否则内部评价不得作为页面模块出现。
+
+## 14. Dashboard Build Pipeline
 
 ```text
 Input Data
@@ -235,7 +339,7 @@ Input Data
 Data → Chart → HTML
 ```
 
-## 11. 最终自问
+## 15. 最终自问
 
 发布前必须能明确回答：
 
