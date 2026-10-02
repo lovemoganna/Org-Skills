@@ -14,9 +14,17 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 
 ## 1. 扫描数据集
 
-先读取 `references/source-authority.md`，执行 Table Role Gate。
+先读取 `references/source-authority.md`。
 
-工作簿 / 数据库中所有表不能一视同仁。先区分：
+先执行 **Explicit Scope Gate**：
+
+- 用户明确指定表 / Sheet 范围时，只读取并分析该范围；
+- 可以读取工作簿 metadata 解析准确表名，但不得读取、引用或让范围外表影响指标、规则、结论或 QA；
+- 只有用户未限定范围时，才进入全数据集 Table Role Gate。
+
+然后执行 Table Role Gate。
+
+进入当前分析范围的表不能一视同仁。先区分：
 
 `fact / entity / dimension / canonical aggregate / rule / qa / fix log / dashboard / backup`
 
