@@ -1,13 +1,13 @@
 ---
 name: dataset-dashboard-builder
-description: 自动扫描多表数据集，识别业务对象、表间关系、数据质量和高价值分析主题，并生成最小必要的定制看板。用于“给这批表自动做看板”“不知道该看什么指标”“多张表自动拆主题”“数据更新后自动刷新看板”等任务。不是固定模板生成器：必须先理解数据、验证口径，再决定指标、图表和布局。需要 HTML 成品时执行 Rendered QA 与回归闭环。
+description: 自动扫描多表数据集，识别业务对象、表间关系、数据质量和高价值分析主题，通过 Question Frontier、竞争解释、Diagnostic Test 与 Robustness 将表面 Pattern 提炼为可晋级 Finding，再生成最小必要的定制看板。用于“给这批表自动做看板”“不知道该看什么指标”“多张表自动拆主题”“数据更新后自动刷新看板”等任务。不是固定模板生成器：必须先理解数据、验证口径、解释关键现象，再决定指标、图表和布局。需要 HTML 成品时执行 Rendered QA 与回归闭环。
 ---
 # Dataset Dashboard Builder
 
 目标：
 
 ```text
-多表数据 → 数据可信度 → 业务语义 → 分析主题 → 指标 → 变化/异常 → 图表 → 看板 → 质检
+多表数据 → 来源权威 → 数据可信度 → Question Map → Investigation → Promoted Findings → Visual Plan → 看板 → 质检
 ```
 
 核心原则：**先决定什么值得看，再决定怎么画。**禁止把字段机械转成图表。
