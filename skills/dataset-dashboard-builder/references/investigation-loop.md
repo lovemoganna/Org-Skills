@@ -168,8 +168,6 @@ Claim
 
 Dashboard 只消费四类内容：
 
-- **Promoted Finding**：通过 Finding Promotion Gate；
-- **Context Metric**：必要背景数字，但明确不冒充洞察；
 - **Executive Thesis**：通过 Portfolio Synthesis 的主结论；
 - **Promoted Finding**：支撑 Thesis 的已验证发现；
 - **Context Metric**：必要背景数字，但明确不冒充洞察；
