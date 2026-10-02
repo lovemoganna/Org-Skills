@@ -32,6 +32,9 @@ critical_rules = [
     "Question Frontier",
     "Question Quality Gate",
     "Question Consequence Gate",
+    "Hypothesis Frontier",
+    "Analysis Depth Gate",
+    "Robustness Check",
 ]
 haystack = skill + "\n" + "\n".join(
     p.read_text(encoding="utf-8") for p in (ROOT / "references").glob("*.md")
@@ -71,11 +74,18 @@ assert "Lucy 退化成陪练 / SQL 助手" in regression, "question-quality orig
 assert "无 Task Owner 却虚构领导任务" in regression, "dataset-driven arc regression missing"
 assert "低价值问题必须被淘汰" in regression, "low-value question regression missing"
 assert "Question Frontier 非预写 checklist" in regression, "dynamic frontier regression missing"
+assert "只报排名 / 比例，没有解释深度" in regression, "shallow-analysis failure sample missing"
+assert "Lucy 只挑战 SQL，不挑战解释" in regression, "hypothesis-challenge failure sample missing"
+assert "集中度极端值稳健性" in regression, "robustness regression missing"
+assert "频次 × 单笔金额分解" in regression, "mechanism-decomposition regression missing"
+assert "数据不足时保持 unresolved" in regression, "unresolved hypothesis regression missing"
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "Lucy = Critical Analyst" in dialogue, "Lucy critical-analyst role missing"
 assert "Lucy 是独立分析者，不是 Reviewer、SQL 助手或陪练" in dialogue, "anti-companion role contract missing"
 assert "禁止虚构领导任务" in dialogue, "no-fake-task-owner contract missing"
 assert "accept / reject / replace / split" in dialogue, "question challenge actions missing"
+assert "counter-hypothesis" in dialogue, "hypothesis challenge action missing"
+assert "What / Where / Why / Alternative / Test / Robustness / So What" in dialogue, "analysis depth gate missing from dialogue"
 
 
 
