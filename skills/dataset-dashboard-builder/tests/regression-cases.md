@@ -18,7 +18,7 @@
 - 加密交易：25；其中 completed 22；
 - 汇率：8 条，单一 effective_date；
 - completed 交易与汇率 exact-date 匹配：0；
-- 快照估值：144,444 USDT；
+- 辅助快照估值数学结果：144,444 USDT；该值不得在业务规则禁止跨币种混同汇总时升级为 canonical 核心 KPI；
 - 法币快照估值：123,074.5 USDT；
 - 加密快照估值：21,369.5 USDT；
 - active 交易用户：9；
@@ -28,7 +28,7 @@
 
 验收：
 
-1. 总金额必须命名为“快照估值”，不能称历史真实成交额；
+1. 若使用 144,444 USDT，只能命名为“辅助快照估值”，不能称历史真实成交额，也不得覆盖按原生 currency / asset / network 分区的 canonical 结果；
 2. Top3 可以作为集中度，Top10 不得作为核心集中度结论；
 3. 日期冲突进入数据质量区，不得静默忽略；
 4. 看板至少覆盖规模、结构/集中度、流程状态、数据质量；
@@ -122,3 +122,50 @@ active=7。不得输出 Top10=100% 作为集中度发现，应降为 Top1/Top3�
 ### 泛化 K：Renderer 不支持目标图
 
 验收：按“原生 → 等价变体 → 自定义 → 表格”降级，并保证分析语义不变。
+
+
+## V3 原样本：Source Role & Authority
+
+完整工作簿包含 11 个 Sheet：
+
+- `users / fiat_transactions / crypto_transactions` → entity / fact；
+- `exchange_rates` → reference；
+- `expected_fiat_result / expected_crypto_result` → canonical aggregate / reconciliation target；
+- `data_rules` → rule / dictionary；
+- `qa_result` → QA；
+- `fix_log` → fix / audit log；
+- `Executive_Dashboard` → dashboard / output；
+- `_backup_*` → backup / archive。
+
+验收：
+
+1. dashboard / backup 不得进入业务人口或 KPI；
+2. expected 结果只用于对账，不得与原始交易再次累计；
+3. `data_rules / qa_result / fix_log` 可以改变口径或可信度，但其记录数不得作为业务指标；
+4. `fix_log` 已明确跨币种混同汇总属于历史缺陷，因此原生 currency / asset / network 汇总是 canonical；
+5. `144,444 USDT` 仅保留为辅助 snapshot 检查值，不能替代原生单位结果。
+
+## V3 泛化：混合工作簿
+
+输入：
+
+`orders / customers / expected_orders / qa_result / dashboard / _backup_20260101`
+
+验收：
+
+- `orders / customers` 进入业务分析；
+- `expected_orders` 用于对账；
+- `qa_result` 用于验证；
+- `dashboard / backup` 默认排除；
+- 不发生重复计数。
+
+
+## V4 渲染泛化：图例与标签
+
+### 多序列图
+
+两条以上 series 同图时，验收必须有可见图例或直接标签；不得仅靠颜色区分。
+
+### 密集散点
+
+多个点坐标接近时，验收不得出现直接标签覆盖。允许只标关键点，其余通过 tooltip / hover detail 查看。

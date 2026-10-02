@@ -17,3 +17,20 @@
 | 看板主要停留在总量、结构、TopN，真实数据中的完成率、时延、分层集中度、跨表关系等没有被主动发现 | 缺少“分析到什么深度才算完成”的生成规则 | 新增 Analysis Depth Protocol 与 Question Map | 数据支持时必须从 L0/L1 推进到 L2，并至少探索 L3/L4/L5 中一个高价值方向 |
 | 图表映射只有 KPI、折线、条形、堆叠、排名和表格，复杂分析只能被压回基础图 | 图表类型被主 Skill 的简化映射和 Renderer 能力反向限制 | 新增 Visualization Registry 与 Renderer Capability Gate | 先按问题选分析语义，再解决渲染；支持分布、关系、矩阵、流程、贡献、流向、层级、网络和地理等图形 |
 | “支持更多图”容易演化为为了丰富页面强行增加图形 | 缺少信息增量约束 | 注册表明确不追求图形数量 | 图形多样性不能替代分析价值；重复图只有在回答不同问题时保留 |
+
+
+## V3：来源角色与指标权威性
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 真实工作簿有 11 个 Sheet，但只有核心事实/实体/参考表应直接进入业务指标；expected、QA、dashboard、backup 若一视同仁会造成重复分析或污染人口 | 缺少表角色识别 | 新增 Source Role & Metric Authority Protocol | 先做 Source Map；事实/实体用于计算，规则/expected/QA 用于约束和对账，dashboard/backup 默认排除 |
+| 数据集修复日志明确禁止跨币种混同汇总，但旧回归把 144,444 USDT 快照估值放在核心锚点 | 只做 Time-dimension Gate，没有检查业务规则是否允许跨单位聚合 | 新增 Unit Authority Gate | 时间上可换算不等于业务上可聚合；原生单位口径优先，统一估值只能是明确标记的辅助分析 |
+| 原始表与 expected/summary 同时存在时，模型可能重复累计 | 缺少来源权威与 double-count 规则 | 新增 Authority Order 与 Double-count Gate | canonical aggregate 用于对账，不作为额外事实再次 SUM |
+
+
+## V4：图例与标签碰撞
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 真实 HTML 的双序列月度折线只有颜色，没有可见图例 | Visual Registry 缺少多序列识别验收 | 新增 Encoding & Label Gate | 多序列必须有直接标签或可见图例，不能只靠颜色 |
+| 法币渠道 scatter 的低时延点聚集，直接标签互相覆盖 | 只要求可读标签，没有 collision gate | 增加标签碰撞处理顺序 | 重叠时减少直标、只标关键点、tooltip 或 label repel；禁止文字覆盖 |

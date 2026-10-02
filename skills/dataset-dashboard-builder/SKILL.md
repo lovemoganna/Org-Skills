@@ -14,12 +14,24 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 
 ## 1. 扫描数据集
 
-先建立 Dataset Map：
+先读取 `references/source-authority.md`，执行 Table Role Gate。
+
+工作簿 / 数据库中所有表不能一视同仁。先区分：
+
+`fact / entity / dimension / canonical aggregate / rule / qa / fix log / dashboard / backup`
+
+默认只有事实表、实体表和符合条件的维表进入业务指标；expected、QA、修复日志、看板和备份用于对账、约束或排除。
+
+先建立 Source Map，再建立 Dataset Map。
 
 | 表 | 一行代表什么 | 主键/候选键 | 时间字段 | 金额/指标 | 维度 | 可关联字段 |
 |---|---|---|---|---|---|---|
 
 同时检查：行数、字段类型、时间范围、NULL、重复键、状态字段、单位、明显异常值。
+
+**Metric Authority Gate：**如果数据规则、canonical/expected 结果与临时派生指标冲突，以明确业务规则和权威口径为准。禁止把原始表、expected 汇总、dashboard 输出重复计入同一指标。
+
+**Unit Authority Gate：**如果业务规则要求按 currency / asset / network 等原生单位分区，跨单位换算只能作为明确标记的辅助估值，不得自动升级为核心 KPI。
 
 ## 2. Quality Gate
 
