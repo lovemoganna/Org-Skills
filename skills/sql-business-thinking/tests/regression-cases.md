@@ -11,7 +11,7 @@
 - `crypto_transactions`
 - `exchange_rates`
 
-读取基线：DuckDB `read_xlsx`，四表初始化后物化为表；浏览器报告使用 DuckDB-Wasm 时遵循 browser VFS / CORS 约束。
+读取基线：DuckDB `read_xlsx`。本真实样本初始化时一次性建立 `users / fiat_transactions / crypto_transactions / exchange_rates` 四个视图，后续分析只引用视图；浏览器报告使用 DuckDB-Wasm 时遵循 browser VFS / CORS 约束。
 
 ### 当前回归锚点
 
@@ -104,3 +104,12 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 - Yone 仍承担 Analysis Owner 职责，Carmen 仍承担 Reviewer 职责；
 - 未指定人物名的历史样本仍默认使用 `star/Lucy`；
 - 换成任意其他明确名字时，同样只替换名字，不改变角色职责和 Conversation Arc。
+
+
+### 泛化 F：Dialogue-Driven 首屏不得提前泄露最终 KPI
+
+当任务明确要求人物逐步讨论并由 Result 推出结论时：
+
+- 首屏只显示任务、角色、初始化或当前问题；
+- 最终总额、Top N、重叠率等数字在对应 Result 之前不得出现；
+- SQL / Result 原位展示，不得因为普通报告的“首屏 KPI / SQL 折叠”规则被提前汇总或移入验证台。
