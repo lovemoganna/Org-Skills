@@ -378,3 +378,95 @@ Observed Pattern：
 - 小额异常不能仅因全局金额/覆盖面较小被跳过；
 - Materiality 用于该目标内部判断调查深度与措辞；
 - 无关的大范围问题可作为旁注，不得抢走主分析路径。
+
+
+## V8 原样本：Dashboard Quality
+
+当前四表样本存在稳定对象键 `uid / fiat_order_id / crypto_order_id`，且核心任务包括异常识别、原因解释和对象验证。
+
+失败基线：
+
+- HTML 有 Thesis / Evidence / Context / Secondary Lead；
+- 但主要是长滚动阅读；
+- 没有用户可用的筛选、对象定位、跨模块联动或下钻；
+- Supporting Evidence 更像报告章节，不形成“总览 → 解释 → 对象 → 明细”工作路径。
+
+验收：
+
+1. 先建立 Dashboard Mission Contract；
+2. 首屏必须同时出现：
+   - 当前状态；
+   - 1–3 个最高优先级问题；
+   - 明确的继续分析入口；
+3. Information Architecture 必须形成 `What → So What → Why → Who/Where → Evidence`；
+4. 至少提供一个有分析价值的筛选或对象选择；
+5. 至少提供从核心问题到用户 / 订单 / 交易证据的下钻路径；
+6. 筛选后相关 KPI / 图 / 表使用一致范围；
+7. 长篇解释不得成为主要交互方式；
+8. Dashboard Quality Evaluation 必须达到 Critical=0 / Major=0。
+
+## V8 泛化
+
+### 泛化 S：有稳定对象键的调查型数据集
+
+输入：
+
+`customers / orders / events`
+
+存在 `customer_id / order_id`，用户目标是定位异常订单。
+
+验收：
+
+- 静态汇总不足；
+- 必须支持至少一种对象定位 / drill-down；
+- 详情必须回到原始订单或事件。
+
+### 泛化 T：纯静态汇报任务
+
+用户明确要求：
+
+`生成一页静态管理层汇报，不需要交互`
+
+验收：
+
+- 不强制筛选 / drill-down；
+- 仍必须满足信息架构与数据真实性；
+- Interaction Gate 正确豁免。
+
+### 泛化 U：漂亮但无业务链路
+
+页面有渐变、卡片、动画、8 个图，但无法说明主要业务问题或下一步动作。
+
+验收：
+
+- 评为 Major；
+- 不能因视觉完成度高而通过。
+
+### 泛化 V：长报告不是 Dashboard
+
+页面有正确结论和图表，但需要连续滚动阅读大量解释才能理解，且没有状态→异常→定位路径。
+
+验收：
+
+- 评为 Major；
+- 必须重构 Information Architecture，而不是只改颜色和间距。
+
+### Adversarial W：不要固定六模块模板
+
+数据只有简单 SLA 监控，无可用实体层级，也没有合理的“原因→对象”链。
+
+验收：
+
+- 不强行生成状态 / 趋势 / 异常 / 解释 / 定位 / 下钻全部模块；
+- 只保留任务真正需要的模块；
+- Dashboard Framework 是功能语义，不是页面模板。
+
+
+### V8 Rendered QA：移动端控制区
+
+当桌面使用 sticky filter bar 时：
+
+- 390px 等窄屏不得让完整筛选区长期固定并挤压主要分析内容；
+- 应折叠、收起或取消 sticky；
+- 允许筛选区在页面顶部正常占位；
+- 禁止用缩小字体来掩盖控制区过高问题。

@@ -3,13 +3,15 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → Question Map → Candidate Triage → Investigation → Portfolio Synthesis → Visual Plan → HTML → 回归
+扫描 → 质检 → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Information Architecture → Visualization → Interaction → UI → Quality Evaluation → 回归
 ```
 
 ## 文件
 
 - [`SKILL.md`](SKILL.md)：主协议。
 - [`references/source-authority.md`](references/source-authority.md)：表角色、来源权威性、重复计数与单位聚合边界。
+- [`references/dashboard-quality-framework.md`](references/dashboard-quality-framework.md)：Dashboard 本质、五层质量模型、信息架构、交互与 Anti-AI 规则。
+- [`eval/dashboard-quality.md`](eval/dashboard-quality.md)：Critical / Major / Minor Dashboard 质量评估与修正闭环。
 - [`references/analysis-depth.md`](references/analysis-depth.md)：Question Map、分析深度阶梯与停止条件。
 - [`references/investigation-loop.md`](references/investigation-loop.md)：候选优先级、Question/Hypothesis Frontier、稳健性、Finding 晋级与 Portfolio Synthesis。
 - [`references/visualization-registry.md`](references/visualization-registry.md)：图表能力注册表、选图规则与 Renderer Capability Gate。

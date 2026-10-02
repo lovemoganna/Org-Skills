@@ -10,6 +10,8 @@ assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skil
 
 for path in [
     ROOT / "references" / "source-authority.md",
+    ROOT / "references" / "dashboard-quality-framework.md",
+    ROOT / "eval" / "dashboard-quality.md",
     ROOT / "references" / "analysis-depth.md",
     ROOT / "references" / "investigation-loop.md",
     ROOT / "references" / "visualization-registry.md",
@@ -37,6 +39,10 @@ critical = [
     "Explicit Scope Gate",
     "Candidate Triage",
     "Portfolio Synthesis",
+    "Dashboard Mission Gate",
+    "Information Architecture Gate",
+    "Interaction Gate",
+    "Dashboard Quality Evaluation",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -57,6 +63,14 @@ for rule in ["Candidate Triage Gate", "Goal Alignment", "Question Frontier", "Qu
     assert rule in investigation, f"investigation rule missing: {rule}"
 assert "Pattern 只是“发生了什么”，不是“为什么”" in investigation
 
+quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(encoding="utf-8")
+for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Gate", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
+    assert rule in quality, f"dashboard quality rule missing: {rule}"
+
+dashboard_eval = (ROOT / "eval" / "dashboard-quality.md").read_text(encoding="utf-8")
+for rule in ["Critical", "Major", "Minor", "Acceptance Rule", "Generate", "Evaluate Again"]:
+    assert rule in dashboard_eval, f"dashboard eval rule missing: {rule}"
+
 analysis_depth = (ROOT / "references" / "analysis-depth.md").read_text(encoding="utf-8")
 for rule in ["Question Map", "L2 · 分布与分层", "L4 · 关系、流程与跨表", "L5 · 驱动、集中度与异常"]:
     assert rule in analysis_depth, f"analysis depth rule missing: {rule}"
@@ -69,7 +83,7 @@ assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
 assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
 assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")
