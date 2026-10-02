@@ -40,7 +40,8 @@
 10. HTML 离线打开时核心内容仍可读；
 11. Question Map 与 Analysis Depth Gate 已执行；数据支持时不能只停留在总量 / TopN；
 12. Visual Plan 与 Renderer Capability Gate 已执行；fallback 不得改变分析语义；
-13. 主要 Pattern 已执行 Hypothesis Frontier / Robustness / Finding Promotion Gate。
+13. 主要 Pattern 已执行 Candidate Triage / Hypothesis Frontier / Robustness / Finding Promotion Gate；
+14. Promoted Findings 已执行 Portfolio Synthesis，首屏不是发现列表的机械平铺。
 
 ### 4A. 深度分析 QA
 
@@ -53,6 +54,10 @@
 
 ### 4B. Investigation QA
 
+- 是否先做 Candidate Triage，而不是对每个异常平均深挖；
+- 是否把“唯一 / 极端 / 稀有”误当成“高价值”；
+- 是否综合考虑影响面、控制严重性、证据强度与行动价值；
+
 - 核心发现第一次出现时是否只作为 Pattern，而不是直接写 Insight；
 - 是否至少存在 H1/H2 两个竞争解释；
 - 是否明确什么证据会削弱当前主解释；
@@ -64,7 +69,17 @@
 - Context Metric 是否被误写成 Insight；
 - 是否在信息增益下降后停止，而不是机械遍历所有字段。
 
-### 4C. 可视化 QA
+### 4C. Portfolio Synthesis QA
+
+- 是否把共享同一驱动/实体/证据的 Finding 合并；
+- 是否存在重复首屏卡片，只是换了维度措辞；
+- 是否解释 Finding 之间的冲突或表面矛盾；
+- 是否按价值排序，而不是按发现顺序；
+- 首页是否能压缩成少量 Executive Thesis；
+- P2 Secondary Lead 是否错误抢占首屏；
+- 单条小金额/小样本异常只有在控制或分析依赖严重时才可越级。
+
+### 4D. 可视化 QA
 
 - 是否从分析问题选择图形，而不是从 Renderer 能画什么倒推；
 - 分布、关系、矩阵、流程、贡献、流向等语义需要时是否正确路由；
