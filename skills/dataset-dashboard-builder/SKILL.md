@@ -77,10 +77,14 @@ exact-date / exact-time 是否匹配？
 完成 Source Map / Dataset Map / Quality Gate 后，必须读取 `references/dashboard-quality-framework.md`，建立 Dashboard Mission Contract：
 
 - Primary Business Question；
-- Primary User / Mode；
+- Audience；
+- Dashboard Mode；
+- Decision / Action；
+- Population；
+- Period / As-of；
+- Comparison Basis；
+- Cadence；
 - Core Objects；
-- Key Decisions；
-- Key Actions；
 - Evidence Path；
 - Known Limits。
 
@@ -148,6 +152,15 @@ Candidate Triage
 - 首屏优先展示综合后的 Executive Thesis，而不是把 Promoted Findings 平铺成卡片；
 - Context Metric、Secondary Lead 与核心 Thesis 必须分层；
 - 停止条件是边际信息增益下降，不是“所有维度都查过”。
+
+## 4C. Comparison & Metric Role Gate
+
+必须执行 Dashboard Quality Framework 的 Metric Role Gate 与 Comparison Context Gate。
+
+- 指标分为 Primary KPI / Driver / Guardrail / Diagnostic / Context；
+- KPI Card 只突出真正需要快速判断的 Primary KPI / Guardrail；
+- Primary KPI / Finding 必须有合理比较语境，或明确写 `no meaningful comparison available`；
+- 主要比较对象必须同时可见；禁止用切换 Filter 代替比较。
 
 ## 5. 指标选择
 
@@ -290,6 +303,8 @@ Executive Thesis / 关键限制
 - 不依赖外部库也应保留可读 fallback（如果成品要求离线可用）；
 - 执行 Visualization Registry 的 Renderer Capability Gate：原生支持 → 等价变体 → 自定义实现 → 表格 fallback；禁止为了“能画”而改变分析语义。
 
+最终 Dashboard 不得把 Question/Hypothesis Frontier、Diagnostic Test、Quality Evaluation、Regression 状态等内部生成过程当作页面模块展示，除非用户明确要求审计过程。
+
 生成后必须执行：
 
 1. `eval/dashboard-quality.md`；
@@ -318,6 +333,8 @@ Generate
 - 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
 - Candidate Triage 与 Portfolio Synthesis 已完成；
 - Dashboard Mission Contract 已完成；
+- Metric Role / Comparison Context Gate 已完成；
+- Default View 在无交互时已能完成 Primary Job；
 - Information Architecture Gate 已完成；
 - 需要定位/验证时 Interaction Gate 已完成；
 - 首屏 Thesis 已合并重复驱动并按价值排序；
