@@ -27,7 +27,7 @@ Analysis Events
 
 ## 2A. Dialogue-Driven Report Override
 
-角色名必须从 `dialogue-rendering.md` 的 Role Binding Gate 读取。当前请求显式给出人物名时，Renderer 必须使用绑定后的名字；不得硬编码默认 `star/Lucy`。
+角色名必须从 `dialogue-rendering.md` 的 Role Binding Gate 读取。当前请求显式给出人物名时，Renderer 必须使用绑定后的名字；不得硬编码默认 `Star/Lucy`。
 
 
 当用户明确要求：
@@ -176,6 +176,19 @@ Renderer 只读，不重新分析。
 - 所有远程读取受浏览器 CORS 约束；
 - 远程 XLSX 失败后可回退到同轮分析固化的 CSV/Parquet；
 - “记录”与“实时”必须明确区分。
+
+## 11A. HTML Artifact Delivery Contract
+
+当交付物是完整 HTML，且用户未指定文件名/路径时：
+
+- 默认写入 `/mnt/data/sql_business_thinking_report.html`；
+- 必须生成实体单文件，不得只返回源码文本；
+- CSS / JS / 会话 / SQL / Result / Report-back 均随文件交付；
+- 公共 CDN 只用于可选运行时，记录结果必须内嵌，保证网络失败时仍可阅读；
+- 最终回复必须给出 `sandbox:/mnt/data/sql_business_thinking_report.html` 下载链接；
+- Rendered QA 需要同时检查文件存在、非空、可解析以及下载路径与实际文件一致。
+
+用户显式指定其他文件名、目录或格式时，以用户要求为准。
 
 ## 12. UI
 
