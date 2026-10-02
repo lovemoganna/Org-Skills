@@ -52,5 +52,10 @@ assert "Analysis Owner / Reviewer" in regression_loop, "bound-role regression co
 assert "代码必须在 star / Lucy" not in report_rendering, "default role names still hardcoded in dialogue rendering rule"
 assert "star 左、Lucy 右" not in report_rendering, "default role names still hardcoded in UI rule"
 assert "Dialogue-Driven 首屏不得提前泄露最终 KPI" in regression, "dialogue first-screen regression missing"
+assert "Dataset-to-Report Autopilot" in skill, "autopilot input contract missing"
+assert "Reverse Skill Audit Gate" in skill, "reverse skill audit gate missing"
+assert "最小输入 Autopilot" in regression, "minimal-input autopilot regression missing"
+assert "不提供业务问题、JOIN、粒度、SQL" in regression, "minimal-input payload missing"
+
 
 print("OK: sql-business-thinking repository integrity")
