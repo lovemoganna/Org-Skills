@@ -135,7 +135,7 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 验收：
 
 - 输出和代码会话原样使用 `Yone/Carmen`，不得擅自改回默认 `Star/Lucy`；
-- Yone 仍承担 Analysis Owner 职责，Carmen 仍承担 Critical Analyst 职责；
+- Yone 仍承担 Analysis Lead 职责，Carmen 仍承担 Critical Analyst 职责；
 - 未指定人物名的历史样本仍默认使用 `Star/Lucy`；
 - 换成任意其他明确名字时，同样只替换名字，不改变角色职责和 Conversation Arc。
 
