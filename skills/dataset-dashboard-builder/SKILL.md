@@ -114,21 +114,25 @@ L0 数据可信度
 必须建立：
 
 ```text
-Question Frontier
+Candidate Triage
+→ Question Frontier
 → Hypothesis Frontier
 → Diagnostic Test
 → Robustness Check
 → Finding Promotion Gate
+→ Portfolio Synthesis
 ```
 
 硬规则：
 
-- 每个主要 Pattern 至少检查一个合理竞争解释；
+- 先按 Decision Dependency / Materiality / Evidence / Actionability / Non-redundancy 做 Candidate Triage，禁止对所有 Pattern 平均用力；
+- 每个 P0/P1 Pattern 至少检查一个合理竞争解释；
 - 查询结果必须改变 Question Frontier 或 Hypothesis 状态，否则视为低价值查询；
 - 关键结论至少做一次稳健性检查；
 - 数据不足时保持 `unresolved`，不得补故事；
-- 只有通过 Finding Promotion Gate 的结论才能进入首屏核心发现；
-- Context Metric 可以展示，但必须与真正的 Finding 分开；
+- 只有通过 Finding Promotion Gate 的结论才能参与 Portfolio Synthesis；
+- 首屏优先展示综合后的 Executive Thesis，而不是把 Promoted Findings 平铺成卡片；
+- Context Metric、Secondary Lead 与核心 Thesis 必须分层；
 - 停止条件是边际信息增益下降，不是“所有维度都查过”。
 
 ## 5. 指标选择
@@ -190,15 +194,16 @@ Top N 由有效样本数决定：
 默认阅读顺序：
 
 ```text
-Promoted Findings / 关键限制
+Executive Thesis / 关键限制
+→ Supporting Findings
 → Context Metrics
 → 解释证据与稳健性
-→ Open Questions
+→ Secondary Leads / Open Questions
 → 下钻明细
 → 数据质量与口径
 ```
 
-首屏不得只是 KPI 卡片集合。核心 Finding 必须能回指 Pattern、竞争解释、Diagnostic Test 和 Robustness。
+首屏不得只是 KPI 或 Finding 卡片集合。Executive Thesis 必须来自 Portfolio Synthesis，并能回指 supporting Finding、Pattern、竞争解释、Diagnostic Test 和 Robustness。
 
 如果数据质量问题会改变核心数字，限制必须靠近 KPI，不得藏在页尾。
 
@@ -235,6 +240,8 @@ Promoted Findings / 关键限制
 - Analysis Depth Gate 已完成，或明确记录数据为何无法继续下钻；
 - Investigation Gate 已完成；
 - 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
+- Candidate Triage 与 Portfolio Synthesis 已完成；
+- 首屏 Thesis 已合并重复驱动并按价值排序；
 - 每个核心图表都回答明确问题；
 - Visual Plan 与 Renderer Capability Gate 已完成；
 - 关键指标口径可追溯；
