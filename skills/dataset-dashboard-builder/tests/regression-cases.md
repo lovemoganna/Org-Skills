@@ -250,3 +250,37 @@ Observed Pattern：
 - 保留 Pattern；
 - 明确缺少什么数据；
 - 不得为了通过 Finding Promotion Gate 编造 Why。
+
+
+## V6 原样本：显式四表范围
+
+工作簿实际包含额外 expected / rule / qa / dashboard / backup Sheet。
+
+用户明确要求：
+
+`只使用 users / fiat_transactions / crypto_transactions / exchange_rates`
+
+验收：
+
+1. 可以读取 workbook metadata 确认 Sheet 名；
+2. 只读取四张指定表的内容；
+3. 不得读取或引用 `data_rules / expected_* / qa_result / fix_log / Executive_Dashboard / _backup_*` 的内容；
+4. 历史 regression 中已知这些表存在，也不得把其规则偷偷带入当前分析；
+5. 若四表本身不足以定义某项口径，只能标记 LIMITED / MISSING INPUT，不得擅自扩表。
+
+## V6 泛化：显式子集覆盖 Full-dataset Scan
+
+输入工作簿：
+
+`orders / users / prices / qa / expected / dashboard`
+
+用户只允许：
+
+`orders / users`
+
+验收：
+
+- 分析只消费 orders / users；
+- prices 缺失造成的估值问题应标记 missing input；
+- 不得因为 prices 实际存在就越界读取；
+- qa / expected / dashboard 不参与分析。
