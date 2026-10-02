@@ -21,6 +21,7 @@ Org-Skills/
 | Skill | 作用 | 状态 |
 |---|---|---|
 | [`sql-business-thinking`](skills/sql-business-thinking/) | 把业务问题拆成数据逻辑，再翻译成 SQL；支持陌生数据集勘察、人物会话推演、HTML 报告与回归闭环 | Active |
+| [`dataset-dashboard-builder`](skills/dataset-dashboard-builder/) | 自动扫描多表数据集，完成质检、主题拆分、指标选择并生成高价值定制看板 | Active |
 
 ## 维护原则
 
