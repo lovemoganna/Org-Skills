@@ -50,3 +50,12 @@
 | 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
 |---|---|---|---|
 | 用户本轮明确只允许 4 张表，但 Source Authority 仍写“扫描工作簿每张表”，同一工作簿还存在 expected / QA / dashboard / backup | 缺少显式输入范围优先级 | 新增 Explicit Scope Gate | 用户指定范围是硬边界；metadata 可用于解析表名，但范围外内容不得读取、引用或影响当前分析 |
+
+
+## V7：Finding Priority & Portfolio Synthesis
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 稀有但影响窄的异常容易和真正高影响发现同级进入首屏 | Finding Promotion 只检查证据闭环，没有全局 materiality / dependency / actionability 排序 | 新增 Candidate Triage Gate | “异常”不等于“重要”；P0/P1 才默认进入完整调查，P2 保留为 Secondary Lead |
+| 多个 Finding 分别正确，但首页仍像分析卡片堆叠，没有主线 | Dashboard Promotion 逐条消费 Finding，缺少跨 Finding 合并和综合 | 新增 Portfolio Synthesis Gate | 共享驱动/实体/证据的 Finding 必须合并为 Executive Thesis，并按价值排序 |
+| 同一底层驱动可能同时表现为群体占比、实体集中等多个现象，造成重复结论 | 缺少跨 Finding redundancy / contradiction 检查 | 增加 Merge + Contradiction Check | 首页展示 1–3 条主 Thesis，Supporting Findings 放到证据层 |
