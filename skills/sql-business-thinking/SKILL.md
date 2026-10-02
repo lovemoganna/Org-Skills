@@ -45,12 +45,18 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 
 **Autopilot 行为：**
 
-1. 先勘察数据，建立分析地图；
-2. 从数据实际能支撑的问题里选择一个高价值主问题，并说明为什么选它；
-3. 只采用有证据、可回退的分析默认；不得把未知业务定义伪装成事实；
-4. Level 4 阻塞仍必须暂停；Level 3 若用户已经明确授权自主分析，可在报告中显式记录分析假设后继续，不再额外索取确认；
-5. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额；
-6. 用户要求完整分析报告时，输出 Dialogue-Driven HTML：人物会话、SQL 增量、Result、判断修正原位交错。
+1. 先做一次最小数据勘察，建立 **Analysis Map**；勘察只负责知道“有什么、怎么连、哪些口径会阻塞”，不把字段清单机械变成分析问题。
+2. 基于当前证据建立 **Question Frontier**：已确认事实、仍未知且会改变判断的事项、候选问题、当前唯一问题。Frontier 是内部工作状态，不在报告里滚动展示完整清单。
+3. Star 每轮只能提出一个“下一步最值得回答的问题”；Lucy 不负责帮 Star 把问题做完，而是独立挑战**这个问题本身是否值得现在问**，必要时直接否决并提出替代问题。
+4. 当前问题必须先通过 **Question Quality Gate**，才允许生成 SQL：
+   - **Trigger**：为什么是现在问，必须由已有数据结构、上一轮 Result 或当前阻塞触发；
+   - **Consequence**：不同答案会让后续判断、口径或分析路径发生什么变化；如果答案 A/B 都不改变下一步，问题淘汰；
+   - **Answerability**：当前表、字段、粒度、时间和 JOIN 是否真的能回答；
+   - **Priority**：是否比 Frontier 里的其他未知更值得先问。优先级默认是“阻塞后续的口径/可信度 → 会改变结论的竞争解释 → 规模/结构 → 纯描述细节”。
+5. **SQL 不是推进器，问题才是。** SQL 只用于回答已经通过 Gate 的当前问题；查询结果必须更新 Question Frontier：关闭一个未知、产生新未知、改变优先级或终止一条分析路径。若 Result 不改变 Frontier，这个查询视为低价值，除非它是必要的最终取数。
+6. 只采用有证据、可回退的分析默认；不得把未知业务定义伪装成事实。Level 4 阻塞仍必须暂停；Level 3 若用户已经明确授权自主分析，可在报告中显式记录分析假设后继续。
+7. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
+8. 用户要求完整分析报告时，输出 **Question-Driven Dialogue HTML**：当前问题 → Star 为什么现在问 → Lucy 挑战/替换问题 → SQL 增量 → Result → Frontier 状态变化 → 下一问题。禁止把 Lucy 写成陪练、审核员或“帮 Star 完成任务”的辅助角色。
 
 **Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后不得直接结束。必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。可泛化且确属 Skill 的问题，最小回写规则，并执行原失败样本、泛化测试、历史回归和 Diff；当前报告只修 UI 而不修生成机制，判失败。
 
@@ -282,24 +288,26 @@ SQL 对了再问：这张表拿来干什么？能比较什么、发现什么异�
 
 当用户明确要求模拟学习者与分析师、领导下任务后的讨论推演、从头推演、角色对话或“人物会话”时，会话不是内部过程噪声，而是显式交付物。必须读取 `references/dialogue-rendering.md`。
 
-**Role Binding Gate：**当前请求如果显式给出人物名，必须原样绑定为本轮角色名；只有未指定人物名时，才使用默认 `Star`（Analysis Owner）与 `Lucy`（Reviewer）。下文 `Star/Lucy` 均表示默认角色名，不得覆盖用户在当前请求中明确指定的名字。
+**Role Binding Gate：**当前请求如果显式给出人物名，必须原样绑定为本轮角色名；只有未指定人物名时，才使用默认 `Star`（Analysis Lead）与 `Lucy`（Critical Analyst）。下文 `Star/Lucy` 均表示默认角色名，不得覆盖用户在当前请求中明确指定的名字。
 
 硬规则：
 
-- 会话必须形成连续状态链：任务下达 → Star 收住目标 → Star × Lucy 拆问题 → 核事实 → 暴露分歧 → 修正判断 → Star 综合 → Star 向任务发起人汇报。
-- Star 是 Analysis Owner，不是“错误制造器”：必须主动提出第一版口径、吸收证据、至少独立识别一个问题，并承担最终结论。
-- Lucy 是 Reviewer：负责补充、质疑和验证；没有证据时只能指出要查什么，不得提前知道最终数字。
+- **Autopilot 默认不虚构领导任务。** 用户只给数据集 / 表时，会话链为：数据集进入 → Analysis Map → Question Frontier → Star 提问 → Lucy 挑战问题质量 → SQL / Result → Frontier 更新 → 下一问题 → Star 综合报告。只有用户明确给出领导 / Task Owner 时，才增加“任务下达 / report-back”外框。
+- Star 是 **Analysis Lead**：主动理解数据、维护分析方向、从 Frontier 里选择当前最值得回答的问题，并解释“为什么现在问、答案会改变什么”；最终负责综合报告。
+- Lucy 是 **Critical Analyst**，不是 Reviewer / 陪练：独立挑战 Star 的问题选择、假设和优先级；可以否决低价值问题、提出竞争问题或替代路径。Lucy 不负责替 Star 补齐流程，也不以“帮助 Star 完成任务”为目标。
+- **Question Quality Gate：**任何 SQL 前必须能回答 Trigger / Consequence / Answerability / Priority 四项。Gate 未通过，先改问题，不准写 SQL。
+- **Question Consequence Gate：**Result 后必须明确它如何改变 Question Frontier；若没有关闭未知、产生新未知、改变优先级或结束路径，除必要最终取数外，该查询判为低价值。
 - 每句台词必须通过 Turn Delta Gate：至少新增事实、判断、关键问题或决策；无信息的“对 / 明白 / 好的”删掉或合并。
 - 人物只能使用当前阶段已经出现的事实；没有跑出结果前，禁止提前说最终金额、Top N、重叠率或异常记录。
 - 每阶段默认 2～4 个来回，最多反问 2 次；连续两轮反问后必须推进到 SQL、数据检查或阶段结论。
 - **Code-in-Conversation Contract：**如果用户要求代码在人物讨论中产生，SQL 必须紧跟“为什么要查 / 查什么”的对白出现；执行结果紧跟 SQL；下一句人物判断必须使用刚出现的结果。禁止先把完整 SQL 写完，再让人物回头解释。
-- **Code Growth Gate：**“对白 → 一次性完整 SQL”仍不算逐步生成。至少展示一次可见代码增量：Star 先落最小骨架/局部条件，Lucy 指出缺口，再补字段、过滤、JOIN 或聚合，最后才形成唯一可执行 SQL。草稿片段标明“不单独执行”，避免形成第二套权威代码。
+- **Code Growth Gate：**“对白 → 一次性完整 SQL”仍不算逐步生成。至少展示一次可见代码增量：当前问题通过 Question Quality Gate 后，Star 先落最小骨架/局部条件；Lucy 若质疑的是 SQL 边界，只补一个会改变答案的缺口，再补字段、过滤、JOIN 或聚合，最后才形成唯一可执行 SQL。草稿片段标明“不单独执行”，避免形成第二套权威代码。
 - **One Step One Query：**一个推进点只解决一个当前问题，对应一个最终可执行 SQL 和一个 Result。若出现第二个独立问题，必须另起推进点；禁止把两个查询塞进同一阶段后再做连续性汇总。
-- **Human State Transition：**Result 后的状态变化由 Star/Lucy 自己说出来；不要再用“这一步确认 / 暂时不能推出 / 截至目前”之类旁白摘要替人物做判断。
+- **Human State Transition：**Result 后的状态变化由 Star/Lucy 自己说出来，并同步体现 Question Frontier 的变化；不要再用“这一步确认 / 暂时不能推出 / 截至目前”之类旁白摘要替人物做判断。
 - **Result Dependency Gate：**金额、比例、异常行、Top N 等具体事实第一次进入台词之前，必须已有对应的可见 result 节点。
 - **No Rolling Summary / Local Context Only：**推进过程中不做跨阶段累计汇总、不提前展示最终 KPI；每一步只保留当前问题、当前代码、当前结果和下一判断。跨阶段汇总只能在最终 report-back 出现。
 - 人物台词不得出现“关卡通过”“调用 Skill”“按协议”等内部状态机语言。
-- 最终必须由 Star 完成 report-back；每个关键结论都要能回指前面的口径或证据节点。
+- 最终必须由 Star 完成 synthesis / report；只有显式存在 Task Owner 时才称 report-back；每个关键结论都要能回指前面的口径或证据节点。
 - 当 SQL 已经原位嵌入权威会话时，不得在附录再复制第二套 SQL；Skill Trace 可单独折叠展示。
 
 ## 报告 / HTML 输出
