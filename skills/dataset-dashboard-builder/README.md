@@ -9,6 +9,8 @@
 ## 文件
 
 - [`SKILL.md`](SKILL.md)：主协议。
+- [`references/analysis-depth.md`](references/analysis-depth.md)：Question Map、分析深度阶梯与停止条件。
+- [`references/visualization-registry.md`](references/visualization-registry.md)：图表能力注册表、选图规则与 Renderer Capability Gate。
 - [`references/regression-loop.md`](references/regression-loop.md)：真实样本、泛化与渲染回归规则。
 - [`references/skill-change-log.md`](references/skill-change-log.md)：真实缺陷及泛化修正记录。
 - [`tests/regression-cases.md`](tests/regression-cases.md)：原样本、泛化和历史边界测试。

@@ -66,6 +66,25 @@ exact-date / exact-time 是否匹配？
 
 一张表可以进入多个主题，多张表可以共同回答一个主题。禁止“一张表一个看板”。
 
+## 4A. Analysis Depth Gate
+
+主题拆分后必须读取 `references/analysis-depth.md`。
+
+先生成 Question Map，再做分析；禁止从字段直接跳到图表。
+
+只要数据支持，分析不得停在“总量 + 趋势 + TopN”。默认至少完成：
+
+```text
+L0 数据可信度
+→ L1 基线
+→ L2 分布 / 分层
+→ L3 时间变化、L4 关系 / 流程、L5 驱动 / 异常中至少一个高价值方向
+```
+
+优先寻找能改变判断的差异：分布、标准化指标、完成率、时延、费率、集中度、跨表关系、流程损耗、cohort、异常和贡献拆解。
+
+如果数据只支持浅层描述，必须明确说明限制，不得把 L1 包装成完整分析。
+
 ## 5. 指标选择
 
 每个指标必须写清：
@@ -98,6 +117,10 @@ Top N 由有效样本数决定：
 每张图先写一句：`这张图回答什么问题？`
 
 答不出来就删除。
+
+必须读取 `references/visualization-registry.md`。图表选择由分析问题决定，不由当前 Renderer 原生支持列表决定。
+
+基础映射仅是最低覆盖，不是能力上限。数据语义成立时，应能选择 histogram、box plot、scatter / bubble、heatmap、cohort heatmap、Pareto、waterfall、funnel、Sankey / alluvial、treemap、network、map、条件表等更合适的表达。
 
 默认映射：
 
@@ -149,7 +172,8 @@ Top N 由有效样本数决定：
 - 桌面与移动端均不得整页横向溢出；
 - 长表局部滚动；
 - 交互必须有明确作用，不为“像产品”增加无意义控件；
-- 不依赖外部库也应保留可读 fallback（如果成品要求离线可用）。
+- 不依赖外部库也应保留可读 fallback（如果成品要求离线可用）；
+- 执行 Visualization Registry 的 Renderer Capability Gate：原生支持 → 等价变体 → 自定义实现 → 表格 fallback；禁止为了“能画”而改变分析语义。
 
 生成后必须执行 `references/regression-loop.md`。
 
@@ -158,7 +182,9 @@ Top N 由有效样本数决定：
 只有同时满足才完成：
 
 - 无已知 P0/P1 数据逻辑问题；
+- Analysis Depth Gate 已完成，或明确记录数据为何无法继续下钻；
 - 每个核心图表都回答明确问题；
+- Visual Plan 与 Renderer Capability Gate 已完成；
 - 关键指标口径可追溯；
 - 无重复/装饰性图表；
 - Rendered QA 通过；
