@@ -140,6 +140,8 @@ Top N 不是固定默认值。由 active population 决定：
 
 用户明确要求模拟人物会话时，读取 `dialogue-rendering.md`。
 
+角色名字必须继承 `dialogue-rendering.md` 的 Role Binding Gate；未指定时才使用默认 `star/Lucy`。下面的名字仅代表默认角色。
+
 - 先建立 Conversation Arc：任务下达 → star 收住目标 → star/Lucy 核事实与修判断 → star 综合 → report-back。
 - star / Analysis Owner：主动提出口径、吸收证据、更新判断并负责最终汇报，不得只当“犯错角色”。
 - Lucy / Reviewer：负责补充、质疑和验证；未拿到证据前不得提前宣布最终数字。
