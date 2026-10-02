@@ -11,6 +11,7 @@ assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skil
 for path in [
     ROOT / "references" / "source-authority.md",
     ROOT / "references" / "analysis-depth.md",
+    ROOT / "references" / "investigation-loop.md",
     ROOT / "references" / "visualization-registry.md",
     ROOT / "references" / "regression-loop.md",
     ROOT / "references" / "skill-change-log.md",
@@ -31,6 +32,8 @@ critical = [
     "Table Role Gate",
     "Metric Authority Gate",
     "Unit Authority Gate",
+    "Investigation Gate",
+    "Finding Promotion Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -46,6 +49,11 @@ for rule in ["Table Role Gate", "Authority Order", "Double-count Gate", "Unit & 
     assert rule in source_authority, f"source authority rule missing: {rule}"
 assert "dashboard / output" in source_authority and "backup / archive" in source_authority
 
+investigation = (ROOT / "references" / "investigation-loop.md").read_text(encoding="utf-8")
+for rule in ["Question Frontier", "Question Quality Gate", "Hypothesis Frontier", "Evidence Depth Gate", "Robustness Check", "Finding Promotion Gate", "Information Gain Stop Rule"]:
+    assert rule in investigation, f"investigation rule missing: {rule}"
+assert "Pattern 只是“发生了什么”，不是“为什么”" in investigation
+
 analysis_depth = (ROOT / "references" / "analysis-depth.md").read_text(encoding="utf-8")
 for rule in ["Question Map", "L2 · 分布与分层", "L4 · 关系、流程与跨表", "L5 · 驱动、集中度与异常"]:
     assert rule in analysis_depth, f"analysis depth rule missing: {rule}"
@@ -58,7 +66,7 @@ assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
 assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
 assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")
