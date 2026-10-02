@@ -1,0 +1,41 @@
+name: Skills Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - ".github/workflows/skills-regression.yml"
+  pull_request:
+    paths:
+      - "skills/**"
+      - ".github/workflows/skills-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run skill integrity checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t checks < <(find skills -type f -path "*/tests/check_repo.py" | sort)
+          if [ "${#checks[@]}" -eq 0 ]; then
+            echo "No check_repo.py files found."
+            exit 1
+          fi
+          for check in "${checks[@]}"; do
+            echo "==> python $check"
+            python "$check"
+          done
