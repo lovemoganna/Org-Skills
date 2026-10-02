@@ -36,4 +36,10 @@ haystack = skill + "\n" + "\n".join(
 for rule in critical_rules:
     assert rule in haystack, f"critical rule missing: {rule}"
 
+for deprecated_role in ("Yone", "Carmen"):
+    assert deprecated_role not in haystack, f"deprecated role name remains: {deprecated_role}"
+
+for current_role in ("star", "Lucy"):
+    assert current_role in haystack, f"current role name missing: {current_role}"
+
 print("OK: sql-business-thinking repository integrity")
