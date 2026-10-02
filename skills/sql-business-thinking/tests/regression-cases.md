@@ -32,14 +32,14 @@
 
 ```text
 领导下任务
-→ Yone 收住目标
-→ Yone/Carmen 讨论当前问题
+→ star 收住目标
+→ star/Lucy 讨论当前问题
 → 草稿代码增量
 → 唯一可执行 SQL
 → Result
 → 判断修正
 → 下一问题
-→ Yone report-back
+→ star report-back
 ```
 
 验收：

@@ -12,10 +12,10 @@
 | Skills / Debug 元信息容易抢主报告 | 正文按决策价值，审计轨迹二级展开 | 过程是证据，不是页面主角 |
 | 显式要求人物会话，却被“过程信息默认折叠”规则一起藏进附录 | 增加 Dialogue Coverage Gate；正文展示关键纠错回放 | 用户点名的人物会话属于交付物，不得按过程噪声降级 |
 | 人物会话、SQL、Skill Trace 交错，角色阅读被不断打断 | 拆成三条信息通道 | 教学叙事 / 可执行证据 / 内部路由必须解耦 |
-| Carmen 台词混有状态机语气，人物感弱 | 增加 Character Contract：先结论后依据、≤3 句、内部流程标签不进台词 | 角色只说推动当前阶段的话；流程元信息交给 UI |
+| Lucy 台词混有状态机语气，人物感弱 | 增加 Character Contract：先结论后依据、≤3 句、内部流程标签不进台词 | 角色只说推动当前阶段的话；流程元信息交给 UI |
 | 移动端高维排名表被压缩到难读 | 保持表格最小宽度，容器内局部横向滚动 | 高维表优先局部滚动，不靠缩字号塞进一屏 |
 | 会话像彼此独立的纠错卡，没有任务起点和汇报终点 | 增加 Conversation Arc Contract | 角色模拟必须覆盖 Assignment → Evidence → Revision → Synthesis → Report-back |
-| Yone 被写成错误制造器，Carmen 像全知专家 | 重分角色职责：Yone=Analysis Owner，Carmen=Reviewer | Owner 必须提出假设、更新判断并完成最终汇报；Reviewer 只挑战和验证 |
+| star 被写成错误制造器，Lucy 像全知专家 | 重分角色职责：star=Analysis Owner，Lucy=Reviewer | Owner 必须提出假设、更新判断并完成最终汇报；Reviewer 只挑战和验证 |
 | 对话存在“对 / 明白”等低信息回合 | 增加 Turn Delta Gate | 每句必须新增 FACT / JUDGMENT / QUESTION / DECISION，否则删除或合并 |
 | 人物提前知道尚未跑出的最终数字 | 增加 Progressive Knowledge Gate | 角色只能使用当前阶段已经出现的事实，禁止结果倒灌到前文 |
 | 最终汇报与前序讨论缺少显式追溯 | 增加 Report-back Traceability Gate | 最终每个关键结论必须能回指至少一个前序证据节点 |
@@ -38,6 +38,6 @@
 |---|---|---|
 | “SQL 出现在会话里”但仍是完整 SQL 突然出现 | 加 Code Growth Gate，要求至少一次对白触发的可见代码增量 | Code-in-Conversation 还不等于 Code-Growth；逐步生成必须可见 |
 | 一个阶段塞多个 SQL，读者失去当前判断点 | 加 One Step One Query | 一个推进点 = 一个问题 + 一个最终 SQL + 一个 Result + 一个判断变化 |
-| Result 后又用旁白做“这一步确认 / 截至目前”汇总 | 改由 Yone/Carmen 自己说出刚刚发生的状态变化 | Human State Transition：角色模式下状态变化由角色承担 |
+| Result 后又用旁白做“这一步确认 / 截至目前”汇总 | 改由 star/Lucy 自己说出刚刚发生的状态变化 | Human State Transition：角色模式下状态变化由角色承担 |
 | 中间不断滚动汇总，干扰当前推进点 | 禁止跨阶段累计摘要 | Local Context Only：推进中只保留当前问题、当前证据和下一判断 |
 | 草稿 SQL 与正式 SQL 容易形成双重事实源 | 草稿标“不单独执行”，正式 SQL 保持唯一可执行实例 | Draft vs Executable Contract：草稿只展示增量，不形成第二套权威代码 |

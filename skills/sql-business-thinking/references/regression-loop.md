@@ -36,16 +36,16 @@
 
 ### C2. 人物会话（任务明确要求时）
 
-- 是否有完整 Conversation Arc：任务下达 → 推演 → Yone report-back；
-- Yone 是否承担综合、判断和收敛，而不是只负责犯错；
-- Carmen 是否只补充 / 质疑 / 验证，没有提前知道未验证答案；
+- 是否有完整 Conversation Arc：任务下达 → 推演 → star report-back；
+- star 是否承担综合、判断和收敛，而不是只负责犯错；
+- Lucy 是否只补充 / 质疑 / 验证，没有提前知道未验证答案；
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION；
 - 是否存在无信息确认句、重复最终数字的假对白；
 - 最终汇报能否逐项反查到前序证据；
 - 是否把“调用 Skill / 关卡”写进人物台词；
 - 对话是否被 SQL、结果表、Skill Trace 打碎；
 - 正文与附录是否存在两个不一致的人物版本；
-- 移动端是否仍能清楚区分 Yone / Carmen。
+- 移动端是否仍能清楚区分 star / Lucy。
 
 ### D. 数据逻辑
 
