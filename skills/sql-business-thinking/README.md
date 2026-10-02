@@ -22,3 +22,7 @@
 - [`tests/check_repo.py`](tests/check_repo.py)：仓库结构与引用完整性检查。
 
 维护时必须先读取仓库当前版本，再做最小 Diff；不要从聊天附件覆盖仓库 HEAD。
+
+## 默认 HTML 交付
+
+完整分析报告默认写入 `/mnt/data/sql_business_thinking_report.html`，并在最终回复提供可点击下载链接；用户显式指定其他路径时覆盖默认值。

@@ -32,14 +32,14 @@
 
 ```text
 领导下任务
-→ star 收住目标
-→ star/Lucy 讨论当前问题
+→ Star 收住目标
+→ Star/Lucy 讨论当前问题
 → 草稿代码增量
 → 唯一可执行 SQL
 → Result
 → 判断修正
 → 下一问题
-→ star report-back
+→ Star report-back
 ```
 
 验收：
@@ -100,9 +100,9 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 
 验收：
 
-- 输出和代码会话原样使用 `Yone/Carmen`，不得擅自改回默认 `star/Lucy`；
+- 输出和代码会话原样使用 `Yone/Carmen`，不得擅自改回默认 `Star/Lucy`；
 - Yone 仍承担 Analysis Owner 职责，Carmen 仍承担 Reviewer 职责；
-- 未指定人物名的历史样本仍默认使用 `star/Lucy`；
+- 未指定人物名的历史样本仍默认使用 `Star/Lucy`；
 - 换成任意其他明确名字时，同样只替换名字，不改变角色职责和 Conversation Arc。
 
 
@@ -133,3 +133,14 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 - 单一无歧义汇率 snapshot 可用于探索性快照估值，但必须带日期/快照口径，不能称为历史成交额；
 - 完整报告结束后自动执行 Reverse Skill Audit Gate；
 - 输出仍满足 Dialogue-Driven、Code Growth、One Step One Query、Result Dependency 与历史回归要求。
+
+
+### 泛化 H：默认 HTML 实体交付
+
+当用户要求完整交互式 SQL 分析报告，但不再额外指定文件名和路径时：
+
+- 默认生成 `/mnt/data/sql_business_thinking_report.html`；
+- 交付必须是实体 `.html` 文件，不得只返回源码；
+- 最终回复提供 `sandbox:/mnt/data/sql_business_thinking_report.html` 可点击链接；
+- 网络/CDN/实时执行失败时，文件仍能读取本轮已验证的记录 Result；
+- 用户显式指定其他文件名或路径时，用户要求优先。

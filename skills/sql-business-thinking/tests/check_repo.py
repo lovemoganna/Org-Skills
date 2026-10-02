@@ -37,7 +37,7 @@ for rule in critical_rules:
     assert rule in haystack, f"critical rule missing: {rule}"
 
 assert "Role Binding Gate" in haystack, "role binding rule missing"
-for default_role in ("star", "Lucy"):
+for default_role in ("Star", "Lucy"):
     assert default_role in haystack, f"default role name missing: {default_role}"
 
 regression = (ROOT / "tests" / "regression-cases.md").read_text(encoding="utf-8")
@@ -49,13 +49,19 @@ regression_loop = (ROOT / "references" / "regression-loop.md").read_text(encodin
 assert "Dialogue-Driven 模式不适用下面的 KPI 首屏规则" in report_rendering, "dialogue first-screen override missing"
 assert "Analysis Owner / Reviewer" in report_rendering, "bound-role rendering contract missing"
 assert "Analysis Owner / Reviewer" in regression_loop, "bound-role regression contract missing"
-assert "代码必须在 star / Lucy" not in report_rendering, "default role names still hardcoded in dialogue rendering rule"
-assert "star 左、Lucy 右" not in report_rendering, "default role names still hardcoded in UI rule"
+assert "代码必须在 Star / Lucy" not in report_rendering, "default role names still hardcoded in dialogue rendering rule"
+assert "Star 左、Lucy 右" not in report_rendering, "default role names still hardcoded in UI rule"
+for operational in (skill, (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8"), (ROOT / "references" / "protocol.md").read_text(encoding="utf-8")):
+    assert not re.search(r"\\bstar\\b", operational), "stale lowercase default role remains"
 assert "Dialogue-Driven 首屏不得提前泄露最终 KPI" in regression, "dialogue first-screen regression missing"
 assert "Dataset-to-Report Autopilot" in skill, "autopilot input contract missing"
 assert "Reverse Skill Audit Gate" in skill, "reverse skill audit gate missing"
 assert "最小输入 Autopilot" in regression, "minimal-input autopilot regression missing"
 assert "不提供业务问题、JOIN、粒度、SQL" in regression, "minimal-input payload missing"
+assert "Default HTML Delivery Contract" in skill, "default html delivery contract missing"
+assert "/mnt/data/sql_business_thinking_report.html" in skill, "default html path missing"
+assert "默认 HTML 实体交付" in regression, "html artifact delivery regression missing"
+
 
 
 print("OK: sql-business-thinking repository integrity")

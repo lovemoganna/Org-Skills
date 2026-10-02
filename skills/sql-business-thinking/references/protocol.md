@@ -140,16 +140,16 @@ Top N 不是固定默认值。由 active population 决定：
 
 用户明确要求模拟人物会话时，读取 `dialogue-rendering.md`。
 
-角色名字必须继承 `dialogue-rendering.md` 的 Role Binding Gate；未指定时才使用默认 `star/Lucy`。下面的名字仅代表默认角色。
+角色名字必须继承 `dialogue-rendering.md` 的 Role Binding Gate；未指定时才使用默认 `Star/Lucy`。下面的名字仅代表默认角色。
 
-- 先建立 Conversation Arc：任务下达 → star 收住目标 → star/Lucy 核事实与修判断 → star 综合 → report-back。
-- star / Analysis Owner：主动提出口径、吸收证据、更新判断并负责最终汇报，不得只当“犯错角色”。
+- 先建立 Conversation Arc：任务下达 → Star 收住目标 → Star/Lucy 核事实与修判断 → Star 综合 → report-back。
+- Star / Analysis Owner：主动提出口径、吸收证据、更新判断并负责最终汇报，不得只当“犯错角色”。
 - Lucy / Reviewer：负责补充、质疑和验证；未拿到证据前不得提前宣布最终数字。
 - 每句台词必须新增事实、判断、关键问题或决策；无信息确认句删除或合并。
 - 人物只能使用当前阶段已经出现的事实；禁止把最终答案倒灌到前文。
 - 每阶段最多反问 2 次；连续两轮反问后必须推进到 SQL、数据检查或阶段结论。
 - “关卡通过”“调用 Skill”“按协议”不属于人物台词，只能作为 UI/审计元数据。
-- 最终 star 汇报的每个关键结论必须能回指前序证据。
+- 最终 Star 汇报的每个关键结论必须能回指前序证据。
 - 正文已有完整权威会话时，不另存一个旧版人物全文；SQL 验证与 Skill Trace 独立保存。
 
 

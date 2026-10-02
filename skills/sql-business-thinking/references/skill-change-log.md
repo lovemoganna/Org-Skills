@@ -15,7 +15,7 @@
 | Lucy 台词混有状态机语气，人物感弱 | 增加 Character Contract：先结论后依据、≤3 句、内部流程标签不进台词 | 角色只说推动当前阶段的话；流程元信息交给 UI |
 | 移动端高维排名表被压缩到难读 | 保持表格最小宽度，容器内局部横向滚动 | 高维表优先局部滚动，不靠缩字号塞进一屏 |
 | 会话像彼此独立的纠错卡，没有任务起点和汇报终点 | 增加 Conversation Arc Contract | 角色模拟必须覆盖 Assignment → Evidence → Revision → Synthesis → Report-back |
-| star 被写成错误制造器，Lucy 像全知专家 | 重分角色职责：star=Analysis Owner，Lucy=Reviewer | Owner 必须提出假设、更新判断并完成最终汇报；Reviewer 只挑战和验证 |
+| Star 被写成错误制造器，Lucy 像全知专家 | 重分角色职责：Star=Analysis Owner，Lucy=Reviewer | Owner 必须提出假设、更新判断并完成最终汇报；Reviewer 只挑战和验证 |
 | 对话存在“对 / 明白”等低信息回合 | 增加 Turn Delta Gate | 每句必须新增 FACT / JUDGMENT / QUESTION / DECISION，否则删除或合并 |
 | 人物提前知道尚未跑出的最终数字 | 增加 Progressive Knowledge Gate | 角色只能使用当前阶段已经出现的事实，禁止结果倒灌到前文 |
 | 最终汇报与前序讨论缺少显式追溯 | 增加 Report-back Traceability Gate | 最终每个关键结论必须能回指至少一个前序证据节点 |
@@ -38,7 +38,7 @@
 |---|---|---|
 | “SQL 出现在会话里”但仍是完整 SQL 突然出现 | 加 Code Growth Gate，要求至少一次对白触发的可见代码增量 | Code-in-Conversation 还不等于 Code-Growth；逐步生成必须可见 |
 | 一个阶段塞多个 SQL，读者失去当前判断点 | 加 One Step One Query | 一个推进点 = 一个问题 + 一个最终 SQL + 一个 Result + 一个判断变化 |
-| Result 后又用旁白做“这一步确认 / 截至目前”汇总 | 改由 star/Lucy 自己说出刚刚发生的状态变化 | Human State Transition：角色模式下状态变化由角色承担 |
+| Result 后又用旁白做“这一步确认 / 截至目前”汇总 | 改由 Star/Lucy 自己说出刚刚发生的状态变化 | Human State Transition：角色模式下状态变化由角色承担 |
 | 中间不断滚动汇总，干扰当前推进点 | 禁止跨阶段累计摘要 | Local Context Only：推进中只保留当前问题、当前证据和下一判断 |
 | 草稿 SQL 与正式 SQL 容易形成双重事实源 | 草稿标“不单独执行”，正式 SQL 保持唯一可执行实例 | Draft vs Executable Contract：草稿只展示增量，不形成第二套权威代码 |
 
@@ -47,14 +47,14 @@
 
 | 暴露缺陷 | 修正意见 | 可泛化规则 |
 |---|---|---|
-| 默认人物角色命名需要统一，旧默认名曾散落在主协议、渲染协议、回归样本和历史规则中 | 将默认角色统一为 `star/Lucy` | 默认角色名属于跨文件契约；但用户当前请求显式指定的角色名必须优先于默认值 |
+| 默认人物角色命名需要统一，旧默认名曾散落在主协议、渲染协议、回归样本和历史规则中 | 将默认角色统一为 `Star/Lucy` | 默认角色名属于跨文件契约；但用户当前请求显式指定的角色名必须优先于默认值 |
 
 
 ## V9：角色绑定优先级
 
 | 暴露缺陷 | 本轮修正 | 可泛化规则 |
 |---|---|---|
-| 真实测试明确要求 `Yone/Carmen`，但 Skill 与仓库测试把默认 `star/Lucy` 当成不可覆盖硬编码，导致无法忠实执行当前输入 | 新增 Role Binding Gate：显式人物名优先；未指定时才使用默认 `star/Lucy`；回归测试从“禁止旧名”改为“验证绑定优先级” | **角色职责与角色名字必须解耦。** 默认名只能是 fallback，任何当前请求的显式命名都应原样绑定；测试应验证职责契约，而不是禁止某个具体名字出现 |
+| 真实测试明确要求 `Yone/Carmen`，但 Skill 与仓库测试把默认 `Star/Lucy` 当成不可覆盖硬编码，导致无法忠实执行当前输入 | 新增 Role Binding Gate：显式人物名优先；未指定时才使用默认 `Star/Lucy`；回归测试从“禁止旧名”改为“验证绑定优先级” | **角色职责与角色名字必须解耦。** 默认名只能是 fallback，任何当前请求的显式命名都应原样绑定；测试应验证职责契约，而不是禁止某个具体名字出现 |
 
 
 ## V10：Dialogue-Driven 规则优先级
@@ -62,7 +62,7 @@
 | 暴露缺陷 | 本轮修正 | 可泛化规则 |
 |---|---|---|
 | `Dialogue-Driven` 要求“首屏不展示最终 KPI”，但普通报告 §4 又要求“首屏显示最重要数字”，两条规则优先级不够明确 | 明确 Dialogue-Driven 同时覆盖普通报告的首屏 KPI 与 SQL 默认折叠规则 | **局部模式规则必须显式覆盖冲突的全局默认。** 不能只写“顺序覆盖”，必须点名被覆盖的规则 |
-| Role Binding Gate 已允许显式人物名，但 report/regression 文档仍大量硬编码默认 `star/Lucy` | 将渲染与回归验收改为 `Analysis Owner / Reviewer + 本轮绑定角色名` | **角色职责是契约，角色名字是参数。** QA 不应把默认名字当成职责判断 |
+| Role Binding Gate 已允许显式人物名，但 report/regression 文档仍大量硬编码默认 `Star/Lucy` | 将渲染与回归验收改为 `Analysis Owner / Reviewer + 本轮绑定角色名` | **角色职责是契约，角色名字是参数。** QA 不应把默认名字当成职责判断 |
 | 本真实数据样本要求初始化一次建四个视图，但回归基线仍写“物化为表” | 回归样本改成一次性建立四视图，后续只引用视图 | **数据初始化形态属于输入契约。** 用户明确指定 view/table 时，回归基线不得擅自替换 |
 
 
@@ -73,3 +73,11 @@
 | 用户只想提供“数据集 + 表”，但当前 Direct 协议仍会把业务目的、粒度、主表范围等 Level 3 选择重新甩回用户，导致调用提示不断外挂增长 | 新增 Dataset-to-Report Autopilot：用户明确授权完整分析时，Skill 先勘察数据并自主选择高价值问题；Level 3 选择显式标为分析假设，Level 4 仍暂停 | **最小输入契约应内建到 Skill。** 用户只提供数据源与分析范围时，不应被迫重复提供 Skill 本应自行推导的结构信息 |
 | 单一汇率 snapshot 下，Autopilot 若严格等待用户确认就无法闭环；若直接当历史汇率又会越界 | 允许单一无歧义 snapshot 作为探索性默认，但强制日期/快照命名，并禁止解释为历史成交额 | **自主推进只允许可证据化、可回退的分析默认。** 不得以自动化为理由隐去口径变化 |
 | 最终 HTML 修好了，但同类问题仍可能依赖下一次外部提示再次指出 | 将 Reverse Skill Audit Gate 纳入 Autopilot 完成条件 | **Artifact 是 Skill 的反向测试样本。** 可泛化缺陷必须回写规则、复测并回归，不能长期积累外挂提示词 |
+
+
+## V12：默认角色与 HTML 交付内建
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 用户已经明确默认人物应为 `Star/Lucy`，但 Skill 主协议仍使用小写 `star`，导致报告需要靠调用提示或生成器额外修正 | 将默认角色统一为 `Star/Lucy`，角色职责仍由 Role Binding Gate 管理 | **默认展示名也是输出契约。** 如果每次都靠外部提示纠正大小写，说明配置仍未真正内建 |
+| HTML 文件名、落盘位置和下载链接仍依赖用户额外声明 | 新增 Default HTML Delivery Contract：默认 `/mnt/data/sql_business_thinking_report.html`，单文件交付并返回 sandbox 链接 | **交付形式属于 Skill 输出契约。** 稳定的文件名、位置和链接不应成为每次调用的外挂输入 |
