@@ -54,6 +54,9 @@ viz = (ROOT / "references" / "visualization-registry.md").read_text(encoding="ut
 for chart in ["histogram", "box plot", "scatter", "heatmap", "Pareto", "waterfall", "funnel", "Sankey", "network graph"]:
     assert chart in viz, f"visualization family missing: {chart}"
 assert "原生支持目标图形" in viz and "自定义 SVG / Canvas" in viz, "renderer capability fallback missing"
+assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
+assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
+assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
 for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
