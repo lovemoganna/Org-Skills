@@ -9,6 +9,7 @@
 ## 文件
 
 - [`SKILL.md`](SKILL.md)：主协议。
+- [`references/source-authority.md`](references/source-authority.md)：表角色、来源权威性、重复计数与单位聚合边界。
 - [`references/analysis-depth.md`](references/analysis-depth.md)：Question Map、分析深度阶梯与停止条件。
 - [`references/visualization-registry.md`](references/visualization-registry.md)：图表能力注册表、选图规则与 Renderer Capability Gate。
 - [`references/regression-loop.md`](references/regression-loop.md)：真实样本、泛化与渲染回归规则。
