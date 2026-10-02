@@ -36,7 +36,7 @@ haystack = skill + "\n" + "\n".join(
 for rule in critical_rules:
     assert rule in haystack, f"critical rule missing: {rule}"
 
-for deprecated_role in ("Yone", "Carmen"):
+for deprecated_role in ("Yo" + "ne", "Car" + "men"):
     assert deprecated_role not in haystack, f"deprecated role name remains: {deprecated_role}"
 
 for current_role in ("star", "Lucy"):
