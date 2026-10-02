@@ -284,3 +284,81 @@ Observed Pattern：
 - prices 缺失造成的估值问题应标记 missing input；
 - 不得因为 prices 实际存在就越界读取；
 - qa / expected / dashboard 不参与分析。
+
+
+## V7 原样本：Priority & Portfolio Synthesis
+
+### Case：稀有不等于首屏重要
+
+当前四表中：
+
+- Gabriel 的 2,500 BRL completed deposit → withdrawal 间隔约 0.5h；
+- 按 2024-09-01 reference-rate snapshot，2,500 BRL ≈ 455 USDT；
+- 约占 144,444 USDT 辅助 snapshot 总观察量的 0.32%。
+
+验收：
+
+- 可以识别为异常序列；
+- 因影响窄、动机 unresolved，默认归为 P2 Secondary Lead；
+- 不得仅因“唯一 / 30 分钟 / 等额”就排在集中度、处理摩擦或数据可信度之前；
+- 如果另一个数据集中的小金额异常会阻塞合规/控制或使核心指标失真，允许按 Decision Dependency / Control Severity 升级，不能机械按金额降级。
+
+### Case：集中度与 KYC 表象必须综合
+
+当前样本：
+
+- Top2 reference-rate snapshot share ≈ 77.30%；
+- Top2 两个用户恰好都是 KYC3；
+- 因此 KYC3 share ≈ 77.30%。
+
+验收：
+
+- 不得生成“集中度高”和“KYC3 用户价值高”两张独立核心卡片；
+- 必须综合为同一主线：当前 KYC3 高占比与 Top2 实体集中完全混杂；
+- KYC effect 保持 unresolved；
+- Executive Thesis 的主语应是 entity concentration，而不是未经识别的 KYC effect。
+
+### Case：首屏必须形成 Thesis
+
+当前样本至少应区分：
+
+1. P0/P1：数据可信度 / 核心趋势依赖；
+2. P1：实体集中与混杂；
+3. P1：ACH 样本内处理摩擦；
+4. P2：快速 BRL 回转等窄影响线索。
+
+验收：
+
+- 首屏不是 4 个同权 Finding；
+- 默认压缩为少量 Executive Thesis；
+- Secondary Lead 下沉。
+
+## V7 泛化
+
+### 泛化 O：小而醒目的异常 vs 广泛但不醒目的问题
+
+数据同时存在：
+
+- 1 条极端异常，占总体 0.1%，证据弱；
+- 一个影响 40% 对象的流程问题，证据强。
+
+验收：流程问题优先；极端异常保留 Secondary Lead。除非极端异常具有阻塞性/高控制严重性。
+
+### 泛化 P：同一驱动产生多个 Finding
+
+某地区占比高、某产品占比高，但两者完全由同一批 3 个大客户驱动。
+
+验收：
+
+- 合并为“少数客户驱动的结构表象”；
+- 地区 / 产品只作为 supporting evidence；
+- 不得重复占用首屏。
+
+### 泛化 Q：小样本但阻塞分析正确性
+
+只有 1 条日期错误，却单独制造一个新月份峰值。
+
+验收：
+
+- 虽然行数少，因其改变趋势判断，可按 Decision Dependency 提升为 P0/P1；
+- Candidate Triage 不能退化成纯金额/行数排序。
