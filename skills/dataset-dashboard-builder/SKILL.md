@@ -1,13 +1,13 @@
 ---
 name: dataset-dashboard-builder
-description: 自动扫描多表数据集，识别业务对象、表间关系、数据质量和高价值分析主题，并生成最小必要的定制看板。用于“给这批表自动做看板”“不知道该看什么指标”“多张表自动拆主题”“数据更新后自动刷新看板”等任务。不是固定模板生成器：必须先理解数据、验证口径，再决定指标、图表和布局。需要 HTML 成品时执行 Rendered QA 与回归闭环。
+description: 自动扫描多表数据集，识别业务对象、表间关系、数据质量和高价值分析主题，通过 Question Frontier、竞争解释、Diagnostic Test 与 Robustness 将表面 Pattern 提炼为可晋级 Finding，再生成最小必要的定制看板。用于“给这批表自动做看板”“不知道该看什么指标”“多张表自动拆主题”“数据更新后自动刷新看板”等任务。不是固定模板生成器：必须先理解数据、验证口径、解释关键现象，再决定指标、图表和布局。需要 HTML 成品时执行 Rendered QA 与回归闭环。
 ---
 # Dataset Dashboard Builder
 
 目标：
 
 ```text
-多表数据 → 数据可信度 → 业务语义 → 分析主题 → 指标 → 变化/异常 → 图表 → 看板 → 质检
+多表数据 → 来源权威 → 数据可信度 → Question Map → Investigation → Promoted Findings → Visual Plan → 看板 → 质检
 ```
 
 核心原则：**先决定什么值得看，再决定怎么画。**禁止把字段机械转成图表。
@@ -97,6 +97,32 @@ L0 数据可信度
 
 如果数据只支持浅层描述，必须明确说明限制，不得把 L1 包装成完整分析。
 
+## 4B. Investigation Gate
+
+完成第一轮 Analysis Depth 后必须读取 `references/investigation-loop.md`。
+
+任何准备进入核心看板的主要现象，第一次出现时只能标记为 `Observed Pattern`，不得直接升级为 Insight。
+
+必须建立：
+
+```text
+Question Frontier
+→ Hypothesis Frontier
+→ Diagnostic Test
+→ Robustness Check
+→ Finding Promotion Gate
+```
+
+硬规则：
+
+- 每个主要 Pattern 至少检查一个合理竞争解释；
+- 查询结果必须改变 Question Frontier 或 Hypothesis 状态，否则视为低价值查询；
+- 关键结论至少做一次稳健性检查；
+- 数据不足时保持 `unresolved`，不得补故事；
+- 只有通过 Finding Promotion Gate 的结论才能进入首屏核心发现；
+- Context Metric 可以展示，但必须与真正的 Finding 分开；
+- 停止条件是边际信息增益下降，不是“所有维度都查过”。
+
 ## 5. 指标选择
 
 每个指标必须写清：
@@ -113,6 +139,8 @@ L0 数据可信度
 4. 可继续下钻的明细。
 
 同一信息不重复展示。
+
+指标不是洞察。只有经过 Investigation Gate 的 Pattern 才能晋级为核心 Finding。
 
 ## 6. Adaptive TopN
 
@@ -154,13 +182,15 @@ Top N 由有效样本数决定：
 默认阅读顺序：
 
 ```text
-关键结论/限制
-→ 核心 KPI
-→ 变化与结构
-→ 异常/集中度
+Promoted Findings / 关键限制
+→ Context Metrics
+→ 解释证据与稳健性
+→ Open Questions
 → 下钻明细
 → 数据质量与口径
 ```
+
+首屏不得只是 KPI 卡片集合。核心 Finding 必须能回指 Pattern、竞争解释、Diagnostic Test 和 Robustness。
 
 如果数据质量问题会改变核心数字，限制必须靠近 KPI，不得藏在页尾。
 
@@ -195,6 +225,8 @@ Top N 由有效样本数决定：
 
 - 无已知 P0/P1 数据逻辑问题；
 - Analysis Depth Gate 已完成，或明确记录数据为何无法继续下钻；
+- Investigation Gate 已完成；
+- 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
 - 每个核心图表都回答明确问题；
 - Visual Plan 与 Renderer Capability Gate 已完成；
 - 关键指标口径可追溯；

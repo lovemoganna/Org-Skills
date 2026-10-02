@@ -34,3 +34,12 @@
 |---|---|---|---|
 | 真实 HTML 的双序列月度折线只有颜色，没有可见图例 | Visual Registry 缺少多序列识别验收 | 新增 Encoding & Label Gate | 多序列必须有直接标签或可见图例，不能只靠颜色 |
 | 法币渠道 scatter 的低时延点聚集，直接标签互相覆盖 | 只要求可读标签，没有 collision gate | 增加标签碰撞处理顺序 | 重叠时减少直标、只标关键点、tooltip 或 label repel；禁止文字覆盖 |
+
+
+## V5：Hypothesis-driven Investigation
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 看板虽然分析层级更多，但发现一个差异后仍会直接画图，缺少“为什么”的连续调查 | Analysis Depth 只规定查哪些层，没有规定一个发现何时才算解释完成 | 新增 Hypothesis-driven Investigation Loop | Pattern 必须经过竞争解释、Diagnostic Test、Robustness 后才允许晋级 |
+| Top1/Top3、KYC 占比、ACH 时延等容易被直接包装成结论 | 缺少 Finding Promotion Gate | 新增 Pattern / Finding 分离 | 指标和差异不是洞察；核心 Finding 必须排除至少一个替代解释并做稳健性检查 |
+| 深挖容易退化成“再按一个维度切一下” | 缺少 Question Frontier 与信息增益停止规则 | 新增 Question Quality Gate / Information Gain Stop Rule | 下一问必须改变解释或路径；结果不改变 Frontier 的查询默认淘汰 |

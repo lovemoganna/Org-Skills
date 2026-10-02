@@ -39,7 +39,8 @@
 9. 每张图能回答明确业务问题；
 10. HTML 离线打开时核心内容仍可读；
 11. Question Map 与 Analysis Depth Gate 已执行；数据支持时不能只停留在总量 / TopN；
-12. Visual Plan 与 Renderer Capability Gate 已执行；fallback 不得改变分析语义。
+12. Visual Plan 与 Renderer Capability Gate 已执行；fallback 不得改变分析语义；
+13. 主要 Pattern 已执行 Hypothesis Frontier / Robustness / Finding Promotion Gate。
 
 ### 4A. 深度分析 QA
 
@@ -50,7 +51,20 @@
 - 是否把相关或同期变化误写成因果；
 - 深挖结果是否真的改变判断，而不是重复切片。
 
-### 4B. 可视化 QA
+### 4B. Investigation QA
+
+- 核心发现第一次出现时是否只作为 Pattern，而不是直接写 Insight；
+- 是否至少存在 H1/H2 两个竞争解释；
+- 是否明确什么证据会削弱当前主解释；
+- Diagnostic Test 是否真正区分解释，而不是继续加描述维度；
+- 关键结论是否至少做一次 Robustness Check；
+- 去掉极端值 / 换分母 / 分层后，结论措辞是否同步变化；
+- 数据不足时是否保持 unresolved；
+- 首屏核心 Finding 是否全部通过 Finding Promotion Gate；
+- Context Metric 是否被误写成 Insight；
+- 是否在信息增益下降后停止，而不是机械遍历所有字段。
+
+### 4C. 可视化 QA
 
 - 是否从分析问题选择图形，而不是从 Renderer 能画什么倒推；
 - 分布、关系、矩阵、流程、贡献、流向等语义需要时是否正确路由；

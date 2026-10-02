@@ -169,3 +169,84 @@ active=7。不得输出 Top10=100% 作为集中度发现，应降为 Top1/Top3�
 ### 密集散点
 
 多个点坐标接近时，验收不得出现直接标签覆盖。允许只标关键点，其余通过 tooltip / hover detail 查看。
+
+
+## V5 原样本：Hypothesis-driven Investigation
+
+### Case：集中度不能停在 Top1 / Top3
+
+Observed Pattern：
+
+- Top1 = 49.93%；
+- Top3 = 83.48%。
+
+失败行为：
+
+```text
+Top3 很高
+→ 结论：用户高度集中
+→ 画 Pareto
+```
+
+验收：
+
+1. 至少建立两个解释：
+   - H1：整体结构性集中；
+   - H2：少数极端实体造成表面集中。
+2. 去掉 Top1 后重新计算：
+   - 剩余第一名仍约占 54.66%。
+3. 去掉 Top2 后：
+   - 剩余第一名约占 27.22%。
+4. 结论不能写成“由单一大户造成”；应收紧为“当前样本主要由前两名实体驱动，前两名移除后集中度明显下降”或同义事实表达。
+5. Pareto 只能表达 Pattern，不能替代 Robustness。
+
+### Case：KYC3 占 77.30% 不能直接解释成 KYC 效应
+
+Observed Pattern：
+
+- KYC Level 3 两个用户贡献约 77.30%。
+
+验收：
+
+- 必须检查这两个用户是否本身就是 Top1/Top2；
+- 如果 KYC3 与大户身份完全重合，状态保持“entity concentration 与 KYC level 混杂”；
+- 禁止写“KYC3 用户价值更高”；
+- 若没有更大样本或可比用户，Hypothesis 保持 unresolved。
+
+### Case：ACH 时延必须排除单点异常
+
+Observed Pattern：
+
+- ACH completed median ≈ 18.375h，N=4。
+
+验收：
+
+- 检查分布与最慢记录；
+- 去掉最慢一笔后，中位时延仍约 16.75h；
+- 按用户拆分：两个用户都表现出较高时延，但样本仍小；
+- 结论只能写“当前 ACH 样本持续偏慢，且不完全由单一最慢订单解释”；不得写“ACH 渠道导致慢”。
+
+## V5 泛化
+
+### 泛化 L：Pattern 不能直接晋级
+
+任意 TopN、成功率差异、群体占比或趋势峰值第一次出现时：
+
+- 只能标 Pattern；
+- 必须建立 H1/H2；
+- 没有 Diagnostic Test / Robustness 时不得进首屏 Finding。
+
+### 泛化 M：Result 必须改变 Frontier
+
+如果一条查询只是增加一个新的描述切片，但不会改变解释、口径、优先级或下一步：
+
+- 默认淘汰；
+- 不得为了“分析完整”执行并画图。
+
+### 泛化 N：数据不足保持 unresolved
+
+只有聚合结果，没有明细支撑竞争解释时：
+
+- 保留 Pattern；
+- 明确缺少什么数据；
+- 不得为了通过 Finding Promotion Gate 编造 Why。
