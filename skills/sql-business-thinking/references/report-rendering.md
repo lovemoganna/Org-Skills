@@ -44,15 +44,19 @@ Analysis Events
 Dataset / Assignment（仅显式存在时）
 → Analysis Map
 → Question Frontier
-→ Current Unknown
-→ Star: Why now + What changes
-→ Lucy: accept / reject / replace / split
+→ Current Unknown / Observed Pattern
+→ Star: Why now + H1
+→ Lucy: accept / reject / replace / split + H2 / 反证
 → Question Quality Gate
+→ Hypothesis Frontier
+→ Diagnostic Question
 → Draft Code A
 → SQL Boundary Challenge（如需要）
 → Draft Code B
 → Executable SQL
 → Result
+→ Hypothesis Update
+→ Robustness Check（主要发现）
 → Frontier Update
 → Next Question
 → ...
@@ -68,7 +72,10 @@ Dataset / Assignment（仅显式存在时）
 - 每个推进点只允许一个当前问题和一个最终可执行 SQL；第二个独立查询必须另起推进点；
 - 当前问题前必须能看出“为什么现在问、答案会改变什么”；Lucy 不能只补 SQL，必须先对问题质量做 accept / reject / replace / split；
 - 被 reject / replace 的问题不得继续渲染 SQL；
-- Result 后必须显示它如何改变 Question Frontier；不能改变 Frontier 的查询除必要最终取数外不进入正文；
+- Result 后必须显示它如何改变 Question Frontier 或 Hypothesis Frontier；不能改变问题优先级、假设状态或最终解释的查询，除必要最终取数外不进入正文；
+- 主要 Pattern 不得只显示数字后跳到下一维度；正文必须可见主解释、竞争解释、Diagnostic Test 和假设更新；
+- 主要结论至少展示一次有意义的 Robustness Check；若数据不足，正文明确“未能验证”，不能伪装稳定；
+- 最终 Insight 不得只是 Result 的中文复述；至少体现 Why / Alternative / Test / Robustness / So What；
 - 删除“这一步确认 / 暂时不能推出 / 截至目前”式元摘要，Result 后由角色自己完成状态更新；
 - 最终汇报之后才允许出现汇总卡片、最终附表；
 - Skill Trace、运行日志仍属于二级审计信息。
@@ -221,6 +228,7 @@ Renderer 只读，不重新分析。
 6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
 7. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
 8. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
+9. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
 
 **重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。**
 
