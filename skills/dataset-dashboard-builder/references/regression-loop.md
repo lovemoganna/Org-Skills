@@ -42,7 +42,7 @@
 12. Visual Plan 与 Renderer Capability Gate 已执行；fallback 不得改变分析语义；
 13. 主要 Pattern 已执行 Candidate Triage / Hypothesis Frontier / Robustness / Finding Promotion Gate；
 14. Promoted Findings 已执行 Portfolio Synthesis，首屏不是发现列表的机械平铺；
-15. Dashboard Mission / Information Architecture / Interaction / Quality Evaluation 已执行。
+15. Dashboard Mission / Metric Role / Comparison / Information Architecture / Interaction / Quality Evaluation 已执行。
 
 ### 4A. 深度分析 QA
 
@@ -84,12 +84,17 @@
 ### 4D. Dashboard Quality QA
 
 - 页面是否首先像一个分析工具，而不是长篇分析报告；
+- 默认视图是否无需操作就完成 Primary Job；
+- Primary KPI / Finding 是否有可解释的比较语境；
+- 核心比较是否同时可见，而非靠切换 Filter；
+- Drill 是否保留触发上下文并落到正确记录 / tab；
 - 是否明确 Dashboard Mission；
 - 是否形成 `What → So What → Why → Who/Where → Evidence`；
 - 第一屏是否同时给出状态、重点与下一步入口；
 - 数据存在稳定对象键且任务需要定位/验证时，是否存在有效交互或下钻；
 - 是否存在 KPI / Finding 卡片堆砌；
 - 是否存在纯展示模块；
+- Dashboard 是否把内部 Quality Evaluation / Hypothesis / Regression 过程暴露给最终用户；
 - 是否通过 `eval/dashboard-quality.md`，Critical=0 且 Major=0；
 - 是否仅修 Minor，而真正 Major 仍未解决。
 

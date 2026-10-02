@@ -3,7 +3,7 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Information Architecture → Visualization → Interaction → UI → Quality Evaluation → 回归
+扫描 → 质检 → Mission / Mode → Question Map → Investigation → Portfolio Synthesis → Metric Roles / Comparison → Information Architecture → Visualization → Context-preserving Interaction → UI → Quality Evaluation → 回归
 ```
 
 ## 文件
