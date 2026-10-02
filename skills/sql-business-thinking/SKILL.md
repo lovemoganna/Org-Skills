@@ -54,9 +54,18 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
    - **Answerability**：当前表、字段、粒度、时间和 JOIN 是否真的能回答；
    - **Priority**：是否比 Frontier 里的其他未知更值得先问。优先级默认是“阻塞后续的口径/可信度 → 会改变结论的竞争解释 → 规模/结构 → 纯描述细节”。
 5. **SQL 不是推进器，问题才是。** SQL 只用于回答已经通过 Gate 的当前问题；查询结果必须更新 Question Frontier：关闭一个未知、产生新未知、改变优先级或终止一条分析路径。若 Result 不改变 Frontier，这个查询视为低价值，除非它是必要的最终取数。
-6. 只采用有证据、可回退的分析默认；不得把未知业务定义伪装成事实。Level 4 阻塞仍必须暂停；Level 3 若用户已经明确授权自主分析，可在报告中显式记录分析假设后继续。
-7. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
-8. 用户要求完整分析报告时，输出 **Question-Driven Dialogue HTML**：当前问题 → Star 为什么现在问 → Lucy 挑战/替换问题 → SQL 增量 → Result → Frontier 状态变化 → 下一问题。禁止把 Lucy 写成陪练、审核员或“帮 Star 完成任务”的辅助角色。
+6. 一旦出现会进入最终报告的主要现象，建立 **Hypothesis Frontier**，不允许立刻跳到下一个描述性问题：
+   - **Observed Pattern**：真正需要解释的现象；
+   - **H1 / H2 / H3**：至少一个主解释、一个合理竞争解释；数据不足时可只有 H1/H2，但不能只有单一故事；
+   - **Disconfirming Evidence**：什么结果会削弱当前主解释；
+   - **Diagnostic Test**：哪条 SQL 最能区分这些解释；
+   - **Status**：supported / weakened / rejected / unresolved。
+7. 主要发现必须通过 **Analysis Depth Gate**，至少检查：What → Where → Why → Alternative → Test → Robustness → So What。只停留在金额、排名、比例或“谁最多”，不得直接进入最终结论。
+8. Star 在 Result 后必须提出或更新一个**解释模型**；Lucy 优先攻击解释，而不是继续补字段：有没有竞争解释、极端值、分母、时间口径、聚合方式或样本结构能造成同样现象？
+9. 对关键结论至少执行一次 **Robustness Check**：去掉极端值、换合理分母/粒度/口径、分解“频次 × 单笔金额”、或做其他能验证结论是否依赖单点/单一设定的测试。数据不支持时明确写“无法验证”，不得伪造稳健性。
+10. 只采用有证据、可回退的分析默认；不得把未知业务定义伪装成事实。Level 4 阻塞仍必须暂停；Level 3 若用户已经明确授权自主分析，可在报告中显式记录分析假设后继续。
+11. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
+12. 用户要求完整分析报告时，输出 **Hypothesis-Driven Dialogue HTML**：现象 → 当前问题 → Star 提出解释 → Lucy 给竞争解释/反证 → Diagnostic SQL → Result → 假设状态变化 → 稳健性检查 → 下一问题。禁止把 Lucy 写成陪练、审核员或“帮 Star 完成任务”的辅助角色。
 
 **Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后不得直接结束。必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。可泛化且确属 Skill 的问题，最小回写规则，并执行原失败样本、泛化测试、历史回归和 Diff；当前报告只修 UI 而不修生成机制，判失败。
 
@@ -292,11 +301,13 @@ SQL 对了再问：这张表拿来干什么？能比较什么、发现什么异�
 
 硬规则：
 
-- **Autopilot 默认不虚构领导任务。** 用户只给数据集 / 表时，会话链为：数据集进入 → Analysis Map → Question Frontier → Star 提问 → Lucy 挑战问题质量 → SQL / Result → Frontier 更新 → 下一问题 → Star 综合报告。只有用户明确给出领导 / Task Owner 时，才增加“任务下达 / report-back”外框。
-- Star 是 **Analysis Lead**：主动理解数据、维护分析方向、从 Frontier 里选择当前最值得回答的问题，并解释“为什么现在问、答案会改变什么”；最终负责综合报告。
-- Lucy 是 **Critical Analyst**，不是 Reviewer / 陪练：独立挑战 Star 的问题选择、假设和优先级；可以否决低价值问题、提出竞争问题或替代路径。Lucy 不负责替 Star 补齐流程，也不以“帮助 Star 完成任务”为目标。
+- **Autopilot 默认不虚构领导任务。** 用户只给数据集 / 表时，会话链为：数据集进入 → Analysis Map → Question Frontier → 现象 → Hypothesis Frontier → Star 提问/解释 → Lucy 挑战问题与解释 → Diagnostic SQL / Result → 假设与 Frontier 更新 → 稳健性检查 → 下一问题 → Star 综合报告。只有用户明确给出领导 / Task Owner 时，才增加“任务下达 / report-back”外框。
+- Star 是 **Analysis Lead**：主动理解数据、维护分析方向、从 Frontier 里选择当前最值得回答的问题；重要 Result 出现后必须提出或更新解释模型，不能只复述数字；最终负责综合报告。
+- Lucy 是 **Critical Analyst**，不是 Reviewer / 陪练：独立挑战 Star 的问题选择、解释、假设和优先级；可以否决低价值问题、提出竞争解释、反证、替代路径或稳健性测试。Lucy 不负责替 Star 补齐流程，也不以“帮助 Star 完成任务”为目标。
 - **Question Quality Gate：**任何 SQL 前必须能回答 Trigger / Consequence / Answerability / Priority 四项。Gate 未通过，先改问题，不准写 SQL。
-- **Question Consequence Gate：**Result 后必须明确它如何改变 Question Frontier；若没有关闭未知、产生新未知、改变优先级或结束路径，除必要最终取数外，该查询判为低价值。
+- **Hypothesis Frontier Gate：**主要现象进入下一阶段前，至少有主解释 + 竞争解释 + 可反驳证据 + 区分它们的测试；如果数据无法区分，必须保留 unresolved。
+- **Analysis Depth Gate：**主要发现至少覆盖 What / Where / Why / Alternative / Test / Robustness / So What；只报金额、排名、比例判浅分析。
+- **Question Consequence Gate：**Result 后必须明确它如何改变 Question Frontier 或 Hypothesis Frontier；若没有关闭未知、改变假设状态、改变优先级或结束路径，除必要最终取数外，该查询判为低价值。
 - 每句台词必须通过 Turn Delta Gate：至少新增事实、判断、关键问题或决策；无信息的“对 / 明白 / 好的”删掉或合并。
 - 人物只能使用当前阶段已经出现的事实；没有跑出结果前，禁止提前说最终金额、Top N、重叠率或异常记录。
 - 每阶段默认 2～4 个来回，最多反问 2 次；连续两轮反问后必须推进到 SQL、数据检查或阶段结论。

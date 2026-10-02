@@ -78,7 +78,8 @@ Star 负责**分析方向**，不是“执行领导任务的人”：
 - 每轮只提出一个当前最值得回答的问题；
 - 说清 **为什么现在问**、**可能答案会改变什么**；
 - 选择当前分析路径，并在 Result 后更新优先级；
-- 能主动放弃自己原来的低价值问题；
+- 重要 Result 出现后提出一个解释模型，而不是复述数字；
+- 能主动放弃自己原来的低价值问题或已经被证据削弱的假设；
 - 最终整合成 SQL 分析报告。
 
 Star 可以提出差问题，但差问题应被 Gate 淘汰，而不是靠 Lucy 陪着把它做完。
@@ -90,7 +91,9 @@ Lucy 是独立分析者，不是 Reviewer、SQL 助手或陪练。她负责：
 - 挑战 Star **问的问题本身**是否值得；
 - 识别更高优先级的未知量；
 - 提出竞争解释、替代问题或更短的验证路径；
+- 主动寻找能反驳 Star 当前解释的证据；
 - 检查问题是否真的能由当前数据回答；
+- 对主要发现要求至少一次稳健性检查；
 - 问题通过后，才对 SQL 边界进行必要质疑。
 
 Lucy 可以直接说“这个问题现在不值得查”，但必须指出为什么、替代什么。她不提前知道结果，也不为了制造分歧强行反驳。
@@ -146,6 +149,55 @@ Result 后必须能完成至少一种 Frontier 变化：
 - 或完成最终答案所需的必要取数。
 
 如果 Result 出来后“下一步还是原计划，判断也完全不变”，这条查询默认删除，除非它是最终结果本身。
+
+## 2D. Hypothesis Frontier
+
+主要现象出现后，人物会话必须从“问什么”升级到“怎么解释”：
+
+```text
+Observed Pattern
+→ Star: H1
+→ Lucy: H2 / 反证
+→ Diagnostic Question
+→ SQL / Result
+→ H1 / H2 状态变化
+→ Robustness Check
+→ Insight
+```
+
+最低要求：
+
+- 至少一个主解释 + 一个合理竞争解释；
+- Star 必须说明什么证据会让自己改口；
+- Lucy 必须至少一次真正攻击解释，而不是只攻击 SQL；
+- 如果现有数据不能区分解释，双方都必须保留 unresolved，禁止强行收敛。
+
+### Hypothesis Challenge 动作
+
+Lucy 可执行：
+
+- **counter-hypothesis**：提出能解释同一现象的另一机制；
+- **falsify**：指出什么结果会直接削弱 H1；
+- **decompose**：把表面指标拆成可诊断组成，例如“金额 = 笔数 × 单笔金额”；
+- **stress-test**：去极端值 / 换分母 / 换合理口径；
+- **boundary**：指出数据只能支持描述，不能支持因果或风险判断。
+
+## 2E. Analysis Depth Gate
+
+主要发现如果只停在以下形式，判浅分析：
+
+- “A 最大”；
+- “Top3 = 83.48%”；
+- “两类用户重叠 88.89%”；
+- “某用户 crypto 占比高”。
+
+进入最终结论前至少回答：
+
+```text
+What → Where → Why → Alternative → Test → Robustness → So What
+```
+
+不是要求每层都增加 SQL，而是要求每个主要结论都有**解释深度和证据闭环**。
 
 ## 3. Turn Delta Gate
 
@@ -440,6 +492,15 @@ Star：资产覆盖没问题，但只有一个 effective_date。继续查交易�
 - 是否有字段清单式、为了完整而查的机械问题？
 - Result 是否真的改变 Question Frontier？
 - 下一问是否由上一轮证据触发，而不是预先排好的 checklist？
+
+### Hypothesis / Depth
+- 主要 Pattern 后是否建立主解释 + 竞争解释，而不是直接跳到下一个描述问题？
+- Star 是否至少一次明确“什么证据会让我改口”？
+- Lucy 是否挑战过解释本身，而不只是 SQL / 问题优先级？
+- 是否有 diagnostic test 真正区分竞争解释？
+- 关键结论是否至少做一次有意义的 robustness check？
+- 去掉人物姓名后，对话是否仍体现“提出解释 → 反驳解释 → 证据区分 → 更新判断”，而不是 SQL 开发讨论？
+- 最终主要发现是否通过 What / Where / Why / Alternative / Test / Robustness / So What？
 
 ### Turn Delta
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION？

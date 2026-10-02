@@ -45,6 +45,12 @@
 - 是否存在“结果无论怎样都不改变下一步”的低价值查询；
 - Result 是否实际改变 Question Frontier；
 - 下一问是否由上一轮 Result 触发，而不是预写 checklist；
+- 主要 Pattern 后是否建立 Hypothesis Frontier，而不是继续横向扫维度；
+- Star 是否提出解释模型，而不是只复述数字；
+- Lucy 是否提出过竞争解释 / 反证 / stress-test，而不是只补 SQL；
+- 主要结论是否通过 What / Where / Why / Alternative / Test / Robustness / So What；
+- 是否至少有一次真正改变解释可信度的 Robustness Check；
+- 删除角色名后，对话是否仍体现“解释 → 反驳 → 证据区分 → 更新判断”；
 - 每句是否新增 FACT / JUDGMENT / QUESTION / DECISION；
 - 是否存在无信息确认句、重复最终数字的假对白；
 - 最终 synthesis / report-back 能否逐项反查到前序证据；
@@ -93,6 +99,8 @@ P3：纯审美微调，不做，除非它影响理解。
 - 移动端结构：实际测量 `scrollWidth <= clientWidth + 1`；Grid/Flex 内的代码/表格容器检查 `min-width:0` 与局部 `overflow-x:auto`；
 - 人物会话结构与角色约束（如适用）；
 - Question Frontier：当前问题来源、Lucy 的问题挑战、Result 后 Frontier 变化；
+- Hypothesis Frontier：主要 Pattern 的 H1/H2、反证、Diagnostic Test、状态变化；
+- Analysis Depth：主要发现是否超越“多少 / 谁最大 / 占多少”，并完成 Why / Alternative / Robustness / So What；
 - 低价值查询扫描：删除“查完也不改变下一步”的非必要查询；
 - 与上一版业务结论 diff。
 - HTML 实体文件交付：默认路径存在、文件非空、最终回复链接与实际文件一致（如适用）。
@@ -118,5 +126,5 @@ P3：纯审美微调，不做，除非它影响理解。
 - 运行时/交互无明显阻断；
 - 桌面/移动端结构成立；
 - Skills 缺陷已回写并由当前报告反向验证；
-- 不再存在 Lucy 陪练化、预写 checklist 或低价值问题推进；
+- 不再存在 Lucy 陪练化、预写 checklist、低价值问题推进或“只报数字不解释”的浅分析；
 - 继续修改只会变成纯审美偏好。

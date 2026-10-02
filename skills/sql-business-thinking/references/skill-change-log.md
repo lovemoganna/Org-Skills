@@ -98,3 +98,13 @@
 | Autopilot 虽然能自己选题，但缺少“为什么这个问题优先”的机制，容易把字段清单机械翻译成 SQL checklist | 新增 Analysis Map → Question Frontier → Question Quality Gate；SQL 只能回答通过 Gate 的当前问题 | **SQL 不是推进器，问题才是。** 每个查询前必须说明 Trigger / Consequence / Answerability / Priority |
 | Result 经常只是验证流程步骤，查完后下一步仍按预设顺序继续 | 新增 Question Consequence Gate：Result 必须关闭 Unknown、产生新 Unknown、改变优先级、终止路径或完成必要最终取数 | **查询必须改变分析状态。** 查完也不改变 Frontier 的非必要查询应删除 |
 | 旧 Conversation Arc 默认从“领导下任务”开始，导致无 Task Owner 的数据分析也被包装成替领导办事 | Dataset-Driven Arc 设为默认；只有用户显式给出 Task Owner 时才增加 Assignment / Report-back | **不要为角色会话虚构组织关系。** 任意数据集分析应默认从数据与问题开始 |
+
+
+## V15：假设驱动与分析深度
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Question Frontier 能减少废问题，但报告仍容易停在“多少 / 谁最大 / 占多少”，数字正确却缺少解释 | 新增 Hypothesis Frontier：Observed Pattern → H1/H2 → Disconfirming Evidence → Diagnostic Test → Status | **问题驱动只解决“问什么”，假设驱动才解决“怎么解释”。** 主要现象不得直接升级成 Insight |
+| Star 只在 Result 后复述数字，Lucy 只挑战问题或 SQL，缺少真正的分析博弈 | 要求 Star 提出解释模型；Lucy 增加 counter-hypothesis / falsify / decompose / stress-test / boundary | **角色差异必须体现在解释竞争。** 删除姓名后仍应看出“提出解释 → 攻击解释 → 证据区分 → 更新判断” |
+| 高集中度可能只是单一极端用户造成，但旧规则没有强制验证结论是否稳健 | 新增 Analysis Depth Gate 与 Robustness Check；优先去 Top1、拆频次×单笔金额、按 rail/asset 拆驱动 | **主要结论必须经受至少一次会改变可信度的压力测试。** 稳健性不是多跑一个同类指标 |
+| 数据不足时为了“深度”容易编造 Why | Hypothesis Frontier 支持 unresolved；无法区分竞争解释时明确缺失数据 | **深度不等于强行解释。** 能证明“当前数据不足以区分”本身也是专业结论 |
