@@ -144,3 +144,16 @@ active 用户只有 7 个时，不得把 Top 10 = 100% 当作集中度结论；�
 - 最终回复提供 `sandbox:/mnt/data/sql_business_thinking_report.html` 可点击链接；
 - 网络/CDN/实时执行失败时，文件仍能读取本轮已验证的记录 Result；
 - 用户显式指定其他文件名或路径时，用户要求优先。
+
+
+### 泛化 I：Grid/Flex 宽内容移动端溢出
+
+在 390px 视口下，把长 SQL 与最小宽度大于视口的表格放入 Grid/Flex 内容列。
+
+验收：
+
+- 页面根节点满足 `scrollWidth <= clientWidth + 1`；
+- Grid/Flex 内容项允许收缩，不能被默认 `min-width:auto` 撑宽；
+- SQL 与表格只在各自 wrapper 内横向滚动；
+- 禁止用缩小正文字号掩盖结构性溢出；
+- 桌面端布局与历史 Dialogue-Driven 顺序不得退化。

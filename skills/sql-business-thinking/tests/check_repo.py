@@ -61,6 +61,10 @@ assert "不提供业务问题、JOIN、粒度、SQL" in regression, "minimal-inp
 assert "Default HTML Delivery Contract" in skill, "default html delivery contract missing"
 assert "/mnt/data/sql_business_thinking_report.html" in skill, "default html path missing"
 assert "默认 HTML 实体交付" in regression, "html artifact delivery regression missing"
+assert "Mobile Width Gate" in report_rendering, "mobile width gate missing"
+assert "scrollWidth <= document.documentElement.clientWidth" in report_rendering, "rendered mobile geometry assertion missing"
+assert "Grid/Flex 宽内容移动端溢出" in regression, "mobile overflow regression missing"
+
 
 
 
