@@ -34,6 +34,7 @@ critical = [
     "Unit Authority Gate",
     "Investigation Gate",
     "Finding Promotion Gate",
+    "Explicit Scope Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -45,7 +46,7 @@ assert "sql-business-thinking" in readme, "boundary with existing skill must be 
 assert "一张表一个看板" in skill, "theme split guard missing"
 
 source_authority = (ROOT / "references" / "source-authority.md").read_text(encoding="utf-8")
-for rule in ["Table Role Gate", "Authority Order", "Double-count Gate", "Unit & Aggregation Authority"]:
+for rule in ["Explicit Scope Gate", "Table Role Gate", "Authority Order", "Double-count Gate", "Unit & Aggregation Authority"]:
     assert rule in source_authority, f"source authority rule missing: {rule}"
 assert "dashboard / output" in source_authority and "backup / archive" in source_authority
 
@@ -66,7 +67,7 @@ assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
 assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
 assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")

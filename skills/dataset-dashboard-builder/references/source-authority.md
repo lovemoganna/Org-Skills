@@ -2,9 +2,32 @@
 
 目标：先判断“哪些表是什么角色、哪些口径有权定义业务指标”，再开始分析。避免把看板、备份、预期结果或 QA 表当成原始业务事实。
 
+## 0. Explicit Scope Gate
+
+用户显式指定表、Sheet、文件、schema 或数据集子集时，该范围是分析边界。
+
+规则：
+
+1. 只读取、分析和 JOIN 用户允许的范围；
+2. 允许读取工作簿 metadata 以确认精确表名、sheetId 或结构存在，但 metadata 中出现的范围外表不得进一步读取；
+3. 范围外的 rule / expected / qa / dashboard / backup 即使位于同一工作簿，也不得影响当前口径；
+4. 历史 regression 中知道某张额外表存在，不构成越界读取授权；
+5. 如果当前范围缺少定义某项指标所需的规则表或维表，把该项标记为 `LIMITED / MISSING INPUT`，不要自动扩展范围；
+6. 只有用户未指定范围时，才执行 Full-dataset Scan。
+
+验收：
+
+```text
+Workbook = A + B + C + QA + Dashboard + Backup
+User scope = A + B + C
+→ metadata 可见全部
+→ 内容只读取 A / B / C
+→ QA / Dashboard / Backup 不参与当前分析
+```
+
 ## 1. Table Role Gate
 
-扫描工作簿 / 数据库 / 数据目录后，先为每张表分配角色：
+确定当前允许范围后，再为范围内每张表分配角色：
 
 | 角色 | 说明 | 是否直接进入业务指标 |
 |---|---|---|
@@ -81,9 +104,9 @@ currency / asset / network 分区
 
 不得把“QA 检查数量”“修复条数”混进业务 KPI。
 
-## 6. Full-dataset Scan Output
+## 6. Source Map Output
 
-完成角色识别后，输出 Source Map：
+完成角色识别后，输出当前允许范围的 Source Map：
 
 | 表 | 角色 | 是否进入指标 | 主要用途 | 权威性 | 风险 |
 |---|---|---|---|---|---|
