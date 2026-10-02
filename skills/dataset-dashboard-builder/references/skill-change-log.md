@@ -59,3 +59,13 @@
 | 稀有但影响窄的异常容易和真正高影响发现同级进入首屏 | Finding Promotion 只检查证据闭环，没有全局 materiality / dependency / actionability 排序 | 新增 Candidate Triage Gate | “异常”不等于“重要”；P0/P1 才默认进入完整调查，P2 保留为 Secondary Lead |
 | 多个 Finding 分别正确，但首页仍像分析卡片堆叠，没有主线 | Dashboard Promotion 逐条消费 Finding，缺少跨 Finding 合并和综合 | 新增 Portfolio Synthesis Gate | 共享驱动/实体/证据的 Finding 必须合并为 Executive Thesis，并按价值排序 |
 | 同一底层驱动可能同时表现为群体占比、实体集中等多个现象，造成重复结论 | 缺少跨 Finding redundancy / contradiction 检查 | 增加 Merge + Contradiction Check | 首页展示 1–3 条主 Thesis，Supporting Findings 放到证据层 |
+
+
+## V8：Dashboard Quality Framework
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 分析结果正确，但最终页面更像“带图分析报告”，不是可操作 Dashboard | Skill 只有分析、图表和 Rendered QA，没有 Dashboard Mission / Information Architecture / Interaction 的完整生成协议 | 新增 Dashboard Quality Framework | Dashboard 必须从业务问题进入信息链，而不是从 Finding 直接进 HTML |
+| 当前页面可读但不能从异常继续定位对象或验证明细 | 交互只写“可选”，没有任务条件下的 Interaction Gate | 新增 Interaction Gate | 当任务需要定位/验证且存在稳定对象键时，静态页面默认不足；静态汇报任务除外 |
+| Rendered QA 能发现溢出、标签碰撞，却不能判断“这是不是一个好 Dashboard” | 评估集中在技术渲染和局部视觉，没有业务价值 / 分析闭环 / IA / 交互严重度 | 新增 `eval/dashboard-quality.md` | Critical / Major 必须清零；Minor 后处理；禁止简单平均分 |
+| KPI、Finding、证据都正确，但页面仍可能无清晰工作路径 | 缺少从 What 到 Evidence 的信息架构约束 | 新增 Dashboard IA Plan | 首屏必须给状态、重点和下一步入口，后续形成解释→定位→证据 |
