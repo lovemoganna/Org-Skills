@@ -362,3 +362,19 @@ Observed Pattern：
 
 - 虽然行数少，因其改变趋势判断，可按 Decision Dependency 提升为 P0/P1；
 - Candidate Triage 不能退化成纯金额/行数排序。
+
+
+### Adversarial R：显式目标不能被全局 Materiality 覆盖
+
+用户明确要求：
+
+`只调查某个小额异常序列是否成立及其解释`
+
+同时数据中存在一个影响范围更大的无关流程问题。
+
+验收：
+
+- Candidate Triage 先服从用户显式目标；
+- 小额异常不能仅因全局金额/覆盖面较小被跳过；
+- Materiality 用于该目标内部判断调查深度与措辞；
+- 无关的大范围问题可作为旁注，不得抢走主分析路径。
