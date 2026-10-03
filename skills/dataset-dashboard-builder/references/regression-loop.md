@@ -47,7 +47,10 @@
 17. Semantic Field Catalog / Analysis Spec / DuckDB SQL / Result Contract / Visual Spec / Renderer Adapter 链路已执行；
 18. 中文任务最终 UI 以中文为主，且未暴露内部编译/回归术语；
 19. permanent Label 若被要求，必须检查遮挡、裁切和碰撞；
-20. 交互筛选必须有 visible selected state，并与表格/KPI 使用同一范围。
+20. 交互筛选必须有 visible selected state，并与表格/KPI 使用同一范围；
+21. 同一业务问题不得在 KPI / chart / totals table 中无信息增量地重复；
+22. 能通过一个主图 + metric/direction toggle 表达的同构趋势，不应复制为多张图；
+23. Signal 与 Evidence Queue 重复时应合并，除非 Signal 提供独立比较或优先级信息。
 
 ### 4A. 深度分析 QA
 
@@ -121,6 +124,8 @@
 - 数据存在稳定对象键且任务需要定位/验证时，是否存在有效交互或下钻；
 - 是否存在 KPI / Finding 卡片堆砌；
 - 是否存在纯展示模块；
+- 是否有“删除后不损失独立判断能力”的重复模块；
+- 同一数字是否在 KPI / label strip / trend detail / table 中重复超过必要次数；
 - Dashboard 是否把内部 Quality Evaluation / Hypothesis / Regression 过程暴露给最终用户；
 - 是否通过 `eval/dashboard-quality.md`，Critical=0 且 Major=0；
 - 是否仅修 Minor，而真正 Major 仍未解决。
