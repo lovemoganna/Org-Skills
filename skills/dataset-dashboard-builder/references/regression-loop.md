@@ -57,7 +57,13 @@
 27. 至少完成 Real User / Constrained User / Edge-data User 三类模拟；
 28. 能真实渲染时至少检查 360 / 768 / 1280px；
 29. 同行控件高度、KPI baseline、section edge、同级 gutter 必须一致；
-30. 同类缺陷连续复现时必须进入 Skill rule / regression / checker，而不是只修当前 HTML。
+30. 同类缺陷连续复现时必须进入 Skill rule / regression / checker，而不是只修当前 HTML；
+31. movement / anomaly 必须先确认比较窗口、完整性与数据边界；
+32. extreme 必须先过 materiality，低金额高占比不得自动晋级高价值 Finding；
+33. 告警 / 风险 / 优先级阈值必须有 authority；模型不得自造绝对金额红线；
+34. “为什么变化”优先检查 delta contribution，而不只看当前 TopN；
+35. 核心解释至少做一次 control / counterexample / remove-Top robustness；
+36. 用户要求多个候选 Dashboard 时，候选必须结构性改变 decision path，不能只换视觉主题。
 
 ### 4A. Insight Hierarchy QA
 
@@ -73,6 +79,20 @@
 - Exception 是否包含 object / evidence / why it matters / next check；
 - in-process 是否与 failed / cancelled 分开；
 - 小样本是否避免无依据因果 / 预测 / 聚类。
+
+### 4AA. Decision Diagnostics QA
+
+- 是否确认当前 / 基线时间桶完整且可比；
+- 是否把正常波动或 partial bucket 错写成 anomaly；
+- 是否执行 Materiality Before Extremeness；
+- 低金额但 Top1 share 很高的时间桶是否被错误称为“高峰”；
+- 任何业务阈值 / 优先级是否能回溯到用户、policy、SLA 或明确 benchmark；
+- 没有 authority 时是否改用 relative materiality / contribution / severity / evidence / actionability；
+- “为什么变化”是否量化了 segment / entity delta contribution；
+- 当前最大实体是否被错误当成变化原因；
+- 是否做 remove-Top / control segment / alternate denominator / alternate grain 等至少一种反证；
+- 重要峰值 / 异常是否能落到 actor / record；
+- 多候选 Dashboard 是否共享同一口径，并在 decision path 上真正不同。
 
 ### 4B. 深度分析 QA
 
