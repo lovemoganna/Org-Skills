@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Insight Hierarchy → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
