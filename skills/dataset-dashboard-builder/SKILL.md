@@ -86,7 +86,7 @@ Domain Detection
 
 规则：
 
-- 只有用户明确指定领域，或 Entity / Event-State / Dimension 至少两类证据一致时，才加载 Domain Pack；
+- 只有用户明确指定领域，或对应 Domain Pack 的 Detection Signature 成立且领域证据一致时，才加载 Domain Pack；
 - medium / high confidence 才默认启用；low confidence 使用 generic；
 - Domain Pack 只能提供候选 ontology / questions / metrics / playbooks / visual grammar，不能覆盖 Source / Quality / Unit / Time Gate；
 - 当前数据不支持的领域模块必须跳过；
