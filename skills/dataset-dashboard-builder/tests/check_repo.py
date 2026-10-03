@@ -143,8 +143,7 @@ for anchor in ["V12 原样本：Funds Scale & Trend → Renderer Contract", "105
 for anchor in ["V13 原样本：Redundancy Gate", "泛化 AT：同构趋势复制", "泛化 AU：Chart + Table 重复", "Adversarial AV：说明文案复制"]:
     assert anchor in regression, f"V13 redundancy anchor missing: {anchor}"
 
-for anchor in ["V14 原样本：Dashboard Audit Loop", "泛化 AW：孤儿组件", "泛化 AX：复杂度升级无理由", "Adversarial AY：源码检查冒充视觉检查", "Adversarial AZ：正常数据可用，边界数据破版"]:
-    assert anchor in regression, f"V14 audit-loop anchor missing: {anchor}"
+for anchor in ["V14 原样本：Dashboard Audit Loop", "泛化 AW：孤儿组件", "泛化 AX：复杂度升级无理由", "Adversarial AY：源码检查冒充视觉检查", "Adversarial AZ：正常数据可用，边界数据破版", "Adversarial BA：无 overflow 但图表被压扁"]:\n    assert anchor in regression, f"V14 audit-loop anchor missing: {anchor}"
 
 assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 
