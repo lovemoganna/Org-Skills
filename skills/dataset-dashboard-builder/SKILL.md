@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -317,7 +317,7 @@ North Star
 
 - So-What Gate：每个主图 / 主表必须有一句真实数据支持的 takeaway；
 - Amount × Count Dual-Signal Gate：交易 / 资金类问题必须同时检查金额与笔数；
-- Event-Driven Spike Gate：高峰先检查 top transaction / top entity share，禁止把单笔大额事件写成全面增长；
+- Event-Driven Spike Gate：先过 materiality，再检查 top transaction / top entity share，禁止把低金额高占比或单笔大额事件写成全面增长；
 - Driver Decomposition：优先 breadth / intensity / concentration，而不是机械遍历全部维度；
 - Pareto Gate：高集中度必须检查 Top1 / Top2 / cumulative share，并避免把实体集中错误归因给 KYC / country 等标签；
 - Exception Logic：Exception 必须带对象、证据、重要性和 next check；
@@ -325,6 +325,24 @@ North Star
 - Analytical Restraint：小样本优先 descriptive decomposition / Pareto / exact evidence，不乱上因果、预测和聚类。
 
 高价值 Dashboard 不能只回答“多少”和“怎么变”，还必须回答“为什么 / 谁贡献 / 哪些例外值得查 / 如何落到证据”。
+
+
+## 6AB. Decision Diagnostics Gate
+
+Insight Hierarchy 完成后、Dashboard IA 前必须读取 `references/decision-diagnostics.md`。
+
+重点执行：
+
+- Change Confirmation：先确认 movement 不是 partial bucket / data artifact / normal variance；
+- Materiality Before Extremeness：先判断重要，再判断极端；低金额高占比不得自动升级为“高峰”；
+- Threshold Authority：禁止自行发明金额红线、风险线、告警阈值或优先级规则；
+- Delta Contribution：解释变化时优先计算谁贡献了 delta，而不是只看当前谁最大；
+- Control / Counterexample：核心解释至少做一次 remove-Top / control segment / alternate denominator / alternate grain 等反证；
+- Actor / Record Attribution：重要峰值或异常能落到实体 / 记录时必须下钻；
+- Comparison Context：突出数字必须有 prior / peer / normalized / share / benchmark 之一；
+- Candidate Architecture Test：用户明确要多个方案时，候选必须改变分析路径，不能只换皮肤。
+
+Decision Diagnostics 的结果可以降级或删除原本准备进入 Dashboard 的 Finding。
 
 ## 6B. Information Architecture Gate
 
@@ -551,6 +569,7 @@ Generate
 - Information Architecture Gate 已完成；
 - Dashboard Decision & Audit Loop Gate 已完成；
 - Decision Questions 与 Coverage Plan 已生成并逐项对账；
+- Decision Diagnostics 已完成，且无自造阈值 / 低 materiality 极端值越级；
 - 需要定位/验证时 Interaction Gate 已完成；
 - 首屏 Thesis 已合并重复驱动并按价值排序；
 - 每个核心图表都回答明确问题；
