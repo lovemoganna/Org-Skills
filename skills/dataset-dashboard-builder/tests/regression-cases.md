@@ -596,7 +596,7 @@ V10 必须至少重组为当前数据支持的领域工作区：
 - Fiat channel 与 Crypto network 分开；
 - snapshot FX 不作为历史真实成交额；
 - rapid in-out 不写成洗钱 / 欺诈；
-- 当前没有 address / tx_hash 时，不生成链上 network graph；
+- 当前存在 address / tx_hash，可在订单 Evidence 中展示；但没有明确 address-to-address 关系图数据时，不生成链上 network graph；
 - 没有 case / owner 时，不生成 assign / freeze / close 等动作。
 
 ## V10 泛化
