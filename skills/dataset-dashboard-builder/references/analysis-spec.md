@@ -13,9 +13,9 @@
 → X / Y / Series
 → Analysis Spec freeze
 → DuckDB SQL
-→ Result
-→ Chart.js Spec
-→ Renderer
+→ Result Contract
+→ Visual Spec
+→ Renderer Adapter
 ```
 
 图表组件不得自行读取原始表、决定聚合或重新解释字段。
@@ -380,7 +380,7 @@ TopN 后是否保留 `Other` 必须由 part-to-whole 需求决定。
 
 ## 10. Filter Contract
 
-Global Filter 不直接修改 Chart.js。
+Global Filter 不直接修改任何 Renderer。
 
 执行：
 
@@ -389,7 +389,8 @@ Global Filter State
 → patch Analysis Spec.filters
 → compile DuckDB SQL
 → Result rows
-→ compile Chart.js Spec
+→ compile Visual Spec
+→ Renderer Adapter
 → render
 ```
 
@@ -420,6 +421,19 @@ Renderer 只消费：
 
 ```text
 Analysis Spec
-+ Result
-+ Chart.js Spec
++ Result Contract
++ Visual Spec
 ```
+
+Visual Spec 至少显式记录 `renderer_family / chart_family / x / y / series / time_grain / unit / formatter / label_policy / interaction_policy / locale`。Renderer 不得从原始 Schema 临时补猜。
+
+## 12. Display Contract
+
+最终视图的显示规则也属于 Spec，不允许散落在组件里：
+
+- `locale` 跟随用户主要语言；
+- `label_policy` 明确 permanent / hover / selected-only；
+- `interaction_policy` 明确 click-filter / drill-through / crosshair / range-select；
+- `theme_policy` 必须支持统一浅色 / 深色 tokens；
+- 用户明确要求 permanent Label 时，必须记录其位置与碰撞策略，不能只靠 Tooltip；
+- 业务页面默认隐藏内部 Analysis / Compiler / Regression 文案。
