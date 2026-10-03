@@ -183,6 +183,10 @@ Current
 
 ## 8. Information Architecture Gate
 
+渲染前先生成 Dashboard IA Plan，并读取 `dashboard-audit-loop.md` 建立 Decision Questions 与 Coverage Plan。
+
+先写 2–5 个默认视图必须回答的问题。每个问题只能有一个 Primary View；辅助视图必须证明新的 time / segment / denominator / distribution / evidence / exact lookup 价值。
+
 渲染前先生成 Dashboard IA Plan：
 
 | 顺序 | 模块 | 功能类型 | 回答问题 | 优先级 | 进入下一层的动作 |
@@ -190,6 +194,9 @@ Current
 
 硬规则：
 
+- 每个 section 只能有一个主 job；
+- 每个主组件必须绑定至少一个 Decision Question；
+- 每个 required 组件必须进入 Coverage Plan 并有稳定 id；
 - 第一屏优先回答当前最重要的业务问题；
 - P0/P1 信息必须明显高于 Context / P2；
 - 总览、解释、定位、明细必须形成阅读路径；
@@ -292,11 +299,16 @@ Dashboard 的目标不是把所有正确结果都展示出来，而是用最少�
 
 目标视觉：专业分析工具，而不是营销页面。
 
+Dashboard 默认追求“高密度但可扫描”，不是“更多留白”。默认 3 秒看到主状态，30 秒看到变化与重点对象，300 秒能进入定位与证据。
+
 优先：
 
 - 清晰层级；
 - 高信息密度但不拥挤；
-- 统一间距；
+- 统一间距与同级 gutter；
+- KPI 数值同一 baseline；
+- 同行控件统一高度；
+- section / panel 共享左边界；
 - 可读字体；
 - 一致单位和格式；
 - 重点颜色有限；
