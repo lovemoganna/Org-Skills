@@ -1000,3 +1000,52 @@ Vela / Chart.js / HTML component 内出现原始 rows 聚合或 `SUM` 等重新�
 用户明确要求永久 Label，但柱体 / 点位与文字重叠或被 canvas 边缘裁切。
 
 验收：失败。必须外置、避让或更换同语义表达。
+
+
+## V13 原样本：Redundancy Gate
+
+基于同一 exchange_funds_flow_dataset，已知 V12 曾出现以下冗余：
+
+- 总额 / 入金 / 出金先在 KPI 出现，又在双趋势图、永久 Label 条、逐月明细表重复；
+- amount trend 与 count trend 使用两张同构 Vela 图；
+- 用户集中度同时出现 ranking bar 与相同实体 table；
+- Flow Pattern Signal 卡片与 Evidence Queue 表达同一异常。
+
+### 验收
+
+默认页面应压缩为不超过 5–6 个主要工作区，并优先形成：
+
+```text
+概览
+→ 单一主趋势（metric / direction 可切换）
+→ 资金结构
+→ 用户集中
+→ 核查队列
+```
+
+要求：
+
+- amount / count 可以在一个趋势视图切换，不要求并排双图；
+- total / deposit / withdrawal 可以在同一趋势视图切换；
+- permanent label 已提供逐期数值时，不额外生成重复 totals table；
+- 用户 ranking 与 exact lookup 能合并成 bar-in-cell table 时，不保留第二张 ranking 图；
+- anomaly signal 与 evidence detail 合并到同一 Queue；
+- status 只保留一个主组件，不同时堆叠 status KPI + summary + bar。
+
+### 泛化 AT：同构趋势复制
+
+输入 revenue / orders / date，两个指标可以通过 metric selector 在同一时间图查看。
+
+验收：默认不因为“两个指标”就生成两张完全同构图；只有需要同时比较、不同单位同屏有明确价值时才保留多图。
+
+### 泛化 AU：Chart + Table 重复
+
+一张 Top10 bar 和一张同字段、同排序、同数值的 Top10 table。
+
+验收：判重复；除非 table 增加 entity attributes、exact lookup 或操作入口，否则删除其中一个。
+
+### Adversarial AV：说明文案复制
+
+每个 panel 都写“点击图表可筛选”。
+
+验收：失败；统一为一处必要交互提示或通过显著 hover/selected state 自解释。
