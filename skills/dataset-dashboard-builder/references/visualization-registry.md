@@ -134,8 +134,9 @@ Semantic Field Catalog
 → Analysis Intent
 → Analysis Spec
 → DuckDB SQL
-→ Result
-→ Chart.js Spec
+→ Result Contract
+→ Visual Spec
+→ Renderer Adapter
 ```
 
 ### 基础关系映射
@@ -172,17 +173,44 @@ Chart Planner 的 intent 必须是中性的：
 
 Investigation / Domain 层可以决定某个已验证 Finding 值得展示，但 visual 本身仍表达数据关系，不把结论写进字段映射。
 
-### Chart.js Ownership
+### Renderer Ownership
 
-本 Skill 的默认图表引擎为 Chart.js。
+具体图表库不再写死。
 
-Renderer Capability Gate 更新为：
+优先级由语义决定：
 
-```text
-Chart.js native
-→ Chart.js plugin / custom implementation
-→ same-intent equivalent
-→ table fallback
-```
+- 金融 / 资金时间序列，需要 zoom / pan / crosshair / range selection → Vela；
+- generic category / composition / distribution / relationship → Chart.js 或等价 Adapter；
+- KPI / compact status / detail / evidence / 简单排名 → Native HTML / CSS；
+- 用户明确指定 Renderer 时，只要语义可忠实表达，应优先遵循用户选择。
 
-不允许组件换用另一套图表引擎来绕过 Analysis Spec。
+所有 Renderer 都必须遵守 `references/renderer-contract.md`，不能绕过 Analysis Spec。
+
+## V12 · Funds Scale + Renderer Contract
+
+资金流数据存在 `amount + direction + time` 时，Visual Plan 至少先考虑：
+
+1. amount level；
+2. amount over time；
+3. count over time；
+4. deposit / withdrawal split；
+5. Fiat / Crypto 或 native currency / asset breakdown。
+
+channel / network 默认属于诊断维度，不得因为现成有字段就抢占主图。
+
+如果跨单位只能依赖单日 FX snapshot：
+
+- 原生单位趋势仍是 authoritative；
+- 统一总额只能命名为 reference-rate / snapshot valuation；
+- 图标题、KPI、tooltip 必须保持这一限制。
+
+### Vela Routing
+
+Vela 只负责时间序列 Renderer：
+
+- 输入必须来自 Result Contract；
+- 默认使用离线 data，不自动接实时 provider；
+- 业务单值时间序列不得伪装成真实 K 线；
+- 多图共享时间域时可同步 crosshair；
+- range preset / zoom / pan 属于显示交互，不得改变业务口径；
+- Vela 无法表达 permanent label 等硬约束时，使用 overlay / summary / 同语义 fallback，不得静默丢失要求。
