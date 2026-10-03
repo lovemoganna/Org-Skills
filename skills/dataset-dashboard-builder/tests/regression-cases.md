@@ -540,3 +540,115 @@ Dashboard 发现一条 payment 失败，但用户详情默认打开 profile tab�
 
 - Internal Analysis Boundary 正确豁免；
 - 可以展示 Evaluation，但必须与业务 Dashboard 主区分开。
+
+
+## V10 原样本：Exchange Funds Flow Domain Intelligence
+
+当前四表：
+
+- `users`；
+- `fiat_transactions`；
+- `crypto_transactions`；
+- `exchange_rates`。
+
+### Domain Detection
+
+支持证据：
+
+- Entity：user / KYC / country / account status；
+- Event / State：fiat / crypto orders，deposit / withdrawal，completed / failed / processing / confirming；
+- Dimension：currency / channel / asset / network / fee / completion time。
+
+验收：
+
+- Domain = `exchange-funds-flow`；
+- Confidence = high；
+- 加载 `domains/exchange-funds-flow/domain-pack.md`；
+- 不把该领域自动升级成 AML / fraud。
+
+### Domain Composition
+
+原 generic 失败行为：
+
+```text
+Completed KPI
++ concentration
++ latency
++ trend
++ user detail
+```
+
+V10 必须至少重组为当前数据支持的领域工作区：
+
+1. **Flow Health**：Fiat / Crypto 状态结构，不只显示 completed rate；
+2. **Rail / Network Performance**：channel / network 的 N、状态、latency 等同屏；
+3. **Entity Exposure**：Top concentration + user attributes / composition；
+4. **Flow Pattern Investigation**：rapid in-out 等已验证序列候选；
+5. **Evidence Queue**：Signal → User → Order evidence。
+
+不是所有工作区必须同等权重。
+
+### Domain Accuracy
+
+验收：
+
+- processing / confirming 与 failed 分开；
+- Fiat channel 与 Crypto network 分开；
+- snapshot FX 不作为历史真实成交额；
+- rapid in-out 不写成洗钱 / 欺诈；
+- 当前存在 address / tx_hash，可在订单 Evidence 中展示；但没有明确 address-to-address 关系图数据时，不生成链上 network graph；
+- 没有 case / owner 时，不生成 assign / freeze / close 等动作。
+
+## V10 泛化
+
+### 泛化 AC：客服 SLA 数据
+
+输入：
+
+`tickets / agents / sla_rules`
+
+具有 ticket state / priority / agent / SLA duration，但没有 payment / asset / network。
+
+验收：
+
+- 不加载 exchange-funds-flow；
+- generic 或未来 support domain；
+- 不残留 rail / network / KYC / flow pattern。
+
+### 泛化 AD：只有 crypto-like 字段但缺资金事件语义
+
+输入：
+
+`events(id,user_id,network,status,created_at)`
+
+没有 deposit / withdrawal、amount、currency / asset，也没有明确资金流任务。
+
+验收：
+
+- Funds Event Signature 不成立；
+- 不自动加载 exchange-funds-flow；
+- 不机械生成 rapid in-out / concentration / fee analysis。
+
+### 泛化 AE：用户明确指定 generic
+
+即使 Schema 很像资金流，用户要求：
+
+`只做通用数据探索，不使用行业假设`
+
+验收：
+
+- 不加载 Domain Pack；
+- generic pipeline 正常工作。
+
+### Adversarial AF：字段名伪装
+
+输入：
+
+`marketing_network / asset_name / channel_name`
+
+但事实表实际是广告 campaign performance。
+
+验收：
+
+- 不能仅凭 network / asset / channel 字段名判定 exchange funds flow；
+- Entity + Event-State + Dimension 证据不足时回退 generic。

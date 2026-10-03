@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Information Architecture → Visual Plan → Interaction → UI → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Information Architecture → Visual Plan → Interaction → UI → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -72,7 +72,30 @@ exact-date / exact-time 是否匹配？
 
 禁止把单日汇率套到跨期交易后继续命名为“历史成交额”。
 
-## 3A. Dashboard Mission Gate
+## 3A. Domain Intelligence Gate
+
+完成 Source Map / Dataset Map / Quality Gate 后，先读取 `references/domain-routing.md`。
+
+执行：
+
+```text
+Domain Detection
+→ Confidence
+→ Domain Pack or Generic Fallback
+```
+
+规则：
+
+- 只有用户明确指定领域，或对应 Domain Pack 的 Detection Signature 成立且领域证据一致时，才加载 Domain Pack；
+- medium / high confidence 才默认启用；low confidence 使用 generic；
+- Domain Pack 只能提供候选 ontology / questions / metrics / playbooks / visual grammar，不能覆盖 Source / Quality / Unit / Time Gate；
+- 当前数据不支持的领域模块必须跳过；
+- 加载 Domain Pack 后仍必须执行 Generic Analysis Depth / Investigation / Robustness；
+- 用户明确要求 generic 时不得自动套领域 Pack。
+
+当前仓库已有 `domains/exchange-funds-flow/domain-pack.md`。只有当前数据真实匹配时才读取。
+
+## 3B. Dashboard Mission Gate
 
 完成 Source Map / Dataset Map / Quality Gate 后，必须读取 `references/dashboard-quality-framework.md`，建立 Dashboard Mission Contract：
 
@@ -90,9 +113,9 @@ exact-date / exact-time 是否匹配？
 
 如果用户没有明确业务问题，只能从数据与任务推导最合理的分析任务，并明确推导依据。禁止编造业务目标。
 
-## 4. 按业务主题拆分，而不是按表拆分
+## 4. 按领域问题与业务主题拆分，而不是按表拆分
 
-基于数据自动生成候选主题，只保留有证据且能回答问题的主题，例如：
+如果加载 Domain Pack，先从领域 Question Library 生成候选问题；否则使用通用主题。只保留当前 Schema 与证据真实支持的主题，例如：
 
 - 数据可信度；
 - 规模与趋势；
@@ -190,6 +213,27 @@ Top N 由有效样本数决定：
 - active ≥ 100：Top 10，可增加 Top 1%。
 
 如果 Top N 覆盖全部对象，它不能作为“集中度”核心结论。
+
+## 6. Domain Composition Gate
+
+若加载 Domain Pack，Portfolio Synthesis 后必须把 Promoted Findings 映射到领域工作流，而不是直接按 generic finding 类型排版。
+
+Exchange Funds Flow 示例只能在数据支持时使用：
+
+- Flow Health；
+- Rail / Network Performance；
+- Entity Exposure；
+- Flow Pattern Investigation；
+- Evidence Queue。
+
+Domain Composition 是候选工作区，不是固定页面模板。
+
+至少检查：
+
+1. 是否有一个领域专属工作流真实改变页面结构；
+2. 是否保留该领域关键状态语义，而不是压成 generic completion / trend；
+3. 是否能从领域 Signal 落到真实实体 / 事件 / evidence；
+4. 是否出现 Domain Pack 不支持的字段或动作。
 
 ## 6A. Information Architecture Gate
 
@@ -332,6 +376,7 @@ Generate
 - Investigation Gate 已完成；
 - 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
 - Candidate Triage 与 Portfolio Synthesis 已完成；
+- Domain Detection 已完成；若加载 Pack，Domain Evaluation 已通过；
 - Dashboard Mission Contract 已完成；
 - Metric Role / Comparison Context Gate 已完成；
 - Default View 在无交互时已能完成 Primary Job；

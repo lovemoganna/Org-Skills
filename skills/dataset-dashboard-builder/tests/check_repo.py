@@ -10,6 +10,9 @@ assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skil
 
 for path in [
     ROOT / "references" / "source-authority.md",
+    ROOT / "references" / "domain-routing.md",
+    ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
+    ROOT / "eval" / "exchange-funds-flow.md",
     ROOT / "references" / "dashboard-quality-framework.md",
     ROOT / "eval" / "dashboard-quality.md",
     ROOT / "references" / "analysis-depth.md",
@@ -44,6 +47,8 @@ critical = [
     "Interaction Gate",
     "Dashboard Quality Evaluation",
     "Comparison & Metric Role Gate",
+    "Domain Intelligence Gate",
+    "Domain Composition Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -63,6 +68,18 @@ investigation = (ROOT / "references" / "investigation-loop.md").read_text(encodi
 for rule in ["Candidate Triage Gate", "Goal Alignment", "Question Frontier", "Question Quality Gate", "Hypothesis Frontier", "Evidence Depth Gate", "Robustness Check", "Finding Promotion Gate", "Portfolio Synthesis Gate", "Information Gain Stop Rule"]:
     assert rule in investigation, f"investigation rule missing: {rule}"
 assert "Pattern 只是“发生了什么”，不是“为什么”" in investigation
+
+domain_routing = (ROOT / "references" / "domain-routing.md").read_text(encoding="utf-8")
+for rule in ["Domain Detection Gate", "Entity evidence", "Event / state evidence", "Dimension evidence", "Generic Fallback"]:
+    assert rule in domain_routing, f"domain routing rule missing: {rule}"
+
+domain_pack = (ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md").read_text(encoding="utf-8")
+for rule in ["Detection Signature", "Funds Event Signature", "Domain Ontology", "Flow Health", "Rail / Network Performance", "Entity Exposure", "Flow Pattern Investigation", "Evidence Queue", "Domain Visual Grammar"]:
+    assert rule in domain_pack, f"exchange funds flow rule missing: {rule}"
+
+domain_eval = (ROOT / "eval" / "exchange-funds-flow.md").read_text(encoding="utf-8")
+for rule in ["Critical", "Major", "Expected Domain Questions", "Acceptance"]:
+    assert rule in domain_eval, f"exchange funds flow eval missing: {rule}"
 
 quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(encoding="utf-8")
 for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Mode", "Metric Role Gate", "Comparison Context Gate", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Semantics", "Internal Analysis Boundary", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
@@ -84,7 +101,7 @@ assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
 assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
 assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W", "V9 原样本：Dashboard Context / Comparison / Drill", "泛化 X", "泛化 Y", "泛化 Z", "泛化 AA", "Adversarial AB"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W", "V9 原样本：Dashboard Context / Comparison / Drill", "泛化 X", "泛化 Y", "泛化 Z", "泛化 AA", "Adversarial AB", "V10 原样本：Exchange Funds Flow Domain Intelligence", "泛化 AC", "泛化 AD", "泛化 AE", "Adversarial AF"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")

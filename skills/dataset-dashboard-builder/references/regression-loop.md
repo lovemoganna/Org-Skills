@@ -42,7 +42,8 @@
 12. Visual Plan 与 Renderer Capability Gate 已执行；fallback 不得改变分析语义；
 13. 主要 Pattern 已执行 Candidate Triage / Hypothesis Frontier / Robustness / Finding Promotion Gate；
 14. Promoted Findings 已执行 Portfolio Synthesis，首屏不是发现列表的机械平铺；
-15. Dashboard Mission / Metric Role / Comparison / Information Architecture / Interaction / Quality Evaluation 已执行。
+15. Domain Detection / Dashboard Mission / Metric Role / Comparison / Information Architecture / Interaction / Quality Evaluation 已执行；
+16. 若加载 Domain Pack，Domain Evaluation 已执行，且至少一个领域工作流真实改变 Dashboard 结构。
 
 ### 4A. 深度分析 QA
 
@@ -81,7 +82,16 @@
 - P2 Secondary Lead 是否错误抢占首屏；
 - 单条小金额/小样本异常只有在控制或分析依赖严重时才可越级。
 
-### 4D. Dashboard Quality QA
+### 4D. Domain Intelligence QA
+
+- Domain 是否由 Entity / Event-State / Dimension 或用户显式指定支持；
+- low confidence 是否错误加载领域 Pack；
+- Domain Pack 是否只提供候选问题而非固定模板；
+- 是否至少有一个领域专属工作流改变最终结构；
+- 不支持的领域字段 / 动作是否被补造；
+- generic fallback 是否仍可正常执行。
+
+### 4E. Dashboard Quality QA
 
 - 页面是否首先像一个分析工具，而不是长篇分析报告；
 - 默认视图是否无需操作就完成 Primary Job；
@@ -98,7 +108,7 @@
 - 是否通过 `eval/dashboard-quality.md`，Critical=0 且 Major=0；
 - 是否仅修 Minor，而真正 Major 仍未解决。
 
-### 4E. 可视化 QA
+### 4F. 可视化 QA
 
 - 是否从分析问题选择图形，而不是从 Renderer 能画什么倒推；
 - 分布、关系、矩阵、流程、贡献、流向等语义需要时是否正确路由；
