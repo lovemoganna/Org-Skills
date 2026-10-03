@@ -1142,3 +1142,10 @@ Vela / Chart.js / HTML component 内出现原始 rows 聚合或 `SUM` 等重新�
 默认数据正常，但 empty / long label / 360px 时控件溢出或页面断裂。
 
 验收：失败。Edge-data + constrained simulation 是 required。
+
+
+### Adversarial BA：无 overflow 但图表被压扁
+
+360px 下页面没有整页横向 overflow，但 12 个时间点被强行缩放到 300px 宽，tick / label 无法读取。
+
+验收：失败。响应式检查必须同时验证 plot 可读性；优先使用组件内部横向滚动、减少可见点数或提高时间粒度，而不是把图整体缩小到不可读。
