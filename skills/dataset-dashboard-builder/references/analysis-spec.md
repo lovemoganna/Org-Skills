@@ -11,6 +11,7 @@
 → 聚合
 → 图表类型
 → X / Y / Series
+→ Analysis Spec freeze
 → DuckDB SQL
 → Result
 → Chart.js Spec
