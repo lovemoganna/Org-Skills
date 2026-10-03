@@ -246,6 +246,48 @@ Current
 7. “查看 ACH 明细”必须进入 ACH 证据，不得只选中某个 ACH 用户后展示该用户全部无关交易；
 8. “定位异常记录”必须落到异常记录或包含该记录的正确明细视图，不得跳到错误 tab / 粒度。
 
+## 10A. Redundancy & Compression Gate
+
+Dashboard 的目标不是把所有正确结果都展示出来，而是用最少组件覆盖主要判断链路。
+
+### One Question → One Primary View
+
+同一个问题只保留一个主表达：
+
+- level → KPI / compact metric；
+- change over time → 一个主趋势视图；
+- composition → 一个构成视图；
+- exact lookup → table；
+- evidence → queue / detail。
+
+辅助组件必须提供新的分析维度，而不是重复已有数字。
+
+### 常见重复模式
+
+以下默认判为重复，除非能证明信息增量：
+
+- KPI 总额 + 趋势图 + 同周期 totals table；
+- amount trend 与 count trend 两张结构完全相同的图，但可用 metric switch 完成；
+- total / deposit / withdrawal 三张同构时间图，但可用 direction switch；
+- 状态数字卡 + 状态 summary + 100% status bar 同时出现；
+- 用户排名 bar + 相同用户排名 table；
+- anomaly card + 同一 anomaly 的 evidence queue row；
+- 每个 Panel 重复写“点击可筛选”。
+
+### 保留第二视图的条件
+
+至少满足其一：
+
+- 新增时间维度；
+- 新增分层 / segment；
+- 新增分布；
+- 新增 denominator / uncertainty；
+- 新增精确明细；
+- 新增下钻 / evidence；
+- 新增不同分析问题，而非同一指标的不同装饰。
+
+发布前执行删除测试：**删除某模块后，用户是否失去一个独立判断能力？** 如果答案是否定的，优先删除。
+
 ## 11. UI Gate
 
 目标视觉：专业分析工具，而不是营销页面。
