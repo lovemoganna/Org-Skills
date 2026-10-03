@@ -17,6 +17,7 @@ for path in [
     ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
     ROOT / "eval" / "exchange-funds-flow.md",
     ROOT / "references" / "dashboard-quality-framework.md",
+    ROOT / "references" / "insight-hierarchy.md",
     ROOT / "references" / "dashboard-audit-loop.md",
     ROOT / "eval" / "dashboard-quality.md",
     ROOT / "references" / "analysis-depth.md",
@@ -57,6 +58,7 @@ critical = [
     "Analysis Spec Gate",
     "Display & Label Gate",
     "Dashboard Decision & Audit Loop Gate",
+    "Insight Hierarchy Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -118,6 +120,13 @@ for rule in ["Decision Question Gate", "Dashboard Coverage Plan", "Simplest Prim
 for rule in ["360px", "768px", "1280px", "Real User", "Constrained User", "Edge-data User"]:
     assert rule in audit_loop, f"dashboard audit-loop behavior missing: {rule}"
 
+insight_hierarchy = (ROOT / "references" / "insight-hierarchy.md").read_text(encoding="utf-8")
+for rule in ["Insight Hierarchy Gate", "North Star Gate", "So-What Gate", "Amount × Count Dual-Signal Gate", "Event-Driven Spike Gate", "Driver Decomposition Gate", "Pareto Gate", "Exception Logic Gate", "Operational State Gate", "Analytical Restraint Gate", "High-Value Dashboard Acceptance"]:
+    assert rule in insight_hierarchy, f"insight hierarchy rule missing: {rule}"
+
+for rule in ["breadth", "intensity", "concentration", "Top1", "Top2", "remove-Top1", "in-process"]:
+    assert rule in insight_hierarchy, f"insight hierarchy behavior missing: {rule}"
+
 dashboard_eval = (ROOT / "eval" / "dashboard-quality.md").read_text(encoding="utf-8")
 for rule in ["Critical", "Major", "Minor", "Acceptance Rule", "Generate", "Evaluate Again"]:
     assert rule in dashboard_eval, f"dashboard eval rule missing: {rule}"
@@ -145,6 +154,9 @@ for anchor in ["V13 原样本：Redundancy Gate", "泛化 AT：同构趋势复�
 
 for anchor in ["V14 原样本：Dashboard Audit Loop", "泛化 AW：孤儿组件", "泛化 AX：复杂度升级无理由", "Adversarial AY：源码检查冒充视觉检查", "Adversarial AZ：正常数据可用，边界数据破版", "Adversarial BA：无 overflow 但图表被压扁"]:
     assert anchor in regression, f"V14 audit-loop anchor missing: {anchor}"
+
+for anchor in ["V15 原样本：Insight Hierarchy → High-Value Funds Dashboard", "85.21%", "48.84%", "88.27%", "89.27%", "81.89%", "86.64%", "51.92%", "70.62%", "11,392.5 USDT", "泛化 BB：金额涨、笔数平", "泛化 BC：标签被少数实体混淆", "泛化 BD：高金额未终态", "Adversarial BE：把单笔峰值写成增长", "Adversarial BF：KYC 伪驱动", "Adversarial BG：只有 Level + Trend"]:
+    assert anchor in regression, f"V15 insight-hierarchy anchor missing: {anchor}"
 
 assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 
