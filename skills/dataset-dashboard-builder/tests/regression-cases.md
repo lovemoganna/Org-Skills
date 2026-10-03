@@ -1149,3 +1149,155 @@ Vela / Chart.js / HTML component 内出现原始 rows 聚合或 `SUM` 等重新�
 360px 下页面没有整页横向 overflow，但 12 个时间点被强行缩放到 300px 宽，tick / label 无法读取。
 
 验收：失败。响应式检查必须同时验证 plot 可读性；优先使用组件内部横向滚动、减少可见点数或提高时间粒度，而不是把图整体缩小到不可读。
+
+
+## V15 原样本：Insight Hierarchy → High-Value Funds Dashboard
+
+同一 exchange_funds_flow_dataset，目标不再只是“生成正确看板”，而是验证看板是否能从规模进入驱动、集中度、例外与证据。
+
+### North Star
+
+completed + reference FX snapshot 口径：
+
+- 总流水：144,444 USDT；
+- 净流入：+67,305 USDT；
+- completed：43 / 50；
+- 入金：105,874.5 USDT；
+- 出金：38,569.5 USDT。
+
+### Amount × Count Dual Signal
+
+Fiat：
+
+- 金额：123,074.5 USDT；
+- 金额份额：85.21%；
+- completed count：21；
+- count share：48.84%；
+- median ticket：1,542 USDT。
+
+Crypto：
+
+- 金额：21,369.5 USDT；
+- completed count：22；
+- median ticket：650 USDT。
+
+验收：
+
+- 不能只写“Fiat 流水更高”；
+- 必须指出 Fiat 的金额份额明显高于笔数份额，并继续检查 ticket size；
+- 当前样本支持“Fiat 大额单笔驱动更多”的描述，不支持由 flow type 本身导致的因果结论。
+
+### Event-Driven Spike
+
+重要高峰月：
+
+- 2025-01：56,642.5 USDT / 6 笔；Top1 transaction share = 88.27%；
+- 2025-02：13,442.5 USDT / 4 笔；Top1 transaction share = 89.27%；
+- 2025-06：30,530 USDT / 3 笔；Top1 transaction share = 81.89%；
+- 2025-09：11,542.5 USDT / 4 笔；Top1 transaction share = 86.64%。
+
+验收：
+
+- 不得把这些峰值写成“广泛增长 / 活跃度提升”；
+- 应写成“少数大额交易 / 单笔事件驱动的金额峰值”；
+- 必须保留对应 transaction / user 的 evidence path。
+
+### Pareto / Concentration
+
+- Top1 user：49.93%；
+- Top2 users：77.30%；
+- Top2 transactions：51.92%；
+- Top5 transactions：70.62%。
+
+验收：
+
+- 用户集中度必须至少展示 Top1 / Top2 或 Pareto cumulative share；
+- KYC3 高占比若主要来自两个 Top 用户，不能写成“KYC3 用户整体更高价值”；
+- 应表达为“资金集中于两个用户；这两个用户恰好都是 KYC3，当前数据不能证明 KYC 等级驱动高金额”。
+
+### Operational Exceptions
+
+in-process = pending / processing / confirming：
+
+- 4 笔；
+- 参考快照估值合计：11,392.5 USDT；
+- 其中 10,000 USD pending deposit 为 materially large 单笔。
+
+terminal non-completion = failed / cancelled：
+
+- 3 笔；
+- 参考快照估值合计：825.5 USDT。
+
+验收：
+
+- in-process 与 failed / cancelled 必须分开；
+- 10,000 pending 应进入 Exception / Queue 或 Guardrail；
+- 不能只把 4 笔未终态压成一个状态百分比。
+
+### High-Value Acceptance
+
+默认看板必须能回答：
+
+1. North Star 是多少；
+2. 金额 / 笔数如何变化；
+3. 峰值来自 breadth、intensity 还是 concentration；
+4. 哪些用户 / 交易贡献最大；
+5. 哪些 exception 值得继续查；
+6. 能否下钻到真实记录。
+
+如果只能回答 1–2，V15 判失败。
+
+### 泛化 BB：金额涨、笔数平
+
+输入：
+
+- amount 明显上涨；
+- count 基本不变；
+- 少数 top transaction 增大。
+
+验收：
+
+- 必须继续检查 ticket size / top transaction share；
+- 不得直接写“业务活动全面增长”。
+
+### 泛化 BC：标签被少数实体混淆
+
+输入：
+
+某 segment 占 75% 金额，但该 segment 的金额几乎由 2 个实体贡献。
+
+验收：
+
+- 先表达 entity concentration；
+- segment 只能作为 confounded context；
+- 不得把 segment 标签写成驱动因素。
+
+### 泛化 BD：高金额未终态
+
+输入：
+
+总订单 100 笔，只有 2 笔 pending，但 pending amount 占 completed turnover 的 25%。
+
+验收：
+
+- 不能因为 count 低就降级；
+- 必须按 material amount 进入 Guardrail / Exception；
+- next check 要落到具体记录。
+
+### Adversarial BE：把单笔峰值写成增长
+
+月度 turnover 暴增，但 top1 transaction share > 80%，count 未同步增加。
+
+验收：失败。必须改为 event-driven spike / concentration 表达。
+
+### Adversarial BF：KYC 伪驱动
+
+KYC3 占比高，但去掉 Top2 用户后差异消失。
+
+验收：失败。不得写“KYC3 驱动高流水”。
+
+### Adversarial BG：只有 Level + Trend
+
+页面只有 KPI + 时间趋势，虽然数字都正确，但没有 driver / concentration / exception / evidence。
+
+验收：不能称为 high-value dashboard。
