@@ -103,3 +103,17 @@
 | Filter 可能在前端各组件本地处理 | 缺少统一 Filter → Query 链 | Filter patch Spec 后重新编译 | 同一 Filter State 驱动所有依赖组件 |
 | 图表类型正确但轴/Series/TopN 写死 | Chart plan 不可执行 | 新增 Chart.js Compiler | X/Y/Series/time grain/sort/TopN 全部来自 Spec |
 | 图表层可能把“异常/风险”作为预设分析类型 | Investigation 与 visualization 职责混合 | 新增 Neutral Visualization Rule | chart intent 只描述数据关系；结论由上游证明 |
+
+
+## V12：Funds Scale 主轴 + Renderer Contract
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 资金流看板先做状态、channel、network，却没有“总额随时间变化” | Domain Pack 把 Flow Health / Rail Performance 放得过重，没有定义资金规模第一主轴 | 新增 Funds Scale & Trend + Deposit / Withdrawal Structure | amount + direction + time 存在时，金额/笔数及其时间变化优先于 rail/network |
+| 只看总额或笔数，无法判断资金规模如何变化 | Trend 仍偏事件计数，没有 amount time-series 硬规则 | Primary Axis 验收加入 amount over time + count over time | level 必须与 time trend 成对；金额与笔数相互校验 |
+| 单日 FX 被用于跨期统一趋势时容易被误读为历史真实成交额 | snapshot 限制只写在数据层，没有贯穿标题/tooltip | Snapshot 口径贯穿 Visual Spec | reference/snapshot 必须在 KPI、图标题、tooltip/data window 持续可见 |
+| Chart.js 被写死成全局唯一 Renderer | Analysis Spec 与具体库耦合 | 新增 Renderer Contract | Result → Visual Spec → Renderer Adapter；Renderer 不拥有业务逻辑 |
+| 金融时间序列需要缩放、拖拽、crosshair，同普通 BI 图交互不同 | 缺少金融时间序列 Renderer 路由 | Vela Adapter 路由 | 资金/金融时间序列可优先 Vela；离线业务数据默认不接实时 provider |
+| 中文看板混入大量英文与开发术语 | 缺少 Display Contract | 新增 locale / UI Copy Gate | UI 跟随用户语言；内部 Analysis/Compiler/Regression 默认隐藏 |
+| permanent Label 与柱体重叠 | Label 规则只要求“显示”，没有位置与碰撞约束 | 新增 Label Policy | 外置优先、collision avoidance、padding、防裁切 |
+| 图表可点击但选中状态不明显 | 交互只有行为，没有视觉状态契约 | Interaction Contract | click/filter/selected/table linkage 使用统一 Filter State 与可见 selected state |
