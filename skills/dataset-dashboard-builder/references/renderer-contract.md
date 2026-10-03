@@ -67,7 +67,9 @@ Renderer Adapter 禁止：
 - 主图必须保留用户要求的 zoom / pan / crosshair / range selection；
 - 多图共享同一时间域时，应同步 crosshair；
 - WebGL2 不可用时允许使用库自身 Canvas2D fallback；
-- 如果用户明确要求离线成品，必须打包本地 bundle 或提供无库可读 fallback。
+- 如果用户明确要求离线成品，必须打包本地 bundle 或提供无库可读 fallback；
+- Vela API 仍在演进，成品必须 pin 到已验证的明确版本 / revision，不引用无版本 `latest`；
+- 保留 Vela 默认可见 attribution；若关闭内置 attribution，必须在同一页面提供等价、可见的 Vela™ 项目归属。
 
 ### Chart.js
 
