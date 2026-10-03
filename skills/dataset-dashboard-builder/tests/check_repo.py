@@ -11,6 +11,7 @@ assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skil
 for path in [
     ROOT / "references" / "source-authority.md",
     ROOT / "references" / "analysis-spec.md",
+    ROOT / "references" / "renderer-contract.md",
     ROOT / "references" / "chartjs-compiler.md",
     ROOT / "references" / "domain-routing.md",
     ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
@@ -53,6 +54,7 @@ critical = [
     "Domain Composition Gate",
     "Semantic Field Catalog Gate",
     "Analysis Spec Gate",
+    "Display & Label Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -68,6 +70,12 @@ for rule in ["Semantic Field Catalog", "Identifier Gate", "Aggregation Semantics
     assert rule in analysis_spec, f"analysis spec rule missing: {rule}"
 for rule in ["identifier", "non_additive", "COUNT DISTINCT", "Global Filter State"]:
     assert rule in analysis_spec, f"analysis spec semantic rule missing: {rule}"
+
+renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(encoding="utf-8")
+for rule in ["Renderer Ownership", "Renderer Selection", "Vela", "Chart.js", "Native HTML / CSS", "Visual Spec", "Label Policy", "Interaction Contract", "Language & UI Copy", "Theme & Component Consistency"]:
+    assert rule in renderer_contract, f"renderer contract rule missing: {rule}"
+for rule in ["setExternalCrosshair", "permanent label", "Global Filter State"]:
+    assert rule in renderer_contract, f"renderer contract behavior missing: {rule}"
 
 chart_compiler = (ROOT / "references" / "chartjs-compiler.md").read_text(encoding="utf-8")
 for rule in ["DuckDB SQL Compiler", "Result Contract", "Chart.js Compiler", "Axis Compiler", "Series Compiler", "Compiler Failure"]:
@@ -119,5 +127,11 @@ assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "labe
 
 for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W", "V9 原样本：Dashboard Context / Comparison / Drill", "泛化 X", "泛化 Y", "泛化 Z", "泛化 AA", "Adversarial AB", "V10 原样本：Exchange Funds Flow Domain Intelligence", "泛化 AC", "泛化 AD", "泛化 AE", "Adversarial AF", "V11 原样本：Semantic Field Catalog → Analysis Spec → Chart.js", "泛化 AG", "泛化 AH", "泛化 AI", "泛化 AJ", "泛化 AK", "Adversarial AL", "Adversarial AM"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
+
+for anchor in ["V12 原样本：Funds Scale & Trend → Renderer Contract", "105,874.5 USDT", "56,642.5 USDT / 6 笔", "泛化 AN：资金数据但错误主轴", "Adversarial AQ：Vela 自动接行情", "Adversarial AR：中文任务英文 UI", "Adversarial AS：永久 Label 与图形重叠"]:
+    assert anchor in regression, f"V12 regression anchor missing: {anchor}"
+
+renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(encoding="utf-8")
+assert "Result Contract" in renderer_contract and "Visual Spec" in renderer_contract and "Renderer Adapter" in renderer_contract
 
 print("OK: dataset-dashboard-builder repository integrity")
