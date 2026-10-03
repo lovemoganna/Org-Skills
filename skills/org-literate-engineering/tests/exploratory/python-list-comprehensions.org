@@ -1,0 +1,26 @@
+#+TITLE: Python List Comprehensions
+
+* Squares
+
+用列表推导式生成 0 到 n-1 的平方。
+
+#+name: squares
+#+begin_src python :var n=10 :results value
+return [x**2 for x in range(n)]
+#+end_src
+
+#+RESULTS: squares
+: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+* Filter
+
+在原文示例列表中保留不小于 floor 的值。
+
+#+name: filter-values
+#+begin_src python :var floor=0 :results value
+vec = [-4, -2, 0, 2, 4]
+return [x for x in vec if x >= floor]
+#+end_src
+
+#+RESULTS: filter-values
+: [0, 2, 4]
