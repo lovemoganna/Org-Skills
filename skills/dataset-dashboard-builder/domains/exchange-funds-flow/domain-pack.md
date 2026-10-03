@@ -97,28 +97,54 @@ Created
 
 按价值优先考虑，而不是机械全部执行。
 
-### A. Flow Health
+### A. Funds Scale & Trend
+
+只要存在 `amount + direction + time`，且数据质量允许，这一层默认是资金流看板的第一主轴：
+
+- 完成资金的总金额 / 总笔数是多少？
+- 金额与笔数随时间如何变化？
+- deposit / withdrawal 分别贡献多少？
+- Fiat / Crypto 分别贡献多少？
+- 原生 currency / asset 的金额结构是什么？
+- 是否存在明显时间段变化，需要继续下钻？
+
+**硬规则：**
+
+- 资金看板不能只有状态、channel、network，而缺失 amount / count 的时间变化；
+- channel / network 属于诊断维度，不能默认替代资金规模主轴；
+- 原生单位不兼容时，金额趋势按 currency / asset 分层；
+- 只有通过 Time-dimension Gate 时才允许跨单位汇总；
+- 单日 reference FX 只能生成“参考汇率折算 / 快照估值趋势”，不得命名为历史真实成交额；
+- snapshot valuation 可以作为辅助比较，不得掩盖原生单位明细。
+
+### B. Flow Health
 
 - Fiat / Crypto 的处理完成状态如何？
 - 未完成记录是失败，还是仍在处理中？
-- 哪些 rail / network 出现明显处理摩擦？
-- 时延差异是否由单一用户 / 单笔异常驱动？
-- 是否存在 backlog 迹象？
+- unresolved / in-process 是否影响资金规模解释？
+- 状态结构是否随时间变化？
 
-### B. Rail / Network Performance
+### C. Deposit / Withdrawal Structure
 
-对 channel / network 联合观察：
+- 入金金额 / 笔数与出金金额 / 笔数如何比较？
+- deposit / withdrawal 的时间趋势是否不同？
+- 方向差异来自 Fiat、Crypto、currency、asset 还是少数实体？
+- amount 与 count 是否给出一致信号？
 
-- N；
+### D. Rail / Network Diagnostics
+
+只有当主问题需要解释处理性能时再进入：
+
+- channel / network 的 N；
 - completed share；
 - failed / processing / confirming；
 - settlement latency；
-- amount / frequency（仅单位兼容时）；
-- fee / effective fee（数据支持时）。
+- fee / effective fee；
+- amount / frequency（仅单位兼容时）。
 
-必须同时保留 denominator 与状态结构。
+Rail / Network 默认是 Driver / Diagnostic，不是资金流看板的第一主轴。
 
-### C. Entity Exposure
+### E. Entity Exposure
 
 - 资金活动是否集中于少数用户？
 - 集中是金额、频率、方向还是资产 / rail 造成？
@@ -126,7 +152,7 @@ Created
 - KYC / country / account status 与集中是否混杂？
 - 某群体高占比是否只是少数大实体造成？
 
-### D. Flow Pattern Investigation
+### F. Flow Pattern Investigation
 
 仅基于当前数据能证明的事件序列检查：
 
@@ -140,7 +166,7 @@ Created
 
 这些只是 investigation patterns，不自动等于欺诈 / 洗钱 / 风险事件。
 
-### E. Evidence Queue
+### G. Evidence Queue
 
 任何重要 Signal 最终应能落到：
 
@@ -156,31 +182,43 @@ Signal
 
 ## 4. Metric Roles
 
-### Primary / Health
+### Primary
 
 数据支持时优先考虑：
 
+- completed amount；
+- completed count；
+- deposit amount / count；
+- withdrawal amount / count；
+- amount / count trend over time；
+- Fiat / Crypto split。
+
+如果单位不兼容：
+
+- 原生 currency / asset 分层趋势优先；
+- 可用 snapshot valuation 时必须显式写“参考汇率折算 / 快照估值”。
+
+### Health / Guardrail
+
 - completion / terminal-state mix；
-- settlement latency；
 - unresolved / in-process count；
-- affected users。
-
-### Driver
-
-- channel / network；
-- direction；
-- currency / asset；
-- user / segment；
-- amount band；
-- time window。
-
-### Guardrail
-
+- affected users；
+- settlement latency；
 - sample N / denominator；
 - missing / invalid timestamps；
 - exact/as-of FX coverage；
 - data-quality conflicts；
 - unit compatibility。
+
+### Driver
+
+- direction；
+- Fiat / Crypto；
+- currency / asset；
+- user / segment；
+- channel / network；
+- amount band；
+- time window。
 
 ### Diagnostic
 
@@ -188,9 +226,10 @@ Signal
 - Top contribution；
 - fee ratio；
 - rapid reversal interval；
-- order-level state timeline。
+- order-level state timeline；
+- rail / network performance。
 
-不要把 snapshot valuation 自动当 Primary KPI。
+snapshot valuation 不得冒充 historical actual amount。
 
 ## 5. Investigation Playbooks
 
@@ -251,31 +290,55 @@ ID / timestamp / reference-date conflict
 
 不是固定页面模板。
 
-当前数据支持时，优先组合以下工作区：
+如果当前数据支持 `amount + direction + time`，默认优先级：
+
+### Funds Scale & Trend
+
+第一主轴。
+
+推荐：
+
+- total amount / count；
+- deposit / withdrawal amount / count；
+- time trend；
+- Fiat / Crypto split；
+- native currency / asset amount table；
+- snapshot valuation 只作为明确标记的辅助层。
 
 ### Flow Health
 
 适合回答“资金处理是否健康”。
 
-推荐一个紧凑矩阵，而不是大量独立 KPI。
+推荐紧凑 status structure，不用大量独立 KPI。
 
-### Rail / Network Performance
+### Deposit / Withdrawal Structure
 
 推荐：
 
-- performance matrix；
-- ranked latency / completion；
-- status mix；
-- sample N。
+- amount + count 成对出现；
+- direction comparison；
+- direction trend；
+- 必要时继续拆 Fiat / Crypto / currency / asset。
 
 ### Entity Exposure
 
 推荐：
 
-- concentration curve / ranking；
+- concentration ranking；
 - entity table；
-- composition breakdown；
 - robustness note。
+
+### Rail / Network Diagnostics
+
+只有主问题需要解释处理性能时再展示。
+
+推荐：
+
+- performance matrix；
+- latency / completion；
+- sample N。
+
+不得在已有 amount + time 的资金数据上，用 rail / network performance 替代 Funds Scale & Trend。
 
 ### Flow Pattern Investigation
 
@@ -295,11 +358,15 @@ ID / timestamp / reference-date conflict
 
 优先：
 
-- Status mix: stacked bar / matrix；
-- Rail performance: matrix / ranked bar / conditional table；
-- Latency: distribution / box / dot / ranked median + N；
+- Funds amount over time: line / area；需要金融时间序列交互时优先 Vela；
+- Funds count over time: line；
+- Deposit vs withdrawal: dual line / grouped comparison；
+- Native currency / asset amount: table / ranked bar；
+- Status mix: 100% stacked / compact status bar / matrix；
 - Concentration: Pareto / ranked bar + cumulative share；
 - User exposure: sortable table；
+- Rail performance: matrix / ranked bar / conditional table（诊断层）；
+- Latency: distribution / box / dot / ranked median + N；
 - Event sequence: timeline / sequence table；
 - Exception evidence: operational table / drawer；
 - Flow relation: Sankey 仅在真实 source → target + weight 存在时。
@@ -307,7 +374,9 @@ ID / timestamp / reference-date conflict
 避免：
 
 - 默认 Pie；
-- “总资金 USDT”大卡（若 FX 不满足历史估值）；
+- 只有状态和 channel/network、却缺少 amount/count time trend；
+- 把不同 currency / asset 直接相加；
+- 单日 FX 快照生成“历史真实总额”；
 - 没有 stage semantics 的 funnel；
 - 没有 address relation 的 network graph；
 - 用地图展示 country 但空间关系无业务意义。
