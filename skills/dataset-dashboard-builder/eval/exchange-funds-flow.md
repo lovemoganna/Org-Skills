@@ -31,6 +31,11 @@ Detection 不通过则应回退 generic，而不是进入下面的 Domain Evalua
 - 当前 Schema 存在 amount + direction + time，却没有 Funds Scale & Trend；
 - 只展示状态、channel / network，而没有 amount / count 随时间变化；
 - deposit / withdrawal 没有同时检查金额与笔数；
+- 时间高峰没有检查 top transaction / top entity share，就直接写成增长趋势；
+- amount 与 count 信号不一致时没有继续检查 ticket size / concentration；
+- entity concentration 只做排名，不做 Top1 / Top2 / Pareto / remove-Top1 检查；
+- KYC / country 等群体高占比实际由少数 Top 用户造成，却被写成群体属性结论；
+- materially large 的 in-process 记录只被压成状态占比，没有进入 Exception Queue；
 - 未区分 Fiat rail 与 Crypto network；
 - rail / network 比较不显示 denominator；
 - latency 差异没有 N 或稳健性上下文；
@@ -66,4 +71,7 @@ Detection 不通过则应回退 generic，而不是进入下面的 Domain Evalua
 6. Major = 0；
 7. 所有领域专属异常都能回到真实证据或明确 unavailable；
 8. amount + direction + time 存在时，默认视图能直接看到资金规模与时间变化；
-9. channel / network 仅在有解释价值时进入主页面。
+9. channel / network 仅在有解释价值时进入主页面；
+10. 重要时间高峰已区分 breadth（count）与 intensity / concentration（ticket / top transaction）；
+11. entity concentration 至少提供 Top1 / Top2 或 Pareto 累计占比；
+12. Exception 能落到具体订单、用户、金额和 next check。

@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -296,6 +296,35 @@ Analysis Intent 使用中性关系：
 - Renderer Adapter 只消费 Result Contract / Visual Spec，不接触原始表；
 - Renderer 不得因库的能力边界改变 Analysis Intent；
 - 用户明确指定 Renderer 时，只要其能忠实表达语义，就优先遵循用户选择。
+
+
+## 6AA. Insight Hierarchy Gate
+
+Portfolio Synthesis / Domain Composition 后，Dashboard IA 前必须读取 \`references/insight-hierarchy.md\`。
+
+建立：
+
+\`\`\`text
+North Star
+→ Change
+→ Driver / Segment
+→ Exception
+→ Action / Next Investigation
+→ Detail / Evidence
+\`\`\`
+
+并执行：
+
+- So-What Gate：每个主图 / 主表必须有一句真实数据支持的 takeaway；
+- Amount × Count Dual-Signal Gate：交易 / 资金类问题必须同时检查金额与笔数；
+- Event-Driven Spike Gate：高峰先检查 top transaction / top entity share，禁止把单笔大额事件写成全面增长；
+- Driver Decomposition：优先 breadth / intensity / concentration，而不是机械遍历全部维度；
+- Pareto Gate：高集中度必须检查 Top1 / Top2 / cumulative share，并避免把实体集中错误归因给 KYC / country 等标签；
+- Exception Logic：Exception 必须带对象、证据、重要性和 next check；
+- Operational State：in-process 与 failed/cancelled 分开，不得混成一个异常率；
+- Analytical Restraint：小样本优先 descriptive decomposition / Pareto / exact evidence，不乱上因果、预测和聚类。
+
+高价值 Dashboard 不能只回答“多少”和“怎么变”，还必须回答“为什么 / 谁贡献 / 哪些例外值得查 / 如何落到证据”。
 
 ## 6B. Information Architecture Gate
 

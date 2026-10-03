@@ -107,6 +107,10 @@ Created
 - Fiat / Crypto 分别贡献多少？
 - 原生 currency / asset 的金额结构是什么？
 - 是否存在明显时间段变化，需要继续下钻？
+- 高峰是 count 广泛上升，还是少数大额交易导致？
+- amount 与 count 是否给出同一信号？
+- 典型单笔（median ticket）是否发生变化？
+- Top transaction / Top entity 是否主导时间高峰？
 
 **硬规则：**
 
@@ -146,11 +150,16 @@ Rail / Network 默认是 Driver / Diagnostic，不是资金流看板的第一主
 
 ### E. Entity Exposure
 
+优先执行 Pareto / concentration，而不是只做 TopN 排名。
+
 - 资金活动是否集中于少数用户？
 - 集中是金额、频率、方向还是资产 / rail 造成？
 - 去除 Top1 / Top2 后结论是否成立？
 - KYC / country / account status 与集中是否混杂？
 - 某群体高占比是否只是少数大实体造成？
+- Top1 / Top2 / Top5 share 是多少？
+- 去掉 Top1 后结论是否仍成立？
+- Top transaction share 是否解释了实体集中或月度峰值？
 
 ### F. Flow Pattern Investigation
 
@@ -309,7 +318,9 @@ ID / timestamp / reference-date conflict
 
 适合回答“资金处理是否健康”。
 
-推荐紧凑 status structure，不用大量独立 KPI。
+优先把 materially large 的 in-process / failed / cancelled 记录转为 Exception Queue，而不是默认画状态构成图。
+
+只有状态分布本身改变业务判断时，才保留紧凑 status structure。
 
 ### Deposit / Withdrawal Structure
 
@@ -324,9 +335,11 @@ ID / timestamp / reference-date conflict
 
 推荐：
 
-- concentration ranking；
-- entity table；
-- robustness note。
+- Pareto / cumulative share；
+- Top1 / Top2 concentration；
+- entity ranking / bar-in-cell table；
+- remove-Top1 robustness；
+- confounding note。
 
 ### Rail / Network Diagnostics
 
@@ -358,9 +371,10 @@ ID / timestamp / reference-date conflict
 
 优先：
 
-- Funds amount over time: line / area；需要金融时间序列交互时优先 Vela；
+- Funds amount + count over time: 允许一张混合图，但必须确保双轴不制造虚假相关；资金方向分析优先 deposit / withdrawal bars + count line；
+- Funds amount over time: line / area；
 - Funds count over time: line；
-- Deposit vs withdrawal: dual line / grouped comparison；
+- Deposit vs withdrawal: diverging / grouped bars；
 - Native currency / asset amount: table / ranked bar；
 - Status mix: 100% stacked / compact status bar / matrix；
 - Concentration: Pareto / ranked bar + cumulative share；
