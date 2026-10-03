@@ -140,3 +140,15 @@
 | 正常数据没问题，窄屏/空数据破版 | 只验证 happy path | 新增 Real / Constrained / Edge-data User Simulation |
 | node --check 被误当成 UI 验收 | static QA 与 rendered QA 边界不清 | 明确 360/768/1280 rendered audit；无法渲染必须披露 |
 | 同类错误重复出现 | 修当前 HTML，没有 durable fix | 两轮复现强制升级为 Skill rule / regression / checker |
+
+
+## V15：Insight Hierarchy / High-Value Dashboard
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| UI / Audit Loop 更完整，但用户仍感觉“质量完全没提升” | 主要优化生成与验收，没有强制 Dashboard 解释 North Star 为什么变化 | 新增 Insight Hierarchy Gate | North Star → Change → Driver → Exception → Evidence |
+| 金额趋势高峰容易被直接称为增长 | 未检查金额与笔数是否同步，也未检查 top transaction share | 新增 Amount × Count + Event-Driven Spike Gate | amount 涨、count 平时优先查 ticket / concentration；Top1 主导则写事件驱动 |
+| Fiat 金额高容易停留在“类型差异” | 没有 breadth / intensity / concentration 分解 | 新增 Driver Decomposition | 优先解释规模来自对象广度、典型单笔还是集中度 |
+| KYC3 高金额占比容易被写成群体洞察 | segment 被 Top 用户混淆 | 新增 Pareto + confounding rule | 先查 Top1/Top2/remove-Top1；标签结论必须经实体集中度校正 |
+| 状态图展示 4 笔未终态但没有行动价值 | 只看状态占比，没有 amount materiality 与 evidence path | 新增 Exception Logic | materially large 的 in-process 应进入 Guardrail / Queue，并落到订单 |
+| 小数据集也容易被套复杂模型 | “深度分析”被误解为方法复杂 | 新增 Analytical Restraint | 小样本优先 decomposition / Pareto / exact evidence，不乱做因果、聚类、预测 |
