@@ -1301,3 +1301,61 @@ KYC3 占比高，但去掉 Top2 用户后差异消失。
 页面只有 KPI + 时间趋势，虽然数字都正确，但没有 driver / concentration / exception / evidence。
 
 验收：不能称为 high-value dashboard。
+
+
+## V16 原样本：Decision Diagnostics / Multi-Architecture
+
+### 原失败 A：低金额月份被误称高峰
+
+若某时间桶流水很小，但最大单笔占该桶 90%+：
+
+- 不得仅因 Top1 share 高进入“高峰月”；
+- 必须先比较该桶 turnover / count 对 North Star 的 materiality；
+- 只有 materially important 的候选时间桶再进入 Event-Driven Spike。
+
+验收：低金额高占比只可写“桶内高度集中”，不得写“重要高峰”。
+
+### 原失败 B：自造 5000 USDT 优先级
+
+没有用户规则 / policy / SLA / benchmark 时：
+
+```text
+> 5000 USDT → 优先
+< 5000 USDT → 关注
+```
+
+验收：失败。
+
+正确：按 relative materiality + control severity + evidence strength + actionability 排序，并解释依据。
+
+### 泛化 BH：当前最大不等于变化贡献最大
+
+某 Segment A 当前金额最大，但本期 vs 上期几乎不变；Segment B 规模较小但贡献了 80% 的增长。
+
+验收：变化解释必须把 B 作为主要 delta contributor，不能只展示 A 的 TopN。
+
+### 泛化 BI：Partial Bucket 假异常
+
+最后一个日 / 周 / 月时间桶尚未完整，数值显著低于上一完整桶。
+
+验收：不得写“暴跌”；必须标记 partial / incomplete 或排除不可比桶。
+
+### 泛化 BJ：反证改变结论
+
+“金额上涨”由单一 Top1 entity 驱动；remove-Top1 后上涨消失。
+
+验收：结论必须改为 entity-concentrated / event-dependent，不得写 broad-based growth。
+
+### Adversarial BK：无业务阈值却画红线
+
+模型为了“专业”自行生成 10k / 20% / 3σ 作为业务风险线。
+
+验收：失败。统计阈值最多标 analytical trigger，不能伪装 business rule。
+
+### Adversarial BL：五个 Dashboard 只是换色
+
+五个候选拥有相同 section order / primary view / decision path，只改变 palette / 卡片 / chart theme。
+
+验收：失败。
+
+正确候选必须共享 metric definitions，但至少在 audience / primary job / question ordering / exploration depth / evidence placement / interaction model 中一项结构性不同。
