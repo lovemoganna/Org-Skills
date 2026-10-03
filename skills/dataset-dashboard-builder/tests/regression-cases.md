@@ -652,3 +652,206 @@ V10 必须至少重组为当前数据支持的领域工作区：
 
 - 不能仅凭 network / asset / channel 字段名判定 exchange funds flow；
 - Entity + Event-State + Dimension 证据不足时回退 generic。
+
+
+## V11 原样本：Semantic Field Catalog → Analysis Spec → Chart.js
+
+当前四表必须先生成统一字段语义。
+
+### Field Catalog
+
+至少识别：
+
+- `uid / fiat_order_id / crypto_order_id` → identifier；
+- `created_at / completed_at / effective_date` → temporal；
+- `channel / network / direction / country_code` → categorical；
+- `status` → state；
+- `currency / asset` → unit / categorical；
+- `amount / fee` → continuous_numeric；
+- `confirmations` → discrete_numeric。
+
+验收：
+
+- `uid` 虽为数值，也不得生成 `SUM(uid)`；
+- order id 不得进入 Y axis；
+- amount 只有在单位兼容时才允许 SUM；
+- rate / percentage / snapshot 不得机械 SUM。
+
+### Spec A：时间 + 指标
+
+问题：
+
+`Fiat 记录量如何随时间变化？`
+
+预期：
+
+- intent = `trend`；
+- temporal dimension = `created_at`；
+- measure = `COUNT(fiat_order_id)`；
+- time grain 根据当前跨度动态选择，不写死在组件；
+- Chart.js = `line`；
+- X = time bucket；
+- Y = order count；
+- 不出现“异常 / 风险”作为 chart intent。
+
+### Spec B：分类 + 指标
+
+问题：
+
+`不同 channel 的 completed settlement latency 如何比较？`
+
+预期：
+
+- intent = `category_comparison`；
+- dimension = `channel`；
+- filters = `status = completed`；
+- measure = median latency；
+- aggregation = `MEDIAN`；
+- Chart.js = horizontal `bar`；
+- 排序按 median latency DESC；
+- N 必须可同时查询或作为 tooltip / table context。
+
+### Spec C：两个连续数值
+
+问题：
+
+`Fiat amount 与 fee 的关系如何？`
+
+预期：
+
+- intent = `relationship`；
+- X = amount；
+- Y = fee；
+- point identity = `fiat_order_id`；
+- optional Series = direction；
+- Chart.js = `scatter`；
+- 禁止先 SUM(amount) / SUM(fee) 再画一个点。
+
+### Spec D：数值分布
+
+问题：
+
+`Completed Fiat amount 如何分布？`
+
+预期：
+
+- intent = `distribution`；
+- measure = amount；
+- 在单位不兼容时必须先按 currency 分层或选择单一 currency；
+- SQL 层生成 histogram bin；
+- Chart.js 使用 bar 渲染 bins；
+- Renderer 不得自己重新分箱。
+
+### Spec E：实体 / 原始记录
+
+问题：
+
+`查看 Crypto 原始订单明细`
+
+预期：
+
+- intent = `detail`；
+- 使用 table；
+- `crypto_order_id` 作为 identifier；
+- 不生成数值轴；
+- 记录排序按业务时间；
+- table 与 chart 共用统一 Filter State。
+
+### Query Ownership
+
+验收：
+
+```text
+Analysis Spec
+→ DuckDB SQL
+→ Result Contract
+→ Chart.js Spec
+```
+
+- KPI / Chart / Table 不得自行拼 SQL；
+- 全局筛选必须 patch Analysis Spec 后重新执行；
+- X/Y/Series/TopN/time grain 不能写死在组件；
+- Chart.js config 不能从原始 Schema 临时猜列。
+
+## V11 泛化
+
+### 泛化 AG：数值 ID
+
+输入：
+
+`customer_id BIGINT / order_id BIGINT / revenue DOUBLE / segment VARCHAR`
+
+验收：
+
+- customer_id / order_id = identifier；
+- 允许 COUNT DISTINCT；
+- 禁止 SUM / AVG ID；
+- revenue 才是 measure。
+
+### 泛化 AH：Series 基数过高
+
+输入：
+
+`date / revenue / product_id`，product_id 有 500 个值。
+
+验收：
+
+- 不自动生成 500 条折线；
+- Planner 必须选择 TopN / filter / small multiples / no series；
+- Renderer 不得自行截断到任意前 10 个。
+
+### 泛化 AI：Non-additive Rate
+
+输入：
+
+`region / conversion_rate / converted / eligible`
+
+验收：
+
+- 优先 `SUM(converted) / SUM(eligible)`；
+- 禁止 `SUM(conversion_rate)`；
+- 除非 metric definition 明确，否则不得简单 AVG conversion_rate。
+
+### 泛化 AJ：动态时间粒度
+
+输入 A：3 天分钟级事件。
+输入 B：5 年月度业务数据。
+
+验收：
+
+- 两者不能都写死 month 或 day；
+- time grain 根据跨度、自然 cadence、数据密度与问题生成；
+- 用户明确粒度时优先用户要求。
+
+### 泛化 AK：同一指标跨组件
+
+一个 KPI、趋势图和明细表都引用 `completed_share`。
+
+验收：
+
+- 三者引用同一 measure definition；
+- 不允许 KPI 用 completed/total、图表用 AVG(row_rate)、表格又用另一状态集合。
+
+### Adversarial AL：组件自行查询
+
+某 Chart.js 组件内部出现：
+
+`duckdb.query(...)` 或自行拼 `SELECT ...`
+
+验收：
+
+- 判失败；
+- 查询必须上收 Analysis Engine；
+- 组件只消费 Result Contract。
+
+### Adversarial AM：伪数值字段
+
+输入：
+
+`postal_code INTEGER / sku_code BIGINT / risk_level_code INTEGER`
+
+验收：
+
+- 不能仅凭 numeric type 当 continuous measure；
+- 根据语义识别为 categorical / identifier / ordinal / unknown；
+- 未确认语义时不得 SUM。
