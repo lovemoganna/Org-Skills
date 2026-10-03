@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Interaction → UI → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -357,6 +357,31 @@ Information Architecture 完成后，逐组件执行“信息增量”检查。
 核心水平 → 变化 → 结构 / 驱动 → 对象 → 证据
 ```
 
+
+## 6D. Dashboard Decision & Audit Loop Gate
+
+Information Architecture 与 Redundancy Gate 完成后，渲染前必须读取 `references/dashboard-audit-loop.md`。
+
+先生成：
+
+Decision Questions → Coverage Plan → Simplest Primitive → Build
+
+硬规则：
+
+- 每个 section 只有一个主 job；
+- 每个主组件至少服务一个 Decision Question；
+- 每个 Decision Question 默认只有一个 Primary View；
+- Coverage Plan 中的 required KPI / chart / filter / interaction / evidence 必须有稳定 id；
+- 生成后必须逐项 Coverage Reconciliation；
+- 实际存在但不在 Plan 中的孤儿组件，要么补充其独立问题价值，要么删除；
+- Dashboard 默认高密度但可扫描，不以增加留白作为默认优化；
+- 统一 token 控制 type / spacing / gutter / radius / control height / state；
+- 同行控件高度、KPI baseline、section edge、同级 gutter 必须一致；
+- 至少模拟 Real User + Constrained User + Edge-data User；
+- 能渲染时检查 360 / 768 / 1280px；不能渲染时明确视觉验收未完成。
+
+同类 UI / IA 缺陷连续两轮复现时，必须升级为 Skill rule / regression / checker，而不是继续只修 HTML。
+
 ## 7. 图表与布局
 
 每张图先写一句：`这张图回答什么问题？`
@@ -462,8 +487,9 @@ Executive Thesis / 关键限制
 
 生成后必须执行：
 
-1. `eval/dashboard-quality.md`；
-2. `references/regression-loop.md`。
+1. `references/dashboard-audit-loop.md` 的 Coverage Reconciliation / User Simulation / Rendered Audit；
+2. `eval/dashboard-quality.md`；
+3. `references/regression-loop.md`。
 
 执行：
 
@@ -494,6 +520,8 @@ Generate
 - Metric Role / Comparison Context Gate 已完成；
 - Default View 在无交互时已能完成 Primary Job；
 - Information Architecture Gate 已完成；
+- Dashboard Decision & Audit Loop Gate 已完成；
+- Decision Questions 与 Coverage Plan 已生成并逐项对账；
 - 需要定位/验证时 Interaction Gate 已完成；
 - 首屏 Thesis 已合并重复驱动并按价值排序；
 - 每个核心图表都回答明确问题；

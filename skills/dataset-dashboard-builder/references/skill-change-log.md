@@ -127,3 +127,16 @@
 | amount / count 与 total / deposit / withdrawal 被复制成多张同构时间图 | 把指标数量误当成图表数量 | 主趋势使用 metric / direction control | 同构视图优先切换，不机械复制 |
 | 用户集中 ranking chart 与同值 table 重复 | chart / table 职责未区分 | bar-in-cell table 合并比较与精确读值 | table 只有增加 lookup / attributes / action 时才与 chart 共存 |
 | Signal 卡片与 Evidence Queue 重复同一异常 | Finding 展示与 Evidence 入口分离过度 | 合并为 Queue + detail | 同一异常只保留一个主入口 |
+
+
+## V14：Dashboard Audit Loop
+
+| 反复暴露的问题 | 根因 | 修正 |
+|---|---|---|
+| 每轮都靠用户指出新问题 | 只有生成规则，没有系统 rendered audit | 新增 Dashboard Audit Loop |
+| 页面组件越改越多 | 缺少 Decision Questions 与 Coverage Plan | 生成前锁定 2–5 个问题，每个问题一个 Primary View |
+| AI 会顺手增加“看起来专业”的模块 | 没有 coverage reconciliation | required 元素逐项对账，孤儿组件必须删除或回写问题 |
+| UI 修复长期靠局部 padding | 没有全局 token 与跨组件一致性检查 | 统一 type/spacing/gutter/radius/control/state tokens |
+| 正常数据没问题，窄屏/空数据破版 | 只验证 happy path | 新增 Real / Constrained / Edge-data User Simulation |
+| node --check 被误当成 UI 验收 | static QA 与 rendered QA 边界不清 | 明确 360/768/1280 rendered audit；无法渲染必须披露 |
+| 同类错误重复出现 | 修当前 HTML，没有 durable fix | 两轮复现强制升级为 Skill rule / regression / checker |

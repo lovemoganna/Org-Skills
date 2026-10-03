@@ -1049,3 +1049,103 @@ Vela / Chart.js / HTML component 内出现原始 rows 聚合或 `SUM` 等重新�
 每个 panel 都写“点击图表可筛选”。
 
 验收：失败；统一为一处必要交互提示或通过显著 hover/selected state 自解释。
+
+
+## V14 原样本：Dashboard Audit Loop
+
+基于 exchange_funds_flow_dataset 与前序多轮 Dashboard 调试，新增生成前 / 生成后的自动审查契约。
+
+### Decision Questions
+
+默认页面必须先压缩成 2–5 个问题，例如：
+
+1. 范围内资金规模是多少？
+2. 资金规模与笔数随时间如何变化？
+3. 资金集中在哪些实体？
+4. 哪些记录值得继续核查？
+
+验收：
+
+- 每个 section 只能对应一个主 job；
+- 每个主组件必须服务至少一个问题；
+- 组件不能说明回答哪个问题 → 删除；
+- 一个问题默认只有一个 Primary View。
+
+### Coverage Plan
+
+至少覆盖：
+
+- kpi-turnover
+- kpi-net
+- trend-funds
+- filter-date
+- filter-direction
+- entity-concentration
+- queue-evidence
+
+要求：
+
+- required 项必须全部渲染；
+- 未计划组件必须回写新问题或删除；
+- 不允许“AI 顺手加的图”。
+
+### Simplest Primitive
+
+- 单一水平优先 KPI；
+- 精确明细优先 table；
+- 简单排名可 bar-in-cell；
+- 普通业务趋势无需伪装 K 线；
+- advanced visual 必须证明新增分析价值。
+
+### User Simulation
+
+必须至少覆盖：
+
+- Real User：默认打开 → 判断资金规模 → 看趋势 → 定位实体 → 查看证据；
+- Constrained：360px 或 keyboard-only；
+- Edge Data：empty / long label / extreme value 至少一种。
+
+### Rendered Audit
+
+能渲染时检查 360 / 768 / 1280：
+
+- 无整页横向 overflow；
+- filter 不长期占满视口；
+- KPI baseline 一致；
+- input / select / button 同行高度一致；
+- section left edge / gutter 一致；
+- chart label 无裁切 / 重叠；
+- dark / light 状态连续。
+
+不能渲染时必须标记 rendered visual check unavailable，不得只跑 node --check 就声称 UI 已验收。
+
+### 泛化 AW：孤儿组件
+
+计划只有 KPI / trend / entity table，最终 HTML 多出 donut 与“智能洞察”卡片。
+
+验收：失败。除非新增 Decision Question 并证明独立价值，否则删除。
+
+### 泛化 AX：复杂度升级无理由
+
+3 个分类值用 3D donut / custom WebGL visual。
+
+验收：失败。Simplest Primitive Guard 应选择简单 bar / compact status / table。
+
+### Adversarial AY：源码检查冒充视觉检查
+
+只执行 HTML parse + node --check，最终声称“视觉验收通过”。
+
+验收：失败。必须明确区分 source/static QA 与 rendered visual QA。
+
+### Adversarial AZ：正常数据可用，边界数据破版
+
+默认数据正常，但 empty / long label / 360px 时控件溢出或页面断裂。
+
+验收：失败。Edge-data + constrained simulation 是 required。
+
+
+### Adversarial BA：无 overflow 但图表被压扁
+
+360px 下页面没有整页横向 overflow，但 12 个时间点被强行缩放到 300px 宽，tick / label 无法读取。
+
+验收：失败。响应式检查必须同时验证 plot 可读性；优先使用组件内部横向滚动、减少可见点数或提高时间粒度，而不是把图整体缩小到不可读。

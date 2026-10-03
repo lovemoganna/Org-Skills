@@ -50,6 +50,12 @@ Generate
 
 检查：
 
+- 是否先写 2–5 个 Decision Questions；
+- 每个 section 是否只有一个主 job；
+- 每个主组件是否绑定 Decision Question；
+- 每个 Decision Question 是否只有一个 Primary View；
+- Coverage Plan required 项是否全部真实渲染；
+- 是否存在不在 Coverage Plan、又无独立价值的孤儿组件；
 - 第一屏是否优先展示 P0/P1；
 - 是否形成 `总览 → 发现 → 解释 → 定位 → 明细`；
 - 是否存在同权卡片堆叠；
@@ -103,6 +109,13 @@ Generate
 
 检查：
 
+- 是否完成 Real / Constrained / Edge-data 三类用户模拟；
+- 能渲染时是否检查 360 / 768 / 1280px；
+- 是否存在整页 overflow / clipping / chart label collision；
+- 同行控件高度是否一致；
+- KPI value 是否同一 baseline；
+- 同层级 gutter / left edge 是否一致；
+- 深浅主题 default / hover / focus / selected / empty 是否连续；
 - 信息层级是否清晰；
 - 字体是否可读；
 - 密度是否合理；
@@ -136,6 +149,10 @@ Generate
 - Drill 丢失触发上下文，进入错误对象、错误 tab 或无关明细；
 - 内部 Evaluation / QA 过程被当成 Dashboard 主模块；
 - 信息架构混乱；
+- Decision Question 无主视图或一个 section 承担多个不相干主任务；
+- Coverage Plan required 元素缺失；
+- 存在明显孤儿组件或重复组件；
+- 360 / 768 / 1280 任一核心视口出现主要内容溢出 / 裁切；
 - 页面更像报告而不是 Dashboard；
 - 图表选择错误；
 - 无法完成 `What → So What → Why → Who/Where → Evidence`；

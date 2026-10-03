@@ -50,7 +50,14 @@
 20. 交互筛选必须有 visible selected state，并与表格/KPI 使用同一范围；
 21. 同一业务问题不得在 KPI / chart / totals table 中无信息增量地重复；
 22. 能通过一个主图 + metric/direction toggle 表达的同构趋势，不应复制为多张图；
-23. Signal 与 Evidence Queue 重复时应合并，除非 Signal 提供独立比较或优先级信息。
+23. Signal 与 Evidence Queue 重复时应合并，除非 Signal 提供独立比较或优先级信息；
+24. Decision Questions 必须存在，且每个主组件可追溯到至少一个问题；
+25. Coverage Plan required 项必须逐项渲染并对账；
+26. 不得存在无 Coverage Plan 且无独立价值的孤儿组件；
+27. 至少完成 Real User / Constrained User / Edge-data User 三类模拟；
+28. 能真实渲染时至少检查 360 / 768 / 1280px；
+29. 同行控件高度、KPI baseline、section edge、同级 gutter 必须一致；
+30. 同类缺陷连续复现时必须进入 Skill rule / regression / checker，而不是只修当前 HTML。
 
 ### 4A. 深度分析 QA
 
@@ -130,7 +137,20 @@
 - 是否通过 `eval/dashboard-quality.md`，Critical=0 且 Major=0；
 - 是否仅修 Minor，而真正 Major 仍未解决。
 
-### 4G. 可视化 QA
+### 4G. Decision / Coverage / Rendered QA
+
+- 是否只有 2–5 个明确 Decision Questions，而不是把所有字段当问题；
+- 每个 section 是否只有一个主 job；
+- 每个 Primary View 是否回答一个独立问题；
+- required 元素是否全部有稳定 id 并完成 Coverage Reconciliation；
+- 实际 DOM 是否有计划外孤儿组件；
+- 是否执行 Simplest Primitive Guard，避免复杂度高于问题需要；
+- 高密度是否仍可扫描，而不是简单增加留白；
+- 是否模拟真实用户、受限用户、边界数据；
+- 360 / 768 / 1280 是否存在 overflow、clipping、sticky 占屏、label 碰撞；
+- static source check 不得冒充 rendered visual check。
+
+### 4H. 可视化 QA
 
 - 金融 / 资金时间序列若使用 Vela，是否只消费统一 Result；
 - Vela 是否保留 zoom / pan / crosshair / range interaction，且没有接入无关实时 provider；
