@@ -28,6 +28,9 @@ Detection 不通过则应回退 generic，而不是进入下面的 Domain Evalua
 必须修正：
 
 - 页面只有通用 KPI / trend / TopN，看不出资金流领域工作流；
+- 当前 Schema 存在 amount + direction + time，却没有 Funds Scale & Trend；
+- 只展示状态、channel / network，而没有 amount / count 随时间变化；
+- deposit / withdrawal 没有同时检查金额与笔数；
 - 未区分 Fiat rail 与 Crypto network；
 - rail / network 比较不显示 denominator；
 - latency 差异没有 N 或稳健性上下文；
@@ -41,9 +44,11 @@ Detection 不通过则应回退 generic，而不是进入下面的 Domain Evalua
 
 根据当前 Schema 支持情况，至少判断这些问题是否 applicable：
 
+- Funds Scale & Trend；
 - Flow Health；
-- Rail / Network Performance；
+- Deposit / Withdrawal Structure；
 - Entity Exposure；
+- Rail / Network Diagnostics；
 - Flow Pattern Investigation；
 - Evidence Queue。
 
@@ -59,4 +64,6 @@ Detection 不通过则应回退 generic，而不是进入下面的 Domain Evalua
 4. 通用 Analysis / Investigation 仍然执行；
 5. Critical = 0；
 6. Major = 0；
-7. 所有领域专属异常都能回到真实证据或明确 unavailable。
+7. 所有领域专属异常都能回到真实证据或明确 unavailable；
+8. amount + direction + time 存在时，默认视图能直接看到资金规模与时间变化；
+9. channel / network 仅在有解释价值时进入主页面。
