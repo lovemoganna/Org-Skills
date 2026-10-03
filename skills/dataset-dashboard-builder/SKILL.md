@@ -326,6 +326,37 @@ What
 - 所有模块使用相同视觉权重；
 - 把 supporting evidence 当首屏主体。
 
+## 6C. Redundancy Gate
+
+Information Architecture 完成后，逐组件执行“信息增量”检查。
+
+核心规则：**一个业务问题只保留一个主表达。第二个组件必须回答新的问题，否则删除或合并。**
+
+逐项检查：
+
+- KPI 已回答“当前是多少”后，趋势图只负责“怎么变”，不得再做一套同值总额表；
+- 同一时间序列如果只是 amount / count 或 total / deposit / withdrawal 的视角切换，优先使用一个主图 + metric / direction control，而不是并排复制多张同构图；
+- 图上永久 Label 已能精确读值时，不再额外放一张逐期 totals table，除非表格承载额外字段或核查任务；
+- status summary 与 status composition 重复时合并成一个紧凑状态组件；
+- ranking chart 与同字段 ranking table 重复时，只保留一个主视图；需要精确核查时，将 bar-in-cell 合并进 table；
+- Signal 卡片与 Evidence Queue 指向同一异常时，优先合并为一个可下钻 Queue；
+- 同一个筛选/操作说明不要在每个 Panel 重复，只保留一处最小必要提示；
+- 第二个组件只有在新增 `time / segment / distribution / denominator / evidence / exact lookup` 等信息时才允许保留。
+
+每个组件必须回答：
+
+```text
+它比页面上已有内容新增了什么信息？
+```
+
+答不出来 → 删除。
+
+验收：默认视图应尽量形成最短链路：
+
+```text
+核心水平 → 变化 → 结构 / 驱动 → 对象 → 证据
+```
+
 ## 7. 图表与布局
 
 每张图先写一句：`这张图回答什么问题？`
@@ -468,7 +499,8 @@ Generate
 - 每个核心图表都回答明确问题；
 - Visual Plan 与 Renderer Capability Gate 已完成；
 - 关键指标口径可追溯；
-- 无重复/装饰性图表；
+- 无重复 KPI / 图表 / totals table / signal card；
+- Redundancy Gate 已通过，每个保留组件都有独立信息增量；
 - Dashboard Quality Evaluation：Critical=0 且 Major=0；
 - Rendered QA 通过；
 - 新发现的可泛化缺陷已回写 Skill 并复测。
