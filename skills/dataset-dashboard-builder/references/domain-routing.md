@@ -8,16 +8,18 @@
 
 先生成候选 Domain，不直接决定。
 
-Domain 证据至少来自以下三类中的两类：
+Domain 证据必须先满足对应 Domain Pack 自己的 **Detection Signature**，再检查以下三类证据：
 
-1. **Entity evidence**：核心对象是否符合某领域语义；
+1. **Entity evidence**：核心对象是否符合该领域语义；
 2. **Event / state evidence**：事实表是否存在该领域典型事件、方向、阶段或状态；
-3. **Dimension evidence**：字段是否出现该领域特有维度，例如 channel / network / asset / SLA / product / campaign / incident 等。
+3. **Dimension evidence**：字段是否出现该领域特有维度。
+
+禁止把“有 entity + status + 某个常见字段”本身当作领域证据。字段名 `network / asset / channel / status` 在不同领域可能重名，必须结合事实粒度与事件语义判断。
 
 只有：
 
 - 用户显式指定领域；或
-- 数据证据足够一致；
+- 对应 Pack 的 Detection Signature 成立，且数据证据足够一致；
 
 才允许加载 Domain Pack。
 
