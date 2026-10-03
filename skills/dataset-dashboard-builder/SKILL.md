@@ -7,7 +7,7 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Information Architecture → Visual Plan → Interaction → UI → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result → Chart.js Spec → Information Architecture → Interaction → UI → Domain Evaluation → Quality Evaluation → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -72,7 +72,24 @@ exact-date / exact-time 是否匹配？
 
 禁止把单日汇率套到跨期交易后继续命名为“历史成交额”。
 
-## 3A. Domain Intelligence Gate
+## 3A. Semantic Field Catalog Gate
+
+Quality Gate 后必须读取 `references/analysis-spec.md`，先建立统一 Semantic Field Catalog。
+
+字段先判断业务语义，再决定能否作为 dimension / measure。
+
+硬规则：
+
+- numeric 不等于 measure；
+- ID / UID / order_id / transaction_id / hash / code 等 identifier 禁止机械 SUM / AVG；
+- temporal / categorical / state / continuous numeric / discrete numeric / identifier / unit 必须区分；
+- measure 必须记录 unit、aggregation_class 与 allowed_aggregations；
+- rate / percentage / pre-aggregated KPI 默认 non-additive；
+- currency / asset 等单位不兼容时，禁止因图表需要而强行合并。
+
+Field Catalog 是后续 Domain、Analysis、SQL 和 Chart 的共同事实源。组件不得各自重新猜字段类型。
+
+## 3B. Domain Intelligence Gate
 
 完成 Source Map / Dataset Map / Quality Gate 后，先读取 `references/domain-routing.md`。
 
@@ -95,7 +112,7 @@ Domain Detection
 
 当前仓库已有 `domains/exchange-funds-flow/domain-pack.md`。只有当前数据真实匹配时才读取。
 
-## 3B. Dashboard Mission Gate
+## 3C. Dashboard Mission Gate
 
 完成 Source Map / Dataset Map / Quality Gate 后，必须读取 `references/dashboard-quality-framework.md`，建立 Dashboard Mission Contract：
 
@@ -235,7 +252,47 @@ Domain Composition 是候选工作区，不是固定页面模板。
 3. 是否能从领域 Signal 落到真实实体 / 事件 / evidence；
 4. 是否出现 Domain Pack 不支持的字段或动作。
 
-## 6A. Information Architecture Gate
+## 6A. Analysis Spec Gate
+
+Domain Composition / Portfolio Synthesis 后，任何准备进入 Dashboard 的 KPI、Chart、Table 都必须先生成统一 Analysis Spec。
+
+必须读取：
+
+- `references/analysis-spec.md`；
+- `references/chartjs-compiler.md`。
+
+唯一允许的视图生成链路：
+
+```text
+Field Catalog
+→ Analysis Intent
+→ Dimension / Measure
+→ Aggregation
+→ Chart Family
+→ X / Y / Series
+→ Analysis Spec
+→ DuckDB SQL
+→ Result Contract
+→ Chart.js Spec
+→ Renderer
+```
+
+Analysis Intent 使用中性关系：
+
+`level / trend / category_comparison / composition / distribution / relationship / ranking / detail`
+
+图表生成层不得预设 `异常 / 风险 / fraud` 等结论。领域或 Investigation 已确认的 Finding 只能决定“值得展示什么”，不能绕过 Analysis Spec。
+
+硬规则：
+
+- Chart / KPI / Table 组件禁止直接访问 DuckDB；
+- 组件禁止自行拼 SQL、决定聚合、改变 TopN、时间粒度或 Series；
+- Global Filter 先 patch Analysis Spec，再由统一 Analysis Engine 重编译 SQL；
+- KPI / Chart / Tooltip / Table 必须共享同一 measure definition 与 formatter；
+- SQL 结果 grain 必须与 Spec 一致；
+- Chart.js 只消费 Result Contract，不接触原始表。
+
+## 6B. Information Architecture Gate
 
 Portfolio Synthesis 完成后，必须再次使用 `references/dashboard-quality-framework.md` 生成 Dashboard IA Plan。
 
@@ -270,9 +327,11 @@ What
 
 答不出来就删除。
 
-必须读取 `references/visualization-registry.md`。图表选择由分析问题决定，不由当前 Renderer 原生支持列表决定。
+必须读取 `references/visualization-registry.md`。图表选择由 Analysis Intent + Field Shape 决定，不由当前 Renderer 原生支持列表决定。
 
-基础映射仅是最低覆盖，不是能力上限。数据语义成立时，应能选择 histogram、box plot、scatter / bubble、heatmap、cohort heatmap、Pareto、waterfall、funnel、Sankey / alluvial、treemap、network、map、条件表等更合适的表达。
+X / Y / Series、时间粒度、排序和 TopN 必须来自 Analysis Spec，禁止在组件中写死。
+
+基础映射仅是最低覆盖，不是能力上限。Chart.js 为默认图表引擎；当语义需要非原生图形时，按 Renderer Capability Gate 走 Chart.js plugin / 自定义实现 / 同意图降级 / table fallback，禁止因为渲染器方便而改变分析语义。
 
 默认映射：
 
@@ -339,13 +398,15 @@ Executive Thesis / 关键限制
 
 需要 HTML 时：
 
+- 使用 Chart.js 作为默认图表引擎，不切换为 ECharts；
 - 使用真实计算结果，不在 Renderer 中重新推导数字；
 - 核心指标、口径和来源可追溯；
 - 桌面与移动端均不得整页横向溢出；
 - 长表局部滚动；
 - 交互必须有明确作用，不为“像产品”增加无意义控件；
 - 不依赖外部库也应保留可读 fallback（如果成品要求离线可用）；
-- 执行 Visualization Registry 的 Renderer Capability Gate：原生支持 → 等价变体 → 自定义实现 → 表格 fallback；禁止为了“能画”而改变分析语义。
+- 执行 Visualization Registry 的 Renderer Capability Gate：Chart.js 原生 → Chart.js plugin / 自定义实现 → 同意图等价变体 → 表格 fallback；禁止为了“能画”而改变分析语义；
+- 所有组件必须可回溯到 Analysis Spec ID 与统一 Query / Result Contract。
 
 最终 Dashboard 不得把 Question/Hypothesis Frontier、Diagnostic Test、Quality Evaluation、Regression 状态等内部生成过程当作页面模块展示，除非用户明确要求审计过程。
 
@@ -376,8 +437,10 @@ Generate
 - Investigation Gate 已完成；
 - 每个核心 Finding 已通过 Finding Promotion Gate，或明确标记 unresolved；
 - Candidate Triage 与 Portfolio Synthesis 已完成；
+- Semantic Field Catalog 已完成；
 - Domain Detection 已完成；若加载 Pack，Domain Evaluation 已通过；
 - Dashboard Mission Contract 已完成；
+- 所有 Dashboard 组件已有 Analysis Spec，SQL / Result / Chart.js 编译链路一致；
 - Metric Role / Comparison Context Gate 已完成；
 - Default View 在无交互时已能完成 Primary Job；
 - Information Architecture Gate 已完成；

@@ -119,3 +119,70 @@ Renderer 不得重新发明指标口径。
 “支持更多图”不等于“每次多画几种”。
 
 同一种图如果最适合多个问题，可以重复使用；不同问题需要不同编码时，再切换图形。最终目标是信息增量，不是视觉多样性。
+
+
+## V11 · Analysis Spec First
+
+Visualization Registry 只负责回答“什么数据关系适合什么 visual family”。
+
+它不能直接决定查询和轴字段。
+
+必须按以下顺序：
+
+```text
+Semantic Field Catalog
+→ Analysis Intent
+→ Analysis Spec
+→ DuckDB SQL
+→ Result
+→ Chart.js Spec
+```
+
+### 基础关系映射
+
+| 数据关系 | 默认 visual |
+|---|---|
+| temporal + measure | line |
+| categorical + measure | bar |
+| 少量互斥 category + additive/common-denominator measure，明确 part-to-whole | stacked bar；必要时 doughnut |
+| continuous measure distribution | histogram |
+| two continuous measures | scatter |
+| entity / raw records | table |
+| temporal + measure + categorical series | multi-line |
+| categorical + measure + categorical series | grouped / stacked bar，由问题决定 |
+
+### X / Y / Series
+
+X / Y / Series 只能来自 Analysis Spec。
+
+禁止：
+
+- 组件通过“第一个字符串列 / 第一个数值列”猜 X/Y；
+- 因现有 demo 写死 `created_at / amount / status`；
+- Renderer 自动选择额外 category 当 Series；
+- Renderer 自己修改时间粒度、排序或 TopN。
+
+### Neutral Visualization Rule
+
+Chart Planner 的 intent 必须是中性的：
+
+`level / trend / category_comparison / composition / distribution / relationship / ranking / detail`
+
+`risk / anomaly / fraud` 不是 chart intent。
+
+Investigation / Domain 层可以决定某个已验证 Finding 值得展示，但 visual 本身仍表达数据关系，不把结论写进字段映射。
+
+### Chart.js Ownership
+
+本 Skill 的默认图表引擎为 Chart.js。
+
+Renderer Capability Gate 更新为：
+
+```text
+Chart.js native
+→ Chart.js plugin / custom implementation
+→ same-intent equivalent
+→ table fallback
+```
+
+不允许组件换用另一套图表引擎来绕过 Analysis Spec。

@@ -10,6 +10,8 @@ assert skill.startswith("---\nname: dataset-dashboard-builder\n"), "invalid skil
 
 for path in [
     ROOT / "references" / "source-authority.md",
+    ROOT / "references" / "analysis-spec.md",
+    ROOT / "references" / "chartjs-compiler.md",
     ROOT / "references" / "domain-routing.md",
     ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
     ROOT / "eval" / "exchange-funds-flow.md",
@@ -49,6 +51,8 @@ critical = [
     "Comparison & Metric Role Gate",
     "Domain Intelligence Gate",
     "Domain Composition Gate",
+    "Semantic Field Catalog Gate",
+    "Analysis Spec Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -58,6 +62,18 @@ for anchor in ["144,444 USDT", "83.48%", "8 / 9 = 88.89%", "exact-date 匹配：
 
 assert "sql-business-thinking" in readme, "boundary with existing skill must be documented"
 assert "一张表一个看板" in skill, "theme split guard missing"
+
+analysis_spec = (ROOT / "references" / "analysis-spec.md").read_text(encoding="utf-8")
+for rule in ["Semantic Field Catalog", "Identifier Gate", "Aggregation Semantics", "Analysis Intent", "Analysis Spec", "Series Gate", "Time Grain Gate", "Central Query Ownership"]:
+    assert rule in analysis_spec, f"analysis spec rule missing: {rule}"
+for rule in ["identifier", "non_additive", "COUNT DISTINCT", "Global Filter State"]:
+    assert rule in analysis_spec, f"analysis spec semantic rule missing: {rule}"
+
+chart_compiler = (ROOT / "references" / "chartjs-compiler.md").read_text(encoding="utf-8")
+for rule in ["DuckDB SQL Compiler", "Result Contract", "Chart.js Compiler", "Axis Compiler", "Series Compiler", "Compiler Failure"]:
+    assert rule in chart_compiler, f"chart compiler rule missing: {rule}"
+assert "Chart.js component 不直接 mutate" in chart_compiler
+assert "AVG(precomputed_rate)" in chart_compiler
 
 source_authority = (ROOT / "references" / "source-authority.md").read_text(encoding="utf-8")
 for rule in ["Explicit Scope Gate", "Table Role Gate", "Authority Order", "Double-count Gate", "Unit & Aggregation Authority"]:
@@ -101,7 +117,7 @@ assert "Encoding & Label Gate" in viz, "encoding/label gate missing"
 assert "多序列图必须有清晰的直接标签或可见图例" in viz, "multi-series legend rule missing"
 assert "散点、气泡、折线末端等直接标签发生重叠" in viz, "label collision rule missing"
 
-for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W", "V9 原样本：Dashboard Context / Comparison / Drill", "泛化 X", "泛化 Y", "泛化 Z", "泛化 AA", "Adversarial AB", "V10 原样本：Exchange Funds Flow Domain Intelligence", "泛化 AC", "泛化 AD", "泛化 AE", "Adversarial AF"]:
+for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "V3 原样本：Source Role & Authority", "辅助快照估值数学结果：144,444 USDT", "54.66%", "27.22%", "16.75h", "V5 原样本：Hypothesis-driven Investigation", "V6 原样本：显式四表范围", "V7 原样本：Priority & Portfolio Synthesis", "0.32%", "V7 泛化", "Adversarial R", "V8 原样本：Dashboard Quality", "V8 泛化", "Adversarial W", "V9 原样本：Dashboard Context / Comparison / Drill", "泛化 X", "泛化 Y", "泛化 Z", "泛化 AA", "Adversarial AB", "V10 原样本：Exchange Funds Flow Domain Intelligence", "泛化 AC", "泛化 AD", "泛化 AE", "Adversarial AF", "V11 原样本：Semantic Field Catalog → Analysis Spec → Chart.js", "泛化 AG", "泛化 AH", "泛化 AI", "泛化 AJ", "泛化 AK", "Adversarial AL", "Adversarial AM"]:
     assert anchor in regression, f"depth regression anchor missing: {anchor}"
 
 print("OK: dataset-dashboard-builder repository integrity")

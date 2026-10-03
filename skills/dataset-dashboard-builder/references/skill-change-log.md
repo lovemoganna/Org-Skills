@@ -91,3 +91,15 @@
 | 交易所资金流无法自然形成 Flow Health / Rail Performance / Entity Exposure / Flow Pattern / Evidence Queue | 通用主题不知道资金流对象、状态与调查路径 | 新增 exchange-funds-flow Domain Pack | Domain Pack 提供候选 ontology / metrics / playbooks / visual grammar，不固定页面模板 |
 | 领域异常容易被误解成风险定性 | 缺少领域边界 | 新增资金流 Domain Evaluation | rapid in-out 等仅为 flow pattern，不得自动定性 fraud / laundering |
 | 专业 Dashboard 缺乏领域级验收 | 只有通用 Dashboard Evaluation | 新增 domain-specific evaluation | 通用“好 Dashboard”与“好资金流 Dashboard”分开验收 |
+
+
+## V11：Semantic Field Catalog → Analysis Spec → DuckDB → Chart.js
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 图表虽按问题选型，但 X/Y/Series、聚合和时间粒度仍可能由组件临时决定 | 缺少统一中间表示 | 新增 Semantic Field Catalog + Analysis Spec | 先识别字段语义，再生成统一 Spec；图表组件无判断权 |
+| numeric ID 容易被通用数值逻辑当 measure | 物理类型与业务语义没有分层 | 新增 Identifier Gate | ID 仅 count/distinct/detail/drill，不机械 SUM/AVG |
+| KPI / 图 / 表可能各自查询、导致口径漂移 | 查询所有权分散 | 新增 Central Query Ownership | Analysis Engine 独占 DuckDB SQL；组件只消费 Result |
+| Filter 可能在前端各组件本地处理 | 缺少统一 Filter → Query 链 | Filter patch Spec 后重新编译 | 同一 Filter State 驱动所有依赖组件 |
+| 图表类型正确但轴/Series/TopN 写死 | Chart plan 不可执行 | 新增 Chart.js Compiler | X/Y/Series/time grain/sort/TopN 全部来自 Spec |
+| 图表层可能把“异常/风险”作为预设分析类型 | Investigation 与 visualization 职责混合 | 新增 Neutral Visualization Rule | chart intent 只描述数据关系；结论由上游证明 |

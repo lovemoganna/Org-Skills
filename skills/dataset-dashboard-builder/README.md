@@ -3,13 +3,15 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → Domain Detection → Domain Model → Mission / Mode → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Metric Roles / Comparison → Information Architecture → Visualization → Context-preserving Interaction → Domain + Dashboard Evaluation → 回归
+扫描 → 质检 → Field Catalog → Domain Detection → Domain Model → Mission / Mode → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Analysis Spec → DuckDB SQL → Result → Chart.js Spec → Information Architecture → Interaction → Domain + Dashboard Evaluation → 回归
 ```
 
 ## 文件
 
 - [`SKILL.md`](SKILL.md)：主协议。
 - [`references/source-authority.md`](references/source-authority.md)：表角色、来源权威性、重复计数与单位聚合边界。
+- [`references/analysis-spec.md`](references/analysis-spec.md)：字段语义、维度/指标、聚合、Analysis Spec 与统一查询所有权。
+- [`references/chartjs-compiler.md`](references/chartjs-compiler.md)：Analysis Spec → DuckDB SQL → Result → Chart.js 配置编译协议。
 - [`references/domain-routing.md`](references/domain-routing.md)：领域识别、置信度、Domain Pack 路由与 generic fallback。
 - [`domains/exchange-funds-flow/domain-pack.md`](domains/exchange-funds-flow/domain-pack.md)：资金流领域 ontology、问题库、指标角色、调查 playbook、视觉语法。
 - [`eval/exchange-funds-flow.md`](eval/exchange-funds-flow.md)：资金流领域专属质量验收。

@@ -43,7 +43,8 @@
 13. 主要 Pattern 已执行 Candidate Triage / Hypothesis Frontier / Robustness / Finding Promotion Gate；
 14. Promoted Findings 已执行 Portfolio Synthesis，首屏不是发现列表的机械平铺；
 15. Domain Detection / Dashboard Mission / Metric Role / Comparison / Information Architecture / Interaction / Quality Evaluation 已执行；
-16. 若加载 Domain Pack，Domain Evaluation 已执行，且至少一个领域工作流真实改变 Dashboard 结构。
+16. 若加载 Domain Pack，Domain Evaluation 已执行，且至少一个领域工作流真实改变 Dashboard 结构；
+17. Semantic Field Catalog / Analysis Spec / DuckDB SQL / Result / Chart.js Spec 链路已执行。
 
 ### 4A. 深度分析 QA
 
@@ -82,7 +83,19 @@
 - P2 Secondary Lead 是否错误抢占首屏；
 - 单条小金额/小样本异常只有在控制或分析依赖严重时才可越级。
 
-### 4D. Domain Intelligence QA
+### 4D. Analysis Spec QA
+
+- 是否先识别 identifier / temporal / categorical / state / measure / unit；
+- numeric ID 是否被错误当成 measure；
+- measure 是否有 aggregation_class 与合法 aggregation；
+- rate / percentage 是否被错误 SUM 或简单 AVG；
+- X / Y / Series / time grain / sort / TopN 是否来自 Analysis Spec；
+- Chart / KPI / Table 是否存在自行查询或自行聚合；
+- Global Filter 是否统一 patch Spec 后重新查询；
+- Chart.js config 是否只消费 Result Contract；
+- 当前可视化是否表达 trend / comparison / composition / distribution / relationship / detail，而不是预设风险结论。
+
+### 4E. Domain Intelligence QA
 
 - Domain 是否由 Entity / Event-State / Dimension 或用户显式指定支持；
 - low confidence 是否错误加载领域 Pack；
@@ -91,7 +104,7 @@
 - 不支持的领域字段 / 动作是否被补造；
 - generic fallback 是否仍可正常执行。
 
-### 4E. Dashboard Quality QA
+### 4F. Dashboard Quality QA
 
 - 页面是否首先像一个分析工具，而不是长篇分析报告；
 - 默认视图是否无需操作就完成 Primary Job；
@@ -108,7 +121,7 @@
 - 是否通过 `eval/dashboard-quality.md`，Critical=0 且 Major=0；
 - 是否仅修 Minor，而真正 Major 仍未解决。
 
-### 4F. 可视化 QA
+### 4G. 可视化 QA
 
 - 是否从分析问题选择图形，而不是从 Renderer 能画什么倒推；
 - 分布、关系、矩阵、流程、贡献、流向等语义需要时是否正确路由；
