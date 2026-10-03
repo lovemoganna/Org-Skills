@@ -2,6 +2,16 @@
 
 只有在 Exchange Funds Flow Domain Pack 被加载时执行。
 
+## Detection
+
+自动加载本 Pack 时先检查：
+
+- Funds Event Signature 是否成立；
+- 是否至少有两类 supporting evidence；
+- 是否仅因 `network / asset / channel / status` 等重名字段误判。
+
+Detection 不通过则应回退 generic，而不是进入下面的 Domain Evaluation。
+
 ## Critical
 
 任一出现即失败：
