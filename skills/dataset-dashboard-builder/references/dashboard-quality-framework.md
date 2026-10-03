@@ -54,13 +54,17 @@ L1–L3 决定“有没有用”；L4–L5 决定“好不好用”。
 
 ## 3. Dashboard Information Chain
 
+先读取 `insight-hierarchy.md`。
+
 高质量 Dashboard 优先形成：
 
 ```text
-What
-→ So What
-→ Why
+North Star / What
+→ Change / So What
+→ Driver / Why
+→ Exception
 → Who / Where
+→ Action
 → Evidence
 ```
 
@@ -210,6 +214,8 @@ Current
 ## 9. Visualization Gate
 
 图表选择继续遵守 `visualization-registry.md`。
+
+任何主图先通过 So-What Gate：如果不能写出一个由真实数据支持、且比标题更有信息量的 takeaway，则该图不得进入主页面。
 
 额外原则：
 
