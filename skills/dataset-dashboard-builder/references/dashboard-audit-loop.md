@@ -189,20 +189,21 @@ UI 只在正常数据下正确不算完成。
 检查族：
 
 1. overflow / clipping；
-2. text wrap / widows；
-3. card / KPI baseline；
-4. control height；
-5. repeated component size；
-6. near-miss edges；
-7. table header / alignment；
-8. sticky region 占屏；
-9. contrast / dark mode；
-10. focus / hover / selected；
-11. chart label collision；
-12. empty / error states；
-13. data values / visual agreement；
-14. duplicate panels；
-15. visible hierarchy。
+2. chart readable plot width：禁止为了消除整页 overflow 把长时间序列压缩到标签不可读；窄屏优先局部横向滚动、减少同时显示点数或调整粒度；
+3. text wrap / widows；
+4. card / KPI baseline；
+5. control height；
+6. repeated component size；
+7. near-miss edges；
+8. table header / alignment；
+9. sticky region 占屏；
+10. contrast / dark mode；
+11. focus / hover / selected；
+12. chart label collision；
+13. empty / error states；
+14. data values / visual agreement；
+15. duplicate panels；
+16. visible hierarchy。
 
 如果无法真实浏览器渲染：
 
