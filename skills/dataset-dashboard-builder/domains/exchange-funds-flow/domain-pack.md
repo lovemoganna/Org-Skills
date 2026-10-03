@@ -4,6 +4,32 @@
 
 此 Pack 只在 Domain Detection Gate 证明当前数据与该领域匹配时加载。
 
+## 0. Detection Signature
+
+自动识别时，除非用户显式指定本领域，至少满足：
+
+### 必须命中：Funds Event Signature
+
+事实数据中存在真实资金事件语义，至少符合其一：
+
+- `direction = deposit / withdrawal`；或
+- 明确的 transfer / deposit / withdrawal event type，并存在 amount + currency / asset。
+
+仅有 `network / channel / asset / status` 字段名不够。
+
+### 并且至少命中两类 Supporting Evidence
+
+- User / account entity；
+- currency / asset；
+- fiat rail / payment channel；
+- blockchain network；
+- fee；
+- confirmation；
+- transaction / order / tx hash / address；
+- created → completed lifecycle。
+
+若 Funds Event Signature 不成立，默认不自动加载本 Pack。
+
 ## 1. Domain Ontology
 
 核心对象候选：
