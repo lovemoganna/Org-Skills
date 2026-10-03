@@ -44,7 +44,10 @@
 14. Promoted Findings 已执行 Portfolio Synthesis，首屏不是发现列表的机械平铺；
 15. Domain Detection / Dashboard Mission / Metric Role / Comparison / Information Architecture / Interaction / Quality Evaluation 已执行；
 16. 若加载 Domain Pack，Domain Evaluation 已执行，且至少一个领域工作流真实改变 Dashboard 结构；
-17. Semantic Field Catalog / Analysis Spec / DuckDB SQL / Result / Chart.js Spec 链路已执行。
+17. Semantic Field Catalog / Analysis Spec / DuckDB SQL / Result Contract / Visual Spec / Renderer Adapter 链路已执行；
+18. 中文任务最终 UI 以中文为主，且未暴露内部编译/回归术语；
+19. permanent Label 若被要求，必须检查遮挡、裁切和碰撞；
+20. 交互筛选必须有 visible selected state，并与表格/KPI 使用同一范围。
 
 ### 4A. 深度分析 QA
 
@@ -92,7 +95,8 @@
 - X / Y / Series / time grain / sort / TopN 是否来自 Analysis Spec；
 - Chart / KPI / Table 是否存在自行查询或自行聚合；
 - Global Filter 是否统一 patch Spec 后重新查询；
-- Chart.js config 是否只消费 Result Contract；
+- Visual Spec / Renderer Adapter 是否只消费 Result Contract；
+- Renderer 是否偷偷重新计算 aggregation / TopN / time grain；
 - 当前可视化是否表达 trend / comparison / composition / distribution / relationship / detail，而不是预设风险结论。
 
 ### 4E. Domain Intelligence QA
@@ -122,6 +126,12 @@
 - 是否仅修 Minor，而真正 Major 仍未解决。
 
 ### 4G. 可视化 QA
+
+- 金融 / 资金时间序列若使用 Vela，是否只消费统一 Result；
+- Vela 是否保留 zoom / pan / crosshair / range interaction，且没有接入无关实时 provider；
+- 资金看板有 amount + direction + time 时，是否遗漏 amount / count 的时间变化；
+- channel / network 是否错误抢占 Funds Scale & Trend 主位；
+- snapshot FX 是否在标题、KPI、tooltip 中持续标记为 reference / snapshot，而不是历史真实金额；
 
 - 是否从分析问题选择图形，而不是从 Renderer 能画什么倒推；
 - 分布、关系、矩阵、流程、贡献、流向等语义需要时是否正确路由；
