@@ -152,3 +152,14 @@
 | KYC3 高金额占比容易被写成群体洞察 | segment 被 Top 用户混淆 | 新增 Pareto + confounding rule | 先查 Top1/Top2/remove-Top1；标签结论必须经实体集中度校正 |
 | 状态图展示 4 笔未终态但没有行动价值 | 只看状态占比，没有 amount materiality 与 evidence path | 新增 Exception Logic | materially large 的 in-process 应进入 Guardrail / Queue，并落到订单 |
 | 小数据集也容易被套复杂模型 | “深度分析”被误解为方法复杂 | 新增 Analytical Restraint | 小样本优先 decomposition / Pareto / exact evidence，不乱做因果、聚类、预测 |
+
+
+## V16：Decision Diagnostics / Multi-Architecture Evaluation
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| Top1 share ≥80% 会把低流水月份也叫“高峰” | 只有 Extremeness，没有先判断 Materiality | 新增 Materiality Before Extremeness Gate | 先选 materially important time bucket，再判断 event-driven |
+| 核查队列出现模型自造 5000 USDT 优先线 | 缺少 Threshold Authority | 新增 Threshold Authority Gate | 业务红线只能来自用户 / policy / SLA / benchmark；否则只能相对排序 |
+| 当前 TopN 容易被当成变化原因 | 横截面排名替代 movement attribution | 新增 Delta Contribution Gate | 解释变化优先量化谁贡献 delta |
+| 核心解释虽有 robustness，但没有明确反证类型 | robustness 过于宽泛 | 新增 Control / Counterexample Gate | remove-Top / control segment / alternate denominator / alternate grain 至少一种 |
+| 多方案测试容易退化成换皮肤 | 缺少 Candidate Architecture 约束 | 新增 Multi-Architecture Test | 候选共享口径，但 decision path 必须结构性不同 |
