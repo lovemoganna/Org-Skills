@@ -1,6 +1,8 @@
-# DuckDB SQL → Chart.js Compiler
+# Chart.js Adapter Compiler
 
-目标：Analysis Spec 是唯一中间表示。
+定位：这是 Renderer Contract 下的 **Chart.js 专用 Adapter**，不再代表整个 Skill 的唯一图表引擎。
+
+目标：Analysis Spec 是唯一中间表示；Chart.js 只能把已验证 Result 编译为 Chart.js config。
 
 执行链：
 
@@ -8,8 +10,8 @@
 Analysis Spec
 → DuckDB SQL Compiler
 → Result Contract
-→ Chart.js Compiler
-→ Renderer
+→ Visual Spec
+→ Chart.js Adapter
 ```
 
 ## 1. DuckDB SQL Compiler
@@ -309,3 +311,5 @@ Chart.js component 不直接 mutate 其他组件的数据。
 ```
 
 禁止用随机换图掩盖 Spec 错误。
+
+如果 Visual Spec 明确要求 Vela / Native HTML，Chart.js Adapter 不得抢占 Renderer。
