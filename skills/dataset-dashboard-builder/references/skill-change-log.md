@@ -81,3 +81,13 @@
 | “定位异常记录”点击后落到用户 Fiat 详情；“查看 ACH 明细”只选用户后展示全部 Fiat | Interaction Gate 只要求存在交互，没有上下文保真 | 新增 Interaction Semantics + context-preserving drill | Drill 必须携带对象键、筛选、触发条件和记录键，落到正确证据 |
 | 最终 Dashboard 显示 Dashboard Quality Evaluation 模块 | 缺少 Internal Analysis Boundary | 新增内部分析与最终内容边界 | Evaluation / Hypothesis / Regression 默认不进入最终 Dashboard |
 | 主要比较可能依赖用户切换 Filter | 缺少 Comparison Context Gate | 新增 Comparison Gate | 核心比较同时可见；Filter 不能替代比较 |
+
+
+## V10：Domain Intelligence Layer
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 对特定领域数据仍生成 generic BI：completed、TopN、trend、latency 各自成块，但缺少领域工作流 | Skill 有通用分析模型，没有 Domain Detection / Ontology / Question Library | 新增 Domain Intelligence Routing | 先判断领域，再让领域问题驱动分析；低置信度回退 generic |
+| 交易所资金流无法自然形成 Flow Health / Rail Performance / Entity Exposure / Flow Pattern / Evidence Queue | 通用主题不知道资金流对象、状态与调查路径 | 新增 exchange-funds-flow Domain Pack | Domain Pack 提供候选 ontology / metrics / playbooks / visual grammar，不固定页面模板 |
+| 领域异常容易被误解成风险定性 | 缺少领域边界 | 新增资金流 Domain Evaluation | rapid in-out 等仅为 flow pattern，不得自动定性 fraud / laundering |
+| 专业 Dashboard 缺乏领域级验收 | 只有通用 Dashboard Evaluation | 新增 domain-specific evaluation | 通用“好 Dashboard”与“好资金流 Dashboard”分开验收 |
