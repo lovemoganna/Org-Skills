@@ -117,3 +117,13 @@
 | 中文看板混入大量英文与开发术语 | 缺少 Display Contract | 新增 locale / UI Copy Gate | UI 跟随用户语言；内部 Analysis/Compiler/Regression 默认隐藏 |
 | permanent Label 与柱体重叠 | Label 规则只要求“显示”，没有位置与碰撞约束 | 新增 Label Policy | 外置优先、collision avoidance、padding、防裁切 |
 | 图表可点击但选中状态不明显 | 交互只有行为，没有视觉状态契约 | Interaction Contract | click/filter/selected/table linkage 使用统一 Filter State 与可见 selected state |
+
+
+## V13：Redundancy / Compression Gate
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 同一总额在 KPI、双趋势图、Label 条、逐期 totals table 多次重复 | 只检查单组件正确，没有检查页面级信息增量 | 新增 Redundancy Gate | One Question → One Primary View；第二视图必须提供新维度 |
+| amount / count 与 total / deposit / withdrawal 被复制成多张同构时间图 | 把指标数量误当成图表数量 | 主趋势使用 metric / direction control | 同构视图优先切换，不机械复制 |
+| 用户集中 ranking chart 与同值 table 重复 | chart / table 职责未区分 | bar-in-cell table 合并比较与精确读值 | table 只有增加 lookup / attributes / action 时才与 chart 共存 |
+| Signal 卡片与 Evidence Queue 重复同一异常 | Finding 展示与 Evidence 入口分离过度 | 合并为 Queue + detail | 同一异常只保留一个主入口 |

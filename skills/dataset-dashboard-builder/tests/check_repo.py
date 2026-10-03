@@ -131,6 +131,11 @@ for anchor in ["77.30%", "49.93%", "18.375", "V2 泛化：可视化注册表", "
 for anchor in ["V12 原样本：Funds Scale & Trend → Renderer Contract", "105,874.5 USDT", "56,642.5 USDT / 6 笔", "泛化 AN：资金数据但错误主轴", "Adversarial AQ：Vela 自动接行情", "Adversarial AR：中文任务英文 UI", "Adversarial AS：永久 Label 与图形重叠"]:
     assert anchor in regression, f"V12 regression anchor missing: {anchor}"
 
+for anchor in ["V13 原样本：Redundancy Gate", "泛化 AT：同构趋势复制", "泛化 AU：Chart + Table 重复", "Adversarial AV：说明文案复制"]:
+    assert anchor in regression, f"V13 redundancy anchor missing: {anchor}"
+
+assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
+
 renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(encoding="utf-8")
 assert "Result Contract" in renderer_contract and "Visual Spec" in renderer_contract and "Renderer Adapter" in renderer_contract
 
