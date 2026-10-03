@@ -59,7 +59,22 @@
 29. 同行控件高度、KPI baseline、section edge、同级 gutter 必须一致；
 30. 同类缺陷连续复现时必须进入 Skill rule / regression / checker，而不是只修当前 HTML。
 
-### 4A. 深度分析 QA
+### 4A. Insight Hierarchy QA
+
+- 是否存在一个明确 North Star，而不是多个同权 KPI；
+- 主页面是否形成 North Star → Change → Driver → Exception → Evidence；
+- 每个主图 / 主表是否能写出真实计算支持的 So-What；
+- 交易 / 资金数据是否同时检查 amount 与 count；
+- amount / count 信号不一致时是否检查 ticket size；
+- 重要时间峰值是否检查 top transaction / top entity share；
+- 是否区分 breadth / intensity / concentration；
+- 高集中数据是否执行 Top1 / Top2 / Pareto / remove-Top1；
+- 群体高占比是否被少数实体混淆；
+- Exception 是否包含 object / evidence / why it matters / next check；
+- in-process 是否与 failed / cancelled 分开；
+- 小样本是否避免无依据因果 / 预测 / 聚类。
+
+### 4B. 深度分析 QA
 
 - 是否至少检查分布 / 分层；
 - 数据支持时，是否继续检查时间、流程、关系、驱动或异常；
