@@ -615,19 +615,19 @@ V10 必须至少重组为当前数据支持的领域工作区：
 - generic 或未来 support domain；
 - 不残留 rail / network / KYC / flow pattern。
 
-### 泛化 AD：只有 crypto transfer 表但语义不足
+### 泛化 AD：只有 crypto-like 字段但缺资金事件语义
 
 输入：
 
 `events(id,user_id,network,status,created_at)`
 
-没有 direction / asset / amount，也没有明确资金流任务。
+没有 deposit / withdrawal、amount、currency / asset，也没有明确资金流任务。
 
 验收：
 
-- Domain confidence 至多 medium / low，依据实际证据决定；
-- 不机械生成 rapid in-out / concentration / fee analysis；
-- 缺失问题标 unavailable。
+- Funds Event Signature 不成立；
+- 不自动加载 exchange-funds-flow；
+- 不机械生成 rapid in-out / concentration / fee analysis。
 
 ### 泛化 AE：用户明确指定 generic
 
