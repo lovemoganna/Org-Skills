@@ -17,6 +17,7 @@ for path in [
     ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
     ROOT / "eval" / "exchange-funds-flow.md",
     ROOT / "references" / "dashboard-quality-framework.md",
+    ROOT / "references" / "dashboard-audit-loop.md",
     ROOT / "eval" / "dashboard-quality.md",
     ROOT / "references" / "analysis-depth.md",
     ROOT / "references" / "investigation-loop.md",
@@ -55,6 +56,7 @@ critical = [
     "Semantic Field Catalog Gate",
     "Analysis Spec Gate",
     "Display & Label Gate",
+    "Dashboard Decision & Audit Loop Gate",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -109,6 +111,13 @@ quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(enc
 for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Mode", "Metric Role Gate", "Comparison Context Gate", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Semantics", "Internal Analysis Boundary", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
     assert rule in quality, f"dashboard quality rule missing: {rule}"
 
+audit_loop = (ROOT / "references" / "dashboard-audit-loop.md").read_text(encoding="utf-8")
+for rule in ["Decision Question Gate", "Dashboard Coverage Plan", "Simplest Primitive Guard", "One Primary Answer per View", "Density & Hierarchy Gate", "Global Design System Gate", "User Simulation Gate", "Rendered Audit Gate", "Coverage Reconciliation Gate", "Durable Fix Rule"]:
+    assert rule in audit_loop, f"dashboard audit-loop rule missing: {rule}"
+
+for rule in ["360px", "768px", "1280px", "Real User", "Constrained User", "Edge-data User"]:
+    assert rule in audit_loop, f"dashboard audit-loop behavior missing: {rule}"
+
 dashboard_eval = (ROOT / "eval" / "dashboard-quality.md").read_text(encoding="utf-8")
 for rule in ["Critical", "Major", "Minor", "Acceptance Rule", "Generate", "Evaluate Again"]:
     assert rule in dashboard_eval, f"dashboard eval rule missing: {rule}"
@@ -133,6 +142,9 @@ for anchor in ["V12 原样本：Funds Scale & Trend → Renderer Contract", "105
 
 for anchor in ["V13 原样本：Redundancy Gate", "泛化 AT：同构趋势复制", "泛化 AU：Chart + Table 重复", "Adversarial AV：说明文案复制"]:
     assert anchor in regression, f"V13 redundancy anchor missing: {anchor}"
+
+for anchor in ["V14 原样本：Dashboard Audit Loop", "泛化 AW：孤儿组件", "泛化 AX：复杂度升级无理由", "Adversarial AY：源码检查冒充视觉检查", "Adversarial AZ：正常数据可用，边界数据破版"]:
+    assert anchor in regression, f"V14 audit-loop anchor missing: {anchor}"
 
 assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 
