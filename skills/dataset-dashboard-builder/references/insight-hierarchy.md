@@ -80,7 +80,9 @@ Observed pattern
 
 ## 5. Event-Driven Spike Gate
 
-时间序列出现峰值时，必须检查峰值是否由少数记录驱动。
+时间序列出现峰值时，必须先读取 `decision-diagnostics.md` 的 Materiality Before Extremeness Gate。
+
+先筛出 materially important 的候选时间桶，再检查峰值是否由少数记录驱动。禁止仅凭 Top1 share 高就把低金额月份称为“高峰”。
 
 每个重要时间桶至少计算：
 
@@ -96,7 +98,7 @@ Observed pattern
 - 不描述为“全面增长 / 活跃度提升”；
 - 图上应提供对应 record / entity 下钻。
 
-默认参考：top1 > 80% 可进入高集中提示，但阈值不是业务风险线，只是分析触发器。
+默认参考：top1 > 80% 只能作为 concentration trigger；它不是业务风险线，也不能绕过 materiality。
 
 ## 6. Driver Decomposition Gate
 
