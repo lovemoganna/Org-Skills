@@ -63,6 +63,7 @@ critical = [
     "Insight Hierarchy Gate",
     "Decision Diagnostics Gate",
     "Regression / Evaluation Preflight",
+    "End-to-End Regression Mode",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -177,6 +178,9 @@ for rule in ["Fixture Preflight", "Environment Capability Preflight", "BLOCKED_F
 
 for anchor in ["V17 原样本：Remote Skill × Remote Requirement Evaluation Preflight", "原失败 A：Requirement 声明 Canonical Fixture", "原失败 B：浏览器超时", "泛化 BM：SQL runtime 缺失", "泛化 BN：条件型 Case 未触发", "泛化 BO：核心逻辑通过但视觉环境阻塞", "Adversarial BP：用锚点冒充原始数据", "Adversarial BQ：所有 Case 强制执行"]:
     assert anchor in regression, f"V17 eval-preflight anchor missing: {anchor}"
+
+for anchor in ["V18 原样本：Preflight 不能替代完整回归", "原失败 A：只检查仓库规则就结束", "原失败 B：浏览器失败后提前终止", "泛化 BR：测试报告不能替代产物", "泛化 BS：SQL 证据必须来自实际执行", "Adversarial BT：Preflight 过度展开"]:
+    assert anchor in regression, f"V18 end-to-end regression anchor missing: {anchor}"
 
 assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 

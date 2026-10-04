@@ -1440,3 +1440,82 @@ Overall Verdict = BLOCKED_ENV
 模型无视 trigger，把 5-dashboard / award-level visual 等条件型 Case 每轮都当 required。
 
 验收：失败。必须先做 Required / Conditional Case Resolution。
+
+
+## V18 原样本：Preflight 不能替代完整回归
+
+### 原失败 A：只检查仓库规则就结束
+
+输入：
+
+用户要求使用远程 Skill + Requirement + Canonical Fixture 做完整回归。
+
+模型执行：
+
+```text
+读取 SKILL.md
+→ 检查 regression-cases.md
+→ 检查 Fixture / Browser
+→ 输出测试报告
+```
+
+但没有：
+
+- 实际加载 Fixture 行数据；
+- 实际分析；
+- 实际 SQL；
+- 实际 HTML Dashboard。
+
+验收：**失败。**
+
+正确主链：
+
+```text
+Skill
+→ Fixture
+→ Analysis
+→ SQL
+→ Result
+→ Findings
+→ HTML
+→ Render / Interaction
+→ Regression
+```
+
+### 原失败 B：浏览器失败后提前终止
+
+输入：
+
+- Fixture 可读；
+- SQL runtime 可用；
+- Chromium 超时。
+
+验收：
+
+- 必须继续完成 SQL、分析和 HTML；
+- 只有 Rendered QA = BLOCKED_ENV；
+- 禁止整个回归停在环境报告。
+
+### 泛化 BR：测试报告不能替代产物
+
+即使 Case A–Q 表格完整，如果没有实际 Dashboard：
+
+验收：失败。
+
+### 泛化 BS：SQL 证据必须来自实际执行
+
+存在 DuckDB runtime 时，只生成 SQL 文本但不执行：
+
+验收：失败。
+
+必须保留：
+
+`metric definition → SQL → result → source fields`
+
+### Adversarial BT：Preflight 过度展开
+
+模型花大量篇幅解释 runtime / statuses / ownership，却没有推进数据分析。
+
+验收：失败。
+
+Preflight 必须保持最小，只为继续执行服务。

@@ -1,18 +1,28 @@
 # Dashboard Regression Loop
 
-## 0. Evaluation Preflight
+## 0. End-to-End Regression Contract
 
-回归开始前必须读取 `eval-preflight.md`。
+回归的主体是**实际运行 Skill 并验收最终 Dashboard**。
 
-先确认：
+必须：
 
-- Canonical Fixture 是否存在且可读；
-- 数学锚点是否来自原始 Fixture 重算，而不是硬编码；
-- DuckDB / JS / HTML / Browser / Screenshot 能力；
-- 哪些 Case 是 required，哪些是 conditional；
-- 状态使用 `PASS / FAIL / BLOCKED_FIXTURE / BLOCKED_ENV / NOT_APPLICABLE`。
+```text
+Fixture
+→ Analysis
+→ SQL
+→ Result
+→ Findings
+→ HTML Dashboard
+→ QA
+→ Regression
+```
 
-基础设施阻塞不得错误归因给 Skill；未触发的条件型 Case 不得拉低通过率。
+开始时读取 `eval-preflight.md` 做最小能力检查，但 Preflight 不得成为停止点。
+
+- Fixture 可读 → 继续执行；
+- 浏览器不可用 → 继续完成 SQL / Analysis / HTML，只阻塞 Rendered QA；
+- 条件型 Case 未触发 → `NOT_APPLICABLE`；
+- 没有实际 HTML + SQL 产物 → 本轮回归未完成。
 
 ## 1. 基线
 
