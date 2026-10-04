@@ -39,12 +39,17 @@ jobs:
           LOAD excel;
           """)
 
+          ERRORS = []
           def emit(name, sql):
-              cur = con.execute(sql)
-              cols = [d[0] for d in cur.description] if cur.description else []
-              rows = cur.fetchall() if cur.description else []
               print(f"@@BEGIN:{name}@@")
-              print(json.dumps({"columns": cols, "rows": rows}, ensure_ascii=False, default=str))
+              try:
+                  cur = con.execute(sql)
+                  cols = [d[0] for d in cur.description] if cur.description else []
+                  rows = cur.fetchall() if cur.description else []
+                  print(json.dumps({"columns": cols, "rows": rows}, ensure_ascii=False, default=str))
+              except Exception as e:
+                  ERRORS.append((name, str(e)))
+                  print(json.dumps({"error": str(e)}, ensure_ascii=False))
               print(f"@@END:{name}@@")
 
           print("@@DUCKDB_VERSION@@", duckdb.__version__)
@@ -347,10 +352,10 @@ jobs:
             FROM completed_flow_snapshot
           ),
           complete_months AS (
-            SELECT DISTINCT month
+            SELECT DISTINCT mth
             FROM monthly, bounds
-            WHERE month < raw_latest_month
-            ORDER BY month DESC
+            WHERE mth < raw_latest_month
+            ORDER BY mth DESC
             LIMIT 2
           ),
           pair AS (
@@ -511,4 +516,7 @@ jobs:
           """)
 
           print("@@DONE@@")
+          if ERRORS:
+              print("@@QUERY_ERRORS@@", json.dumps(ERRORS, ensure_ascii=False))
+              raise SystemExit(1)
           PY
