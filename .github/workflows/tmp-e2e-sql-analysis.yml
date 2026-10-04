@@ -85,12 +85,12 @@ jobs:
           """)
 
           emit("status_counts", """
-          SELECT 'fiat' AS source, status, COUNT(*) AS rows
+          SELECT 'fiat' AS src, status, COUNT(*) AS rows
           FROM fiat_transactions GROUP BY status
           UNION ALL
           SELECT 'crypto', status, COUNT(*) AS rows
           FROM crypto_transactions GROUP BY status
-          ORDER BY source, rows DESC
+          ORDER BY src, rows DESC
           """)
 
           emit("duplicate_keys", """
@@ -109,11 +109,11 @@ jobs:
 
           emit("orphan_uids", """
           WITH tx AS (
-            SELECT CAST(uid AS VARCHAR) uid, 'fiat' source, fiat_order_id record_id FROM fiat_transactions
+            SELECT CAST(uid AS VARCHAR) uid, 'fiat' AS src, fiat_order_id record_id FROM fiat_transactions
             UNION ALL
-            SELECT CAST(uid AS VARCHAR), 'crypto', crypto_order_id FROM crypto_transactions
+            SELECT CAST(uid AS VARCHAR), 'crypto' AS src, crypto_order_id FROM crypto_transactions
           )
-          SELECT source, COUNT(*) AS orphan_rows
+          SELECT src, COUNT(*) AS orphan_rows
           FROM tx t LEFT JOIN users u ON CAST(u.uid AS VARCHAR)=t.uid
           WHERE u.uid IS NULL
           GROUP BY source
