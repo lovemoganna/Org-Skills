@@ -114,7 +114,7 @@ jobs:
             SELECT CAST(uid AS VARCHAR), 'crypto' AS src, crypto_order_id FROM crypto_transactions
           )
           SELECT src, COUNT(*) AS orphan_rows
-          FROM tx t LEFT JOIN users u ON CAST(u.uid AS VARCHAR)=t.uid
+          FROM tx t LEFT JOIN users u ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(t.uid AS BIGINT)
           WHERE u.uid IS NULL
           GROUP BY src
           ORDER BY src
@@ -198,7 +198,7 @@ jobs:
             r.rate_to_usdt,
             f.amount * r.rate_to_usdt AS snapshot_usdt
           FROM fiat_transactions f
-          JOIN users u ON CAST(u.uid AS VARCHAR)=CAST(f.uid AS VARCHAR)
+          JOIN users u ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(f.uid AS BIGINT)
           JOIN exchange_rates r ON r.asset=f.currency
           WHERE f.status='completed'
           UNION ALL
@@ -219,7 +219,7 @@ jobs:
             r.rate_to_usdt,
             c.amount * r.rate_to_usdt
           FROM crypto_transactions c
-          JOIN users u ON CAST(u.uid AS VARCHAR)=CAST(c.uid AS VARCHAR)
+          JOIN users u ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(c.uid AS BIGINT)
           JOIN exchange_rates r ON r.asset=c.asset
           WHERE c.status='completed'
           """)
@@ -335,12 +335,12 @@ jobs:
 
           emit("latest_complete_month_delta", """
           WITH monthly AS (
-            SELECT date_trunc('month', created_at)::DATE month,
+            SELECT date_trunc('month', created_at)::DATE AS mth,
                    uid, user_name,
                    SUM(snapshot_usdt) amount,
                    COUNT(*) count
             FROM completed_flow_snapshot
-            GROUP BY month, uid, user_name
+            GROUP BY mth, uid, user_name
           ),
           bounds AS (
             SELECT date_trunc('month', MAX(created_at))::DATE raw_latest_month
@@ -354,7 +354,7 @@ jobs:
             LIMIT 2
           ),
           pair AS (
-            SELECT MIN(month) previous_month, MAX(month) current_month
+            SELECT MIN(mth) previous_month, MAX(mth) current_month
             FROM complete_months
           ),
           u AS (
@@ -371,8 +371,8 @@ jobs:
             COALESCE(cur.count,0)-COALESCE(prev.count,0) delta_count
           FROM pair p
           CROSS JOIN u
-          LEFT JOIN monthly prev ON prev.month=p.previous_month AND prev.uid=u.uid
-          LEFT JOIN monthly cur ON cur.month=p.current_month AND cur.uid=u.uid
+          LEFT JOIN monthly prev ON prev.mth=p.previous_month AND prev.uid=u.uid
+          LEFT JOIN monthly cur ON cur.mth=p.current_month AND cur.uid=u.uid
           WHERE COALESCE(prev.amount,0)<>0 OR COALESCE(cur.amount,0)<>0
           ORDER BY ABS(delta_amount) DESC, u.uid
           """)
@@ -459,7 +459,7 @@ jobs:
             a.flow_type, a.record_id, a.uid, u.user_name, a.direction, a.unit, a.amount,
             a.status, a.created_at, a.amount*r.rate_to_usdt AS snapshot_usdt
           FROM all_flow a
-          JOIN users u ON CAST(u.uid AS VARCHAR)=a.uid
+          JOIN users u ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(a.uid AS BIGINT)
           LEFT JOIN exchange_rates r ON r.asset=a.unit
           WHERE a.status<>'completed'
           ORDER BY snapshot_usdt DESC NULLS LAST, a.record_id
@@ -504,7 +504,7 @@ jobs:
           )
           SELECT p.*, u.user_name
           FROM pairs p
-          JOIN users u ON CAST(u.uid AS VARCHAR)=p.uid
+          JOIN users u ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(p.uid AS BIGINT)
           WHERE p.rn=1
           ORDER BY gap_hours
           LIMIT 10
