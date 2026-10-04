@@ -163,3 +163,14 @@
 | 当前 TopN 容易被当成变化原因 | 横截面排名替代 movement attribution | 新增 Delta Contribution Gate | 解释变化优先量化谁贡献 delta |
 | 核心解释虽有 robustness，但没有明确反证类型 | robustness 过于宽泛 | 新增 Control / Counterexample Gate | remove-Top / control segment / alternate denominator / alternate grain 至少一种 |
 | 多方案测试容易退化成换皮肤 | 缺少 Candidate Architecture 约束 | 新增 Multi-Architecture Test | 候选共享口径，但 decision path 必须结构性不同 |
+
+
+## V17：Evaluation Preflight / Fixture & Environment Blocking
+
+| 暴露问题 | 归属 | 修正 |
+|---|---|---|
+| Requirement 声明真实 Fixture，但测试仓库没有原始数据 | Requirement / Fixture | 增加 Canonical Fixture Contract；锚点只能对账，不能替代原始行 |
+| 浏览器超时导致 Rendered QA 永久 UNVERIFIED | Environment / Test Contract | 增加 Environment Capability Preflight 与 `BLOCKED_ENV` |
+| Fixture 缺失与 Skill FAIL 混在一起 | Eval Contract | 增加 `BLOCKED_FIXTURE`，明确缺陷 Owner |
+| Multi-Architecture 每轮都被当 mandatory | Requirement | 条件型 Case 未触发时使用 `NOT_APPLICABLE` |
+| Core Logic 已过但视觉环境阻塞时只有一个总分 | Eval Reporting | 增加 Core / Fixture / Rendered / Overall 分层 Verdict |
