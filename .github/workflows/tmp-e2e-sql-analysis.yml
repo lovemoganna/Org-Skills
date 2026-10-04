@@ -1,0 +1,514 @@
+name: Temporary E2E SQL Analysis
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/tmp-e2e-sql-analysis.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  duckdb-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install DuckDB
+        run: python -m pip install --disable-pip-version-check duckdb==1.4.2
+
+      - name: Run real Google Sheet analysis
+        shell: bash
+        run: |
+          python - <<'PY'
+          import duckdb, json, re
+          from datetime import datetime
+
+          URL = "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          SHEETS = ["users", "fiat_transactions", "crypto_transactions", "exchange_rates"]
+
+          con = duckdb.connect()
+          con.execute("""
+          INSTALL httpfs;
+          LOAD httpfs;
+          INSTALL excel;
+          LOAD excel;
+          """)
+
+          def emit(name, sql):
+              cur = con.execute(sql)
+              cols = [d[0] for d in cur.description] if cur.description else []
+              rows = cur.fetchall() if cur.description else []
+              print(f"@@BEGIN:{name}@@")
+              print(json.dumps({"columns": cols, "rows": rows}, ensure_ascii=False, default=str))
+              print(f"@@END:{name}@@")
+
+          print("@@DUCKDB_VERSION@@", duckdb.__version__)
+
+          # Step 0: schema first. Same verified reader; only sheet changes.
+          for sheet in SHEETS:
+              emit(
+                  f"schema_{sheet}",
+                  f"""DESCRIBE SELECT * FROM read_xlsx(
+                    '{URL}',
+                    sheet = '{sheet}',
+                    header = true
+                  )"""
+              )
+              emit(
+                  f"sample_{sheet}",
+                  f"""SELECT * FROM read_xlsx(
+                    '{URL}',
+                    sheet = '{sheet}',
+                    header = true
+                  ) LIMIT 5"""
+              )
+
+          # Materialize only the allowed four sheets after schema discovery.
+          for sheet in SHEETS:
+              con.execute(f"""CREATE OR REPLACE TEMP TABLE {sheet} AS
+              SELECT * FROM read_xlsx(
+                '{URL}',
+                sheet = '{sheet}',
+                header = true
+              )""")
+
+          emit("row_counts", """
+          SELECT 'users' AS table_name, COUNT(*) AS rows FROM users
+          UNION ALL SELECT 'fiat_transactions', COUNT(*) FROM fiat_transactions
+          UNION ALL SELECT 'crypto_transactions', COUNT(*) FROM crypto_transactions
+          UNION ALL SELECT 'exchange_rates', COUNT(*) FROM exchange_rates
+          """)
+
+          emit("status_counts", """
+          SELECT 'fiat' AS source, status, COUNT(*) AS rows
+          FROM fiat_transactions GROUP BY status
+          UNION ALL
+          SELECT 'crypto', status, COUNT(*) AS rows
+          FROM crypto_transactions GROUP BY status
+          ORDER BY source, rows DESC
+          """)
+
+          emit("duplicate_keys", """
+          SELECT 'users.uid' AS key_name, COUNT(*) AS duplicated_keys
+          FROM (SELECT uid FROM users GROUP BY uid HAVING COUNT(*) > 1)
+          UNION ALL
+          SELECT 'fiat_order_id', COUNT(*)
+          FROM (SELECT fiat_order_id FROM fiat_transactions GROUP BY fiat_order_id HAVING COUNT(*) > 1)
+          UNION ALL
+          SELECT 'crypto_order_id', COUNT(*)
+          FROM (SELECT crypto_order_id FROM crypto_transactions GROUP BY crypto_order_id HAVING COUNT(*) > 1)
+          UNION ALL
+          SELECT 'exchange_rates.asset', COUNT(*)
+          FROM (SELECT asset FROM exchange_rates GROUP BY asset HAVING COUNT(*) > 1)
+          """)
+
+          emit("orphan_uids", """
+          WITH tx AS (
+            SELECT CAST(uid AS VARCHAR) uid, 'fiat' source, fiat_order_id record_id FROM fiat_transactions
+            UNION ALL
+            SELECT CAST(uid AS VARCHAR), 'crypto', crypto_order_id FROM crypto_transactions
+          )
+          SELECT source, COUNT(*) AS orphan_rows
+          FROM tx t LEFT JOIN users u ON CAST(u.uid AS VARCHAR)=t.uid
+          WHERE u.uid IS NULL
+          GROUP BY source
+          ORDER BY source
+          """)
+
+          emit("time_quality", """
+          SELECT 'fiat_completed_before_created' AS issue, COUNT(*) AS rows
+          FROM fiat_transactions
+          WHERE completed_at IS NOT NULL AND completed_at < created_at
+          UNION ALL
+          SELECT 'crypto_completed_before_created', COUNT(*)
+          FROM crypto_transactions
+          WHERE completed_at IS NOT NULL AND completed_at < created_at
+          UNION ALL
+          SELECT 'fiat_completed_missing_completed_at', COUNT(*)
+          FROM fiat_transactions
+          WHERE status='completed' AND completed_at IS NULL
+          UNION ALL
+          SELECT 'crypto_completed_missing_completed_at', COUNT(*)
+          FROM crypto_transactions
+          WHERE status='completed' AND completed_at IS NULL
+          """)
+
+          emit("order_id_date_conflicts", """
+          SELECT
+            'crypto' AS source,
+            crypto_order_id AS record_id,
+            uid,
+            CAST(created_at AS DATE) AS created_date,
+            strptime(regexp_extract(crypto_order_id, '_(\\d{8})_', 1), '%Y%m%d')::DATE AS id_date
+          FROM crypto_transactions
+          WHERE regexp_matches(crypto_order_id, '_(\\d{8})_')
+            AND CAST(created_at AS DATE)
+              <> strptime(regexp_extract(crypto_order_id, '_(\\d{8})_', 1), '%Y%m%d')::DATE
+          ORDER BY record_id
+          """)
+
+          emit("exchange_rate_coverage", """
+          SELECT
+            COUNT(*) AS rate_rows,
+            COUNT(DISTINCT effective_date) AS distinct_dates,
+            MIN(effective_date) AS min_date,
+            MAX(effective_date) AS max_date,
+            COUNT(DISTINCT asset) AS assets
+          FROM exchange_rates
+          """)
+
+          emit("exact_fx_matches", """
+          WITH completed_units AS (
+            SELECT CAST(created_at AS DATE) AS tx_date, currency AS asset
+            FROM fiat_transactions WHERE status='completed'
+            UNION ALL
+            SELECT CAST(created_at AS DATE), asset
+            FROM crypto_transactions WHERE status='completed'
+          )
+          SELECT
+            COUNT(*) AS completed_rows,
+            SUM(CASE WHEN r.asset IS NOT NULL THEN 1 ELSE 0 END) AS exact_date_matches
+          FROM completed_units t
+          LEFT JOIN exchange_rates r
+            ON r.asset=t.asset AND r.effective_date=t.tx_date
+          """)
+
+          # Snapshot valuation is explicitly named because rates have only one effective date.
+          con.execute("""
+          CREATE OR REPLACE TEMP VIEW completed_flow_snapshot AS
+          SELECT
+            f.fiat_order_id AS record_id,
+            CAST(f.uid AS VARCHAR) AS uid,
+            u.user_name,
+            u.country_code,
+            u.kyc_level,
+            'Fiat' AS flow_type,
+            f.direction,
+            f.currency AS unit,
+            f.amount,
+            f.channel AS rail,
+            f.status,
+            f.created_at,
+            f.completed_at,
+            r.rate_to_usdt,
+            f.amount * r.rate_to_usdt AS snapshot_usdt
+          FROM fiat_transactions f
+          JOIN users u ON CAST(u.uid AS VARCHAR)=CAST(f.uid AS VARCHAR)
+          JOIN exchange_rates r ON r.asset=f.currency
+          WHERE f.status='completed'
+          UNION ALL
+          SELECT
+            c.crypto_order_id,
+            CAST(c.uid AS VARCHAR),
+            u.user_name,
+            u.country_code,
+            u.kyc_level,
+            'Crypto',
+            c.direction,
+            c.asset,
+            c.amount,
+            c.network,
+            c.status,
+            c.created_at,
+            c.completed_at,
+            r.rate_to_usdt,
+            c.amount * r.rate_to_usdt
+          FROM crypto_transactions c
+          JOIN users u ON CAST(u.uid AS VARCHAR)=CAST(c.uid AS VARCHAR)
+          JOIN exchange_rates r ON r.asset=c.asset
+          WHERE c.status='completed'
+          """)
+
+          emit("north_star_snapshot", """
+          SELECT
+            COUNT(*) AS completed_count,
+            SUM(snapshot_usdt) AS turnover_snapshot_usdt,
+            SUM(snapshot_usdt) FILTER (WHERE direction='deposit') AS deposit_snapshot_usdt,
+            SUM(snapshot_usdt) FILTER (WHERE direction='withdrawal') AS withdrawal_snapshot_usdt,
+            SUM(CASE WHEN direction='deposit' THEN snapshot_usdt ELSE -snapshot_usdt END) AS net_inflow_snapshot_usdt,
+            COUNT(DISTINCT uid) AS active_users,
+            MIN(created_at) AS min_created_at,
+            MAX(created_at) AS max_created_at
+          FROM completed_flow_snapshot
+          """)
+
+          emit("flow_type_driver", """
+          SELECT
+            flow_type,
+            SUM(snapshot_usdt) AS amount,
+            COUNT(*) AS count,
+            MEDIAN(snapshot_usdt) AS median_ticket,
+            AVG(snapshot_usdt) AS avg_ticket,
+            MAX(snapshot_usdt) AS max_ticket,
+            SUM(snapshot_usdt)/SUM(SUM(snapshot_usdt)) OVER () AS amount_share,
+            COUNT(*)::DOUBLE/SUM(COUNT(*)) OVER () AS count_share
+          FROM completed_flow_snapshot
+          GROUP BY flow_type
+          ORDER BY amount DESC
+          """)
+
+          emit("user_concentration", """
+          WITH x AS (
+            SELECT uid, user_name,
+                   SUM(snapshot_usdt) amount,
+                   COUNT(*) count
+            FROM completed_flow_snapshot
+            GROUP BY uid, user_name
+          )
+          SELECT
+            uid, user_name, amount, count,
+            amount/SUM(amount) OVER () AS share,
+            SUM(amount) OVER (ORDER BY amount DESC, uid ROWS UNBOUNDED PRECEDING)
+              /SUM(amount) OVER () AS cumulative_share
+          FROM x
+          ORDER BY amount DESC, uid
+          """)
+
+          emit("transaction_concentration", """
+          WITH ranked AS (
+            SELECT record_id, uid, user_name, snapshot_usdt,
+                   ROW_NUMBER() OVER (ORDER BY snapshot_usdt DESC, record_id) rn,
+                   SUM(snapshot_usdt) OVER () total
+            FROM completed_flow_snapshot
+          )
+          SELECT
+            SUM(snapshot_usdt) FILTER (WHERE rn<=1)/MAX(total) AS top1_share,
+            SUM(snapshot_usdt) FILTER (WHERE rn<=2)/MAX(total) AS top2_share,
+            SUM(snapshot_usdt) FILTER (WHERE rn<=5)/MAX(total) AS top5_share
+          FROM ranked
+          """)
+
+          emit("monthly_snapshot", """
+          WITH m AS (
+            SELECT
+              date_trunc('month', created_at)::DATE AS month,
+              SUM(snapshot_usdt) AS turnover,
+              COUNT(*) AS count,
+              SUM(snapshot_usdt) FILTER (WHERE direction='deposit') AS deposit,
+              SUM(snapshot_usdt) FILTER (WHERE direction='withdrawal') AS withdrawal,
+              COUNT(DISTINCT uid) AS active_users
+            FROM completed_flow_snapshot
+            GROUP BY month
+          )
+          SELECT *, deposit-withdrawal AS net
+          FROM m ORDER BY month
+          """)
+
+          emit("material_month_event_driver", """
+          WITH ranked_tx AS (
+            SELECT
+              date_trunc('month', created_at)::DATE AS month,
+              record_id, uid, user_name, snapshot_usdt,
+              SUM(snapshot_usdt) OVER (PARTITION BY date_trunc('month', created_at)) month_total,
+              COUNT(*) OVER (PARTITION BY date_trunc('month', created_at)) month_count,
+              ROW_NUMBER() OVER (
+                PARTITION BY date_trunc('month', created_at)
+                ORDER BY snapshot_usdt DESC, record_id
+              ) rn
+            FROM completed_flow_snapshot
+          ),
+          month_summary AS (
+            SELECT month,
+                   MAX(month_total) turnover,
+                   MAX(month_count) count,
+                   MAX(snapshot_usdt) FILTER (WHERE rn=1) top1_value,
+                   MAX(snapshot_usdt) FILTER (WHERE rn=1)/MAX(month_total) top1_share,
+                   MAX(record_id) FILTER (WHERE rn=1) top1_record,
+                   MAX(user_name) FILTER (WHERE rn=1) top1_user
+            FROM ranked_tx
+            GROUP BY month
+          ),
+          material AS (
+            SELECT *, ROW_NUMBER() OVER (ORDER BY turnover DESC, month) material_rank
+            FROM month_summary
+          )
+          SELECT *
+          FROM material
+          WHERE material_rank <= 6
+          ORDER BY turnover DESC, month
+          """)
+
+          emit("latest_complete_month_delta", """
+          WITH monthly AS (
+            SELECT date_trunc('month', created_at)::DATE month,
+                   uid, user_name,
+                   SUM(snapshot_usdt) amount,
+                   COUNT(*) count
+            FROM completed_flow_snapshot
+            GROUP BY month, uid, user_name
+          ),
+          bounds AS (
+            SELECT date_trunc('month', MAX(created_at))::DATE raw_latest_month
+            FROM completed_flow_snapshot
+          ),
+          complete_months AS (
+            SELECT DISTINCT month
+            FROM monthly, bounds
+            WHERE month < raw_latest_month
+            ORDER BY month DESC
+            LIMIT 2
+          ),
+          pair AS (
+            SELECT MIN(month) previous_month, MAX(month) current_month
+            FROM complete_months
+          ),
+          u AS (
+            SELECT DISTINCT uid, user_name FROM monthly
+          )
+          SELECT
+            p.previous_month, p.current_month,
+            u.uid, u.user_name,
+            COALESCE(prev.amount,0) previous_amount,
+            COALESCE(cur.amount,0) current_amount,
+            COALESCE(cur.amount,0)-COALESCE(prev.amount,0) delta_amount,
+            COALESCE(prev.count,0) previous_count,
+            COALESCE(cur.count,0) current_count,
+            COALESCE(cur.count,0)-COALESCE(prev.count,0) delta_count
+          FROM pair p
+          CROSS JOIN u
+          LEFT JOIN monthly prev ON prev.month=p.previous_month AND prev.uid=u.uid
+          LEFT JOIN monthly cur ON cur.month=p.current_month AND cur.uid=u.uid
+          WHERE COALESCE(prev.amount,0)<>0 OR COALESCE(cur.amount,0)<>0
+          ORDER BY ABS(delta_amount) DESC, u.uid
+          """)
+
+          emit("remove_top1_robustness", """
+          WITH user_amount AS (
+            SELECT uid, SUM(snapshot_usdt) amount
+            FROM completed_flow_snapshot GROUP BY uid
+          ),
+          top1 AS (
+            SELECT uid FROM user_amount ORDER BY amount DESC, uid LIMIT 1
+          )
+          SELECT
+            SUM(snapshot_usdt) AS remaining_turnover,
+            COUNT(*) AS remaining_count,
+            SUM(CASE WHEN direction='deposit' THEN snapshot_usdt ELSE -snapshot_usdt END) AS remaining_net,
+            SUM(snapshot_usdt)/(SELECT SUM(snapshot_usdt) FROM completed_flow_snapshot) AS remaining_share
+          FROM completed_flow_snapshot
+          WHERE uid NOT IN (SELECT uid FROM top1)
+          """)
+
+          emit("kyc_confounding", """
+          WITH user_amount AS (
+            SELECT uid, user_name, kyc_level, SUM(snapshot_usdt) amount
+            FROM completed_flow_snapshot
+            GROUP BY uid, user_name, kyc_level
+          ),
+          kyc AS (
+            SELECT kyc_level, SUM(amount) amount
+            FROM user_amount GROUP BY kyc_level
+          ),
+          ranked AS (
+            SELECT *, ROW_NUMBER() OVER (ORDER BY amount DESC, uid) rn
+            FROM user_amount
+          )
+          SELECT
+            k.kyc_level,
+            k.amount,
+            k.amount/SUM(k.amount) OVER () AS kyc_share,
+            string_agg(r.user_name, ', ' ORDER BY r.amount DESC) FILTER (WHERE r.kyc_level=k.kyc_level) AS users_in_level,
+            SUM(CASE WHEN r.kyc_level=k.kyc_level AND r.rn<=2 THEN r.amount ELSE 0 END)/NULLIF(k.amount,0) AS share_from_global_top2
+          FROM kyc k
+          CROSS JOIN ranked r
+          GROUP BY k.kyc_level, k.amount
+          ORDER BY k.amount DESC
+          """)
+
+          emit("operational_states_snapshot", """
+          WITH all_flow AS (
+            SELECT 'Fiat' flow_type, CAST(uid AS VARCHAR) uid, direction, currency unit,
+                   amount, status, created_at, fiat_order_id record_id
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'Crypto', CAST(uid AS VARCHAR), direction, asset,
+                   amount, status, created_at, crypto_order_id
+            FROM crypto_transactions
+          )
+          SELECT
+            CASE
+              WHEN status IN ('pending','processing','confirming') THEN 'in_process'
+              WHEN status IN ('failed','cancelled') THEN 'terminal_non_completion'
+              WHEN status='completed' THEN 'completed'
+              ELSE 'other'
+            END state_group,
+            COUNT(*) count,
+            SUM(a.amount*r.rate_to_usdt) snapshot_usdt
+          FROM all_flow a
+          LEFT JOIN exchange_rates r ON r.asset=a.unit
+          GROUP BY state_group
+          ORDER BY snapshot_usdt DESC
+          """)
+
+          emit("operational_evidence", """
+          WITH all_flow AS (
+            SELECT 'Fiat' flow_type, CAST(uid AS VARCHAR) uid, direction, currency unit,
+                   amount, status, created_at, fiat_order_id record_id
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'Crypto', CAST(uid AS VARCHAR), direction, asset,
+                   amount, status, created_at, crypto_order_id
+            FROM crypto_transactions
+          )
+          SELECT
+            a.flow_type, a.record_id, a.uid, u.user_name, a.direction, a.unit, a.amount,
+            a.status, a.created_at, a.amount*r.rate_to_usdt AS snapshot_usdt
+          FROM all_flow a
+          JOIN users u ON CAST(u.uid AS VARCHAR)=a.uid
+          LEFT JOIN exchange_rates r ON r.asset=a.unit
+          WHERE a.status<>'completed'
+          ORDER BY snapshot_usdt DESC NULLS LAST, a.record_id
+          """)
+
+          emit("fiat_channel_latency", """
+          SELECT
+            channel,
+            COUNT(*) AS completed_count,
+            MEDIAN(date_diff('minute', created_at, completed_at))/60.0 AS median_hours,
+            AVG(date_diff('minute', created_at, completed_at))/60.0 AS avg_hours,
+            MAX(date_diff('minute', created_at, completed_at))/60.0 AS max_hours
+          FROM fiat_transactions
+          WHERE status='completed' AND completed_at IS NOT NULL
+          GROUP BY channel
+          ORDER BY median_hours DESC, channel
+          """)
+
+          emit("rapid_same_user_currency_reversal", """
+          WITH dep AS (
+            SELECT fiat_order_id deposit_id, CAST(uid AS VARCHAR) uid, currency,
+                   amount deposit_amount, created_at deposit_at
+            FROM fiat_transactions
+            WHERE status='completed' AND direction='deposit'
+          ),
+          wd AS (
+            SELECT fiat_order_id withdrawal_id, CAST(uid AS VARCHAR) uid, currency,
+                   amount withdrawal_amount, created_at withdrawal_at
+            FROM fiat_transactions
+            WHERE status='completed' AND direction='withdrawal'
+          ),
+          pairs AS (
+            SELECT
+              d.*, w.withdrawal_id, w.withdrawal_amount, w.withdrawal_at,
+              date_diff('minute', d.deposit_at, w.withdrawal_at)/60.0 gap_hours,
+              ROW_NUMBER() OVER (
+                PARTITION BY d.deposit_id
+                ORDER BY w.withdrawal_at
+              ) rn
+            FROM dep d
+            JOIN wd w ON w.uid=d.uid AND w.currency=d.currency AND w.withdrawal_at>d.deposit_at
+          )
+          SELECT p.*, u.user_name
+          FROM pairs p
+          JOIN users u ON CAST(u.uid AS VARCHAR)=p.uid
+          WHERE p.rn=1
+          ORDER BY gap_hours
+          LIMIT 10
+          """)
+
+          print("@@DONE@@")
+          PY
