@@ -1,0 +1,6 @@
+interface:
+  display_name: "Org Museum 收录"
+  short_description: "自动整理编程、知识和阅读材料，收录到 GitHub 并核验网页发布状态"
+  default_prompt: "使用 $org-museum-ingest 把下面内容收录到知识库并发布。"
+policy:
+  allow_implicit_invocation: true

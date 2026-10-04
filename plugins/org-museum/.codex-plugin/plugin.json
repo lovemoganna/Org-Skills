@@ -1,0 +1,8 @@
+{
+  "name": "org-museum",
+  "version": "1.0.0",
+  "description": "Chat → Org → GitHub → GitHub Pages",
+  "skills": "./skills/",
+  "apps": "./.app.json",
+  "interface": {"displayName":"Org Museum","shortDescription":"自动收录并发布知识笔记","category":"Productivity"}
+}

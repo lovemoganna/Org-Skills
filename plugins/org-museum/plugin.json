@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "org-museum",
+  "version": "1.0.0",
+  "description": "在 Chat 中整理 Org 知识笔记、提交 GitHub 并核验自动发布。",
+  "author": {"name": "lovemoganna"},
+  "repository": "https://github.com/lovemoganna/Org-Skills",
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "interface": {
+        "displayName": "Org Museum",
+        "shortDescription": "把内容交给 Chat，自动收录并发布知识笔记",
+        "developerName": "lovemoganna",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "defaultPrompt": ["把下面内容收录到知识库。"]
+      }
+    }
+  }
+}
