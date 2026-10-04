@@ -4,30 +4,49 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 ---
 # Dataset Dashboard Builder
 
-## 0. Regression / Evaluation Preflight
+## 0. End-to-End Regression Mode
 
-当用户明确要求“测试 / 回归 / 验证 Skill”“按 Requirement 执行验收”“远程 Skill × 远程 Requirement 测试”时，必须先读取 `references/eval-preflight.md`，再进入正常数据分析流程。
+当用户要求“测试 / 回归 / 验证 Skill”“按 Requirement 执行验收”时，**必须实际运行本 Skill，不能只审查 Skill 文件或测试规则。**
 
-先完成：
+主链路：
 
 ```text
-Test Contract Discovery
-→ Fixture Preflight
-→ Environment Capability Preflight
-→ Required / Conditional Case Resolution
-→ Execute Cases
-→ Layered Verdict
+Read Requirement
+→ Load Canonical Fixture
+→ Run Dataset Scan / Quality / Field Catalog
+→ Run Question Map / Investigation / Robustness
+→ Build Analysis Spec
+→ Execute DuckDB SQL
+→ Validate Results
+→ Promote Findings
+→ Build Dashboard IA
+→ Generate HTML Dashboard
+→ Render / Interact when available
+→ Evaluate final artifact against Requirement Cases
 ```
+
+本轮主产物必须包含：
+
+- 实际生成的 HTML Dashboard；
+- 实际执行的 SQL；
+- metric → SQL → result → source fields 的分析证据；
+- 对最终产物执行的 regression result。
+
+### Regression / Evaluation Preflight
+
+在主链路开始时读取 `references/eval-preflight.md`，但它只做最小能力检查，**不是测试本身，也不能单独作为最终答案。**
 
 硬规则：
 
-- Requirement 声明 Canonical Fixture 时，原始 Fixture 是 source of truth；数学锚点只能用于对账；
-- Fixture 缺失时，不得把锚点硬编码进 Dashboard 冒充真实回归；
-- 浏览器 / DuckDB / 权限等能力缺失时使用 `BLOCKED_ENV`，不得错误归因给 Skill；
-- Fixture 缺失使用 `BLOCKED_FIXTURE`；
-- 条件型 Case 未触发使用 `NOT_APPLICABLE`，不得计入通过率分母；
-- Static QA 通过不能替代 Rendered QA；
-- 最终必须区分 Core Logic / Fixture / Rendered Environment / Overall Verdict。
+- Fixture 可读后必须立即进入真实数据执行；
+- 数学锚点只能用于对账，不能替代 Fixture；
+- SQL runtime 可用时必须真正执行 SQL；
+- 浏览器不可用时，继续完成数据分析、SQL、HTML 和其余可执行 Case，只把 Rendered QA 标记为 `BLOCKED_ENV`；
+- 单个环境能力受阻时，只阻塞依赖它的 Case，不得提前终止整个回归；
+- 条件型 Case 未触发使用 `NOT_APPLICABLE`；
+- 禁止以“已检查 SKILL.md / regression-cases.md”作为完成回归的证据；
+- 没有实际 HTML Dashboard 的回归，默认未完成。
+
 
 目标：
 
