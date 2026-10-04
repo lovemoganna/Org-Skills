@@ -1,5 +1,19 @@
 # Dashboard Regression Loop
 
+## 0. Evaluation Preflight
+
+回归开始前必须读取 `eval-preflight.md`。
+
+先确认：
+
+- Canonical Fixture 是否存在且可读；
+- 数学锚点是否来自原始 Fixture 重算，而不是硬编码；
+- DuckDB / JS / HTML / Browser / Screenshot 能力；
+- 哪些 Case 是 required，哪些是 conditional；
+- 状态使用 `PASS / FAIL / BLOCKED_FIXTURE / BLOCKED_ENV / NOT_APPLICABLE`。
+
+基础设施阻塞不得错误归因给 Skill；未触发的条件型 Case 不得拉低通过率。
+
 ## 1. 基线
 
 先保存输入、指标口径和当前可运行 HTML。修正只针对已复现缺陷。
