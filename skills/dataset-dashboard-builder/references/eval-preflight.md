@@ -1,8 +1,11 @@
 # Evaluation Preflight
 
-用于 `dataset-dashboard-builder` 被拿来执行 Requirement / regression / eval 时的前置契约。
+用于 Requirement / regression / eval 开始前的**最小能力检查**。
 
-正常“生成 Dashboard”任务不强制进入本 Gate；只有用户明确要求测试、回归、验证 Skill 或按 Requirement 执行验收时启用。
+**Preflight 不是回归测试，不是产物，也不是停止点。**
+它只决定“哪些步骤能执行、哪些具体 Case 受环境阻塞”。
+
+只要 Canonical Fixture 可读，就必须继续实际运行 dataset-dashboard-builder，产出 SQL、分析结果和 HTML Dashboard。浏览器或其他单项能力缺失，不得提前终止整个回归。
 
 ## 1. Test Contract Discovery
 
@@ -36,7 +39,7 @@
 
 ## 3. Environment Capability Preflight
 
-测试开始前记录：
+快速记录：
 
 ```text
 fixture_access
@@ -51,6 +54,18 @@ network_policy
 ```
 
 能力不足时不要等到最后才披露。
+
+## 3A. Continue-Execution Rule
+
+Preflight 完成后必须进入实际执行。
+
+- browser unavailable → 继续 SQL / Analysis / HTML；
+- screenshot unavailable → 继续 HTML / interaction logic / static QA；
+- optional renderer unavailable → 使用同语义 fallback；
+- SQL runtime unavailable → 只将 SQL-execution 依赖项标记 BLOCKED_ENV，并继续能执行的分析与 HTML；不得声称 SQL 已执行；
+- 只有 Fixture 本身不可读，才允许阻断依赖真实数据的主链路。
+
+禁止输出“Preflight 完成”后直接结束。
 
 ## 4. Result Taxonomy
 
