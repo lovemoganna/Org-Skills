@@ -19,6 +19,7 @@ for path in [
     ROOT / "references" / "dashboard-quality-framework.md",
     ROOT / "references" / "insight-hierarchy.md",
     ROOT / "references" / "decision-diagnostics.md",
+    ROOT / "references" / "eval-preflight.md",
     ROOT / "references" / "dashboard-audit-loop.md",
     ROOT / "eval" / "dashboard-quality.md",
     ROOT / "references" / "analysis-depth.md",
@@ -61,6 +62,7 @@ critical = [
     "Dashboard Decision & Audit Loop Gate",
     "Insight Hierarchy Gate",
     "Decision Diagnostics Gate",
+    "Regression / Evaluation Preflight",
 ]
 for rule in critical:
     assert rule in skill or rule in (ROOT / "references" / "regression-loop.md").read_text(encoding="utf-8"), f"missing rule: {rule}"
@@ -168,6 +170,13 @@ for anchor in ["V15 原样本：Insight Hierarchy → High-Value Funds Dashboard
 
 for anchor in ["V16 原样本：Decision Diagnostics / Multi-Architecture", "原失败 A：低金额月份被误称高峰", "原失败 B：自造 5000 USDT 优先级", "泛化 BH：当前最大不等于变化贡献最大", "泛化 BI：Partial Bucket 假异常", "泛化 BJ：反证改变结论", "Adversarial BK：无业务阈值却画红线", "Adversarial BL：五个 Dashboard 只是换色"]:
     assert anchor in regression, f"V16 decision-diagnostics anchor missing: {anchor}"
+
+eval_preflight = (ROOT / "references" / "eval-preflight.md").read_text(encoding="utf-8")
+for rule in ["Fixture Preflight", "Environment Capability Preflight", "BLOCKED_FIXTURE", "BLOCKED_ENV", "NOT_APPLICABLE", "Layered Verdict", "Conditional Case Gate"]:
+    assert rule in eval_preflight, f"eval preflight rule missing: {rule}"
+
+for anchor in ["V17 原样本：Remote Skill × Remote Requirement Evaluation Preflight", "原失败 A：Requirement 声明 Canonical Fixture", "原失败 B：浏览器超时", "泛化 BM：SQL runtime 缺失", "泛化 BN：条件型 Case 未触发", "泛化 BO：核心逻辑通过但视觉环境阻塞", "Adversarial BP：用锚点冒充原始数据", "Adversarial BQ：所有 Case 强制执行"]:
+    assert anchor in regression, f"V17 eval-preflight anchor missing: {anchor}"
 
 assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 
