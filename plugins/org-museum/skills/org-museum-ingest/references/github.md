@@ -25,6 +25,11 @@ fetch_commit_workflow_runs 的当前快捷实现只筛 pull_request，不能用�
 站点版本读取：
 https://lovemoganna.github.io/org-notes/museum-release.json
 使用当前可用的网页读取工具；若该工具不能获取 JSON，明确页面未核验。
+GitHub fetch 不能读取 github.io，不要给它发送 Pages URL。网页工具不可用时，
+通过 fetch_workflow_run_jobs 找 deploy job，确认 Verify live published content
+步骤 success，再用 fetch_workflow_job_logs 读取 `MUSEUM-PUBLISHED-RECEIPT`
+JSON。这个凭据由部署后的真实 HTTP 请求产生；按 commit、id、sha256、href
+核对后可返回已发布。没有该记录则明确页面未核验。
 源码链接：https://github.com/lovemoganna/org-notes/blob/<COMMIT>/<PATH>
 提交链接：https://github.com/lovemoganna/org-notes/commit/<COMMIT>
 页面链接以实际 museum-release.json 的 href 为准，不能仅凭文件名猜测已上线。
