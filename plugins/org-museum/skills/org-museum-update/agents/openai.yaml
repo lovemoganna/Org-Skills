@@ -1,0 +1,6 @@
+interface:
+  display_name: "Org Museum URL 更新"
+  short_description: "从 Museum 页面定位原始 Org，原地炼化并核验发布"
+  default_prompt: "更新这个 Org Museum 页面对应的原始笔记。"
+policy:
+  allow_implicit_invocation: true
