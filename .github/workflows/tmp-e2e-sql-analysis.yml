@@ -116,8 +116,8 @@ jobs:
           SELECT src, COUNT(*) AS orphan_rows
           FROM tx t LEFT JOIN users u ON CAST(u.uid AS VARCHAR)=t.uid
           WHERE u.uid IS NULL
-          GROUP BY source
-          ORDER BY source
+          GROUP BY src
+          ORDER BY src
           """)
 
           emit("time_quality", """
