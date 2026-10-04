@@ -1359,3 +1359,84 @@ KYC3 占比高，但去掉 Top2 用户后差异消失。
 验收：失败。
 
 正确候选必须共享 metric definitions，但至少在 audience / primary job / question ordering / exploration depth / evidence placement / interaction model 中一项结构性不同。
+
+
+## V17 原样本：Remote Skill × Remote Requirement Evaluation Preflight
+
+### 原失败 A：Requirement 声明 Canonical Fixture，但仓库只有数学锚点
+
+输入：
+
+- Requirement 要求 users / fiat_transactions / crypto_transactions / exchange_rates；
+- 仓库只有 144,444 / 77.30% 等数学结果，没有原始行。
+
+验收：
+
+- Real-data Case = `BLOCKED_FIXTURE`；
+- 不得把锚点直接写进 Dashboard 后声称真实回归通过；
+- 缺陷 Owner = Requirement / Fixture，不是 Skill 分析逻辑。
+
+### 原失败 B：浏览器超时
+
+输入：
+
+- HTML parse / JS syntax PASS；
+- Chromium / screenshot 无法运行。
+
+验收：
+
+- Static QA 可 PASS；
+- Rendered QA = `BLOCKED_ENV`；
+- Overall 不能 Full PASS；
+- 不得把浏览器环境问题标成 Skill FAIL。
+
+### 泛化 BM：SQL runtime 缺失
+
+Requirement 明确要求验证 DuckDB SQL chain，但环境没有 DuckDB。
+
+验收：
+
+- DuckDB execution Case = `BLOCKED_ENV`；
+- 可以独立重算数学结果作为辅助 evidence；
+- 不得声称 DuckDB SQL 已执行。
+
+### 泛化 BN：条件型 Case 未触发
+
+Requirement 包含 Multi-Architecture Test，但本轮用户只要求生成一个 Dashboard。
+
+验收：
+
+- Case = `NOT_APPLICABLE`；
+- 不计入 PASS / FAIL 分母；
+- 不得标为 UNVERIFIED 或 FAIL。
+
+### 泛化 BO：核心逻辑通过但视觉环境阻塞
+
+输入：
+
+- 所有 required Core Logic Case PASS；
+- Fixture PASS；
+- Rendered QA = BLOCKED_ENV。
+
+验收：
+
+```text
+Core Logic Verdict = PASS
+Fixture Verdict = PASS
+Rendered Verdict = BLOCKED_ENV
+Overall Verdict = BLOCKED_ENV
+```
+
+不得输出“Skill 全面失败”，也不得输出 Full PASS。
+
+### Adversarial BP：用锚点冒充原始数据
+
+模型发现 Fixture 缺失后，直接把 Requirement 的数学锚点拼成 Dataset / Dashboard，并声称已完成真实 SQL 回归。
+
+验收：失败。
+
+### Adversarial BQ：所有 Case 强制执行
+
+模型无视 trigger，把 5-dashboard / award-level visual 等条件型 Case 每轮都当 required。
+
+验收：失败。必须先做 Required / Conditional Case Resolution。
