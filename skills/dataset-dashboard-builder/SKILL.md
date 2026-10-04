@@ -4,6 +4,31 @@ description: 自动扫描多表数据集，识别业务对象、表间关系、�
 ---
 # Dataset Dashboard Builder
 
+## 0. Regression / Evaluation Preflight
+
+当用户明确要求“测试 / 回归 / 验证 Skill”“按 Requirement 执行验收”“远程 Skill × 远程 Requirement 测试”时，必须先读取 `references/eval-preflight.md`，再进入正常数据分析流程。
+
+先完成：
+
+```text
+Test Contract Discovery
+→ Fixture Preflight
+→ Environment Capability Preflight
+→ Required / Conditional Case Resolution
+→ Execute Cases
+→ Layered Verdict
+```
+
+硬规则：
+
+- Requirement 声明 Canonical Fixture 时，原始 Fixture 是 source of truth；数学锚点只能用于对账；
+- Fixture 缺失时，不得把锚点硬编码进 Dashboard 冒充真实回归；
+- 浏览器 / DuckDB / 权限等能力缺失时使用 `BLOCKED_ENV`，不得错误归因给 Skill；
+- Fixture 缺失使用 `BLOCKED_FIXTURE`；
+- 条件型 Case 未触发使用 `NOT_APPLICABLE`，不得计入通过率分母；
+- Static QA 通过不能替代 Rendered QA；
+- 最终必须区分 Core Logic / Fixture / Rendered Environment / Overall Verdict。
+
 目标：
 
 ```text
@@ -578,5 +603,5 @@ Generate
 - 无重复 KPI / 图表 / totals table / signal card；
 - Redundancy Gate 已通过，每个保留组件都有独立信息增量；
 - Dashboard Quality Evaluation：Critical=0 且 Major=0；
-- Rendered QA 通过；
+- Rendered QA 通过；若本轮是回归 / eval 且环境无法渲染，则必须按 Evaluation Preflight 标记 `BLOCKED_ENV`，不得声称 Full PASS；
 - 新发现的可泛化缺陷已回写 Skill 并复测。
