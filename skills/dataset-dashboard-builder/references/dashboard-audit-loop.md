@@ -208,7 +208,8 @@ UI 只在正常数据下正确不算完成。
 如果无法真实浏览器渲染：
 
 - 执行 DOM / CSS / JS 静态检查；
-- 明确“未完成 rendered visual check”；
+- 普通生成任务明确“未完成 rendered visual check”；
+- regression / eval 模式必须按 `eval-preflight.md` 标记 `BLOCKED_ENV`；
 - 禁止把源码检查描述成视觉验收。
 
 ## 9. Coverage Reconciliation Gate
