@@ -18,7 +18,15 @@ for path in [
     ROOT / "eval" / "exchange-funds-flow.md",
     ROOT / "references" / "dashboard-quality-framework.md",
     ROOT / "references" / "dashboard-business-analysis.md",
+    ROOT / "references" / "dashboard-analysis-models.md",
     ROOT / "references" / "dashboard-reference-catalog.md",
+    ROOT / "goldens" / "README.md",
+    ROOT / "goldens" / "executive-performance.md",
+    ROOT / "goldens" / "monitoring-state.md",
+    ROOT / "goldens" / "investigation-diagnostic.md",
+    ROOT / "goldens" / "operational-queue.md",
+    ROOT / "goldens" / "exploration-comparison.md",
+    ROOT / "goldens" / "entity-360.md",
     ROOT / "references" / "insight-hierarchy.md",
     ROOT / "references" / "decision-diagnostics.md",
     ROOT / "references" / "eval-preflight.md",
@@ -54,6 +62,7 @@ critical = [
     "Portfolio Synthesis",
     "Dashboard Mission Gate",
     "Business Analysis Contract Gate",
+    "Analysis Model Selection Gate",
     "Reference-led Composition Gate",
     "Information Architecture Gate",
     "Dashboard / Report Boundary Gate",
@@ -127,9 +136,27 @@ for rule in ["Primary KPI Eligibility Gate", "Comparator Gate", "Decision Polari
 for rule in ["current largest ≠ change driver", "numerator / denominator", "Context Metric"]:
     assert rule in business_analysis, f"business analysis behavior missing: {rule}"
 
+analysis_models = (ROOT / "references" / "dashboard-analysis-models.md").read_text(encoding="utf-8")
+for rule in ["Selection Gate", "Performance / Variance", "Change / Trend", "Contribution / Mix Shift", "Concentration / Pareto", "Process / Funnel / State", "Operational Queue / SLA", "Cohort / Retention", "Distribution / Segmentation", "Relationship / Unit Economics", "Flow / Movement", "Model → Mode Defaults"]:
+    assert rule in analysis_models, f"analysis model rule missing: {rule}"
+for rule in ["Primary Analysis Model", "Supporting Models", "exactly 1", "最多 2"]:
+    assert rule in analysis_models, f"analysis model behavior missing: {rule}"
+
 reference_catalog = (ROOT / "references" / "dashboard-reference-catalog.md").read_text(encoding="utf-8")
-for rule in ["Reference Selection Gate", "executive", "monitoring", "investigation", "operational", "exploration", "entity", "Dashboard / Report Boundary Gate", "Primary Viewport Gate", "Reference Fit Gate"]:
+for rule in ["Reference Selection Gate", "Golden Index", "Reference Fit Gate", "Dashboard / Report Boundary", "goldens/executive-performance.md", "goldens/exploration-comparison.md"]:
     assert rule in reference_catalog, f"dashboard reference rule missing: {rule}"
+
+goldens = {
+    "executive": (ROOT / "goldens" / "executive-performance.md").read_text(encoding="utf-8"),
+    "monitoring": (ROOT / "goldens" / "monitoring-state.md").read_text(encoding="utf-8"),
+    "investigation": (ROOT / "goldens" / "investigation-diagnostic.md").read_text(encoding="utf-8"),
+    "operational": (ROOT / "goldens" / "operational-queue.md").read_text(encoding="utf-8"),
+    "exploration": (ROOT / "goldens" / "exploration-comparison.md").read_text(encoding="utf-8"),
+    "entity": (ROOT / "goldens" / "entity-360.md").read_text(encoding="utf-8"),
+}
+for name, content in goldens.items():
+    for rule in ["Primary viewport", "Required business logic", "Avoid"]:
+        assert rule in content, f"golden {name} missing: {rule}"
 
 quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(encoding="utf-8")
 for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Mode", "Metric Role Gate", "Comparison Context Gate", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Semantics", "Internal Analysis Boundary", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
@@ -143,7 +170,7 @@ for rule in ["360px", "768px", "1280px", "Real User", "Constrained User", "Edge-
     assert rule in audit_loop, f"dashboard audit-loop behavior missing: {rule}"
 
 insight_hierarchy = (ROOT / "references" / "insight-hierarchy.md").read_text(encoding="utf-8")
-for rule in ["Insight Hierarchy Gate", "North Star Gate", "So-What Gate", "Amount × Count Dual-Signal Gate", "Event-Driven Spike Gate", "Driver Decomposition Gate", "Pareto Gate", "Exception Logic Gate", "Operational State Gate", "Analytical Restraint Gate", "High-Value Dashboard Acceptance"]:
+for rule in ["Mode-aware Hierarchy Gate", "North Star Gate", "Internal Takeaway Gate", "Visible Copy Rule", "Amount × Count Dual-Signal Gate", "Event-Driven Spike Gate", "Driver Decomposition Gate", "Pareto Gate", "Exception Logic Gate", "Operational State Gate", "Internal Role Boundary", "Analytical Restraint Gate", "High-Value Acceptance"]:
     assert rule in insight_hierarchy, f"insight hierarchy rule missing: {rule}"
 
 for rule in ["breadth", "intensity", "concentration", "Top1", "Top2", "remove-Top1", "in-process"]:
@@ -204,11 +231,21 @@ assert "Redundancy Gate" in skill, "redundancy gate missing from SKILL.md"
 renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(encoding="utf-8")
 assert "Result Contract" in renderer_contract and "Visual Spec" in renderer_contract and "Renderer Adapter" in renderer_contract
 
-print("OK: dataset-dashboard-builder repository integrity")
-
 for anchor in ["V19 原样本：Business Analysis Surface / Golden Reference", "原失败 A：分析报告披着 Dashboard 外壳", "原失败 B：内部 QA 状态进入业务页面", "原失败 C：裸总量冒充 Primary KPI", "原失败 D：规则很多但没有专业构图参照", "泛化 BU：Executive 无比较基线", "泛化 BV：Operational Dashboard 却先放 8 个 KPI", "泛化 BW：Investigation Dashboard 变成长篇结论报告", "泛化 BX：Reference 只换皮肤", "泛化 BY：Primary Viewport", "Adversarial BZ：伪造 comparator 以满足 KPI Gate"]:
     assert anchor in regression, f"V19 business-dashboard anchor missing: {anchor}"
 
 surface_lint = (ROOT / "tests" / "dashboard_surface_lint.py").read_text(encoding="utf-8")
-for rule in ["report_process_heading", "internal_execution_state", "PROCESS_HEADING", "INTERNAL_PATTERNS", "--allow-audit"]:
+for rule in ["report_process_heading", "internal_execution_state", "internal_role_label", "PROCESS_HEADING", "INTERNAL_PATTERNS", "INTERNAL_ROLE_PATTERNS", "--allow-audit"]:
     assert rule in surface_lint, f"dashboard surface lint missing: {rule}"
+
+
+for anchor in ["V20 原样本：Analysis Model → Golden Blueprint → Business Surface", "原失败 A：Exploration 仍被套 North Star / Guardrail 叙事", "原失败 B：只有 Dashboard Archetype，没有业务 Analysis Model", "原失败 C：Reference Catalog 只有文字，没有可复用构图骨架", "原失败 D：每张图机械生成 So-What 卡", "泛化 CA：同一数据集，不同任务必须生成不同结构", "泛化 CB：静态销售快照无 comparator", "泛化 CC：支持工单数据", "泛化 CD：订阅行为数据", "泛化 CE：关系分析", "泛化 CF：Reference Loading Budget", "Adversarial CG：把所有分析模型都跑一遍", "Adversarial CH：内部角色泄露", "Adversarial CI：Golden Slot 填充"]:
+    assert anchor in regression, f"V20 analysis-model anchor missing: {anchor}"
+
+assert "Reference Loading Budget" in skill
+assert "Primary Analysis Model" in skill
+assert "Supporting Models" in skill
+assert "So-What / Takeaway 是内部验收字段" in skill
+assert "goldens/*.md" in skill
+
+print("OK: dataset-dashboard-builder repository integrity")
