@@ -30,6 +30,7 @@ for path in [
     ROOT / "references" / "regression-loop.md",
     ROOT / "references" / "skill-change-log.md",
     ROOT / "tests" / "regression-cases.md",
+    ROOT / "tests" / "dashboard_surface_lint.py",
 ]:
     assert path.exists(), f"missing required file: {path.name}"
 
@@ -207,3 +208,7 @@ print("OK: dataset-dashboard-builder repository integrity")
 
 for anchor in ["V19 原样本：Business Analysis Surface / Golden Reference", "原失败 A：分析报告披着 Dashboard 外壳", "原失败 B：内部 QA 状态进入业务页面", "原失败 C：裸总量冒充 Primary KPI", "原失败 D：规则很多但没有专业构图参照", "泛化 BU：Executive 无比较基线", "泛化 BV：Operational Dashboard 却先放 8 个 KPI", "泛化 BW：Investigation Dashboard 变成长篇结论报告", "泛化 BX：Reference 只换皮肤", "泛化 BY：Primary Viewport", "Adversarial BZ：伪造 comparator 以满足 KPI Gate"]:
     assert anchor in regression, f"V19 business-dashboard anchor missing: {anchor}"
+
+surface_lint = (ROOT / "tests" / "dashboard_surface_lint.py").read_text(encoding="utf-8")
+for rule in ["report_process_heading", "internal_execution_state", "PROCESS_HEADING", "INTERNAL_PATTERNS", "--allow-audit"]:
+    assert rule in surface_lint, f"dashboard surface lint missing: {rule}"
