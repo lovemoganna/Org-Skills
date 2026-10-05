@@ -30,6 +30,26 @@
 - 一个 Decision Question 默认只有一个 Primary View；
 - 一个 section 同时承担 summary + exploration + evidence 三种角色时，必须拆分或降级。
 
+## 1A. Reference Fit Gate
+
+Mission / Decision Questions 明确后，读取 `dashboard-reference-catalog.md`，选择一个 Primary Archetype。
+
+记录 Archetype、Why it fits、Primary question、Primary viewport composition、Required interaction、What must not be copied。
+
+如果最终 IA 与所选 reference 的 decision path 不一致，必须重新解释或换 reference。仅有相似颜色、卡片和图表类型不算 reference fit。
+
+## 1B. Business KPI Eligibility Gate
+
+Coverage Plan 之前检查所有候选 headline metric：是否有 comparator、delta/difference、decision polarity、合法 driver path、evidence path。不满足时降级为 context / diagnostic，不得占用 Primary KPI 位。
+
+## 1C. Dashboard Surface Boundary Gate
+
+Build 前预先拒绝 report-shaped IA：
+- 不使用 WHAT / SO WHAT / WHY / PROVENANCE 等分析过程作为顶层 section；
+- 不把 QA / SQL / Regression / Fixture 状态放入业务页面；
+- 不通过长段文字串联页面；
+- 1280×900 首屏必须完成 Primary Job，并给出下一步入口。
+
 ## 2. Dashboard Coverage Plan
 
 渲染前生成 Coverage Plan：
@@ -203,7 +223,10 @@ UI 只在正常数据下正确不算完成。
 13. empty / error states；
 14. data values / visual agreement；
 15. duplicate panels；
-16. visible hierarchy。
+16. visible hierarchy；
+17. Primary Viewport：1280×900 不滚动能否完成 Primary Job；
+18. Dashboard / Report Boundary：是否出现过程型 section、开发状态或长篇报告式 narrative；
+19. Reference Fit：实际构图是否仍符合所选 Archetype。
 
 如果无法真实浏览器渲染：
 
@@ -211,6 +234,19 @@ UI 只在正常数据下正确不算完成。
 - 普通生成任务明确“未完成 rendered visual check”；
 - regression / eval 模式必须按 `eval-preflight.md` 标记 `BLOCKED_ENV`；
 - 禁止把源码检查描述成视觉验收。
+
+## 8A. Artifact Boundary Lint
+
+HTML 生成后、最终 rendered audit 前运行：
+
+`python tests/dashboard_surface_lint.py <dashboard.html>`
+
+默认模式发现以下任一项即 Major：
+
+- report_process_heading；
+- internal_execution_state。
+
+用户明确要求审计视图时才允许 `--allow-audit`。Lint 只负责抓确定性边界错误，不能替代业务分析、Reference Fit 或 Rendered Audit。
 
 ## 9. Coverage Reconciliation Gate
 

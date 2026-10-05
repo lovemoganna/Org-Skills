@@ -28,9 +28,12 @@ Generate
 检查：
 
 - 是否有明确 Dashboard Mission；
+- 是否选择与 Mission 匹配的 Primary Dashboard Archetype；
+- 是否通过 Business Analysis Contract，而不是只展示可计算指标；
 - Audience / Mode / Decision / Population / Period / Comparison / Cadence 是否清楚；
 - 如果数据无“当前”语义，页面是否避免误称“当前状态”；
 - 第一屏是否让用户快速知道范围内最重要的状态；
+- 1280×900 不滚动是否已经完成 Primary Job 并给出下一步入口；
 - 是否回答真正业务问题；
 - 是否存在纯展示模块；
 - 是否能支持下一步判断或行动。
@@ -61,7 +64,9 @@ Generate
 - 是否存在同权卡片堆叠；
 - 是否存在重复模块；
 - 是否能清晰识别下一步入口；
-- 是否更像 Dashboard，而不是长篇报告。
+- 是否更像 Dashboard，而不是长篇报告；
+- 顶层 section 是否使用业务问题/对象命名，而不是 WHAT / SO WHAT / WHY / PROVENANCE；
+- QA / SQL / Fixture / Regression 等内部执行状态是否从业务页面移除。
 
 ## E. 指标质量
 
@@ -70,6 +75,8 @@ Generate
 - 是否区分 Primary KPI / Driver / Guardrail / Diagnostic / Context；
 - KPI Card 是否只保留真正需要突出的指标；
 - Primary KPI / Finding 是否有明确 Comparison Basis；
+- Primary KPI 是否同时具备 comparator、delta/difference 与 decision polarity；
+- 缺少 comparator / polarity 的指标是否已降级为 Context，而不是伪装业务绩效；
 - 需要比较的对象是否同时可见；
 - Filter 是否被错误当成比较工具；
 - 无合理基线时是否明确说明，而不是硬造同比 / 环比；
@@ -154,6 +161,11 @@ Generate
 - 存在明显孤儿组件或重复组件；
 - 360 / 768 / 1280 任一核心视口出现主要内容溢出 / 裁切；
 - 页面更像报告而不是 Dashboard；
+- 顶层信息架构直接使用 WHAT / SO WHAT / WHY / WHO & EVIDENCE / PROVENANCE 等分析过程词；
+- Fixture / DuckDB SQL / Rendered QA / Regression 等开发或验收状态进入业务页面；
+- 1280×900 首屏无法完成 Primary Job；
+- Primary KPI 没有 comparator 或 decision polarity，却被当成业务绩效 KPI；
+- Dashboard Archetype 与 Mission / Audience / Decision 明显不匹配；
 - 图表选择错误；
 - 无法完成 `What → So What → Why → Who/Where → Evidence`；
 - 数据支持下钻但没有有效定位/下钻入口；

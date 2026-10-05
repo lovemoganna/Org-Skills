@@ -413,3 +413,40 @@ Data → Chart → HTML
 8. 哪些模块删除后不会影响业务判断？
 
 如果第 1–6 项不能清晰回答，Dashboard 未完成。
+
+## 16. Business Surface Hard Gates
+
+### Primary KPI Eligibility Gate
+
+Primary KPI 必须同时具备：metric definition + population/period + meaningful comparator + delta/difference + decision polarity or explicit decision meaning。
+
+如果缺 comparator 或 decision polarity：
+- 可以保留为 Context Metric；
+- 不得用最大字号、绿色/红色、箭头或 KPI Card 暗示绩效好坏；
+- 不得称为 performance / health / success KPI；
+- 应重新选择 Dashboard Mode 或 Primary Business Question。
+
+### Dashboard / Report Boundary Gate
+
+Dashboard 是 measurement / decision surface，不是分析过程回放。
+
+默认失败模式：
+- 顶层 section 使用 WHAT / SO WHAT / WHY / WHO / EVIDENCE / PROVENANCE；
+- 首屏放长篇 Executive Thesis、分析总结或方法说明；
+- 把 SQL、Fixture、QA、Regression、Skill 状态当业务模块；
+- 读者必须顺序阅读整页文字才能知道发生了什么；
+- 页面主体由 narrative cards 驱动，而不是 comparison / chart / table / queue / drill。
+
+业务标题应回答“看什么业务对象 / 做什么判断”，而不是暴露分析阶段名。
+
+### Primary Viewport Gate
+
+1280×900 默认视口必须完成 Primary Job。至少可见：Scope / Period / Comparison、Primary KPI / Primary Answer、一项关键变化/驱动/例外、下一步分析入口。
+
+长证据与方法可以在后续区域，不得把主判断推到多屏之后。
+
+### Reference Fit Gate
+
+渲染前必须根据 `dashboard-reference-catalog.md` 选择 Primary Archetype。评估时检查 audience / decision 与 archetype 是否匹配、default view 是否遵循工作路径、是否只复制外观、是否引入数据不支持的指标，以及 custom composition 是否有明确理由。
+
+Reference 只提供“专业看板怎么组织分析”的先验，不覆盖数据事实。

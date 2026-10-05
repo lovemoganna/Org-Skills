@@ -17,6 +17,8 @@ for path in [
     ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md",
     ROOT / "eval" / "exchange-funds-flow.md",
     ROOT / "references" / "dashboard-quality-framework.md",
+    ROOT / "references" / "dashboard-business-analysis.md",
+    ROOT / "references" / "dashboard-reference-catalog.md",
     ROOT / "references" / "insight-hierarchy.md",
     ROOT / "references" / "decision-diagnostics.md",
     ROOT / "references" / "eval-preflight.md",
@@ -28,6 +30,7 @@ for path in [
     ROOT / "references" / "regression-loop.md",
     ROOT / "references" / "skill-change-log.md",
     ROOT / "tests" / "regression-cases.md",
+    ROOT / "tests" / "dashboard_surface_lint.py",
 ]:
     assert path.exists(), f"missing required file: {path.name}"
 
@@ -50,7 +53,11 @@ critical = [
     "Candidate Triage",
     "Portfolio Synthesis",
     "Dashboard Mission Gate",
+    "Business Analysis Contract Gate",
+    "Reference-led Composition Gate",
     "Information Architecture Gate",
+    "Dashboard / Report Boundary Gate",
+    "Primary Viewport Gate",
     "Interaction Gate",
     "Dashboard Quality Evaluation",
     "Comparison & Metric Role Gate",
@@ -113,6 +120,16 @@ for rule in ["Detection Signature", "Funds Event Signature", "Domain Ontology", 
 domain_eval = (ROOT / "eval" / "exchange-funds-flow.md").read_text(encoding="utf-8")
 for rule in ["Critical", "Major", "Expected Domain Questions", "Acceptance"]:
     assert rule in domain_eval, f"exchange funds flow eval missing: {rule}"
+
+business_analysis = (ROOT / "references" / "dashboard-business-analysis.md").read_text(encoding="utf-8")
+for rule in ["Primary KPI Eligibility Gate", "Comparator Gate", "Decision Polarity Gate", "Driver Proof Gate", "Ratio Decomposition", "Duration / Latency", "Actionability Gate", "Mode Downgrade Gate"]:
+    assert rule in business_analysis, f"business analysis rule missing: {rule}"
+for rule in ["current largest ≠ change driver", "numerator / denominator", "Context Metric"]:
+    assert rule in business_analysis, f"business analysis behavior missing: {rule}"
+
+reference_catalog = (ROOT / "references" / "dashboard-reference-catalog.md").read_text(encoding="utf-8")
+for rule in ["Reference Selection Gate", "executive", "monitoring", "investigation", "operational", "exploration", "entity", "Dashboard / Report Boundary Gate", "Primary Viewport Gate", "Reference Fit Gate"]:
+    assert rule in reference_catalog, f"dashboard reference rule missing: {rule}"
 
 quality = (ROOT / "references" / "dashboard-quality-framework.md").read_text(encoding="utf-8")
 for rule in ["五层质量模型", "Dashboard Mission Contract", "Dashboard Mode", "Metric Role Gate", "Comparison Context Gate", "Dashboard Information Chain", "Information Architecture Gate", "Interaction Semantics", "Internal Analysis Boundary", "Anti-AI Dashboard Rules", "移动端控制区不得长期占据主要视口"]:
@@ -188,3 +205,10 @@ renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(enc
 assert "Result Contract" in renderer_contract and "Visual Spec" in renderer_contract and "Renderer Adapter" in renderer_contract
 
 print("OK: dataset-dashboard-builder repository integrity")
+
+for anchor in ["V19 原样本：Business Analysis Surface / Golden Reference", "原失败 A：分析报告披着 Dashboard 外壳", "原失败 B：内部 QA 状态进入业务页面", "原失败 C：裸总量冒充 Primary KPI", "原失败 D：规则很多但没有专业构图参照", "泛化 BU：Executive 无比较基线", "泛化 BV：Operational Dashboard 却先放 8 个 KPI", "泛化 BW：Investigation Dashboard 变成长篇结论报告", "泛化 BX：Reference 只换皮肤", "泛化 BY：Primary Viewport", "Adversarial BZ：伪造 comparator 以满足 KPI Gate"]:
+    assert anchor in regression, f"V19 business-dashboard anchor missing: {anchor}"
+
+surface_lint = (ROOT / "tests" / "dashboard_surface_lint.py").read_text(encoding="utf-8")
+for rule in ["report_process_heading", "internal_execution_state", "PROCESS_HEADING", "INTERNAL_PATTERNS", "--allow-audit"]:
+    assert rule in surface_lint, f"dashboard surface lint missing: {rule}"

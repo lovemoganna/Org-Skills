@@ -174,3 +174,13 @@
 | Fixture 缺失与 Skill FAIL 混在一起 | Eval Contract | 增加 `BLOCKED_FIXTURE`，明确缺陷 Owner |
 | Multi-Architecture 每轮都被当 mandatory | Requirement | 条件型 Case 未触发时使用 `NOT_APPLICABLE` |
 | Core Logic 已过但视觉环境阻塞时只有一个总分 | Eval Reporting | 增加 Core / Fixture / Rendered / Overall 分层 Verdict |
+
+## V19：Business Analysis Surface / Golden Reference
+
+| 暴露缺陷 | 根因 | 最小修正 | 可泛化规则 |
+|---|---|---|---|
+| 最新 E2E 仍用 WHAT / SO WHAT / WHY / WHO & EVIDENCE / PROVENANCE 作为顶层 section，页面本质仍是带图分析报告 | “不要像报告”只有抽象规则，没有 artifact-level boundary | 新增 Dashboard / Report Boundary Gate | 顶层 IA 使用业务对象 / 决策问题；分析流程词默认不得成为业务 section |
+| Fixture / DuckDB SQL / Rendered QA 等状态仍进入业务页面，但回归 Case 仍判 PASS | Internal Analysis Boundary 缺少可执行反例与强制验收 | 将内部 QA 外露升级为 Major，并加入 V19 原失败回归 | 业务页与 audit artifact 分离；用户显式要求审计时才豁免 |
+| 期间累计总量在没有 baseline / target / peer 时仍被当作 headline KPI | 现有 Metric Role 只分类角色，没有 KPI 资格判定 | 新增 Business Analysis Contract | Primary KPI 必须有 comparator + delta/difference + decision polarity；否则降级 Context |
+| 规则越来越多，但模型仍自由拼装页面 | 缺少可复用的高质量 Dashboard composition 先验 | 新增 Golden Reference Catalog 与 Reference Fit Gate | Mission 先选 Archetype，再按 reference 的 decision path 构图；不复制字段/阈值/皮肤 |
+| 核心判断需要滚动多屏后才能完成 | 只要求“首屏重要”，没有可验收的 viewport job | 新增 Primary Viewport Gate | 1280×900 不滚动必须完成 Primary Job，并显示变化/例外和下一步入口 |
