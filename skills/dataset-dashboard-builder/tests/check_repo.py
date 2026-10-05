@@ -107,7 +107,7 @@ for rule in ["Domain Detection Gate", "Entity evidence", "Event / state evidence
     assert rule in domain_routing, f"domain routing rule missing: {rule}"
 
 domain_pack = (ROOT / "domains" / "exchange-funds-flow" / "domain-pack.md").read_text(encoding="utf-8")
-for rule in ["Detection Signature", "Funds Event Signature", "Domain Ontology", "Flow Health", "Rail / Network Performance", "Entity Exposure", "Flow Pattern Investigation", "Evidence Queue", "Domain Visual Grammar"]:
+for rule in ["Detection Signature", "Funds Event Signature", "Domain Ontology", "Flow Health", "Rail / Network Diagnostics", "Entity Exposure", "Flow Pattern Investigation", "Evidence Queue", "Domain Visual Grammar"]:
     assert rule in domain_pack, f"exchange funds flow rule missing: {rule}"
 
 domain_eval = (ROOT / "eval" / "exchange-funds-flow.md").read_text(encoding="utf-8")
