@@ -1,233 +1,237 @@
 # Dashboard Insight Hierarchy
 
-目标：把 Dashboard 从“正确的图表集合”升级为“有判断价值的分析工具”。
+目标：让信息层级服从 Dashboard Mode 与 Primary Analysis Model，不再强制所有数据集使用同一套 North Star → Change → Driver 叙事。
 
-本规则蒸馏自：
-- Stark Dashboard Insight Hierarchy：Current state → Change → Cause/Segment → Exception → Action → Detail；
-- Neil Oliver Data Viz Playbook：So-What Gate、先验证数据是否支持故事；
-- Anthropic Metrics Review：North Star → L1 Health → L2 Diagnostic；
-- data-scientist-core：Pareto、分层对比、过程诊断。
+## 1. Mode-aware Hierarchy Gate
 
-禁止照搬外部模板。只吸收可泛化分析机制。
+先使用 `dashboard-analysis-models.md` 选择 Primary Analysis Model，再按 Dashboard Mode 选择层级。
 
-## 1. Insight Hierarchy Gate
+### executive
 
-每个 Dashboard 先建立：
+`Performance → Variance → Driver → Guardrail → Drill`
 
-\`\`\`text
-North Star
-→ Change
-→ Driver / Segment
-→ Exception
-→ Action / Next Investigation
-→ Detail / Evidence
-\`\`\`
+必须有合法 comparator。没有 comparator 时不得保留 executive performance 模式。
 
-如果页面只有 North Star + Trend，没有 Driver / Exception / Evidence，只能算“监控页”，不能声称高价值分析看板。
+### monitoring
+
+`Current vs Baseline → Trend → Exception → Diagnostic → Drill`
+
+必须有 baseline / prior / SLA / target 中至少一种真实比较。
+
+### investigation
+
+`Focal Metric + Comparator → Delta → Decomposition → Counterexample → Entity/Segment → Evidence`
+
+重点是解释已知问题，不需要额外制造“North Star”。
+
+### operational
+
+`Queue → Priority/Aging → Object → Detail → Action/Evidence`
+
+Primary View 默认是 queue / table。趋势与 KPI 只做上下文。
+
+### exploration
+
+`Scope → Comparison/Distribution → Segment/Relationship → Select → Detail`
+
+没有绩效基线时，Context number 只是辅助，不强制 North Star、Guardrail 或 trend。
+
+### entity
+
+`Entity State → Peer/History → Timeline → Related Records → Evidence`
 
 ## 2. North Star Gate
 
-North Star 必须：
+North Star **不是所有 Dashboard 的必选项**。
 
-- 直接回答当前业务问题；
-- 有明确 population / time range / unit；
-- 配至少一个上下文：prior period / segment / baseline / concentration / target / guardrail；
-- 不得只是“最大数字”；
-- 最多一个 dominant North Star。
+只在以下情况使用：
 
-Supporting KPI 只允许解释 North Star 或保护判断。
+- executive / monitoring 中存在可判断的核心业务指标；
+- 用户明确指定一个 dominant KPI；
+- Primary Analysis Model = Performance / Variance，且 comparator 合法。
 
-## 3. So-What Gate
+North Star 必须有 population / period / unit / comparator。裸总量不得升级。
 
-每个准备进入主页面的图 / 表，必须先写一句可验证 takeaway：
+Exploration / Operational / Entity 模式默认不要求 North Star。
 
-\`\`\`text
+## 3. Internal Takeaway Gate
+
+每个准备进入页面的主图 / 主表，在内部必须能回答：
+
+```text
 Observed pattern
-→ Context / comparison
-→ Why it matters
+→ Comparison / context
+→ Decision relevance
 → Next useful investigation
-\`\`\`
+```
 
-硬规则：
+这是**生成与验收数据结构**，不是默认 UI 文案。
 
-- takeaway 只能来自真实计算；
-- 无法写出 takeaway 的组件删除；
-- 不把相关写成因果；
-- 不把 isolated spike 写成长期趋势；
-- 不把“数值大”自动解释成风险；
-- 竞争解释仍存在时写成 investigation lead，不写成结论。
+### Visible Copy Rule
+
+默认不为每张图渲染 “So what / Takeaway / Insight” 文案卡。
+
+只有满足以下条件才显示解释文字：
+
+- 用户明确要求 commentary；或
+- 单靠图表无法理解重要限制 / 非显然口径；或
+- 文字在筛选后仍能动态保持正确；或
+- 是一个经过验证且对决策有增量的简短 annotation。
+
+优先把动态结论表达为：
+
+- comparator / delta；
+- chart annotation；
+- direct label；
+- tooltip；
+- conditional table cell；
+- selected-state detail。
+
+禁止用固定 narrative card 把 Dashboard 写成分析报告。
 
 ## 4. Amount × Count Dual-Signal Gate
 
-资金 / 交易 / 订单类数据，只看金额或只看笔数都可能误导。
+资金 / 交易 / 订单类数据支持时，同时检查 amount、count、typical ticket、direction、time。
 
-数据支持时必须同时检查：
+诊断：
 
-- amount；
-- count；
-- amount / count（典型单笔）；
-- direction；
-- time。
+- amount ↑ + count ↑：广度可能增加；
+- amount ↑ + count ≈：检查 ticket / concentration；
+- count ↑ + amount ≈：检查小额高频；
+- amount 与 count 反向：检查 mix。
 
-关键诊断：
-
-- amount 上升 + count 同步上升 → 更可能是广泛活动增加；
-- amount 上升 + count 平稳 → 检查大单 / ticket size；
-- count 上升 + amount 平稳 → 检查小额高频；
-- amount 与 count 方向相反 → 必须解释 mix / ticket shift。
-
-不得仅用“趋势上涨”概括这四种情况。
+这一步是分析模型的一部分，不要求一定生成两张图。
 
 ## 5. Event-Driven Spike Gate
 
-时间序列出现峰值时，必须先读取 `decision-diagnostics.md` 的 Materiality Before Extremeness Gate。
-
-先筛出 materially important 的候选时间桶，再检查峰值是否由少数记录驱动。禁止仅凭 Top1 share 高就把低金额月份称为“高峰”。
-
-每个重要时间桶至少计算：
+时间序列峰值先过 Materiality，再检查：
 
 - total amount；
 - count；
 - top1 transaction share；
-- topN transaction share（必要时）；
-- top entity share（必要时）。
+- top entity share；
+- complete bucket。
 
-如果 top1 transaction share 很高：
-
-- 描述为“单笔 / 少数大额事件驱动”；
-- 不描述为“全面增长 / 活跃度提升”；
-- 图上应提供对应 record / entity 下钻。
-
-默认参考：top1 > 80% 只能作为 concentration trigger；它不是业务风险线，也不能绕过 materiality。
+少数记录主导时写 event-dependent / concentrated，不写 broad-based growth。
 
 ## 6. Driver Decomposition Gate
 
-“为什么金额高 / 为什么变化”优先检查三个维度：
+解释 amount / revenue / volume / workload 等 scale 时，优先从：
 
 ### Breadth
-
 - count；
 - active entities；
-- involved segments。
+- eligible population。
 
 ### Intensity
-
-- average / median ticket；
-- amount per active entity；
+- median / average per event；
+- amount per entity；
 - frequency per entity。
 
 ### Concentration
+- Top1 / Top2 / adaptive TopN；
+- cumulative share；
+- leave-one-out。
 
-- Top1 / Top2 / Top5 share；
-- Pareto cumulative share；
-- top transaction share；
-- leave-one-out / remove-Top1 robustness。
-
-优先用这三层解释 scale，避免机械遍历所有 categorical fields。
+不要机械遍历所有 categorical field。
 
 ## 7. Pareto Gate
 
-当少数实体贡献大部分金额时：
+少数实体贡献大部分 measure 时：
 
-- 使用 ranked bar / bar-in-cell + cumulative share；
-- 至少报告 Top1 与 Top2 / TopN share；
-- 如果去掉 Top1 后结论改变，必须显式说明；
-- 不把实体高度集中错误解释为其标签属性导致。
-
-例如：
-
-\`\`\`text
-KYC3 占 77%
-\`\`\`
-
-如果 KYC3 仅由两个 Top 用户构成，正确表达应是：
-
-\`\`\`text
-77% 集中于两个用户；这两个用户恰好都是 KYC3。
-当前数据不能证明 KYC 等级本身驱动高金额。
-\`\`\`
+- 至少计算 Top1、Top2 / TopN、cumulative share；
+- remove-Top1；
+- 检查标签属性是否被大实体混淆；
+- 适合 ranked bar / bar-in-cell / Pareto。
 
 ## 8. Exception Logic Gate
 
-Exception 不等于“红色异常卡”。
+Exception 必须有：
 
-进入主页面的 Exception 至少满足其一：
+`What → Object → Evidence → Materiality → Next check`
 
-- material amount；
-- blocked / unresolved business state；
-- strong evidence of data inconsistency；
-- repeated / extreme behavior pattern；
-- directly affects interpretation of North Star。
-
-Exception 必须包含：
-
-\`\`\`text
-What
-→ Affected object
-→ Evidence
-→ Why it matters
-→ Next check
-\`\`\`
-
-只有状态数量但无金额 / 对象 / next check 的 status chart 默认降级。
+只有状态数量、没有对象或影响的 exception 默认降级。
 
 ## 9. Operational State Gate
 
-资金流中：
+当数据存在 lifecycle：
 
-- pending / processing / confirming = in-process；
-- failed / cancelled = terminal non-completion；
-- completed = realized/completed flow。
+- in-process；
+- success/completed；
+- terminal failure/cancelled；
 
-必须分开。
+必须保持真实状态语义。
 
-如果 in-process 金额 materially large：
-
-- 作为 Guardrail / Exception 展示；
-- 不计入 completed turnover；
-- 不和 failed / cancelled 混成“异常率”。
+是否进入主页面取决于 Primary Analysis Model 与 materiality，不因为“能算状态占比”就自动展示。
 
 ## 10. Comparison Gate
 
-裸数字不得直接晋级 Insight。
+突出数字至少有一种真实上下文：
 
-比较上下文优先顺序：
+- prior comparable period；
+- sibling segment；
+- peer；
+- per-entity / per-order normalization；
+- historical distribution；
+- contribution share；
+- explicit target / benchmark。
 
-1. 同数据集 prior period；
-2. 同期 segment / flow type；
-3. per-entity / per-order normalization；
-4. historical median / distribution；
-5. target / benchmark（只有真实存在时）。
+没有比较就保持 descriptive/context。
 
-禁止编造目标线。
+## 11. Internal Role Boundary
 
-## 11. Analytical Restraint Gate
+以下词默认只存在于内部 contract，不作为业务 UI 标签：
 
-小样本 / 演示数据默认禁止：
+`North Star / Primary / Driver / Guardrail / Diagnostic / Context / Exploration / Executive / Investigation / Supporting Finding`
+
+最终页面使用真实业务语言，例如：
+
+- “已完成订单”；
+- “待处理订单”；
+- “渠道完成时延”；
+- “用户资金集中度”。
+
+## 12. Analytical Restraint Gate
+
+小样本默认优先：
+
+- descriptive decomposition；
+- exact comparison；
+- Pareto；
+- segment distribution；
+- event sequence；
+- evidence drill。
+
+默认禁止：
 
 - 因果归因；
 - 复杂聚类；
 - 预测；
 - 显著性泛化；
-- 把单个 pattern 定义为欺诈 / 风险事件。
+- 把 pattern 自动定性为 fraud / risk。
 
-优先做：
+## 13. High-Value Acceptance
 
-- descriptive decomposition；
-- Pareto；
-- segment comparison；
-- event sequence；
-- exact evidence drill。
+按当前 Mode 检查，而不是统一要求 North Star。
 
-## 12. High-Value Dashboard Acceptance
+### executive / monitoring
 
-高价值 Dashboard 至少能回答：
+必须回答：当前 vs comparator、变化、driver / exception、下一步 drill。
 
-1. North Star 当前是什么？
-2. 它随时间怎么变化？
-3. 变化来自 breadth、intensity 还是 concentration？
-4. 哪些实体 / 事件贡献最大？
-5. 哪些 Exception 真正值得查？
-6. 用户能否落到原始证据？
+### investigation
 
-如果只能回答 1–2，不能以“高价值看板”结束。
+必须回答：问题差异、主要 contribution / decomposition、至少一个 counterexample、actor/record evidence。
+
+### operational
+
+必须回答：待处理什么、为什么优先、对象是谁、如何进入 detail/action。
+
+### exploration
+
+必须回答：最有价值的比较/分布是什么、主要结构差异在哪里、选哪个对象继续下钻。
+
+### entity
+
+必须回答：对象状态、相对 peer/history 如何、关键事件是什么、原始记录在哪里。
+
+如果页面只是在展示若干数字和图表，但不能完成对应 Mode 的主任务，则失败。
