@@ -32,9 +32,9 @@
 
 ## 1A. Reference Fit Gate
 
-Mission / Decision Questions 明确后，读取 `dashboard-reference-catalog.md`，选择一个 Primary Archetype。
+Mission / Decision Questions 与 Primary Analysis Model 明确后，读取 `dashboard-reference-catalog.md`，选择一个 Primary Archetype，并只读取对应的一个 Golden Blueprint。
 
-记录 Archetype、Why it fits、Primary question、Primary viewport composition、Required interaction、What must not be copied。
+记录 Primary Analysis Model、Archetype、Golden file、Why it fits、Primary question、Primary viewport composition、Required interaction、Removed unsupported slots。
 
 如果最终 IA 与所选 reference 的 decision path 不一致，必须重新解释或换 reference。仅有相似颜色、卡片和图表类型不算 reference fit。
 
@@ -48,6 +48,8 @@ Build 前预先拒绝 report-shaped IA：
 - 不使用 WHAT / SO WHAT / WHY / PROVENANCE 等分析过程作为顶层 section；
 - 不把 QA / SQL / Regression / Fixture 状态放入业务页面；
 - 不通过长段文字串联页面；
+- 不显示 Primary / Driver / Guardrail / Diagnostic / Context / Exploration 等内部角色或路由标签；
+- 不为每个主图机械生成 So-What / Takeaway 文字卡；
 - 1280×900 首屏必须完成 Primary Job，并给出下一步入口。
 
 ## 2. Dashboard Coverage Plan
@@ -226,7 +228,10 @@ UI 只在正常数据下正确不算完成。
 16. visible hierarchy；
 17. Primary Viewport：1280×900 不滚动能否完成 Primary Job；
 18. Dashboard / Report Boundary：是否出现过程型 section、开发状态或长篇报告式 narrative；
-19. Reference Fit：实际构图是否仍符合所选 Archetype。
+19. Reference Fit：实际构图是否仍符合所选 Archetype + Golden；
+20. Analysis Model Fit：主要组件是否都能回指 Primary / Supporting Analysis Model；
+21. UI Role Leakage：内部 Context / Guardrail / Exploration 等角色是否泄露；
+22. Narrative Card Check：是否用固定 takeaway 卡替代比较、annotation 或 drill。
 
 如果无法真实浏览器渲染：
 
@@ -244,7 +249,8 @@ HTML 生成后、最终 rendered audit 前运行：
 默认模式发现以下任一项即 Major：
 
 - report_process_heading；
-- internal_execution_state。
+- internal_execution_state；
+- internal_role_label。
 
 用户明确要求审计视图时才允许 `--allow-audit`。Lint 只负责抓确定性边界错误，不能替代业务分析、Reference Fit 或 Rendered Audit。
 

@@ -1611,3 +1611,147 @@ Skill 有 Mission / IA / Interaction / QA 规则，但没有明确 Golden Refere
 数据没有目标或历史，模型自行造“目标 100k”“较上月 +12%”。
 
 验收：Critical。Comparator 必须有数据或用户依据；缺失就降级，不得补造。
+
+
+## V20 原样本：Analysis Model → Golden Blueprint → Business Surface
+
+### 原失败 A：Exploration 仍被套 North Star / Guardrail 叙事
+
+V19 对照产物已经选择 Exploration，但业务 UI 仍出现 `Context`、`Guardrail`、`Exploration`，并保留固定 takeaway 文案。
+
+验收：
+
+- Exploration 不强制 North Star；
+- Context / Guardrail / Exploration 只能是内部 contract，不得作为业务 UI 标签；
+- 内部 takeaway 不自动渲染为文字卡；
+- 当前四表默认无绩效基线时，Primary Mode 可为 exploration，Primary Analysis Model 应来自 Flow / Concentration / Distribution 等真实证据。
+
+### 原失败 B：只有 Dashboard Archetype，没有业务 Analysis Model
+
+模型知道 executive / exploration / operational，但页面组件仍从字段和 Finding 临时决定。
+
+验收：
+
+- Dashboard IA 前必须选择 exactly 1 个 Primary Analysis Model；
+- Supporting Models ≤ 2；
+- 每个主组件必须能回指某个选中 model 的 required calculation；
+- 不允许 `all models` / `all dimensions` 扫描式执行。
+
+### 原失败 C：Reference Catalog 只有文字，没有可复用构图骨架
+
+验收：
+
+- 必须从 `goldens/` 读取一个 Primary Golden；
+- Golden 包含 primary viewport wireframe、component budget、required logic、interaction、avoid；
+- 数据不支持的 slot 必须删除；
+- Reference Fit 不是“颜色和卡片像”。
+
+### 原失败 D：每张图机械生成 So-What 卡
+
+验收：
+
+- So-What / Takeaway 默认是内部验证字段；
+- 图表能通过 comparator、delta、annotation、label、tooltip 或 drill 表达时，不额外增加 narrative card；
+- 用户明确要求 commentary 时才可系统展示说明。
+
+## V20 泛化
+
+### 泛化 CA：同一数据集，不同任务必须生成不同结构
+
+同一订单数据：
+
+任务 1：`为什么本月收入下降？`
+
+预期：
+- Mode = investigation；
+- Primary Model = Performance/Variance 或 Change + Contribution；
+- Golden = investigation-diagnostic；
+- focal metric + comparator + delta + contribution + counterexample 同屏；
+- 不先放通用 KPI 墙。
+
+任务 2：`今天有哪些订单要优先处理？`
+
+预期：
+- Mode = operational；
+- Primary Model = Operational Queue / Process；
+- Golden = operational-queue；
+- queue/table 占主位；
+- KPI / trend 只能做上下文。
+
+两个任务如果只是改标题或颜色，失败。
+
+### 泛化 CB：静态销售快照无 comparator
+
+只有 `customer / segment / revenue`，无历史、target、peer baseline。
+
+验收：
+- Mode = exploration；
+- Primary Model = Contribution / Concentration / Distribution 之一；
+- Revenue 总额只能是 Context；
+- 不出现 North Star / Guardrail / performance delta；
+- Golden = exploration-comparison。
+
+### 泛化 CC：支持工单数据
+
+字段：`ticket_id / queue / status / created_at / resolved_at / owner / sla_due`。
+
+任务：`做运营看板`。
+
+验收：
+- Primary Model = Operational Queue / SLA；
+- queue、aging、breach、owner、detail 优先；
+- Process/Trend 只作为 Supporting Model；
+- 不用 exploration comparison 作为主结构。
+
+### 泛化 CD：订阅行为数据
+
+字段：`user_id / signup_date / event_date / plan / revenue`，存在重复用户事件。
+
+任务：`分析留存`。
+
+验收：
+- Primary Model = Cohort / Retention；
+- cohort definition、eligible denominator、maturity 必须先成立；
+- primary view 是 cohort matrix / retention curve；
+- 不因为有 revenue 就改成通用销售 KPI 页面。
+
+### 泛化 CE：关系分析
+
+字段：`campaign / spend / revenue / conversions`。
+
+任务：`看投入与产出的关系`。
+
+验收：
+- Primary Model = Relationship / Unit Economics；
+- 明确 denominator / ROAS 等口径只有在可定义时才生成；
+- raw-grain relation / segment overlay 优先；
+- 不把 SUM(spend) 与 SUM(revenue) 聚成一个点后声称相关。
+
+### 泛化 CF：Reference Loading Budget
+
+普通“给这批表做 Dashboard”任务：
+
+验收：
+- 不读取完整 regression-cases；
+- 不读取 skill-change-log；
+- 只读当前一个 Primary Golden；
+- investigation / decision-diagnostics 只有触发时才读取。
+
+### Adversarial CG：把所有分析模型都跑一遍
+
+输出同时包含 performance、funnel、cohort、Pareto、scatter、SLA、network，仅因为字段勉强可用。
+
+验收：失败。Primary Model 必须 exactly 1，Supporting ≤2，其他明确 reject / skip。
+
+### Adversarial CH：内部角色泄露
+
+业务页面显示：
+`Context / Guardrail / Diagnostic / Exploration / Primary KPI`
+
+验收：Major；surface lint 应至少捕获保守可判定的内部角色标签。
+
+### Adversarial CI：Golden Slot 填充
+
+选择 executive Golden，但数据没有 comparator，模型仍生成 `vs target` slot 并填 `N/A`。
+
+验收：失败。应降级 Mode 或删除 slot，不能为了模板完整性填空。

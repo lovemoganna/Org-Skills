@@ -184,3 +184,15 @@
 | 期间累计总量在没有 baseline / target / peer 时仍被当作 headline KPI | 现有 Metric Role 只分类角色，没有 KPI 资格判定 | 新增 Business Analysis Contract | Primary KPI 必须有 comparator + delta/difference + decision polarity；否则降级 Context |
 | 规则越来越多，但模型仍自由拼装页面 | 缺少可复用的高质量 Dashboard composition 先验 | 新增 Golden Reference Catalog 与 Reference Fit Gate | Mission 先选 Archetype，再按 reference 的 decision path 构图；不复制字段/阈值/皮肤 |
 | 核心判断需要滚动多屏后才能完成 | 只要求“首屏重要”，没有可验收的 viewport job | 新增 Primary Viewport Gate | 1280×900 不滚动必须完成 Primary Job，并显示变化/例外和下一步入口 |
+
+
+## V20：Analysis Model / Mode-aware Hierarchy / Executable Golden
+
+| 暴露缺陷 | 已验证根因 | 修正 | 可泛化规则 |
+|---|---|---|---|
+| V19 已是 Exploration，但页面仍显示 Context、Guardrail、Exploration | Metric Role / Mode 是内部分析元数据，却没有完整 UI 边界 | 新增 Internal Role Boundary + surface lint | 内部角色不得成为业务标签 |
+| 页面仍有固定 takeaway 文案，整体像“自制 BI 网页” | So-What Gate 强制每个主图生成一句 takeaway，模型自然渲染成文字卡 | Takeaway 改为内部验收字段 | 优先用 comparator、delta、annotation、tooltip、drill 表达；文字不是默认组件 |
+| 有 Archetype 仍缺业务分析能力 | Archetype 解决“页面怎么用”，没有决定“数据应该做哪类业务分析” | 新增 Analysis Model Catalog | 先选 1 个 Primary Model，再选 Golden |
+| Reference Catalog 仍只是文字说明 | 模型没有可直接复用的 viewport hierarchy / component budget | 新增 6 个 executable Golden Blueprint | 每次只读取一个 Golden，数据不支持的 slot 删除 |
+| North Star / Change / Driver 被所有模式复用 | Insight Hierarchy 不是 mode-aware | 重写 Insight Hierarchy | executive/monitoring/investigation/operational/exploration/entity 使用不同工作路径 |
+| 正常生成需读取大量历史规则，注意力被测试资产稀释 | Runtime reference loading 没有预算 | 新增 Reference Loading Budget | regression/change-log 只在测试或 Skill 优化时读取 |

@@ -28,7 +28,8 @@ Generate
 检查：
 
 - 是否有明确 Dashboard Mission；
-- 是否选择与 Mission 匹配的 Primary Dashboard Archetype；
+- 是否选择与 Mission 匹配的 Primary Analysis Model；
+- 是否选择与 Analysis Model / Mission 匹配的 Primary Dashboard Archetype + Golden；
 - 是否通过 Business Analysis Contract，而不是只展示可计算指标；
 - Audience / Mode / Decision / Population / Period / Comparison / Cadence 是否清楚；
 - 如果数据无“当前”语义，页面是否避免误称“当前状态”；
@@ -65,8 +66,11 @@ Generate
 - 是否存在重复模块；
 - 是否能清晰识别下一步入口；
 - 是否更像 Dashboard，而不是长篇报告；
+- 主要组件是否服务 Primary / Supporting Analysis Model，而不是字段驱动画图；
 - 顶层 section 是否使用业务问题/对象命名，而不是 WHAT / SO WHAT / WHY / PROVENANCE；
-- QA / SQL / Fixture / Regression 等内部执行状态是否从业务页面移除。
+- QA / SQL / Fixture / Regression 等内部执行状态是否从业务页面移除；
+- Primary / Driver / Guardrail / Diagnostic / Context / Exploration 等内部标签是否从业务 UI 移除；
+- 是否存在机械重复的 Takeaway / So-What 文案卡。
 
 ## E. 指标质量
 
@@ -165,7 +169,10 @@ Generate
 - Fixture / DuckDB SQL / Rendered QA / Regression 等开发或验收状态进入业务页面；
 - 1280×900 首屏无法完成 Primary Job；
 - Primary KPI 没有 comparator 或 decision polarity，却被当成业务绩效 KPI；
-- Dashboard Archetype 与 Mission / Audience / Decision 明显不匹配；
+- Dashboard Archetype / Golden 与 Mission / Audience / Decision / Primary Analysis Model 明显不匹配；
+- 页面主要组件无法回指任何选中的 Analysis Model；
+- 内部角色标签 Context / Guardrail / Exploration 等直接暴露给业务用户；
+- 每个主图机械附带固定 Takeaway / So-What 卡，导致页面退化为报告；
 - 图表选择错误；
 - 无法完成 `What → So What → Why → Who/Where → Evidence`；
 - 数据支持下钻但没有有效定位/下钻入口；
