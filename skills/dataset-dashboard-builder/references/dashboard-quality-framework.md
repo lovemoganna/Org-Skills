@@ -54,35 +54,18 @@ L1–L3 决定“有没有用”；L4–L5 决定“好不好用”。
 
 ## 3. Dashboard Information Chain
 
-先读取 `insight-hierarchy.md`。
+先读取 `dashboard-analysis-models.md` 与 `insight-hierarchy.md`。
 
-高质量 Dashboard 优先形成：
+高质量 Dashboard 没有唯一通用叙事。信息链由 Dashboard Mode + Primary Analysis Model 决定，例如：
 
-```text
-North Star / What
-→ Change / So What
-→ Driver / Why
-→ Exception
-→ Who / Where
-→ Action
-→ Evidence
-```
+- executive：Performance → Variance → Driver → Guardrail → Drill；
+- monitoring：Current vs Baseline → Trend → Exception → Diagnostic；
+- investigation：Focal Metric → Delta → Decomposition → Counterexample → Evidence；
+- operational：Queue → Priority/Aging → Object → Detail/Action；
+- exploration：Scope → Comparison/Distribution → Segment/Relationship → Detail；
+- entity：Entity State → Peer/History → Timeline → Records。
 
-对应：
-
-```text
-当前状态 / 核心变化
-→ 为什么值得关注
-→ 原因 / 驱动
-→ 具体对象 / 维度
-→ 明细 / 原始证据
-```
-
-禁止默认采用：
-
-```text
-KPI → 饼图 → 柱状图 → 折线图 → 表格
-```
+禁止把 `What / So What / Why / Who / Evidence` 作为统一页面目录，也禁止默认采用 `KPI → 饼图 → 柱状图 → 折线图 → 表格`。
 
 ## 4. Dashboard Mode
 
@@ -115,6 +98,7 @@ Mode 决定默认工作路径，不是装饰标签。
 2. Driver / Diagnostic / Context 不得因为“能算出来”就自动升成卡片；
 3. 同一指标在不同组件中角色必须一致；
 4. 如果没有足够证据定义 Primary KPI，可以只保留 Context / Diagnostic，不强造“核心 KPI”。
+5. Primary / Driver / Guardrail / Diagnostic / Context 是内部 Metric Role，默认不作为业务 UI 标签显示。
 
 ## 6. Comparison Context Gate
 
@@ -215,7 +199,7 @@ Current
 
 图表选择继续遵守 `visualization-registry.md`。
 
-任何主图先通过 So-What Gate：如果不能写出一个由真实数据支持、且比标题更有信息量的 takeaway，则该图不得进入主页面。
+任何主图 / 主表都必须在内部通过 Decision Relevance 检查：它回答哪个业务问题、比较对象是什么、下一步如何下钻。内部 takeaway 默认不渲染为文案卡；只有文字提供图形无法表达的必要限制、动态可保持正确的 annotation，或用户明确要求 commentary 时才显示。
 
 额外原则：
 
