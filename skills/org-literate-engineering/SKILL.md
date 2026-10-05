@@ -434,6 +434,12 @@ Noweb 只用于真实代码组合。
 
 运行错误必须回溯到来源 Org Block 修复，再重新 tangle。
 
+`:tangle` 只声明生成目标，不代表文件已经生成。下游 Block 依赖 Tangle 产物时，执行链必须显式包含 Tangle，再确认 Artifact 存在，最后执行下游 Block。禁止假设 `org-babel-execute-buffer` 会自动完成 Tangle。
+
+如果 `:tangle` 目标的父目录或执行使用的 `:dir` 可能不存在，使用 `:mkdirp yes`。不要假设 `:dir` 会自动创建目录。
+
+`:tangle` 属于 WRITE，遵守第 35 节 Side Effect Gate。
+
 ---
 
 # 16. Session

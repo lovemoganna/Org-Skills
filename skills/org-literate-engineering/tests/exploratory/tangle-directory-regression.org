@@ -1,0 +1,44 @@
+#+TITLE: Tangle Directory Regression
+
+* Module
+
+#+name: fibo-module
+#+begin_src python :tangle _org-babel-test/fibo.py :mkdirp yes :results silent
+def fib_values(n):
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    out = []
+    a, b = 0, 1
+    while a < n:
+        out.append(a)
+        a, b = b, a + b
+    return out
+#+end_src
+
+* Tangle
+
+#+name: tangle-artifact
+#+begin_src emacs-lisp :results silent
+(org-babel-tangle)
+#+end_src
+
+* Verify
+
+#+name: verify-module
+#+begin_src python :dir _org-babel-test :mkdirp yes :results value replace
+import fibo
+
+expected = [0, 1, 1, 2, 3, 5, 8, 13]
+actual = fibo.fib_values(20)
+assert actual == expected, (actual, expected)
+
+try:
+    fibo.fib_values(-1)
+except ValueError:
+    negative_case = True
+else:
+    negative_case = False
+
+assert negative_case
+return "PASS"
+#+end_src
