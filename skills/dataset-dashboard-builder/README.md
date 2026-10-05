@@ -30,5 +30,6 @@
 - [`references/skill-change-log.md`](references/skill-change-log.md)：真实缺陷及泛化修正记录。
 - [`tests/regression-cases.md`](tests/regression-cases.md)：原样本、泛化和历史边界测试。
 - [`tests/check_repo.py`](tests/check_repo.py)：结构与关键规则完整性检查。
+- [`tests/dashboard_surface_lint.py`](tests/dashboard_surface_lint.py)：最终 HTML 的 Dashboard/Report 边界与内部 QA 外露检查。
 
 与 `sql-business-thinking` 的边界：后者负责业务问题→SQL→验证；本 Skill 负责陌生多表→自动发现分析主题→定制看板。二者可以组合，但不互相复制。
