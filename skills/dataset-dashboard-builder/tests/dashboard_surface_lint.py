@@ -66,6 +66,14 @@ INTERNAL_PATTERNS = [
     re.compile(r"\bregression\s*(?:pass|passed|status)\b", re.I),
 ]
 
+INTERNAL_ROLE_PATTERNS = [
+    re.compile(r"(?:^|[·|])\s*context\s*(?:$|[·|])", re.I),
+    re.compile(r"\bguardrail\b", re.I),
+    re.compile(r"(?:^|[·|])\s*exploration\s*(?:$|[·|])", re.I),
+    re.compile(r"\bprimary\s+kpi\b", re.I),
+    re.compile(r"\bdiagnostic\b", re.I),
+]
+
 
 def lint_html(text: str, allow_audit: bool = False) -> dict:
     parser = SurfaceParser()
@@ -83,6 +91,11 @@ def lint_html(text: str, allow_audit: bool = False) -> dict:
             match = pattern.search(visible_text)
             if match:
                 violations.append({"type": "internal_execution_state", "text": match.group(0)})
+
+        for pattern in INTERNAL_ROLE_PATTERNS:
+            match = pattern.search(visible_text)
+            if match:
+                violations.append({"type": "internal_role_label", "text": match.group(0)})
 
     return {
         "status": "PASS" if not violations else "FAIL",
