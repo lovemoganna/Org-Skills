@@ -633,6 +633,7 @@ Portfolio Synthesis、Question Frontier、Hypothesis、Robustness 是生成机�
 
 生成后必须执行：
 
+0. 非审计模式先运行 `python tests/dashboard_surface_lint.py <dashboard.html>`；发现 report_process_heading 或 internal_execution_state 直接记 Major，并重构页面。用户明确要求审计视图时才允许 `--allow-audit`；
 1. `references/dashboard-audit-loop.md` 的 Coverage Reconciliation / User Simulation / Rendered Audit；
 2. `eval/dashboard-quality.md`；
 3. `references/regression-loop.md`。
