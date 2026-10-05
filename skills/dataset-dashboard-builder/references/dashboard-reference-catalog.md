@@ -1,115 +1,98 @@
 # Dashboard Reference Catalog
 
-目标：提供“专业 Dashboard 如何组织业务判断”的可复用参照。Reference 提供 composition / decision path / interaction pattern，不提供事实、指标口径或业务阈值。
+目标：让模型复用专业 Dashboard 的**工作流与构图骨架**，而不是从空白 HTML 自由拼装。
 
-公开参考：
+公开依据：
 
-- Microsoft Power BI：Dashboard 是单页 overview，只保留最重要信息；关键内容应尽量一屏可见。https://learn.microsoft.com/en-us/power-bi/create-reports/service-dashboards
-- Power BI Dashboard Design Tips：以决策所需关键指标为中心，避免滚动和不必要细节。https://learn.microsoft.com/is-is/power-bi/create-reports/service-dashboards-design-tips
-- Tableau：先明确 purpose / audience，把最重要 view 放在最高注意力位置；Dashboard 应让人快速得出答案并支持有效交互。https://help.tableau.com/current/pro/desktop/en-us/dashboards_best_practices.htm
-- Tableau Blueprint：交互必须帮助用户发现答案，而不是装饰。https://help.tableau.com/current/blueprint/en-us/bp_visual_best_practices.htm
-- Looker：隐藏无关字段，构建常用 workflow，并让 aggregate 可以 drill 到 granular evidence。https://docs.cloud.google.com/looker/docs/best-practices/how-to-create-a-positive-experience-for-looker-users
-- IBCS：强调 message、semantic notation、information density、visual integrity、proper visualization、simplification、structure。https://www.ibcs.com/ibcs-definitions/
+- Microsoft Power BI：Dashboard 是单页 overview，应突出最重要信息，并尽量在一个屏幕完成主要判断。https://learn.microsoft.com/en-us/power-bi/create-reports/service-dashboards-design-tips
+- Power BI Sales & Marketing Sample：围绕 market share、sales、competition、time、region 组织管理视图，而不是按字段逐图展示。https://learn.microsoft.com/en-us/power-bi/create-reports/sample-sales-and-marketing
+- Power BI Store Sales Sample：围绕 current vs last year、variance、margin、store/district 等业务比较组织页面。https://learn.microsoft.com/en-us/power-bi/create-reports/sample-store-sales
+- Looker Dashboard Quickstart：把 Top Spenders、Sales Goal Tracking、Shipping Trends 组合成可继续下钻的业务工作流。https://docs.cloud.google.com/looker/docs/looker-core-create-dashboard-quickstart
+- Looker Best Practice：隐藏无关字段，把常用工作流和 aggregate → detail drill 内置到分析体验。https://docs.cloud.google.com/looker/docs/best-practices/how-to-create-a-positive-experience-for-looker-users
 
 ## 1. Reference Selection Gate
 
-Mission Contract 完成后选择一个 Primary Archetype。只有第二种工作流确实独立时才增加 Secondary Pattern。
+Mission Contract + Primary Analysis Model 明确后选择一个 Primary Archetype。
 
-选择输入：Audience + Decision / Action + Cadence + Primary Business Question + Comparison Basis + Core Objects + Evidence Path。
+选择输入：
+
+```text
+Audience
++ Decision / Action
++ Dashboard Mode
++ Primary Analysis Model
++ Comparison Basis
++ Core Objects
++ Evidence Path
+```
 
 禁止按“哪个模板更漂亮”选择。
 
-## 2. Golden Archetypes
+## 2. Golden Index
 
-### executive
+每次正常生成只读取一个 Primary Golden；确有第二个独立工作流时才读取第二个。
 
-适用：管理层周期性看绩效与关键偏差。
+| Archetype | Golden file | 典型 Primary Model |
+|---|---|---|
+| executive | `goldens/executive-performance.md` | Performance / Variance |
+| monitoring | `goldens/monitoring-state.md` | Change / Trend + Process |
+| investigation | `goldens/investigation-diagnostic.md` | Change / Contribution / Concentration |
+| operational | `goldens/operational-queue.md` | Operational Queue / Process |
+| exploration | `goldens/exploration-comparison.md` | Distribution / Contribution / Concentration / Relationship |
+| entity | `goldens/entity-360.md` | entity history / peer / process |
 
-默认路径：`Actual vs Target/Prior → Variance → Main Drivers → Guardrail / Risk → Drill to business area`。
+Golden 是可执行的结构先验：包含 primary viewport wireframe、component budget、required business logic、interaction 和 avoid 列表。
 
-首屏：2–5 个真正 Primary KPI；KPI 同时展示 actual + comparator + delta；一个关键趋势或 variance view；一个 driver / contribution view。
+## 3. Reference Fit Gate
 
-禁止：裸总量当 performance KPI；大量 operation-level filter；evidence queue 抢占首屏；8–12 个同权 KPI 卡。
+生成前记录：
 
-### monitoring
-
-适用：反复查看系统/业务状态是否偏离预期。
-
-默认路径：`Current state → Baseline / threshold / prior → Trend → Exception → Investigate`。
-
-首屏：current + comparison；trend；exception summary。没有合法 baseline/threshold 时，不得伪装 monitoring。
-
-### investigation
-
-适用：围绕一个已知变化或问题找原因。
-
-默认路径：`Focal metric + comparator → decomposition → competing driver → segment/entity → evidence`。
-
-首屏：问题本身；difference；最有解释力的 decomposition；下一层 drill 入口。
-
-禁止：先写长篇“现象/原因/结论”；把 investigation process 作为 WHAT/SO WHAT/WHY section。
-
-### operational
-
-适用：每天/每班次处理对象、队列或 SLA。
-
-默认路径：`Queue / backlog → priority / aging / breach → owner / object → detail → action`。
-
-首屏优先 queue，不优先 KPI 卡。没有 owner/action 字段时只做 locate/verify，不伪造操作按钮。
-
-### exploration
-
-适用：没有单一绩效目标，需要比较与发现结构。
-
-默认路径：`Scope → compare → segment → distribution / relationship → select → detail`。
-
-首屏强调可比较视图和筛选，而不是假造 North Star。
-
-### entity
-
-适用：围绕单一客户、账户、产品、订单等对象。
-
-默认路径：`Entity status → peer / historical comparison → timeline → related events → evidence`。
-
-需要稳定 entity key。对象详情与全局 overview 不应混成同一首屏任务。
-
-## 3. Dashboard / Report Boundary Gate
-
-Dashboard 顶层 section 使用业务对象或决策问题命名。
-
-默认禁止顶层使用：`WHAT / SO WHAT / WHY / WHO / EVIDENCE / PROVENANCE / METHOD / QA / REGRESSION`。
-
-这些属于分析或报告结构，不属于业务工作区。
-
-Portfolio Synthesis 应体现为哪个 view 最大、哪个比较先出现、哪个 driver 与 KPI 相邻、哪个 exception 有 drill、哪些 Context 被降级，而不是生成一组 narrative cards。
-
-## 4. Primary Viewport Gate
-
-1280×900 默认视口内必须完成 Primary Job：scope / period / comparator 可见；primary answer 可见；change / driver / exception 至少一个可见；next investigation entry 可见。
-
-细节可以在后续滚动、drawer、tab、drill-through 中。
-
-## 5. Reference Fit Gate
+```text
+Primary Archetype:
+Golden file:
+Why it fits:
+Primary Analysis Model:
+Primary viewport:
+Required interaction:
+Slots removed because unsupported:
+```
 
 生成后检查：
 
-1. 当前 Mission 为什么匹配这个 Archetype？
-2. Primary viewport 是否遵循该 Archetype 的 decision path？
-3. 交互是否服务该路径？
-4. Evidence 是否在正确层级？
-5. 是否复制了 reference 不属于当前数据的字段、阈值或指标？
-6. 去掉颜色和圆角后，页面结构是否仍能看出 Archetype？
+1. 去掉颜色、圆角和品牌后，页面结构是否仍能看出所选 Archetype？
+2. Primary viewport 是否遵循 Golden 的 decision path？
+3. Analysis Model 的 required calculations 是否真的有对应 view？
+4. 交互是否推动 compare / investigate / locate / verify？
+5. 是否复制了 Golden 中当前数据不支持的 slot？
 
-第 6 项答不出来，说明只复制了皮肤。
+如果只复制了卡片样式或图表类型，Reference Fit = FAIL。
 
-## 6. Custom Composition
+## 4. Dashboard / Report Boundary
 
-没有匹配 reference 时允许自定义，但必须明确 Primary Job、2–5 个 Decision Questions、primary viewport composition、comparison strategy、interaction path、evidence path，以及为什么现有 Archetype 不适用。
+Golden 只提供业务工作区，不提供分析报告目录。
+
+默认禁止业务页面顶层出现：
+
+`WHAT / SO WHAT / WHY / WHO / EVIDENCE / PROVENANCE / METHOD / QA / REGRESSION`
+
+也默认不显示：
+
+`Primary / Driver / Guardrail / Diagnostic / Context / Exploration / Executive / Investigation`
+
+这些是内部角色与路由标签。最终 UI 使用真实业务语言。
+
+## 5. Custom Composition
+
+没有 Golden 适用时允许 custom，但必须明确：
+
+- Primary Job；
+- Primary Analysis Model；
+- 2–5 个 Decision Questions；
+- primary viewport composition；
+- component budget；
+- comparison strategy；
+- interaction path；
+- evidence path；
+- 为什么六类 Golden 都不适用。
 
 Custom 不等于自由堆组件。
-
-## 7. Semantic Visual Consistency
-
-相同业务语义必须保持相同视觉编码：actual / prior / target、positive / negative / neutral delta、completed / in-process / failed、primary / context。
-
-语义未定义时保持 neutral，不为视觉丰富度赋予颜色含义。
