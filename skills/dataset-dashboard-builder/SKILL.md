@@ -51,7 +51,7 @@ Read Requirement
 目标：
 
 ```text
-多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Domain Modeling → Business Modeling → Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result Contract → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → UI → Rendered Audit → Domain Evaluation → Quality Evaluation → Final
+多表数据 → 来源权威 → 数据可信度 → Field Catalog → Domain Detection → Mission → Analysis Model → Question Map → 必要调查 → Portfolio Synthesis → Golden Blueprint → Analysis Spec → SQL / Result → Dashboard IA → Interaction → UI → Audit → Final
 ```
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
@@ -194,21 +194,41 @@ Mission Contract 后必须读取 `references/dashboard-business-analysis.md`。
 
 Business Analysis Contract 只决定“什么值得成为业务判断”，不负责视觉排版。
 
-## 3E. Reference-led Composition Gate
+## 3E. Analysis Model Selection Gate
 
-Business Analysis Contract 后必须读取 `references/dashboard-reference-catalog.md`。
+Business Analysis Contract 后读取 `references/dashboard-analysis-models.md`。
 
-先选择一个 Primary Dashboard Archetype；只有确有必要时再选择一个 Secondary Pattern。选择依据必须来自 Mission / Mode / Decision / Evidence Path，而不是“哪个模板好看”。
+必须先选择业务分析模型，再选择页面结构：
 
-允许的基础 Archetype：`executive / monitoring / investigation / operational / exploration / entity`。
+```text
+Primary Analysis Model = exactly 1
+Supporting Models = 0..2
+```
 
-规则：
+模型候选包括：
 
-- Golden Reference 是构图与工作流参照，不是固定模板；
-- 参考对象的业务领域可以不同，但 decision path / view hierarchy / interaction pattern 必须匹配；
-- 不复制参考中的字段、KPI、阈值、颜色或结论；
-- 没有合适 reference 时允许 custom composition，但仍必须通过 Business Analysis Contract、Dashboard / Report Boundary Gate 与 Primary Viewport Gate；
-- 最终回归必须验证 reference fit，不能只验证组件存在。
+`Performance / Variance / Change / Contribution / Concentration / Process / Operational Queue / Cohort / Distribution / Relationship / Flow`
+
+选择由 Primary Business Question、Field Catalog、comparator、粒度、Evidence Path 决定。禁止为了“分析丰富”把所有模型都跑一遍。
+
+如果用户未给明确业务问题，优先选择当前数据证据最强、能产生真实比较或下钻的模型；无法形成绩效判断时优先 exploration，而不是硬造 KPI。
+
+## 3F. Reference-led Composition Gate
+
+Analysis Model 确定后读取 `references/dashboard-reference-catalog.md`，选择一个 Primary Archetype，再只读取其对应的 `goldens/*.md`。
+
+允许的基础 Archetype：
+
+`executive / monitoring / investigation / operational / exploration / entity`
+
+硬规则：
+
+- Dashboard Mode 决定“用户如何使用页面”；Analysis Model 决定“数据要做什么业务分析”；Golden 决定“页面如何组织这条分析路径”；
+- Golden 是工作流和构图骨架，不是固定皮肤；
+- 只读取当前 Primary Golden；有独立第二工作流时才允许读取第二个；
+- 不复制 Golden 示例字段、阈值、颜色或结论；
+- 数据不支持的 slot 必须删除，不得填充；
+- 最终回归必须验证 Reference Fit，而不是只验证组件存在。
 
 ## 4. 按领域问题与业务主题拆分，而不是按表拆分
 
@@ -245,33 +265,23 @@ L0 数据可信度
 
 ## 4B. Investigation Gate
 
-完成第一轮 Analysis Depth 后必须读取 `references/investigation-loop.md`。
+Investigation 不是所有 Dashboard 的默认流程。
 
-任何准备进入核心看板的主要现象，第一次出现时只能标记为 `Observed Pattern`，不得直接升级为 Insight。
+只有以下内容准备升级为核心解释时，才读取 `references/investigation-loop.md`：
 
-必须建立：
+- “为什么变化”的解释；
+- anomaly / risk / priority 等强化判断；
+- P0 / P1 Finding；
+- 竞争解释会改变页面结论；
+- 用户明确要求 root cause / investigation。
 
-```text
-Candidate Triage
-→ Question Frontier
-→ Hypothesis Frontier
-→ Diagnostic Test
-→ Robustness Check
-→ Finding Promotion Gate
-→ Portfolio Synthesis
-```
+普通 descriptive comparison / distribution / ranking 只需要正确口径与 Analysis Model，不强制构造 Hypothesis Frontier。
 
-硬规则：
+触发 Investigation 时执行：
 
-- 先按 Decision Dependency / Materiality / Evidence / Actionability / Non-redundancy 做 Candidate Triage，禁止对所有 Pattern 平均用力；
-- 每个 P0/P1 Pattern 至少检查一个合理竞争解释；
-- 查询结果必须改变 Question Frontier 或 Hypothesis 状态，否则视为低价值查询；
-- 关键结论至少做一次稳健性检查；
-- 数据不足时保持 `unresolved`，不得补故事；
-- 只有通过 Finding Promotion Gate 的结论才能参与 Portfolio Synthesis；
-- 首屏优先展示综合后的 Executive Thesis，而不是把 Promoted Findings 平铺成卡片；
-- Context Metric、Secondary Lead 与核心 Thesis 必须分层；
-- 停止条件是边际信息增益下降，不是“所有维度都查过”。
+`Candidate Triage → Question Frontier → Competing Explanation → Diagnostic Test → Robustness → Finding Promotion`
+
+查询结果必须改变判断或路径，否则删除。Portfolio Synthesis 默认是内部状态，不自动渲染成 Executive Thesis / Insight Card。
 
 ## 4C. Comparison & Metric Role Gate
 
@@ -378,34 +388,22 @@ Analysis Intent 使用中性关系：
 - 用户明确指定 Renderer 时，只要其能忠实表达语义，就优先遵循用户选择。
 
 
-## 6AA. Insight Hierarchy Gate
+## 6AA. Mode-aware Insight Hierarchy Gate
 
-Portfolio Synthesis / Domain Composition 后，Dashboard IA 前必须读取 \`references/insight-hierarchy.md\`。
+Dashboard IA 前读取 `references/insight-hierarchy.md`。
 
-建立：
+禁止所有模式统一套 `North Star → Change → Driver → Exception → Evidence`。
 
-\`\`\`text
-North Star
-→ Change
-→ Driver / Segment
-→ Exception
-→ Action / Next Investigation
-→ Detail / Evidence
-\`\`\`
+按 Mode 使用不同工作路径：
 
-并执行：
+- executive：Performance → Variance → Driver → Guardrail → Drill；
+- monitoring：Current vs Baseline → Trend → Exception → Diagnostic；
+- investigation：Focal Metric → Delta → Decomposition → Counterexample → Evidence；
+- operational：Queue → Priority/Aging → Object → Detail/Action；
+- exploration：Scope → Comparison/Distribution → Segment/Relationship → Detail；
+- entity：Entity State → Peer/History → Timeline → Records。
 
-- So-What Gate：每个主图 / 主表必须有一句真实数据支持的 takeaway；
-- Amount × Count Dual-Signal Gate：交易 / 资金类问题必须同时检查金额与笔数；
-- Event-Driven Spike Gate：先过 materiality，再检查 top transaction / top entity share，禁止把低金额高占比或单笔大额事件写成全面增长；
-- Driver Decomposition：优先 breadth / intensity / concentration，而不是机械遍历全部维度；
-- Pareto Gate：高集中度必须检查 Top1 / Top2 / cumulative share，并避免把实体集中错误归因给 KYC / country 等标签；
-- Exception Logic：Exception 必须带对象、证据、重要性和 next check；
-- Operational State：in-process 与 failed/cancelled 分开，不得混成一个异常率；
-- Analytical Restraint：小样本优先 descriptive decomposition / Pareto / exact evidence，不乱上因果、预测和聚类。
-
-高价值 Dashboard 不能只回答“多少”和“怎么变”，还必须回答“为什么 / 谁贡献 / 哪些例外值得查 / 如何落到证据”。
-
+So-What / Takeaway 是内部验收字段，默认不渲染成文字卡。只有文字提供图表无法表达的必要限制、动态可保持正确的解释或用户明确要求 commentary 时，才显示。
 
 ## 6AB. Decision Diagnostics Gate
 
@@ -428,17 +426,9 @@ Decision Diagnostics 的结果可以降级或删除原本准备进入 Dashboard 
 
 Portfolio Synthesis 完成后，必须再次使用 `references/dashboard-quality-framework.md` 生成 Dashboard IA Plan，并用 `references/dashboard-reference-catalog.md` 校验所选 Archetype 的工作路径。
 
-Dashboard 必须尽量形成：
+Dashboard IA 必须服从已选择的 Primary Analysis Model + Golden Blueprint。不得再用统一的 `What → So What → Why → Who → Evidence` 报告链替代业务工作流。
 
-```text
-What
-→ So What
-→ Why
-→ Who / Where
-→ Evidence
-```
-
-模块按功能定义：状态、变化、异常、解释、定位、下钻。不是固定模板，也不是固定数量。
+模块按真实业务任务定义，例如绩效比较、变化贡献、分布、队列、对象、明细。不是固定模板，也不是固定数量。
 
 首屏必须优先完成：
 
@@ -557,6 +547,7 @@ X / Y / Series、时间粒度、排序和 TopN 必须来自 Analysis Spec，禁�
 
 - 主要语言跟随用户语言；中文任务以中文作为 UI 主语言，必要业务缩写除外；
 - 不向业务用户暴露 Analysis Spec / Compiler / Regression / Generated by 等开发过程；
+- 不向业务用户暴露 Primary / Driver / Guardrail / Diagnostic / Context、Exploration / Executive / Investigation 等内部角色或路由标签；
 - 删除重复提示、教程式说明和无决策价值的废话；
 - 用户要求 permanent Label 时，Tooltip 不能替代；
 - vertical bar 的值默认放柱顶外侧，horizontal bar 放柱尾外侧，line / point 放点位上方；
@@ -663,8 +654,10 @@ Generate
 - Semantic Field Catalog 已完成；
 - Domain Detection 已完成；若加载 Pack，Domain Evaluation 已通过；
 - Dashboard Mission Contract 已完成；
-- Business Analysis Contract 已完成，Primary KPI 均有合法 comparator / polarity；无基线指标已降级为 Context；
-- Reference-led Composition 已选择并验证 Primary Archetype，或记录 custom composition 的理由；
+- Business Analysis Contract 已完成；
+- Primary Analysis Model 已选择，Supporting Models 不超过 2 个；
+- Primary KPI 均有合法 comparator / polarity；无基线指标已降级为内部 Context role；
+- Reference-led Composition 已选择并验证 Primary Archetype + 对应 Golden，或记录 custom composition 的理由；
 - 所有 Dashboard 组件已有 Analysis Spec，SQL / Result Contract / Visual Spec / Renderer Adapter 链路一致；
 - Metric Role / Comparison Context Gate 已完成；
 - Default View 在无交互时已能完成 Primary Job；
