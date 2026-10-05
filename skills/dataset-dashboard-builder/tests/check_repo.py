@@ -135,7 +135,7 @@ for rule in ["breadth", "intensity", "concentration", "Top1", "Top2", "remove-To
 decision_diagnostics = (ROOT / "references" / "decision-diagnostics.md").read_text(encoding="utf-8")
 for rule in ["Change Confirmation Gate", "Materiality Before Extremeness Gate", "Threshold Authority Gate", "Delta Contribution Gate", "Control / Counterexample Gate", "Actor / Record Attribution Gate", "Comparison Context Gate", "Candidate Architecture Test", "Five-Second / Thirty-Second Test"]:
     assert rule in decision_diagnostics, f"decision diagnostics rule missing: {rule}"
-for rule in ["partial bucket", "materiality + control severity + evidence strength + actionability", "remove-Top1", "delta contribution", "不能只换皮肤"]:
+for rule in ["partial-window / data artifact", "materiality + control severity + evidence strength + actionability", "remove-Top1", "优先排序“贡献了多少变化”", "仅改颜色 / 卡片圆角 / 图表主题就算不同方案"]:
     assert rule in decision_diagnostics, f"decision diagnostics behavior missing: {rule}"
 
 dashboard_eval = (ROOT / "eval" / "dashboard-quality.md").read_text(encoding="utf-8")
