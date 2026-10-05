@@ -235,6 +235,19 @@ UI 只在正常数据下正确不算完成。
 - regression / eval 模式必须按 `eval-preflight.md` 标记 `BLOCKED_ENV`；
 - 禁止把源码检查描述成视觉验收。
 
+## 8A. Artifact Boundary Lint
+
+HTML 生成后、最终 rendered audit 前运行：
+
+`python tests/dashboard_surface_lint.py <dashboard.html>`
+
+默认模式发现以下任一项即 Major：
+
+- report_process_heading；
+- internal_execution_state。
+
+用户明确要求审计视图时才允许 `--allow-audit`。Lint 只负责抓确定性边界错误，不能替代业务分析、Reference Fit 或 Rendered Audit。
+
 ## 9. Coverage Reconciliation Gate
 
 生成后必须把 Coverage Plan 逐项对账。
