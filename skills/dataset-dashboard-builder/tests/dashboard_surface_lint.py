@@ -19,16 +19,11 @@ class SurfaceParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         tag = tag.lower()
-        attrs = dict(attrs)
-        if tag in {"script", "style", "template", "noscript"}:
-            self.ignore_depth += 1
-            return
         if self.ignore_depth:
-            return
-        hidden = "hidden" in attrs or attrs.get("aria-hidden") == "true"
-        style = (attrs.get("style") or "").replace(" ", "").lower()
-        if hidden or "display:none" in style or "visibility:hidden" in style:
             self.ignore_depth += 1
+            return
+        if tag in {"script", "style", "template", "noscript"}:
+            self.ignore_depth = 1
             return
         if re.fullmatch(r"h[1-6]", tag):
             self.heading_tag = tag
@@ -37,8 +32,7 @@ class SurfaceParser(HTMLParser):
     def handle_endtag(self, tag):
         tag = tag.lower()
         if self.ignore_depth:
-            if tag in {"script", "style", "template", "noscript", "div", "section", "aside", "details", "span"}:
-                self.ignore_depth = max(0, self.ignore_depth - 1)
+            self.ignore_depth = max(0, self.ignore_depth - 1)
             return
         if self.heading_tag == tag:
             text = " ".join(self.heading_buf).strip()
