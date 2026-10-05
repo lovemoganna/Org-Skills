@@ -83,7 +83,7 @@ for rule in ["identifier", "non_additive", "COUNT DISTINCT", "Global Filter Stat
 renderer_contract = (ROOT / "references" / "renderer-contract.md").read_text(encoding="utf-8")
 for rule in ["Renderer Ownership", "Renderer Selection", "Vela", "Chart.js", "Native HTML / CSS", "Visual Spec", "Label Policy", "Interaction Contract", "Language & UI Copy", "Theme & Component Consistency"]:
     assert rule in renderer_contract, f"renderer contract rule missing: {rule}"
-for rule in ["setExternalCrosshair", "permanent label", "Global Filter State"]:
+for rule in ["多图共享同一时间域时，应同步 crosshair", "permanent label", "Global Filter State"]:
     assert rule in renderer_contract, f"renderer contract behavior missing: {rule}"
 
 chart_compiler = (ROOT / "references" / "chartjs-compiler.md").read_text(encoding="utf-8")
