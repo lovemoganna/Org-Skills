@@ -3,7 +3,7 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → Field Catalog → Domain Detection → Domain Model → Mission / Mode → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → Rendered Audit → Domain + Dashboard Evaluation → 回归
+扫描 → 质检 → Field Catalog → Domain Detection → Domain Model → Mission / Mode → Business Analysis Contract → Reference Archetype → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → Rendered Audit → Domain + Dashboard Evaluation → 回归
 ```
 
 ## 文件
@@ -19,6 +19,8 @@
 - [`references/insight-hierarchy.md`](references/insight-hierarchy.md)：North Star、So-What、Amount×Count、Event-Driven Spike、Driver Decomposition、Pareto 与 Exception Logic。
 - [`references/decision-diagnostics.md`](references/decision-diagnostics.md)：变化确认、Materiality、阈值权威、Delta Contribution、反证与多候选 Dashboard 结构测试。
 - [`references/dashboard-quality-framework.md`](references/dashboard-quality-framework.md)：Dashboard 本质、五层质量模型、信息架构、交互与 Anti-AI 规则。
+- [`references/dashboard-business-analysis.md`](references/dashboard-business-analysis.md)：Primary KPI 资格、比较基线、决策方向、Driver 证明、指标分解与 Mode 降级。
+- [`references/dashboard-reference-catalog.md`](references/dashboard-reference-catalog.md)：专业 Dashboard Archetype、Golden Reference 选择、Dashboard/Report 边界与首屏契约。
 - [`references/dashboard-audit-loop.md`](references/dashboard-audit-loop.md)：Decision Questions、Coverage Plan、User Simulation、Rendered Audit、设计 token 与覆盖对账闭环。
 - [`eval/dashboard-quality.md`](eval/dashboard-quality.md)：Critical / Major / Minor Dashboard 质量评估与修正闭环。
 - [`references/analysis-depth.md`](references/analysis-depth.md)：Question Map、分析深度阶梯与停止条件。
