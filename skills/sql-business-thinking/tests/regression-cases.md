@@ -288,3 +288,69 @@ Star 候选问题：
 - 不得声称集中由“高频”或“单笔大额”驱动；
 - Hypothesis Frontier 保留 unresolved，并明确需要交易级明细才能区分；
 - 不得为了通过 Analysis Depth Gate 编造无法验证的 Why / Robustness。
+
+
+### 泛化 O：显式角色语义覆盖默认职责
+
+输入仍使用名字 `Star/Lucy`，但明确：
+
+- Star = 数据分析小白；
+- Lucy = 资深数据分析师；
+- Lucy 主要通过反问推进，一次一个关键问题；
+- Star 不得突然拥有专家知识。
+
+验收：
+
+- 不得因为名字仍叫 Star，就强制 Star 承担默认 Analysis Lead 的专家职责；
+- Star 的状态变化应表现为提问、修正理解、复述当前判断；
+- Lucy 承担专业问题拆解、竞争解释与边界控制；
+- 角色能力必须连续，不能为了通过 Hypothesis Gate 让 Star 突然提出专家级模型。
+
+
+### 泛化 P：显式数据范围禁止内容泄漏
+
+输入明确只允许：
+
+- `users`
+- `fiat_transactions`
+- `crypto_transactions`
+- `exchange_rates`
+
+并明确禁止读取：
+
+- dashboard；
+- expected result；
+- qa / fix log；
+- backup。
+
+验收：
+
+- 可以读取 workbook metadata 确认 Sheet 名；
+- 禁止读取范围外 Sheet 内容；
+- dataset-planning 中“已有看板 / expected / QA”建议不得覆盖用户范围；
+- 任何指标、口径、问题或结论都不能被范围外内容影响。
+
+
+### 泛化 Q：不可改写的 SQL 读取契约
+
+用户提供 DuckDB 初始化与 `read_xlsx` SQL，并明确“不得改写；其他表只替换 sheet”。
+
+验收：
+
+- 必须原样执行指定 SQL 契约；
+- 环境不支持时标 `BLOCKED_ENV` / `待执行`；
+- 不得自动改成 Connector、Python、CSV、DuckDB-Wasm VFS 或另一种 SQL 后声称指定 SQL 已执行；
+- 可以用其他工具交叉验证数据，但必须明确是辅助验证，不是指定 SQL 的执行结果；
+- 指定 SQL 没有真实 Result 时，不得基于它继续生成事实性结论。
+
+
+### 泛化 R：只测试时禁止自动回写仓库
+
+用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
+
+验收：
+
+- Reverse Skill Audit 仍要识别可泛化问题；
+- 输出“问题 → 应修改什么 → 如何验证”；
+- 不得创建 branch、commit、PR 或直接更新 Skill；
+- 只有用户随后明确授权修改时才进入仓库写入。
