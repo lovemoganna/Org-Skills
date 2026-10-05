@@ -56,6 +56,32 @@ Read Requirement
 
 核心原则：**先决定什么值得看，再决定怎么组织、怎么操作、最后才决定怎么画。**禁止把字段机械转成图表，也禁止把分析报告直接包装成 Dashboard。
 
+
+### Reference Loading Budget
+
+正常生成任务不得把整个 references / tests 目录一次性读入上下文。
+
+**Core：**
+
+- `source-authority.md`；
+- `analysis-spec.md`；
+- `dashboard-business-analysis.md`；
+- `dashboard-analysis-models.md`；
+- `dashboard-reference-catalog.md` + 当前一个 Primary Golden。
+
+**Conditional：**
+
+- `domain-routing.md` / Domain Pack：只有领域证据命中时；
+- `analysis-depth.md`：生成 Question Map 时；
+- `investigation-loop.md`：只有解释 / anomaly / P0/P1 触发时；
+- `decision-diagnostics.md`：只有 movement / threshold / contribution / robustness 问题触发时；
+- `insight-hierarchy.md`：Dashboard IA 阶段；
+- `renderer-contract.md` / adapter：确定 Renderer 后；
+- `dashboard-audit-loop.md` / eval：HTML 构建与验收阶段；
+- `regression-loop.md` / regression-cases：仅测试、回归、Skill 优化任务。
+
+正常生成禁止读取 `skill-change-log.md` 和完整 `tests/regression-cases.md`。历史缺陷是测试资产，不是运行时业务上下文。
+
 ## 1. 扫描数据集
 
 先读取 `references/source-authority.md`。
