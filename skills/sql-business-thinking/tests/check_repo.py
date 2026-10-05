@@ -35,6 +35,8 @@ critical_rules = [
     "Hypothesis Frontier",
     "Analysis Depth Gate",
     "Robustness Check",
+    "Explicit Execution Contract Gate",
+    "Role Contract Gate",
 ]
 haystack = skill + "\n" + "\n".join(
     p.read_text(encoding="utf-8") for p in (ROOT / "references").glob("*.md")
@@ -79,8 +81,17 @@ assert "Lucy 只挑战 SQL，不挑战解释" in regression, "hypothesis-challen
 assert "集中度极端值稳健性" in regression, "robustness regression missing"
 assert "频次 × 单笔金额分解" in regression, "mechanism-decomposition regression missing"
 assert "数据不足时保持 unresolved" in regression, "unresolved hypothesis regression missing"
+assert "显式角色语义覆盖默认职责" in regression, "explicit role semantics regression missing"
+assert "显式数据范围禁止内容泄漏" in regression, "explicit scope regression missing"
+assert "不可改写的 SQL 读取契约" in regression, "immutable execution contract regression missing"
+assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
+assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
+assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
+assert "不得悄悄换成 Python、Connector、DuckDB-Wasm" in skill, "execution substitution guard missing"
+assert "只有用户明确授权修改 Skill / 仓库时才执行回写" in skill, "skill mutation permission gate missing"
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
-assert "Lucy = Critical Analyst" in dialogue, "Lucy critical-analyst role missing"
+assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
+assert "Star = 数据分析小白" in dialogue, "novice role semantic override example missing"
 assert "Lucy 是独立分析者，不是 Reviewer、SQL 助手或陪练" in dialogue, "anti-companion role contract missing"
 assert "禁止虚构领导任务" in dialogue, "no-fake-task-owner contract missing"
 assert "accept / reject / replace / split" in dialogue, "question challenge actions missing"

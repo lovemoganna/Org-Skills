@@ -108,3 +108,13 @@
 | Star 只在 Result 后复述数字，Lucy 只挑战问题或 SQL，缺少真正的分析博弈 | 要求 Star 提出解释模型；Lucy 增加 counter-hypothesis / falsify / decompose / stress-test / boundary | **角色差异必须体现在解释竞争。** 删除姓名后仍应看出“提出解释 → 攻击解释 → 证据区分 → 更新判断” |
 | 高集中度可能只是单一极端用户造成，但旧规则没有强制验证结论是否稳健 | 新增 Analysis Depth Gate 与 Robustness Check；优先去 Top1、拆频次×单笔金额、按 rail/asset 拆驱动 | **主要结论必须经受至少一次会改变可信度的压力测试。** 稳健性不是多跑一个同类指标 |
 | 数据不足时为了“深度”容易编造 Why | Hypothesis Frontier 支持 unresolved；无法区分竞争解释时明确缺失数据 | **深度不等于强行解释。** 能证明“当前数据不足以区分”本身也是专业结论 |
+
+
+## V16：显式契约优先
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 用户明确 Star=小白、Lucy=资深分析师，但默认 Star=Analysis Lead / Lucy=Critical Analyst 仍可能覆盖能力设定 | Role Binding 升级为完整 Role Contract，名字、能力、职责、知识边界和互动方式均以当前请求优先 | **默认角色只补空白，不覆盖显式角色语义。** 同名也不能自动套默认职责 |
+| 陌生数据集协议建议查看已有看板 / expected，可能越过用户明确的四表白名单 | 数据勘察改为授权范围优先；范围外只允许必要 metadata，不读内容 | **显式数据范围高于任何 planning / QA / expected 建议。** |
+| 用户提供不可改写 DuckDB 读取 SQL 时，运行环境契约仍可能触发替代读取方式 | 新增 Explicit Execution Contract Gate；替代工具只能做辅助验证，不能冒充指定 SQL 实际执行 | **用户指定的执行 SQL 是执行契约，不是提示性示例。** |
+| Reverse Skill Audit 默认要求自动回写仓库，会把纯测试变成边测边改 | 回写改为权限门控；未授权时只报告缺陷与回归建议 | **测试权限与修改权限分离。** 发现问题不等于获得仓库写权限 |

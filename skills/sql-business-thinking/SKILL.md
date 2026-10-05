@@ -31,6 +31,16 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 
 开始前确认 SQL 方言。贴的代码、连接方式或运行环境能看出来的不问，说一句依据。
 
+### Explicit Execution Contract Gate
+
+用户明确给出 SQL 方言、初始化语句、读取方式、数据范围或“不得改写”约束时，这些属于本轮不可擅自替换的执行契约。
+
+- 必须原样保留用户指定的读取 SQL / 初始化顺序；只能替换用户明确允许变化的参数。
+- 运行环境无法执行该契约时，标记对应步骤 `BLOCKED_ENV`；不得悄悄换成 Python、Connector、DuckDB-Wasm 或另一种 SQL 后再声称原 SQL 已执行。
+- 可以使用其他工具做环境诊断或独立交叉验证，但必须与“指定 SQL 的实际执行结果”分开标记。
+- 用户要求真实执行结果时，某 SQL 未实际执行就写 `待执行 / BLOCKED_ENV`，不得基于该 SQL 继续推出新的事实结论。
+- 用户明确限制表 / Sheet 时，范围约束优先于任何 dataset-planning、字典、expected、QA、dashboard 或历史样本建议。范围外内容只能读取必要 metadata 来确认名称，不能读取内容或影响分析。
+
 ## Dataset-to-Report Autopilot
 
 当用户明确要求“直接分析 / 完整跑一轮 / 测试 Skill / 生成分析报告”，且只提供了**数据集 + 要分析的表**、没有给业务问题时，进入 Autopilot。它是 Direct 的子模式，不再把缺少业务问题本身当成继续向用户追问的理由。
@@ -47,7 +57,7 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 
 1. 先做一次最小数据勘察，建立 **Analysis Map**；勘察只负责知道“有什么、怎么连、哪些口径会阻塞”，不把字段清单机械变成分析问题。
 2. 基于当前证据建立 **Question Frontier**：已确认事实、仍未知且会改变判断的事项、候选问题、当前唯一问题。Frontier 是内部工作状态，不在报告里滚动展示完整清单。
-3. Star 每轮只能提出一个“下一步最值得回答的问题”；Lucy 不负责帮 Star 把问题做完，而是独立挑战**这个问题本身是否值得现在问**，必要时直接否决并提出替代问题。
+3. 本轮人物按用户显式角色契约行动；未定义角色能力时才使用默认 Star/Lucy 职责。每轮只推进一个“下一步最值得回答的问题”，质疑者只在当前角色能力允许范围内挑战问题价值。
 4. 当前问题必须先通过 **Question Quality Gate**，才允许生成 SQL：
    - **Trigger**：为什么是现在问，必须由已有数据结构、上一轮 Result 或当前阻塞触发；
    - **Consequence**：不同答案会让后续判断、口径或分析路径发生什么变化；如果答案 A/B 都不改变下一步，问题淘汰；
@@ -61,13 +71,13 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
    - **Diagnostic Test**：哪条 SQL 最能区分这些解释；
    - **Status**：supported / weakened / rejected / unresolved。
 7. 主要发现必须通过 **Analysis Depth Gate**，至少检查：What → Where → Why → Alternative → Test → Robustness → So What。只停留在金额、排名、比例或“谁最多”，不得直接进入最终结论。
-8. Star 在 Result 后必须提出或更新一个**解释模型**；Lucy 优先攻击解释，而不是继续补字段：有没有竞争解释、极端值、分母、时间口径、聚合方式或样本结构能造成同样现象？
+8. Result 后必须出现与角色能力一致的判断更新。默认 Analysis Lead 应提出/更新解释模型，默认 Critical Analyst 优先攻击解释；如果用户把主角定义为小白/学习者，则只要求其表达当前理解与疑问，不得强迫其突然拥有专家级解释能力。
 9. 对关键结论至少执行一次 **Robustness Check**：去掉极端值、换合理分母/粒度/口径、分解“频次 × 单笔金额”、或做其他能验证结论是否依赖单点/单一设定的测试。数据不支持时明确写“无法验证”，不得伪造稳健性。
 10. 只采用有证据、可回退的分析默认；不得把未知业务定义伪装成事实。Level 4 阻塞仍必须暂停；Level 3 若用户已经明确授权自主分析，可在报告中显式记录分析假设后继续。
 11. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
-12. 用户要求完整分析报告时，输出 **Hypothesis-Driven Dialogue HTML**：现象 → 当前问题 → Star 提出解释 → Lucy 给竞争解释/反证 → Diagnostic SQL → Result → 假设状态变化 → 稳健性检查 → 下一问题。禁止把 Lucy 写成陪练、审核员或“帮 Star 完成任务”的辅助角色。
+12. 用户要求完整人物分析报告时，输出 **Hypothesis-Driven Dialogue HTML**：现象 → 当前问题 → 与本轮角色能力一致的判断/追问 → 竞争解释或边界挑战 → Diagnostic SQL → Result → 判断状态变化 → 稳健性检查 → 下一问题。用户未定义角色职责时，才使用默认 Analysis Lead / Critical Analyst 模型。
 
-**Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后不得直接结束。必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。可泛化且确属 Skill 的问题，最小回写规则，并执行原失败样本、泛化测试、历史回归和 Diff；当前报告只修 UI 而不修生成机制，判失败。
+**Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。
 
 ## Default HTML Delivery Contract
 
@@ -289,7 +299,7 @@ SQL 对了再问：这张表拿来干什么？能比较什么、发现什么异�
 
 ## 陌生数据集：先勘察，再出题
 
-拿到没见过的数据集时，读取 `references/dataset-planning.md`。先看四样：每张表一行是谁、主键外键时间金额状态字段；字典和质检里已写明的口径；已有看板和预期结果表；行数和时间范围。
+拿到没见过的数据集时，读取 `references/dataset-planning.md`。先看当前授权范围内：每张表一行是谁、主键外键时间金额状态字段、行数和时间范围；只有用户允许时才读取字典、质检、已有看板或预期结果。显式排除的表禁止读取内容。
 
 然后产出一页纸和一张分析地图。题目从地图里选，不现编。
 
@@ -297,13 +307,13 @@ SQL 对了再问：这张表拿来干什么？能比较什么、发现什么异�
 
 当用户明确要求模拟学习者与分析师、领导下任务后的讨论推演、从头推演、角色对话或“人物会话”时，会话不是内部过程噪声，而是显式交付物。必须读取 `references/dialogue-rendering.md`。
 
-**Role Binding Gate：**当前请求如果显式给出人物名，必须原样绑定为本轮角色名；只有未指定人物名时，才使用默认 `Star`（Analysis Lead）与 `Lucy`（Critical Analyst）。下文 `Star/Lucy` 均表示默认角色名，不得覆盖用户在当前请求中明确指定的名字。
+**Role Contract Gate：**用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先于默认角色。默认 `Star = Analysis Lead`、`Lucy = Critical Analyst` 只在用户没有定义对应角色语义时使用。角色名相同也不得把默认职责强加给用户定义，例如用户定义 `Star = 数据分析小白` 时，Star 不能突然承担资深 Analysis Lead 的解释能力。
 
 硬规则：
 
 - **Autopilot 默认不虚构领导任务。** 用户只给数据集 / 表时，会话链为：数据集进入 → Analysis Map → Question Frontier → 现象 → Hypothesis Frontier → Star 提问/解释 → Lucy 挑战问题与解释 → Diagnostic SQL / Result → 假设与 Frontier 更新 → 稳健性检查 → 下一问题 → Star 综合报告。只有用户明确给出领导 / Task Owner 时，才增加“任务下达 / report-back”外框。
-- Star 是 **Analysis Lead**：主动理解数据、维护分析方向、从 Frontier 里选择当前最值得回答的问题；重要 Result 出现后必须提出或更新解释模型，不能只复述数字；最终负责综合报告。
-- Lucy 是 **Critical Analyst**，不是 Reviewer / 陪练：独立挑战 Star 的问题选择、解释、假设和优先级；可以否决低价值问题、提出竞争解释、反证、替代路径或稳健性测试。Lucy 不负责替 Star 补齐流程，也不以“帮助 Star 完成任务”为目标。
+- 未指定角色职责时，默认 Star 是 **Analysis Lead**、Lucy 是 **Critical Analyst**。
+- 用户显式指定职责时，严格执行用户角色契约。例如 Star=小白时，Star 负责提出真实疑问、修正自己的理解并逐步成长；Lucy=资深分析师时，Lucy 通过追问、反例和最小必要解释推进分析，一次只解决一个关键问题。
 - **Question Quality Gate：**任何 SQL 前必须能回答 Trigger / Consequence / Answerability / Priority 四项。Gate 未通过，先改问题，不准写 SQL。
 - **Hypothesis Frontier Gate：**主要现象进入下一阶段前，至少有主解释 + 竞争解释 + 可反驳证据 + 区分它们的测试；如果数据无法区分，必须保留 unresolved。
 - **Analysis Depth Gate：**主要发现至少覆盖 What / Where / Why / Alternative / Test / Robustness / So What；只报金额、排名、比例判浅分析。
