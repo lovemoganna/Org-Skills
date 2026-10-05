@@ -1519,3 +1519,95 @@ Skill
 验收：失败。
 
 Preflight 必须保持最小，只为继续执行服务。
+
+## V19 原样本：Business Analysis Surface / Golden Reference
+
+### 原失败 A：分析报告披着 Dashboard 外壳
+
+真实失败产物顶层结构：
+
+`01 / WHAT → 02 / SO WHAT → 03 / WHY → 04 / WHO & EVIDENCE → 05 / PROVENANCE`
+
+验收：
+- 判 Major；
+- 这些是分析过程，不是业务工作区；
+- 必须重组为业务对象 / 决策任务，例如 scope + performance/comparison + driver + entity/exception + evidence；
+- Portfolio Synthesis 可以生成一句结论，但不能把“分析流程目录”直接渲染成页面。
+
+### 原失败 B：内部 QA 状态进入业务页面
+
+真实失败产物展示：`Fixture PASS / 数学锚点 PASS / DuckDB SQL BLOCKED_ENV / Rendered QA PASS / SQL Evidence`。
+
+验收：
+- 默认判 Major；
+- 业务 Dashboard 不展示 Skill / runtime / QA 状态；
+- 只有用户明确要求 audit 时才可进入独立审计区，且不能抢占业务页面主视图。
+
+### 原失败 C：裸总量冒充 Primary KPI
+
+只有“期间累计 144,444 USDT”，没有 target / prior / peer / benchmark，也没有定义高低好坏。
+
+验收：
+- 可作为 Context Metric；
+- 不得自动视为 performance KPI；
+- 不得用红绿/箭头暗示好坏；
+- 若 Mission 需要 monitoring / executive performance，则必须找到合法 comparator；找不到时切换为 exploration / investigation。
+
+### 原失败 D：规则很多但没有专业构图参照
+
+Skill 有 Mission / IA / Interaction / QA 规则，但没有明确 Golden Reference 选择，模型自由组合后仍生成报告型长页。
+
+验收：
+- 渲染前必须选择 Primary Archetype；
+- 选择依据来自 audience / decision / cadence / evidence path；
+- reference fit 必须进入回归；
+- 只复制视觉皮肤不算通过。
+
+## V19 泛化
+
+### 泛化 BU：Executive 无比较基线
+
+输入只有一个静态销售快照，没有历史、目标或 peer。
+
+验收：
+- 销售额只能是 Context；
+- 不生成“业绩良好 / 下滑 / 达标”；
+- Dashboard Mode 不得伪装成 executive performance；
+- 可切换 exploration，聚焦结构 / concentration / segment comparison。
+
+### 泛化 BV：Operational Dashboard 却先放 8 个 KPI
+
+任务是“每天处理逾期工单”。
+
+验收：
+- Primary Archetype = operational；
+- queue / aging / SLA breach / owner / detail 优先；
+- 8 个 KPI 卡不能占据首屏主位；
+- 用户应从首屏直接进入待处理对象。
+
+### 泛化 BW：Investigation Dashboard 变成长篇结论报告
+
+任务是“为什么转化率下降”。
+
+验收：
+- 第一屏同时可见 focal metric + comparator + key decomposition；
+- driver / segment 可交互下钻；
+- 不能用多个 narrative section 按“现象→原因→证据”写成长文后再附图。
+
+### 泛化 BX：Reference 只换皮肤
+
+选择 executive reference，但实际只复制卡片样式、配色和圆角；decision path 仍与旧页面相同。
+
+验收：失败。Reference Fit 必须体现在 question ordering / view hierarchy / interaction / evidence placement 至少两项。
+
+### 泛化 BY：Primary Viewport
+
+1280×900 打开后，只能看到标题、说明、筛选器和若干 Context 卡；核心变化与下一步入口必须滚动两屏才出现。
+
+验收：Major。
+
+### Adversarial BZ：伪造 comparator 以满足 KPI Gate
+
+数据没有目标或历史，模型自行造“目标 100k”“较上月 +12%”。
+
+验收：Critical。Comparator 必须有数据或用户依据；缺失就降级，不得补造。
