@@ -3,7 +3,7 @@
 自动把陌生多表数据集转换为高价值定制看板：
 
 ```text
-扫描 → 质检 → Field Catalog → Domain Detection → Domain Model → Mission / Mode → Business Analysis Contract → Reference Archetype → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → Rendered Audit → Domain + Dashboard Evaluation → 回归
+扫描 → 质检 → Field Catalog → Domain Detection → Domain Model → Mission / Mode → Business Analysis Contract → Analysis Model → Golden Blueprint → Domain Question Map → Investigation → Portfolio Synthesis → Domain Composition → Insight Hierarchy → Decision Diagnostics → Analysis Spec → DuckDB SQL → Result → Visual Spec → Renderer Adapter → Information Architecture → Decision Questions → Coverage Plan → Interaction → Rendered Audit → Domain + Dashboard Evaluation → 回归
 ```
 
 ## 文件
@@ -16,10 +16,12 @@
 - [`references/domain-routing.md`](references/domain-routing.md)：领域识别、置信度、Domain Pack 路由与 generic fallback。
 - [`domains/exchange-funds-flow/domain-pack.md`](domains/exchange-funds-flow/domain-pack.md)：资金流领域 ontology、问题库、指标角色、调查 playbook、视觉语法。
 - [`eval/exchange-funds-flow.md`](eval/exchange-funds-flow.md)：资金流领域专属质量验收。
-- [`references/insight-hierarchy.md`](references/insight-hierarchy.md)：North Star、So-What、Amount×Count、Event-Driven Spike、Driver Decomposition、Pareto 与 Exception Logic。
+- [`references/insight-hierarchy.md`](references/insight-hierarchy.md)：按 Mode 选择信息层级；North Star 条件化、Takeaway 内部化，并保留 Amount×Count、Pareto、Exception 等诊断规则。
 - [`references/decision-diagnostics.md`](references/decision-diagnostics.md)：变化确认、Materiality、阈值权威、Delta Contribution、反证与多候选 Dashboard 结构测试。
 - [`references/dashboard-quality-framework.md`](references/dashboard-quality-framework.md)：Dashboard 本质、五层质量模型、信息架构、交互与 Anti-AI 规则。
 - [`references/dashboard-business-analysis.md`](references/dashboard-business-analysis.md)：Primary KPI 资格、比较基线、决策方向、Driver 证明、指标分解与 Mode 降级。
+- [`references/dashboard-analysis-models.md`](references/dashboard-analysis-models.md)：Performance、Change、Contribution、Concentration、Process、Operational Queue、Cohort、Distribution、Relationship、Flow 等业务分析模型路由。
+- [`goldens/`](goldens/)：六类 Dashboard 的可执行构图骨架；正常生成只读取当前一个 Primary Golden。
 - [`references/dashboard-reference-catalog.md`](references/dashboard-reference-catalog.md)：专业 Dashboard Archetype、Golden Reference 选择、Dashboard/Report 边界与首屏契约。
 - [`references/dashboard-audit-loop.md`](references/dashboard-audit-loop.md)：Decision Questions、Coverage Plan、User Simulation、Rendered Audit、设计 token 与覆盖对账闭环。
 - [`eval/dashboard-quality.md`](eval/dashboard-quality.md)：Critical / Major / Minor Dashboard 质量评估与修正闭环。
