@@ -277,6 +277,30 @@ Rendered QA 的“浏览器能力”和“执行位置”分开判断，顺序�
 - 远程 Rendered QA 必须针对本轮最终 Artifact bytes / digest 或等价不可歧义 revision 执行，禁止拿历史截图证明当前 HTML 已通过；
 - 只有所有当前可用、已授权且无需越权写入才能获得的 render placement 都失败，才标 `RENDER_QA_BLOCKED`。
 
+### Canonical Remote Render Runner
+
+仓库提供正式远程浏览器 runner：
+
+```text
+.github/workflows/sql-business-thinking-render-qa.yml
+```
+
+调用契约：
+
+- 输入 `html_gzip_base64`：本轮最终 HTML 原始 bytes 经 gzip 后再做单行 base64；禁止先改写、格式化或重编码 HTML；
+- 输入 `expected_sha256`：对**未压缩原始 HTML bytes**计算 SHA256；runner 内再次计算并要求完全一致；
+- 输入 `allow_design_notes`：默认 `false`；只有用户明确要求解释设计决策时才设 `true`；
+- 推荐使用 `tests/prepare-render-qa-payload.py <html>` 生成 dispatch payload；不得手工截断 base64；
+- inline payload 安全上限由 helper 固定为 60,000 字符。超过时返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE`，不得截断或把不完整 HTML 送去验收；
+- 远程 runner 会生成 `sql-business-thinking-render-qa` artifact，至少包含 `render-qa.json`、`artifact.sha256`、桌面截图与手机截图；
+- 只有 `render-qa.json.state = PASS` 且其中 `artifact_sha256 == expected_sha256`，才允许把远程 Rendered QA 记为 PASS；
+- 远程 runner 会检查桌面 1440×900、手机 390×844、整页宽度、page error 和 Artifact Presentation；历史 artifact / screenshot 不能替代当前 digest 的结果。
+
+隐私边界：
+
+- `workflow_dispatch` 会把 payload 发送到 GitHub Actions。只有当前 HTML 已获用户授权用于远程 QA 时才能调用；
+- 对敏感或未授权远程发送的 HTML，不得为了追求 PASS 偷用该 runner；没有其他合法 placement 时继续标 `RENDER_QA_BLOCKED`。
+
 不能只看源码。Rendered QA 每一项必须记录状态：`PASS / FAIL / BLOCKED`。
 
 - `PASS`：检查已真实执行且通过；
