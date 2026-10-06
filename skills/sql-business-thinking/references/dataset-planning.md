@@ -6,9 +6,10 @@
 
 - 指定表 / Sheet 白名单时，只读取白名单内容；范围外最多读取 metadata 确认名称。
 - 用户禁止读取 dashboard / expected / qa / fix log / backup 时，禁止读取这些内容做“参考”或对账。
-- 用户给出不可改写的 DuckDB 初始化 / `read_xlsx` SQL 时，原样执行；只能替换用户允许变化的参数。
-- 环境无法执行指定 SQL 时标 `BLOCKED_ENV / 待执行`，不得用其他读取方式替代后声称指定 SQL 已执行。
-- 其他工具得到的数据只能作为独立交叉验证，不能成为指定 SQL 的“伪执行结果”。
+- 用户给出不可改写的 DuckDB SQL 时，先区分数据读取语义与运行时 bootstrap。数据源身份、Sheet 范围、`read_xlsx` 语义和分析逻辑必须保持；Native 的 `INSTALL/LOAD httpfs` 不自动成为 DuckDB-Wasm 的逐字约束。
+- HTML / Browser 任务中若 Native DuckDB 不可用，先走 DuckDB-Wasm：按 browser VFS 注册同一数据源，保留 `read_xlsx`，仅在必要时把原始 URL 映射为 VFS 文件名并记录映射。
+- 只有用户显式要求 Native-only / byte-for-byte bootstrap，或所有已授权 DuckDB runtime 都失败时，才标 `BLOCKED_ENV / 待执行`。
+- 不得改用 Python、Connector、CSV 预处理等其他读取方式后声称 DuckDB SQL 已执行。其他工具只能做独立交叉验证。
 
 SKILL.md 讲主流程，这里放陌生数据集的勘察、分析地图、时间维表和 JOIN 守恒规则。
 
