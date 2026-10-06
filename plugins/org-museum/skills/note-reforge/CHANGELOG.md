@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-10-05
+
+Problem:
+- The installed plugin bundled a full copy of note-reforge, so invocation could drift from the repository canonical Skill.
+
+Change:
+- Replaced the bundled execution copy with a bootstrap entry.
+- The bootstrap recognizes the stable minimal invocation and loads the current canonical Skill from `lovemoganna/Org-Skills` before execution.
+- Added an implicit-invocation agent prompt for the stable call form.
+
+Contract:
+- The plugin entry triggers; `skills/note-reforge/SKILL.md` decides behavior.
+
 ## 2026-10-03
 
 Problem:
