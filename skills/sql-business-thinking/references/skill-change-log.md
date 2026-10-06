@@ -162,4 +162,12 @@
 | SQL、Runtime、Gate、Skill Trace 虽然可审计，但容易抢首屏和正文 | 新增 Information Budget Gate 与 Deletion Gate；正文只保留回答问题、改变判断、解释限制、提供必要验证入口的内容 | **完整证据不等于全部前置展示。** 审计性靠可访问，不靠占据主视觉 |
 | 外部可视化 Skill 的模板效果更成熟，但直接复制会把分析系统绑定到外部代码与许可 | 只吸收通用选择机制与信息架构原则，不复制模板代码、视觉资产或专有实现 | **借鉴机制，不耦合实现。** Truth Engine 与 Presentation Engine 保持独立 |
 
+## V22：Freshness、Artifact QA 与 Render Placement
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 用户要求“重新跑一轮”，但完整业务 SQL Result 来自历史 run；只重新执行 Gate 并核对当前数据一致，就被误表述成完整重跑 | 新增 Result Freshness Gate：重跑/当前/最新/E2E 时，关键业务 SQL 必须绑定本轮 run + 当前 data revision + 当前 Skill revision；历史结果只能标 `REUSED_VERIFIED_RESULT` | **结果新鲜度是独立证据契约。** 数据没变不等于 SQL 在本轮重新执行 |
+| Presentation Engine 已规定选图过程只留内部，但最终 HTML 仍出现“候选比较后选择”“这里选择…而不是…” | 新增 Artifact Presentation Gate 与 Artifact Presentation QA；设计 rationale 默认只进 ReportSpec / audit | **规则是否存在不重要，最终 Artifact 是否遵守才重要。** ReportSpec 可以完整，正文必须克制 |
+| 本地 Chromium/Playwright 因 EGL/Display/管理员策略失败后直接收口为 `RENDER_QA_BLOCKED` | 新增 Render QA Placement Gate：Local browser → 已授权 remote browser runner → BLOCKED；远程 QA 必须绑定当前 Artifact digest/revision | **QA 能力与 QA placement 必须分开。** 本地失败不能代表所有合法 render placement 都失败 |
+
 
