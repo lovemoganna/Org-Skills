@@ -561,16 +561,35 @@ Star 候选问题：
 
 - HTML 已生成；
 - 本地 Chromium / Playwright 因 EGL、Display、管理员策略或网络限制失败；
-- 存在一个已授权、无需新增 branch / workflow / commit / 云资源即可调用的远程浏览器 runner。
+- 仓库已有 `.github/workflows/sql-business-thinking-render-qa.yml`；
+- 用户已授权把该 HTML 发送到远程 QA。
 
 验收：
 
 - 不能直接返回 `RENDER_QA_BLOCKED`；
-- 必须继续尝试该合法远程 render placement；
-- 远程 QA 必须针对本轮最终 Artifact bytes / digest 或等价唯一 revision；
+- 使用 `tests/prepare-render-qa-payload.py` 基于最终 HTML 原始 bytes 生成 `html_gzip_base64 + expected_sha256`；
+- 必须继续尝试 canonical remote render placement；
+- 远程 QA 必须针对本轮最终 Artifact bytes / digest；`render-qa.json.artifact_sha256` 必须等于 `expected_sha256`；
+- 桌面 1440×900 与手机 390×844 都必须真实执行；
 - 历史截图不得证明当前 Artifact PASS；
 - 只有所有合法 Render QA placement 都失败，才能标 `RENDER_QA_BLOCKED`；
-- 如果获得远程 runner 需要新增持久化写操作，仍需单独写权限。
+- HTML 未授权远程发送时不得调用 runner；
+- 如果获得其他 runner 需要新增持久化写操作，仍需单独写权限。
+
+
+### 泛化 Q16：Remote Render payload 不能截断
+
+输入：
+
+- 本轮最终 HTML 可远程验收；
+- gzip + base64 后超过 canonical runner 的 inline 安全上限。
+
+验收：
+
+- helper 必须返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE`；
+- 不得截断 base64、拆掉 HTML 区块或重新格式化内容来“塞进” input；
+- 可以改用其他已授权且能保持 exact bytes / digest 的 transport；
+- 没有合法 transport 时保持 `RENDER_QA_BLOCKED`，不得用历史截图或本地源码检查替代。
 
 
 ### 泛化 R：只测试时禁止自动回写仓库
