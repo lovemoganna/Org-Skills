@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## 2026-10-05 — narrative routing and expert-writing upgrade
+
+Problem:
+- A real Claude Code talk transcript could be faithfully reforged yet still read like a personal learning note, training handout, or structured source explanation instead of an expert blog.
+- The canonical Skill forced first person globally and treated "article" as a generic failure, so an explicitly requested expert-article output had no correct route.
+- Bilingual output had no compact layout contract, which could double visual weight or lose information in translation.
+
+Root cause:
+- cognition and preservation rules were stronger than narrative-shape selection;
+- voice, heading behavior, plain-language style, and bilingual layout were not conditioned on output intent.
+
+Change:
+- made narrative identity shape-specific instead of globally first person;
+- added an explicit expert article/blog shape for existing material when the user requests it;
+- added thesis-driven technical writing: source as evidence, mechanism/trade-off analysis, short navigational headings, and simple language;
+- added ASD-STE100-inspired clarity rules without turning prose into a manual;
+- added an opt-in compact bilingual contract: `中文 | English` headings and same-paragraph 1:1 Chinese-English pairs;
+- preserved Runbook, troubleshooting, review, learning-note, and other existing shapes as defaults for their own use cases.
+
+New regressions:
+- `tests/regression/expert-blog-technical-transcript.md`
+- `tests/regression/narrative-shape-routing.md`
+
+Verification target:
+- the Claude Code transcript can produce a thesis-driven expert blog without becoming source-centered or bloated;
+- a troubleshooting note still remains a troubleshooting note;
+- bilingual formatting appears only when explicitly requested.
+
+Known remaining issue:
+- semantic quality still requires model-level evaluation; repository tests can enforce contracts and guardrails but cannot fully score whether a final article feels expert, natural, and compelling.
+
 ## 2026-10-05 — cognition-layer upgrade
 
 Problem:
