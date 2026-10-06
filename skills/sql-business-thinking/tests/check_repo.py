@@ -1,6 +1,11 @@
 from pathlib import Path
+import base64
+import gzip
+import hashlib
 import json
 import re
+import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
@@ -112,6 +117,7 @@ assert "技术证据不能抢业务首屏" in regression, "information-budget re
 assert "重跑不能复用旧业务 Result 冒充 fresh run" in regression, "result freshness regression missing"
 assert "最终 Artifact 不得泄露内部选图过程" in regression, "artifact presentation regression missing"
 assert "本地 Render QA 失败不能直接收口" in regression, "render placement regression missing"
+assert "Remote Render payload 不能截断" in regression, "remote render payload-size regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -139,6 +145,10 @@ assert "为了填模板新增未验证 KPI" in visualization, "template fill fab
 assert "visualization-rendering.md" in skill, "presentation reference not wired into skill"
 assert "visualization-rendering.md" in report_rendering, "report renderer does not delegate chart selection"
 assert "Render QA Placement Gate" in report_rendering, "render QA placement gate missing"
+assert "Canonical Remote Render Runner" in report_rendering, "canonical remote render runner contract missing"
+assert ".github/workflows/sql-business-thinking-render-qa.yml" in report_rendering, "canonical remote render workflow path missing"
+assert "tests/prepare-render-qa-payload.py" in report_rendering, "remote render payload helper missing from contract"
+assert "REMOTE_RENDER_PAYLOAD_TOO_LARGE" in report_rendering, "remote render oversize guard missing"
 assert "Artifact Presentation QA" in report_rendering, "artifact presentation QA missing"
 assert "REUSED_VERIFIED_RESULT" in skill, "reused-result state missing"
 assert "本轮 run" in skill and "当前 Skill revision" in skill, "result freshness revision binding missing"
@@ -159,6 +169,44 @@ for gate_id in gate_ids:
     assert gate_id in workflow, f"wasm harness missing registered gate: {gate_id}"
 for token in ["HARNESS_STALE", "skill_revision", "registry_version", "BLOCKED_DATA_QUALITY"]:
     assert token in workflow, f"wasm harness contract missing: {token}"
+
+render_workflow_path = ROOT.parents[1] / ".github" / "workflows" / "sql-business-thinking-render-qa.yml"
+assert render_workflow_path.exists(), "canonical remote render workflow missing"
+render_workflow = render_workflow_path.read_text(encoding="utf-8")
+for token in [
+    "workflow_dispatch",
+    "html_gzip_base64",
+    "expected_sha256",
+    "allow_design_notes",
+    "1440",
+    "900",
+    "390",
+    "844",
+    "artifact_sha256",
+    "render-qa.json",
+    "desktop.png",
+    "mobile.png",
+    "sql-business-thinking-render-qa",
+]:
+    assert token in render_workflow, f"remote render workflow contract missing: {token}"
+
+payload_helper = ROOT / "tests" / "prepare-render-qa-payload.py"
+render_fixture = ROOT / "tests" / "render-qa-fixture.html"
+assert payload_helper.exists(), "remote render payload helper missing"
+assert render_fixture.exists(), "remote render fixture missing"
+payload_json = subprocess.check_output(
+    [sys.executable, str(payload_helper), str(render_fixture)],
+    text=True,
+)
+payload = json.loads(payload_json)
+fixture_bytes = render_fixture.read_bytes()
+expected_fixture_sha = hashlib.sha256(fixture_bytes).hexdigest()
+assert payload["artifact_sha256"] == expected_fixture_sha, "payload helper sha mismatch"
+assert payload["inputs"]["expected_sha256"] == expected_fixture_sha, "dispatch sha mismatch"
+roundtrip = gzip.decompress(base64.b64decode(payload["inputs"]["html_gzip_base64"]))
+assert roundtrip == fixture_bytes, "payload helper does not preserve exact fixture bytes"
+assert payload["base64_chars"] <= 60000, "fixture unexpectedly exceeds safe inline render payload limit"
+
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
 assert "Star = 数据分析小白" in dialogue, "novice role semantic override example missing"
