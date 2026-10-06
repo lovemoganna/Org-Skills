@@ -182,14 +182,17 @@ Renderer 只读，不重新分析。
 
 ## 11. DuckDB-Wasm Runtime Contract
 
+- **Browser Execution Harness：**当 HTML / Browser 是正式交付物且 Native DuckDB 不可用时，DuckDB-Wasm 是正式执行路径，不是展示性 fallback；不得因此直接产出 `BLOCKED_ENV` 报告。
 - 使用官方 stable DuckDB-Wasm；
 - jsDelivr bundle 用 `selectBundle(getJsDelivrBundles())`；
 - Excel 能力用 `LOAD excel`；
-- 远程文件按 Wasm browser VFS 处理，例如 `registerFileURL`；
-- 不把 native `LOAD httpfs` 当成 Wasm 必须步骤；
-- 所有远程读取受浏览器 CORS 约束；
-- 远程 XLSX 失败后可回退到同轮分析固化的 CSV/Parquet；
-- “记录”与“实时”必须明确区分。
+- 远程文件按 Wasm browser VFS 处理，例如 `registerFileURL` / `registerFileBuffer`；页面必须记录 `source_url → vfs_filename` 映射；
+- 不把 native `LOAD httpfs` 当成 Wasm 必须步骤；Native-only bootstrap 与跨运行时的数据读取语义分开处理；
+- Wasm 正式执行仍必须使用 `read_xlsx` 读取授权 Sheet；不得为了绕过运行时差异改成 PapaParse、SheetJS、Python 预处理或静态伪结果；
+- 只注册和查询当前白名单允许的数据范围；禁止因为工作簿已下载就枚举或读取被禁止 Sheet 的内容；
+- 所有远程读取受浏览器 CORS 约束；失败时区分下载/CORS、VFS、Excel 扩展、SQL 四层；
+- 只有 Wasm 实际失败，或当前请求显式要求 Native-only，才将分析执行标记为 `BLOCKED_ENV`；
+- 已验证的记录结果与浏览器实时重跑结果必须明确区分；Renderer 不得把未执行的浏览器 SQL 标成已验证 Result。
 
 ## 11A. HTML Artifact Delivery Contract
 
