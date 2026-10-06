@@ -290,7 +290,9 @@ Rendered QA 的“浏览器能力”和“执行位置”分开判断，顺序�
 - 输入 `html_gzip_base64`：本轮最终 HTML 原始 bytes 经 gzip 后再做单行 base64；禁止先改写、格式化或重编码 HTML；
 - 输入 `expected_sha256`：对**未压缩原始 HTML bytes**计算 SHA256；runner 内再次计算并要求完全一致；
 - 输入 `allow_design_notes`：默认 `false`；只有用户明确要求解释设计决策时才设 `true`；
-- 推荐使用 `tests/prepare-render-qa-payload.py <html>` 生成 dispatch payload；不得手工截断 base64；
+- 推荐使用 `tests/prepare-render-qa-payload.py <html>` 生成 payload；helper 同时输出 `workflow_dispatch` inputs 与可由 ChatGPT GitHub connector 创建的 `issue_envelope`；
+- **Chat connector trigger：**当当前 GitHub connector 不暴露 `workflow_dispatch`，且用户已授权远程发送 HTML 时，可创建标题以 `[sqlbt-render-qa]` 开头的一次性 Issue，正文必须使用 helper 生成的 `SQLBT_RENDER_QA_V1` envelope。workflow 读取 payload 后立即擦除正文并关闭 Issue，再继续 Chromium QA；不得把 HTML/base64 提交进 Git 历史；
+- Issue 触发只接受仓库 owner 创建且标题前缀匹配的请求；其他 Issue 不执行 render job；
 - inline payload 安全上限由 helper 固定为 60,000 字符。超过时返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE`，不得截断或把不完整 HTML 送去验收；
 - 远程 runner 会生成 `sql-business-thinking-render-qa` artifact，至少包含 `render-qa.json`、`artifact.sha256`、桌面截图与手机截图；
 - 只有 `render-qa.json.state = PASS` 且其中 `artifact_sha256 == expected_sha256`，才允许把远程 Rendered QA 记为 PASS；
