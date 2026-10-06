@@ -259,6 +259,24 @@ Renderer 只读，不重新分析。
 
 ## 13. Rendered QA
 
+### Render QA Placement Gate
+
+Rendered QA 的“浏览器能力”和“执行位置”分开判断，顺序固定为：
+
+```text
+当前环境可用浏览器
+→ 已经存在且本轮获授权使用的远程浏览器 runner
+→ RENDER_QA_BLOCKED
+```
+
+规则：
+
+- 本地 Chromium / Playwright / EGL / Display / 管理员策略失败，只能证明本地 placement 失败，不能直接证明 Rendered QA 整体不可执行；
+- 若已有无需新建 branch / workflow / commit / 云任务即可调用的远程浏览器 runner，必须继续尝试；
+- 为 Rendered QA 新建持久化 runner、workflow、branch 或云资源，仍受 Execution Mutation Permission Gate 约束，不得因为“只是视觉验收”绕过写权限；
+- 远程 Rendered QA 必须针对本轮最终 Artifact bytes / digest 或等价不可歧义 revision 执行，禁止拿历史截图证明当前 HTML 已通过；
+- 只有所有当前可用、已授权且无需越权写入才能获得的 render placement 都失败，才标 `RENDER_QA_BLOCKED`。
+
 不能只看源码。Rendered QA 每一项必须记录状态：`PASS / FAIL / BLOCKED`。
 
 - `PASS`：检查已真实执行且通过；
@@ -273,10 +291,11 @@ Renderer 只读，不重新分析。
 3. 移动端检查：无整页横向溢出；表格可局部滚动；必须实际断言 `document.documentElement.scrollWidth <= document.documentElement.clientWidth`（允许 1px 取整误差）；若失败，先定位最大溢出元素，不得只缩字号；
 4. 功能检查：JS 语法、SQL 按钮映射、fallback、错误显示；
 5. 内容检查：每个问题有 Answer Block；关键数字一致；限制没有被视觉弱化；显式要求的人物会话正文可见。
-6. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
-7. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
-8. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
-9. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
+6. Artifact Presentation QA：检查最终可见正文，不得泄露 Chart Candidate Competition、rejected candidates、Layout Archetype 选择、Renderer 策略、Information Budget 判断等内部设计过程；“候选比较后选择……”“这里选择……而不是……”等说明默认视为 FAIL。只有用户明确要求解释设计决策时才允许进入正文。
+7. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
+8. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
+9. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
+10. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
 
 **重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。无法检查时状态只能是 `BLOCKED`，不得用源码检查替代 Rendered QA。**
 
