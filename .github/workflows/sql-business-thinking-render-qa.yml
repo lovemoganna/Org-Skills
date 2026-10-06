@@ -16,6 +16,8 @@ on:
         required: false
         default: false
         type: boolean
+  issues:
+    types: [opened]
   push:
     paths:
       - ".github/workflows/sql-business-thinking-render-qa.yml"
@@ -23,9 +25,11 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   render-qa:
+    if: github.event_name != 'issues' || (github.actor == github.repository_owner && startsWith(github.event.issue.title, '[sqlbt-render-qa] '))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -39,29 +43,83 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           HTML_GZIP_BASE64: ${{ inputs.html_gzip_base64 }}
           EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+          ALLOW_DESIGN_NOTES_INPUT: ${{ inputs.allow_design_notes || 'false' }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           set -euo pipefail
           mkdir -p render-input render-output
+
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             python3 - <<'PY'
           import base64, gzip, os, pathlib
           payload = os.environ["HTML_GZIP_BASE64"].strip()
           raw = gzip.decompress(base64.b64decode(payload))
           pathlib.Path("render-input/report.html").write_bytes(raw)
+          pathlib.Path("render-input/expected-sha.txt").write_text(os.environ["EXPECTED_SHA256"].strip(), encoding="utf-8")
+          pathlib.Path("render-input/allow-design-notes.txt").write_text(os.environ.get("ALLOW_DESIGN_NOTES_INPUT", "false").strip().lower(), encoding="utf-8")
+          PY
+          elif [ "$EVENT_NAME" = "issues" ]; then
+            python3 - <<'PY'
+          import base64, gzip, os, pathlib
+
+          body = os.environ.get("ISSUE_BODY", "")
+          lines = body.splitlines()
+          if not lines or lines[0].strip() != "SQLBT_RENDER_QA_V1":
+              raise SystemExit("invalid render QA issue envelope")
+
+          fields = {}
+          for line in lines[1:]:
+              if "=" not in line:
+                  continue
+              key, value = line.split("=", 1)
+              fields[key.strip()] = value.strip()
+
+          required = ["expected_sha256", "allow_design_notes", "html_gzip_base64"]
+          missing = [k for k in required if not fields.get(k)]
+          if missing:
+              raise SystemExit("missing render QA issue fields: " + ",".join(missing))
+
+          raw = gzip.decompress(base64.b64decode(fields["html_gzip_base64"]))
+          pathlib.Path("render-input/report.html").write_bytes(raw)
+          pathlib.Path("render-input/expected-sha.txt").write_text(fields["expected_sha256"].lower(), encoding="utf-8")
+          pathlib.Path("render-input/allow-design-notes.txt").write_text(fields["allow_design_notes"].lower(), encoding="utf-8")
           PY
           else
             cp skills/sql-business-thinking/tests/render-qa-fixture.html render-input/report.html
+            sha256sum render-input/report.html | awk '{print $1}' > render-input/expected-sha.txt
+            printf '%s' 'false' > render-input/allow-design-notes.txt
           fi
 
           actual_sha256="$(sha256sum render-input/report.html | awk '{print $1}')"
-          expected_sha256="${EXPECTED_SHA256:-}"
-          if [ -z "$expected_sha256" ]; then
-            expected_sha256="$actual_sha256"
+          expected_sha256="$(cat render-input/expected-sha.txt)"
+          allow_design_notes="$(cat render-input/allow-design-notes.txt)"
+          if [ "$allow_design_notes" != "true" ] && [ "$allow_design_notes" != "false" ]; then
+            echo "allow_design_notes must be true or false" >&2
+            exit 1
           fi
+
           echo "actual_sha256=$actual_sha256" >> "$GITHUB_OUTPUT"
           echo "expected_sha256=$expected_sha256" >> "$GITHUB_OUTPUT"
+          echo "allow_design_notes=$allow_design_notes" >> "$GITHUB_OUTPUT"
           printf '%s' "$actual_sha256" > render-output/artifact.sha256
           printf '%s' "$GITHUB_SHA" > render-output/runner-revision.txt
+          printf '%s' "$EVENT_NAME" > render-output/trigger-channel.txt
+
+      - name: Redact and close issue envelope
+        if: always() && github.event_name == 'issues'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REQUEST_SHA: ${{ steps.prepare.outputs.expected_sha256 }}
+        run: |
+          set -euo pipefail
+          body="Render QA payload consumed by GitHub Actions. expected_sha256=${REQUEST_SHA:-unknown}. The original payload is intentionally removed from the issue body."
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER" \
+            -f body="$body" \
+            -f state="closed" \
+            -f state_reason="completed" >/dev/null
 
       - name: Install Chromium runner
         shell: bash
@@ -95,7 +153,7 @@ jobs:
         env:
           EXPECTED_SHA256: ${{ steps.prepare.outputs.expected_sha256 }}
           ACTUAL_SHA256: ${{ steps.prepare.outputs.actual_sha256 }}
-          ALLOW_DESIGN_NOTES: ${{ inputs.allow_design_notes || 'false' }}
+          ALLOW_DESIGN_NOTES: ${{ steps.prepare.outputs.allow_design_notes }}
         run: |
           set -euo pipefail
           cat > render-qa.cjs <<'JS'
@@ -284,6 +342,7 @@ jobs:
             render-output/render-qa.json
             render-output/artifact.sha256
             render-output/runner-revision.txt
+            render-output/trigger-channel.txt
             render-output/desktop.png
             render-output/mobile.png
             render-output/http-server.log
