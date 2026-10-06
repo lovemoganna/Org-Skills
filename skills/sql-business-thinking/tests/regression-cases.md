@@ -592,6 +592,26 @@ Star 候选问题：
 - 没有合法 transport 时保持 `RENDER_QA_BLOCKED`，不得用历史截图或本地源码检查替代。
 
 
+### 泛化 Q17：Connector 无 workflow_dispatch 时可用一次性 Issue 触发 Remote Render
+
+输入：
+
+- 当前聊天 GitHub connector 没有 `workflow_dispatch` 调用能力；
+- 用户已经授权把最终 HTML 发送到远程 QA；
+- `prepare-render-qa-payload.py` 已生成 `issue_envelope`；
+- 仓库已有 `.github/workflows/sql-business-thinking-render-qa.yml`。
+
+验收：
+
+- 创建标题以 `[sqlbt-render-qa]` 开头的一次性 Issue；
+- Issue 正文必须严格使用 `SQLBT_RENDER_QA_V1` envelope；
+- workflow 只接受仓库 owner 创建且标题前缀匹配的请求；
+- workflow 读取 payload 后立即擦除 Issue 正文并关闭 Issue；
+- Render QA 仍必须绑定 exact Artifact SHA256；
+- payload 不得提交进 Git 历史；
+- HTML 未获远程发送授权时禁止使用该触发通道。
+
+
 ### 泛化 R：只测试时禁止自动回写仓库
 
 用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
