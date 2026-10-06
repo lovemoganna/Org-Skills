@@ -1,0 +1,148 @@
+name: SQL Business Thinking Wasm Retest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sql-business-thinking-wasm-retest.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download original workbook export
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 \
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx' \
+            -o workbook.xlsx
+          python - <<'PY'
+          import zipfile
+          assert zipfile.is_zipfile("workbook.xlsx"), "Google export is not a valid XLSX"
+          print("xlsx_bytes", __import__("os").path.getsize("workbook.xlsx"))
+          PY
+
+      - name: Build browser DuckDB-Wasm probe
+        shell: bash
+        run: |
+          cat > probe.html <<'HTML'
+          <!doctype html>
+          <html>
+          <head><meta charset="utf-8"><title>RUNNING</title></head>
+          <body>
+          <pre id="result"></pre>
+          <pre id="error"></pre>
+          <script type="module">
+          import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.33.0/+esm';
+
+          const allow = ['users','fiat_transactions','crypto_transactions','exchange_rates'];
+          const out = { runtime: {}, source: {}, sheets: {} };
+          const clean = (v) => {
+            if (typeof v === 'bigint') return v.toString();
+            if (v instanceof Date) return v.toISOString();
+            if (v && typeof v === 'object') {
+              if (Array.isArray(v)) return v.map(clean);
+              const o = {};
+              for (const [k,x] of Object.entries(v)) o[k] = clean(x);
+              return o;
+            }
+            return v;
+          };
+          const rows = (table) => table.toArray().map((row) => {
+            const o = {};
+            for (const f of table.schema.fields) o[f.name] = clean(row[f.name]);
+            return o;
+          });
+
+          try {
+            const bundle = await duckdb.selectBundle(duckdb.getJsDelivrBundles());
+            const workerUrl = URL.createObjectURL(new Blob([
+              'importScripts("' + bundle.mainWorker + '");'
+            ], {type: 'text/javascript'}));
+            const worker = new Worker(workerUrl);
+            const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+            await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+
+            const buf = new Uint8Array(await (await fetch('./workbook.xlsx')).arrayBuffer());
+            await db.registerFileBuffer('workbook.xlsx', buf);
+            const conn = await db.connect();
+            await conn.query('INSTALL excel; LOAD excel;');
+
+            out.runtime.bundle = bundle.mainModule;
+            out.runtime.duckdb = rows(await conn.query('SELECT version() AS version'));
+            out.source.mapping = {
+              source_url: 'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+              vfs_filename: 'workbook.xlsx',
+              bytes: buf.byteLength
+            };
+
+            for (const sheet of allow) {
+              const src = "read_xlsx('workbook.xlsx', sheet = '" + sheet + "', header = true)";
+              out.sheets[sheet] = {
+                count: rows(await conn.query('SELECT COUNT(*) AS row_count FROM ' + src)),
+                schema: rows(await conn.query('DESCRIBE SELECT * FROM ' + src)),
+                summary: rows(await conn.query('SUMMARIZE SELECT * FROM ' + src)),
+                sample: rows(await conn.query('SELECT * FROM ' + src + ' LIMIT 5'))
+              };
+            }
+            await conn.close();
+            await db.terminate();
+            document.getElementById('result').textContent = JSON.stringify(out);
+            document.title = 'DONE';
+          } catch (e) {
+            document.getElementById('error').textContent = String(e && e.stack ? e.stack : e);
+            document.title = 'ERROR';
+          }
+          </script>
+          </body>
+          </html>
+          HTML
+
+      - name: Run in headless browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          echo "chrome=$CHROME"
+          python3 -m http.server 8765 >/tmp/http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          "$CHROME" \
+            --headless \
+            --no-sandbox \
+            --disable-gpu \
+            --virtual-time-budget=120000 \
+            --dump-dom \
+            http://127.0.0.1:8765/probe.html > rendered.html 2>/tmp/chrome.err || true
+          python3 - <<'PY'
+          import html, re, sys
+          text = open("rendered.html", encoding="utf-8", errors="replace").read()
+          m = re.search(r'<pre id="result">(.*?)</pre>', text, re.S)
+          e = re.search(r'<pre id="error">(.*?)</pre>', text, re.S)
+          if e and html.unescape(e.group(1)).strip():
+              print("BROWSER_ERROR_BEGIN")
+              print(html.unescape(e.group(1)))
+              print("BROWSER_ERROR_END")
+              sys.exit(1)
+          if not m or not html.unescape(m.group(1)).strip():
+              print(open("/tmp/chrome.err", encoding="utf-8", errors="replace").read())
+              raise SystemExit("No DuckDB result in rendered DOM")
+          payload = html.unescape(m.group(1))
+          open("discovery.json","w",encoding="utf-8").write(payload)
+          print("DISCOVERY_JSON_BEGIN")
+          print(payload)
+          print("DISCOVERY_JSON_END")
+          PY
+
+      - name: Upload discovery evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-business-thinking-wasm-discovery
+          path: discovery.json
+          if-no-files-found: error
