@@ -41,12 +41,14 @@ critical_rules = [
     "Runtime Placement Gate",
     "Execution Mutation Permission Gate",
     "Harness Coverage Gate",
+    "Result Freshness Gate",
     "Downstream Gate Propagation Gate",
     "Chart Candidate Competition Gate",
     "Unit Honesty Gate",
     "One-Chart-One-Conclusion Gate",
     "Layout Archetype Gate",
     "Information Budget Gate",
+    "Artifact Presentation Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
@@ -107,6 +109,9 @@ assert "Gate 已失败但报告仍渲染旧趋势结果" in regression, "gate-to
 assert "连续金额不能为了视觉风格被伪单位化" in regression, "unit-honesty regression missing"
 assert "重复图表与模板填槽必须删除" in regression, "one-chart-one-conclusion regression missing"
 assert "技术证据不能抢业务首屏" in regression, "information-budget regression missing"
+assert "重跑不能复用旧业务 Result 冒充 fresh run" in regression, "result freshness regression missing"
+assert "最终 Artifact 不得泄露内部选图过程" in regression, "artifact presentation regression missing"
+assert "本地 Render QA 失败不能直接收口" in regression, "render placement regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -133,6 +138,14 @@ assert "图数量由 **独立结论数** 决定" in visualization, "independent-
 assert "为了填模板新增未验证 KPI" in visualization, "template fill fabrication guard missing"
 assert "visualization-rendering.md" in skill, "presentation reference not wired into skill"
 assert "visualization-rendering.md" in report_rendering, "report renderer does not delegate chart selection"
+assert "Render QA Placement Gate" in report_rendering, "render QA placement gate missing"
+assert "Artifact Presentation QA" in report_rendering, "artifact presentation QA missing"
+assert "REUSED_VERIFIED_RESULT" in skill, "reused-result state missing"
+assert "本轮 run" in skill and "当前 Skill revision" in skill, "result freshness revision binding missing"
+assert "Artifact Presentation Gate" in visualization, "artifact presentation gate missing from visualization contract"
+assert "ReportSpec 可以完整，正文必须克制" in visualization, "report-vs-body presentation boundary missing"
+assert "Result Freshness QA" in regression_loop, "freshness QA missing from regression loop"
+assert "Render QA Placement" in regression_loop, "render placement QA missing from regression loop"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
 
 gate_registry = json.loads((ROOT / "tests" / "mandatory-gates.json").read_text(encoding="utf-8"))
