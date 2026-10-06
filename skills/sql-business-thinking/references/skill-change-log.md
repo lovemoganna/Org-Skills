@@ -142,5 +142,6 @@
 |---|---|---|
 | Skill 已新增阻塞 Gate，但正式 DuckDB-Wasm runner 仍是旧 Harness；旧 run 成功被误用于证明当前 HEAD 已完成 E2E | 新增 Harness Coverage Gate 与 `tests/mandatory-gates.json`；workflow 监听 `skills/sql-business-thinking/**`，运行时逐项核对 Registry Gate、记录 skill revision / registry version，并在缺项时返回 `HARNESS_STALE` | **规则版本与执行器版本必须绑定。** 文档里存在的阻塞 Gate，如果机器执行器没有覆盖，就不能宣称 E2E PASS |
 | 日期一致性异常由外部交叉验证发现，而不是 DuckDB-Wasm 正式 Harness 自己发现 | 将 `order_id_date_consistency` 写入正式 Wasm Harness，并将失败传播为 `time_analysis = BLOCKED_DATA_QUALITY` | **会阻塞结论的 Gate 必须在正式执行路径内自产证据。** 外部交叉验证只能辅助，不能替代正式 runtime evidence |
+| DuckDB-Wasm 对 `SUM(CASE...)` 返回 HUGEINT / Arrow 对象，JS 直接 `Number(object)` 得到 NaN，导致本应 PASS 的 Gate 被误判 FAIL | Harness 中用于 Gate 判定的聚合值显式 CAST 为 BIGINT，并要求状态判定前做标量归一化 | **Gate 的数据类型也是证据契约。** 不能让运行时序列化差异改变业务 Gate 状态 |
 
 
