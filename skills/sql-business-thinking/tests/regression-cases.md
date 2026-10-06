@@ -454,6 +454,24 @@ Star 候选问题：
 - 只有 Gate coverage 完整且当前 revision 一致时，才能宣称 E2E PASS。
 
 
+### 泛化 Q9：Gate 已失败但报告仍渲染旧趋势结果
+
+输入：
+
+- `order_id_date_consistency = FAIL`；
+- `time_analysis = BLOCKED_DATA_QUALITY`；
+- 历史执行中已经存在 `monthly_snapshot_flow` Result。
+
+验收：
+
+- ReportSpec 必须把时间分析标记为 blocked；
+- HTML 正文禁止渲染月度 / 日度趋势图、时间排名或基于时间字段的正式结论；
+- 禁止用“仅供参考”“只看结构”“不是正式历史价值”等措辞继续展示被阻塞趋势；
+- 允许保留 `monthly_snapshot_flow` SQL / Result 作为折叠审计证据，但必须标 `SUPPRESSED_BY_GATE`，不能作为业务发现；
+- 正文必须展示失败 Gate、冲突样本、受影响分析与解锁条件；
+- 非时间分析（例如集中度）仍可正常展示，不得全局误阻断。
+
+
 ### 泛化 R：只测试时禁止自动回写仓库
 
 用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
