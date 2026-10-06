@@ -151,4 +151,15 @@
 | 数据质量 Gate 已正确返回 `time_analysis = BLOCKED_DATA_QUALITY`，但旧 HTML 仍渲染月度快照趋势，只用“仅供参考”弱化 | 新增 Downstream Gate Propagation Gate；ReportSpec 绑定 Gate 依赖，FAIL / BLOCKED 时 suppress KPI、趋势、排名和正式结论 | **已有查询结果不等于允许展示。** 内容资格必须由当前 Gate 状态决定 |
 | 报告缺少“为何不展示”证据链 | Renderer 要求显示失败 Gate、冲突样本、受影响分析和解锁条件；旧 Result 只能作为折叠审计证据并标 `SUPPRESSED_BY_GATE` | **阻断不是删除证据，而是阻止证据升级成业务结论。** Gate 只传播到依赖项，不得误伤无关分析 |
 
+## V21：Presentation Engine
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 分析层已经成熟，但图表仍使用“问题类型 → 默认图型”硬映射，无法比较多个合法表达 | 新增 `visualization-rendering.md` 与 Chart Candidate Competition Gate；重要图默认比较至少 3 个合理候选 | **先判断数据形状，再竞争候选。** 图型选择必须解释“为什么选它、为什么淘汰相邻候选”，不能靠习惯 |
+| 为追求视觉风格，连续金额存在被拆成点 / 格 / tick 的风险 | 新增 Unit Honesty Gate；视觉单位必须对应真实业务单位，无合法单位时退回普通条形 / 表格 | **表达不能创造数据颗粒。** 视觉语法必须服从数据契约 |
+| 多图报告容易用不同图形重复同一结论，或为了填模板槽位增加弱图 | 新增 One-Chart-One-Conclusion Gate；图数量由独立结论数决定，重复图删除 | **图不是越多越完整。** 一个图只承担一个独立判断 |
+| HTML 容易边生成边拼布局，导致每次报告结构漂移 | 新增 Layout Archetype Gate：Decision Brief / Evidence Report / Dialogue Report，先锁定一种骨架再渲染 | **页面结构也应是契约。** 模板负责稳定组织，不负责制造内容 |
+| SQL、Runtime、Gate、Skill Trace 虽然可审计，但容易抢首屏和正文 | 新增 Information Budget Gate 与 Deletion Gate；正文只保留回答问题、改变判断、解释限制、提供必要验证入口的内容 | **完整证据不等于全部前置展示。** 审计性靠可访问，不靠占据主视觉 |
+| 外部可视化 Skill 的模板效果更成熟，但直接复制会把分析系统绑定到外部代码与许可 | 只吸收通用选择机制与信息架构原则，不复制模板代码、视觉资产或专有实现 | **借鉴机制，不耦合实现。** Truth Engine 与 Presentation Engine 保持独立 |
+
 
