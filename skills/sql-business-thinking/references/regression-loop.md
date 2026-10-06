@@ -75,8 +75,11 @@
 - NULL；
 - 口径命名。
 
-### E. 表达机制
+### E. 证据新鲜度与表达机制
 
+- 用户要求“重新跑 / 当前 / 最新 / 完整跑一轮 / E2E”时，进入关键结论的业务 SQL 是否都在本轮 run 重新执行；
+- 是否存在“只重新跑 Gate / 只比对行数或样本 / 数据看起来没变”后，把历史 Result 当 fresh Result 的情况；
+- 复用历史 Result 时是否显式标 `REUSED_VERIFIED_RESULT`，并记录原 run / data revision / skill revision；是否避免使用“重新跑完 / 当前 SQL 已执行 / E2E PASS”等误导措辞；
 - 重要图是否比较过至少 3 个合理候选；不足 3 个时是否比较全部；
 - 候选淘汰是否基于语义、单位诚实、标签容量、阅读速度、叙事价值或实现可靠性，而不是“更好看”；
 - 是否存在连续金额被任意拆成点 / 格 / tick 的 Unit Honesty 违规；
@@ -125,6 +128,9 @@ P3：纯审美微调，不做，除非它影响理解。
 - 与上一版业务结论 diff；
 - Gate-to-Report 传播检查：若 `time_analysis = BLOCKED_DATA_QUALITY`，HTML 正文不得存在月度/日度趋势图或时间结论，只允许显示阻塞原因、冲突样本、诊断 SQL 与解锁条件。
 - Presentation QA：逐图检查 candidate competition、unit contract、single conclusion；逐区块执行 Deletion Gate；检查 Layout Archetype 未混用。
+- Artifact Presentation QA：扫描最终可见正文，候选竞争、淘汰理由、Layout Archetype、Renderer 策略、Information Budget 等内部 rationale 不得泄露；除非用户明确要求设计说明。
+- Result Freshness QA：若用户要求重跑/当前/最新，关键业务 Result 必须带本轮执行证据；历史 Result 只能作为 `REUSED_VERIFIED_RESULT`。
+- Render QA Placement：本地浏览器失败后，检查是否存在已授权且无需新增持久化写入的远程浏览器 runner；未检查合法远程 placement 时不得直接标 `RENDER_QA_BLOCKED`。
 - HTML 实体文件交付：默认路径存在、文件非空、最终回复链接与实际文件一致（如适用）。
 
 正确内容若发生无授权变化，视为回归，立即修复或回退。
@@ -146,7 +152,7 @@ P3：纯审美微调，不做，除非它影响理解。
 - P2 剩余项不值得继续改；
 - 关键答案覆盖完整；
 - 运行时/交互无明显阻断；
-- 桌面/移动端 Rendered QA 已 PASS；若为 BLOCKED，只能在用户允许阶段性交付时停止，并必须显式披露，不能宣称完整验收；
+- 桌面/移动端 Rendered QA 已 PASS；若本地失败，已继续检查所有合法 Render QA placement；只有全部失败后才能记 `RENDER_QA_BLOCKED`。若最终仍为 BLOCKED，只能在用户允许阶段性交付时停止，并必须显式披露，不能宣称完整验收；
 - Skills 缺陷已形成可执行修正；若本轮授权写仓库，则已回写并反向验证；
 - 不再存在 Lucy 陪练化、预写 checklist、低价值问题推进或“只报数字不解释”的浅分析；
 - 继续修改只会变成纯审美偏好。
