@@ -118,6 +118,7 @@ assert "重跑不能复用旧业务 Result 冒充 fresh run" in regression, "res
 assert "最终 Artifact 不得泄露内部选图过程" in regression, "artifact presentation regression missing"
 assert "本地 Render QA 失败不能直接收口" in regression, "render placement regression missing"
 assert "Remote Render payload 不能截断" in regression, "remote render payload-size regression missing"
+assert "Connector 无 workflow_dispatch 时可用一次性 Issue 触发 Remote Render" in regression, "connector issue render regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -175,6 +176,12 @@ assert render_workflow_path.exists(), "canonical remote render workflow missing"
 render_workflow = render_workflow_path.read_text(encoding="utf-8")
 for token in [
     "workflow_dispatch",
+    "issues:",
+    "types: [opened]",
+    "[sqlbt-render-qa]",
+    "SQLBT_RENDER_QA_V1",
+    "Redact and close issue envelope",
+    "issues: write",
     "html_gzip_base64",
     "expected_sha256",
     "allow_design_notes",
@@ -206,6 +213,13 @@ assert payload["inputs"]["expected_sha256"] == expected_fixture_sha, "dispatch s
 roundtrip = gzip.decompress(base64.b64decode(payload["inputs"]["html_gzip_base64"]))
 assert roundtrip == fixture_bytes, "payload helper does not preserve exact fixture bytes"
 assert payload["base64_chars"] <= 60000, "fixture unexpectedly exceeds safe inline render payload limit"
+issue_envelope = payload.get("issue_envelope", {})
+assert issue_envelope.get("title", "").startswith("[sqlbt-render-qa] "), "issue render title missing"
+issue_body = issue_envelope.get("body", "")
+assert issue_body.startswith("SQLBT_RENDER_QA_V1\n"), "issue render envelope version missing"
+assert f"expected_sha256={expected_fixture_sha}" in issue_body, "issue render sha missing"
+assert "allow_design_notes=false" in issue_body, "issue render design-note default missing"
+assert f"html_gzip_base64={payload['inputs']['html_gzip_base64']}" in issue_body, "issue render payload mismatch"
 
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
