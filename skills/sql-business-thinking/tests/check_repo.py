@@ -112,7 +112,7 @@ assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
 assert "Star = 数据分析小白" in dialogue, "novice role semantic override example missing"
-assert "Lucy 是独立分析者，不是 Reviewer、SQL 助手或陪练" in dialogue, "anti-companion role contract missing"
+assert "Lucy 必须从问题价值、可回答性或优先级上独立判断，而不是只补 SQL" in dialogue, "anti-companion role contract missing"
 assert "禁止虚构领导任务" in dialogue, "no-fake-task-owner contract missing"
 assert "accept / reject / replace / split" in dialogue, "question challenge actions missing"
 assert "counter-hypothesis" in dialogue, "hypothesis challenge action missing"
