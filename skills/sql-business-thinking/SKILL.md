@@ -110,7 +110,7 @@ Validated Findings
 - 正文只保留“回答问题 / 改变判断 / 解释限制 / 提供必要验证入口”的内容，其余删除或折叠；
 - Presentation Engine 不得重新分析、改口径、补数据或绕过 Mandatory Gate。正确性优先于视觉效果；
 - **Artifact Presentation Gate：**候选竞争、淘汰理由、Layout Archetype 选择、Renderer 策略、Information Budget 判断等属于内部 ReportSpec / audit 信息，默认不得进入业务正文。最终 Artifact 必须反查可见文本，删除“候选比较后选择……”“这里选择……而不是……”等设计过程说明；除非用户明确要求解释设计决策。
-- **Canonical Remote Render Runner：**当本地 Rendered QA placement 失败且用户已授权把最终 HTML 送到远程 QA 时，优先复用仓库现有 `.github/workflows/sql-business-thinking-render-qa.yml`。用 `tests/prepare-render-qa-payload.py` 基于最终 HTML 原始 bytes 生成 gzip+base64 与 SHA256；只有 runner 返回当前 digest 对应的 `render-qa.json.state = PASS` 才算远程 Rendered QA PASS。超过 inline payload 上限、HTML 未获远程发送授权、或当前环境无法调用该既有 runner 时，不得偷换成历史截图或截断 payload，按 Placement Gate 继续判断。
+- **Canonical Remote Render Runner：**当本地 Rendered QA placement 失败且用户已授权把最终 HTML 送到远程 QA 时，优先复用仓库现有 `.github/workflows/sql-business-thinking-render-qa.yml`。用 `tests/prepare-render-qa-payload.py` 基于最终 HTML 原始 bytes 生成 gzip+base64 与 SHA256；只有 runner 返回当前 digest 对应的 `render-qa.json.state = PASS` 才算远程 Rendered QA PASS。若当前 GitHub connector 不暴露 `workflow_dispatch`，可使用 helper 生成的 `issue_envelope` 创建一次性 `[sqlbt-render-qa]` Issue 触发同一 runner；workflow 必须在读取后立即擦除 Issue 正文并关闭 Issue，禁止把 payload 写入 Git 历史。超过 inline payload 上限、HTML 未获远程发送授权、或不存在合法触发通道时，不得偷换成历史截图或截断 payload，按 Placement Gate 继续判断。
 
 **Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。**执行环境写权限与 Skill 修改权限分开判断：**为了跑分析而创建临时 branch、workflow、commit 或其他远程资源，同样属于仓库/外部系统写入，不能借“只是执行分析”绕过权限门。
 
