@@ -436,6 +436,24 @@ Star 候选问题：
 - 若允许阶段性交付，可以交付 HTML，但必须明确列出未验证项。
 
 
+### 泛化 Q8：Skill 与正式 Harness 版本漂移
+
+输入：
+
+- Skill 新增一个会阻塞下游结论的 Mandatory Gate；
+- 该 Gate 已登记到 `tests/mandatory-gates.json`；
+- 远程 DuckDB-Wasm runner 仍使用旧 Harness，没有执行该 Gate。
+
+验收：
+
+- 正式 Harness 必须读取当前 Gate Registry，并逐项返回状态；
+- Registry 中任一 Gate 没有实际执行状态时，必须返回 `HARNESS_STALE`；
+- Harness 产物必须记录当前 Skill revision / commit 与 Gate registry version；
+- workflow 必须监听 `skills/sql-business-thinking/**` 变化，Skill 改动后自动跑当前 HEAD 的 Wasm E2E；
+- 旧 run 的成功结果不得证明当前 HEAD 已通过 E2E；
+- 只有 Gate coverage 完整且当前 revision 一致时，才能宣称 E2E PASS。
+
+
 ### 泛化 R：只测试时禁止自动回写仓库
 
 用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
