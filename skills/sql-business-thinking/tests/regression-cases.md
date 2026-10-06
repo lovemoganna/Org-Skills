@@ -520,6 +520,59 @@ Star 候选问题：
 - 技术证据仍可审计，但不得靠“完整”占据主视觉。
 
 
+### 泛化 Q13：重跑不能复用旧业务 Result 冒充 fresh run
+
+输入：
+
+- 用户明确说“重新跑一轮 / 当前结果 / 最新结果 / 完整 E2E”；
+- 当前 HEAD 的 Gate Harness 已重新执行；
+- 关键业务 SQL Result 来自历史 run；
+- 当前数据经行数、样本或逻辑内容比对后“看起来一致”。
+
+验收：
+
+- 历史业务 Result 不能自动升级为本轮 fresh Result；
+- 关键业务 SQL 必须在本轮 run、当前数据 revision、当前 Skill revision 重新执行，才能标 fresh；
+- 若确需复用，状态必须为 `REUSED_VERIFIED_RESULT`，并记录原 run / data revision / skill revision；
+- 复用情况下禁止写“重新跑完”“当前 SQL 已执行”“完整 E2E PASS”；
+- 只重跑 Gate 不等于完整分析重跑。
+
+
+### 泛化 Q14：最终 Artifact 不得泄露内部选图过程
+
+输入：
+
+- ReportSpec 中保存了 3 个候选图、淘汰理由、selected chart 和 Layout Archetype；
+- 最终 HTML 面向业务读者；
+- 用户没有要求解释设计决策。
+
+验收：
+
+- ReportSpec 可以完整保留；
+- HTML 正文不得出现“候选比较后选择……”“这里选择……而不是……”等选图过程；
+- 不得直接展示 `candidate_charts`、`rejected_candidates`、`selected_chart`、Layout Archetype 等内部字段；
+- 正文只保留业务结论、数据口径、限制和必要读图说明；
+- 用户明确要求设计 rationale 时，才允许放到独立 Design Notes。
+
+
+### 泛化 Q15：本地 Render QA 失败不能直接收口
+
+输入：
+
+- HTML 已生成；
+- 本地 Chromium / Playwright 因 EGL、Display、管理员策略或网络限制失败；
+- 存在一个已授权、无需新增 branch / workflow / commit / 云资源即可调用的远程浏览器 runner。
+
+验收：
+
+- 不能直接返回 `RENDER_QA_BLOCKED`；
+- 必须继续尝试该合法远程 render placement；
+- 远程 QA 必须针对本轮最终 Artifact bytes / digest 或等价唯一 revision；
+- 历史截图不得证明当前 Artifact PASS；
+- 只有所有合法 Render QA placement 都失败，才能标 `RENDER_QA_BLOCKED`；
+- 如果获得远程 runner 需要新增持久化写操作，仍需单独写权限。
+
+
 ### 泛化 R：只测试时禁止自动回写仓库
 
 用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
