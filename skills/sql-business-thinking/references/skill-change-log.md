@@ -144,4 +144,11 @@
 | 日期一致性异常由外部交叉验证发现，而不是 DuckDB-Wasm 正式 Harness 自己发现 | 将 `order_id_date_consistency` 写入正式 Wasm Harness，并将失败传播为 `time_analysis = BLOCKED_DATA_QUALITY` | **会阻塞结论的 Gate 必须在正式执行路径内自产证据。** 外部交叉验证只能辅助，不能替代正式 runtime evidence |
 | DuckDB-Wasm 对 `SUM(CASE...)` 返回 HUGEINT / Arrow 对象，JS 直接 `Number(object)` 得到 NaN，导致本应 PASS 的 Gate 被误判 FAIL | Harness 中用于 Gate 判定的聚合值显式 CAST 为 BIGINT，并要求状态判定前做标量归一化 | **Gate 的数据类型也是证据契约。** 不能让运行时序列化差异改变业务 Gate 状态 |
 
+## V20：Gate-to-Report 传播
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 数据质量 Gate 已正确返回 `time_analysis = BLOCKED_DATA_QUALITY`，但旧 HTML 仍渲染月度快照趋势，只用“仅供参考”弱化 | 新增 Downstream Gate Propagation Gate；ReportSpec 绑定 Gate 依赖，FAIL / BLOCKED 时 suppress KPI、趋势、排名和正式结论 | **已有查询结果不等于允许展示。** 内容资格必须由当前 Gate 状态决定 |
+| 报告缺少“为何不展示”证据链 | Renderer 要求显示失败 Gate、冲突样本、受影响分析和解锁条件；旧 Result 只能作为折叠审计证据并标 `SUPPRESSED_BY_GATE` | **阻断不是删除证据，而是阻止证据升级成业务结论。** Gate 只传播到依赖项，不得误伤无关分析 |
+
 
