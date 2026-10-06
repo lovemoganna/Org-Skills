@@ -36,6 +36,9 @@ critical_rules = [
     "Analysis Depth Gate",
     "Robustness Check",
     "Explicit Execution Contract Gate",
+    "Runtime Placement Gate",
+    "Execution Mutation Permission Gate",
+    "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
 haystack = skill + "\n" + "\n".join(
@@ -86,13 +89,26 @@ assert "显式数据范围禁止内容泄漏" in regression, "explicit scope reg
 assert "不可改写的数据读取契约" in regression, "immutable data contract regression missing"
 assert "HTML 任务的 DuckDB-Wasm 正式回退" in regression, "wasm runtime fallback regression missing"
 assert "Native-only 不能被 Wasm 偷换" in regression, "native-only runtime guard regression missing"
+assert "本地 Wasm 失败不等于 Wasm 整体失败" in regression, "runtime placement regression missing"
+assert "分析权限不等于仓库写权限" in regression, "execution mutation permission regression missing"
+assert "关键数据质量检查未执行即阻塞下游" in regression, "mandatory data-quality gate regression missing"
+assert "Rendered QA 被环境阻塞" in regression, "rendered QA blocked regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
 assert "DuckDB-Wasm 正式回退路径" in skill, "wasm runtime fallback contract missing"
+assert "Runtime Placement Gate" in skill, "runtime placement gate missing"
+assert "Execution Mutation Permission Gate" in skill, "execution mutation permission gate missing"
+assert "本地浏览器、网络或扩展失败，只能证明该 placement 失败" in skill, "local placement failure semantics missing"
 assert "Fallback 顺序" in skill, "runtime fallback order missing"
 assert "不得改用 Python / Pandas / Connector" in skill, "non-duckdb substitution guard missing"
 assert "只有用户明确授权修改 Skill / 仓库时才执行回写" in skill, "skill mutation permission gate missing"
+assert "执行环境写权限与 Skill 修改权限分开判断" in skill, "execution-vs-skill permission separation missing"
+assert "Mandatory Data Quality Gate" in (ROOT / "references" / "dataset-planning.md").read_text(encoding="utf-8"), "mandatory data quality gate missing"
+assert "未执行不等于 PASS" in (ROOT / "references" / "dataset-planning.md").read_text(encoding="utf-8"), "data quality not-run guard missing"
+assert "PASS / FAIL / BLOCKED" in report_rendering, "rendered QA state model missing"
+assert "RENDER_QA_BLOCKED" in report_rendering, "rendered QA blocked disclosure missing"
+assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
 assert "Star = 数据分析小白" in dialogue, "novice role semantic override example missing"
