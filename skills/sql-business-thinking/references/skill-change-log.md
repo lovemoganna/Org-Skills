@@ -118,3 +118,11 @@
 | 陌生数据集协议建议查看已有看板 / expected，可能越过用户明确的四表白名单 | 数据勘察改为授权范围优先；范围外只允许必要 metadata，不读内容 | **显式数据范围高于任何 planning / QA / expected 建议。** |
 | 用户提供不可改写 DuckDB 读取 SQL 时，运行环境契约仍可能触发替代读取方式 | 新增 Explicit Execution Contract Gate；替代工具只能做辅助验证，不能冒充指定 SQL 实际执行 | **用户指定的执行 SQL 是执行契约，不是提示性示例。** |
 | Reverse Skill Audit 默认要求自动回写仓库，会把纯测试变成边测边改 | 回写改为权限门控；未授权时只报告缺陷与回归建议 | **测试权限与修改权限分离。** 发现问题不等于获得仓库写权限 |
+
+## V17：Native 缺失时的 DuckDB-Wasm 正式回退
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| HTML 分析任务已经具备 DuckDB-Wasm 能力，但 Explicit Execution Contract 把 Native 初始化语句整体视为不可替换，导致 Native 缺失时过早 `BLOCKED_ENV` | 将契约拆成 Data Contract 与 Runtime Bootstrap Contract；HTML / Browser 任务中按 Native → DuckDB-Wasm → BLOCKED_ENV 顺序执行 | **数据语义与运行时启动必须解耦。** Native bootstrap 不应阻止同一 DuckDB 语义在浏览器正式执行 |
+| Wasm 容易被误判为“替代读取”，或反过来为了 Wasm 偷换成 Python / CSV | 明确 Wasm 只能适配 bootstrap / transport；数据源、Sheet 白名单、`read_xlsx` 语义保持，并记录 URL→VFS 映射 | **Runtime adapter 可以变，Data Contract 不能变。** |
+| Wasm fallback 可能覆盖用户显式 Native-only 约束 | 增加 Native-only 对抗回归；用户明确要求 CLI / byte-for-byte bootstrap 时仍直接阻塞 | **自动回退只在授权边界内发生。** 用户显式 runtime 约束高于默认 fallback |
