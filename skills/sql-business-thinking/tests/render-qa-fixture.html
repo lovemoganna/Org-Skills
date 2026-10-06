@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Render QA Fixture</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#f7f5ef;color:#182033}
+main{max-width:1080px;margin:auto;padding:32px 20px}
+.hero{border-bottom:1px solid #bbb;padding-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;min-width:0}
+.card{border:1px solid #ccc;padding:18px;min-width:0}
+.table-wrap{max-width:100%;overflow-x:auto}
+table{border-collapse:collapse;min-width:720px;width:100%}
+th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><h1>Render QA Fixture</h1><p>用于验证远程 Chromium、移动端宽度和 Artifact digest 绑定。</p></section>
+<section class="grid">
+<article class="card"><h2>Finding</h2><p>这是业务正文，不包含内部选图过程。</p></article>
+<article class="card"><h2>Limit</h2><p>限制信息在正文可见。</p></article>
+</section>
+<section class="card" style="margin-top:16px">
+<h2>Evidence</h2>
+<div class="table-wrap"><table><thead><tr><th>Item</th><th>Value</th><th>Note</th></tr></thead><tbody><tr><td>A</td><td>100</td><td>fixture</td></tr></tbody></table></div>
+</section>
+</main>
+</body>
+</html>
