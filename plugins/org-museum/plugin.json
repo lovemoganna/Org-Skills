@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "org-museum",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "在 Chat 中整理 Org 知识笔记、提交 GitHub 并核验自动发布。",
   "author": {
     "name": "lovemoganna"
