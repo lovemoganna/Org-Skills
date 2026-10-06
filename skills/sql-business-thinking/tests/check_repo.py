@@ -16,6 +16,7 @@ required = {
     "protocol.md",
     "dialogue-rendering.md",
     "report-rendering.md",
+    "visualization-rendering.md",
     "regression-loop.md",
     "skill-change-log.md",
 }
@@ -41,6 +42,11 @@ critical_rules = [
     "Execution Mutation Permission Gate",
     "Harness Coverage Gate",
     "Downstream Gate Propagation Gate",
+    "Chart Candidate Competition Gate",
+    "Unit Honesty Gate",
+    "One-Chart-One-Conclusion Gate",
+    "Layout Archetype Gate",
+    "Information Budget Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
@@ -98,6 +104,9 @@ assert "关键数据质量检查未执行即阻塞下游" in regression, "mandat
 assert "Rendered QA 被环境阻塞" in regression, "rendered QA blocked regression missing"
 assert "Skill 与正式 Harness 版本漂移" in regression, "harness drift regression missing"
 assert "Gate 已失败但报告仍渲染旧趋势结果" in regression, "gate-to-report propagation regression missing"
+assert "连续金额不能为了视觉风格被伪单位化" in regression, "unit-honesty regression missing"
+assert "重复图表与模板填槽必须删除" in regression, "one-chart-one-conclusion regression missing"
+assert "技术证据不能抢业务首屏" in regression, "information-budget regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -116,6 +125,14 @@ assert "RENDER_QA_BLOCKED" in report_rendering, "rendered QA blocked disclosure 
 assert "Downstream Gate Propagation Contract" in report_rendering, "report gate propagation contract missing"
 assert "已有 Result 不代表可展示" in report_rendering, "blocked result suppression rule missing"
 assert "SUPPRESSED" in report_rendering, "suppressed-by-gate rendering state missing"
+visualization = (ROOT / "references" / "visualization-rendering.md").read_text(encoding="utf-8")
+for token in ["Chart Candidate Competition Gate", "Unit Honesty Gate", "One-Chart-One-Conclusion Gate", "Layout Archetype Gate", "Information Budget Gate", "Deletion Gate", "Presentation Engine"]:
+    assert token in visualization, f"presentation contract missing: {token}"
+assert "至少 3 个合理候选" in visualization, "chart candidate competition threshold missing"
+assert "图数量由 **独立结论数** 决定" in visualization, "independent-conclusion chart count rule missing"
+assert "不得为了填模板新增未验证 KPI" in visualization, "template fill fabrication guard missing"
+assert "visualization-rendering.md" in skill, "presentation reference not wired into skill"
+assert "visualization-rendering.md" in report_rendering, "report renderer does not delegate chart selection"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
 
 gate_registry = json.loads((ROOT / "tests" / "mandatory-gates.json").read_text(encoding="utf-8"))
