@@ -40,6 +40,7 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 - **DuckDB-Wasm 正式回退路径：**当交付物是 HTML / Browser，或用户已授权浏览器 DuckDB，且 Native DuckDB 不可用时，必须先切到 DuckDB-Wasm，而不是直接 `BLOCKED_ENV`。Wasm 只允许改运行时 bootstrap；数据源、Sheet 白名单和 `read_xlsx` 语义必须保持。若 VFS 需要本地别名，必须记录“原始 URL → 注册文件名”的映射，禁止把映射伪装成数据源变化。
 - **Runtime Placement Gate：**运行时类型与运行位置分开判断。顺序为：当前环境可用的 Native DuckDB → 当前环境可用的 DuckDB-Wasm → 已经存在且本轮已获授权使用的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。本地浏览器、网络或扩展失败，只能证明该 placement 失败，不能直接证明 DuckDB-Wasm 能力整体失败。
 - **Execution Mutation Permission Gate：**为了获得运行环境而创建 branch、workflow、commit、PR、云任务或其他持久化外部资源，均属于写操作。分析、测试、生成报告本身不自动授权这些写操作；只有用户明确授权对应系统写入，或该远程 runner 已存在且调用不需要持久化修改时才能使用。不得把“临时分支 / 临时 workflow”视为无副作用。
+- **Harness Coverage Gate：**任何被用来宣称“Skill 已完成真实 E2E 执行”的 Native / Wasm runner，必须覆盖当前仓库 `skills/sql-business-thinking/tests/mandatory-gates.json` 中全部阻塞 Gate，并在产物中记录 Gate registry version、执行 commit / revision 与每个 Gate 的状态。缺少任一 Gate、runner revision 落后于当前 Skill、或 Gate registry 与 Harness 不一致时，标 `HARNESS_STALE`，不得宣称 E2E PASS。新增阻塞 Gate 时必须同一轮更新 registry、Harness 与回归测试。
 - **Fallback 顺序：**兼容的 Native DuckDB → 本地 DuckDB-Wasm → 已授权且无需越权创建的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。不得因为 Native 或本地浏览器缺失而跳过已经可用的授权 runner；也不得从 DuckDB runtime 再静默降级到 Python / Connector。
 - 只有两种情况直接 `BLOCKED_ENV`：用户显式要求 Native-only / byte-for-byte bootstrap 且当前 Native 不可用；或所有当前可用、已授权且不需要越权写入才能获得的 DuckDB runtime placement 都实际失败。
 - 可以使用其他工具做环境诊断或独立交叉验证，但必须与 DuckDB 的实际执行结果分开标记。
