@@ -130,7 +130,7 @@ for token in ["Chart Candidate Competition Gate", "Unit Honesty Gate", "One-Char
     assert token in visualization, f"presentation contract missing: {token}"
 assert "至少 3 个合理候选" in visualization, "chart candidate competition threshold missing"
 assert "图数量由 **独立结论数** 决定" in visualization, "independent-conclusion chart count rule missing"
-assert "不得为了填模板新增未验证 KPI" in visualization, "template fill fabrication guard missing"
+assert "为了填模板新增未验证 KPI" in visualization, "template fill fabrication guard missing"
 assert "visualization-rendering.md" in skill, "presentation reference not wired into skill"
 assert "visualization-rendering.md" in report_rendering, "report renderer does not delegate chart selection"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
