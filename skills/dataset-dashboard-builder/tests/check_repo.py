@@ -139,7 +139,7 @@ for rule in ["current largest ≠ change driver", "numerator / denominator", "Co
 analysis_models = (ROOT / "references" / "dashboard-analysis-models.md").read_text(encoding="utf-8")
 for rule in ["Selection Gate", "Performance / Variance", "Change / Trend", "Contribution / Mix Shift", "Concentration / Pareto", "Process / Funnel / State", "Operational Queue / SLA", "Cohort / Retention", "Distribution / Segmentation", "Relationship / Unit Economics", "Flow / Movement", "Model → Mode Defaults"]:
     assert rule in analysis_models, f"analysis model rule missing: {rule}"
-for rule in ["Primary Analysis Model", "Supporting Models", "exactly 1", "最多 2"]:
+for rule in ["Primary Analysis Model", "Supporting Models", "1 个 Primary Analysis Model", "最多 2"]:
     assert rule in analysis_models, f"analysis model behavior missing: {rule}"
 
 reference_catalog = (ROOT / "references" / "dashboard-reference-catalog.md").read_text(encoding="utf-8")
