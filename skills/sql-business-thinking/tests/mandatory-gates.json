@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "gates": [
+    {
+      "id": "user_key_uniqueness",
+      "purpose": "Prevent duplicate user keys from multiplying JOIN results.",
+      "blocks": ["user_join_aggregation"]
+    },
+    {
+      "id": "order_id_uniqueness",
+      "purpose": "Prevent duplicate transaction identifiers from double counting orders.",
+      "blocks": ["transaction_aggregation"]
+    },
+    {
+      "id": "orphan_uid",
+      "purpose": "Detect transaction rows that cannot resolve to an allowed user key.",
+      "blocks": ["user_level_analysis"]
+    },
+    {
+      "id": "status_completion",
+      "purpose": "Validate completion timestamps required by completed-state analysis.",
+      "blocks": ["completed_state_analysis"]
+    },
+    {
+      "id": "amount_fee_validity",
+      "purpose": "Reject null or non-positive amounts and invalid fees before amount aggregation.",
+      "blocks": ["amount_aggregation"]
+    },
+    {
+      "id": "rate_key_uniqueness",
+      "purpose": "Prevent duplicate exchange-rate keys from multiplying converted values.",
+      "blocks": ["rate_join_aggregation"]
+    },
+    {
+      "id": "rate_coverage",
+      "purpose": "Require conversion coverage for every asset used by converted-value analysis.",
+      "blocks": ["converted_value_analysis"]
+    },
+    {
+      "id": "join_cardinality_users",
+      "purpose": "Require JOIN row-count preservation before user-enriched aggregation.",
+      "blocks": ["user_join_aggregation"]
+    },
+    {
+      "id": "order_id_date_consistency",
+      "purpose": "Compare encoded order dates with created_at when the identifier contains a date.",
+      "blocks": ["time_analysis"]
+    }
+  ]
+}
