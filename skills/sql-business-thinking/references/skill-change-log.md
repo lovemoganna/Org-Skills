@@ -179,4 +179,13 @@
 | 手工准备 workflow input 容易重编码、截断或超过 dispatch payload | 新增 `tests/prepare-render-qa-payload.py`，确定性 gzip + base64，输出 SHA256；inline 安全上限 60,000 字符，超过返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE` | **传输也属于证据链。** 不能为了适配 runner 改写或截断待验收 Artifact |
 | 远程 QA 会把 HTML 发往 GitHub Actions，存在数据边界 | Canonical contract 明确：只有用户已授权远程发送当前 HTML 才能调用；敏感/未授权内容没有合法 remote placement 时继续 BLOCKED | **获得 runner 能力不等于获得数据外发权限。** placement authorization 与技术可用性必须同时满足 |
 
+## V24：Connector-triggered Remote Render
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Canonical Remote Render Runner 已存在，但当前 ChatGPT GitHub connector 没有 `workflow_dispatch` 调用接口，导致聊天里仍无法把任意本轮 HTML 送进 runner | workflow 新增 owner-only `issues: opened` 触发；payload helper 同时生成 `issue_envelope`；ChatGPT 可创建一次性 `[sqlbt-render-qa]` Issue 触发同一 Chromium QA | **执行能力必须有当前客户端可到达的触发通道。** 有 runner 但客户端无法调用，仍不算闭环 |
+| 用 Issue 传 payload 可能留下 HTML/base64 长期暴露 | workflow 读取 envelope 后立即擦除 Issue 正文并关闭 Issue；payload 不进入 Git commit/history | **临时传输面必须最小化持久化痕迹。** 不把 QA 输入伪装成仓库源码 |
+| 任意 Issue 都可能误触发昂贵的 Chromium job | job 限定仓库 owner + `[sqlbt-render-qa]` 标题前缀 + `SQLBT_RENDER_QA_V1` envelope | **触发面也需要身份与协议 Gate。** 能写 Issue 不等于能触发 Render QA |
+| Chat connector fallback 可能绕过远程发送授权 | 继续要求当前 HTML 已获用户授权发送到 GitHub Actions；未授权时不创建 issue envelope | **可达性不能覆盖数据边界。** 技术触发与外发授权仍是两道独立 Gate |
+
 
