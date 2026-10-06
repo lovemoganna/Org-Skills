@@ -170,4 +170,13 @@
 | Presentation Engine 已规定选图过程只留内部，但最终 HTML 仍出现“候选比较后选择”“这里选择…而不是…” | 新增 Artifact Presentation Gate 与 Artifact Presentation QA；设计 rationale 默认只进 ReportSpec / audit | **规则是否存在不重要，最终 Artifact 是否遵守才重要。** ReportSpec 可以完整，正文必须克制 |
 | 本地 Chromium/Playwright 因 EGL/Display/管理员策略失败后直接收口为 `RENDER_QA_BLOCKED` | 新增 Render QA Placement Gate：Local browser → 已授权 remote browser runner → BLOCKED；远程 QA 必须绑定当前 Artifact digest/revision | **QA 能力与 QA placement 必须分开。** 本地失败不能代表所有合法 render placement 都失败 |
 
+## V23：Canonical Remote Render Runner
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Render QA Placement Gate 已规定本地失败后尝试远程，但仓库没有一个可直接复用的通用浏览器 runner | 新增 `.github/workflows/sql-business-thinking-render-qa.yml`：workflow_dispatch 接收 gzip+base64 HTML 与原始 bytes SHA256，在 GitHub Actions 中真实运行 Chromium 桌面 1440×900 与手机 390×844 | **Fallback 不能只是一条文字路径。** 只要规则要求某个正式 placement，就应有可调用、可产证据的实现 |
+| 远程 Render QA 可能验错文件或拿历史截图证明当前 HTML | runner 强制 `artifact_sha256 == expected_sha256`，产出 `render-qa.json`、digest、桌面/手机截图；PASS 绑定 exact artifact bytes | **Rendered QA 证据必须绑定 Artifact identity。** “浏览器跑过”不等于“当前文件跑过” |
+| 手工准备 workflow input 容易重编码、截断或超过 dispatch payload | 新增 `tests/prepare-render-qa-payload.py`，确定性 gzip + base64，输出 SHA256；inline 安全上限 60,000 字符，超过返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE` | **传输也属于证据链。** 不能为了适配 runner 改写或截断待验收 Artifact |
+| 远程 QA 会把 HTML 发往 GitHub Actions，存在数据边界 | Canonical contract 明确：只有用户已授权远程发送当前 HTML 才能调用；敏感/未授权内容没有合法 remote placement 时继续 BLOCKED | **获得 runner 能力不等于获得数据外发权限。** placement authorization 与技术可用性必须同时满足 |
+
 
