@@ -126,3 +126,13 @@
 | HTML 分析任务已经具备 DuckDB-Wasm 能力，但 Explicit Execution Contract 把 Native 初始化语句整体视为不可替换，导致 Native 缺失时过早 `BLOCKED_ENV` | 将契约拆成 Data Contract 与 Runtime Bootstrap Contract；HTML / Browser 任务中按 Native → DuckDB-Wasm → BLOCKED_ENV 顺序执行 | **数据语义与运行时启动必须解耦。** Native bootstrap 不应阻止同一 DuckDB 语义在浏览器正式执行 |
 | Wasm 容易被误判为“替代读取”，或反过来为了 Wasm 偷换成 Python / CSV | 明确 Wasm 只能适配 bootstrap / transport；数据源、Sheet 白名单、`read_xlsx` 语义保持，并记录 URL→VFS 映射 | **Runtime adapter 可以变，Data Contract 不能变。** |
 | Wasm fallback 可能覆盖用户显式 Native-only 约束 | 增加 Native-only 对抗回归；用户明确要求 CLI / byte-for-byte bootstrap 时仍直接阻塞 | **自动回退只在授权边界内发生。** 用户显式 runtime 约束高于默认 fallback |
+
+## V18：Runtime Placement、阻塞式数据质量与 QA 状态
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Native 不可用、本地浏览器又失败时，Skill 会把“本地 placement 失败”误判成“Wasm 整体失败” | 新增 Runtime Placement Gate：Native → 本地 Wasm → 已授权且无需越权创建的远程 Wasm runner → BLOCKED | **Runtime type 与 runtime placement 必须分开。** 本地失败不能代表同一运行时能力在其他合法 placement 也失败 |
+| 为了跑分析创建临时 branch / workflow / commit，绕过了“测试不等于写权限”的边界 | 新增 Execution Mutation Permission Gate，并明确执行环境写权限与 Skill 修改权限分开判断 | **执行任务不自动授权外部系统写入。** “临时资源”仍是持久化写操作 |
+| 数据质量规则存在于 checklist，但未执行也能继续进入月度趋势等下游分析 | 将一致性检查升级为 Mandatory Data Quality Gate，状态固定为 PASS / FAIL / NOT_APPLICABLE / BLOCKED；未执行不得 PASS | **会改变下游结论的检查必须是阻塞 Gate。** 规则存在但不强制执行，等于没有规则 |
+| 浏览器渲染因环境阻塞时，静态 QA 通过仍容易被表述成“完整验收” | Rendered QA 增加 PASS / FAIL / BLOCKED；BLOCKED 必须披露 `RENDER_QA_BLOCKED`，不能由 DOM/源码检查替代 | **未真实执行的 QA 不能记 PASS。** 严格验收要求下，BLOCKED 表示验收未完成 |
+
