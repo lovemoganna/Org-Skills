@@ -1,0 +1,6 @@
+interface:
+  display_name: "Note Reforge"
+  short_description: "固定口令触发，并读取最新版 canonical Skill 炼成下一版笔记"
+  default_prompt: "用 note-reforge 炼成下一版：[文件 / 目录]"
+policy:
+  allow_implicit_invocation: true
