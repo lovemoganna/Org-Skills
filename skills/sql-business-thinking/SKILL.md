@@ -38,8 +38,10 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 - **Data Contract 必须保持：**数据源身份、允许表 / Sheet、`read_xlsx` 读取语义、用户允许变化的参数、分析 SQL 的业务逻辑以及实际 Result 的可追溯性。不得改用 Python / Pandas / Connector 读取后声称 DuckDB SQL 已执行。
 - **Runtime Bootstrap Contract 按平台适配：**`INSTALL/LOAD httpfs`、browser VFS、`registerFileURL/registerFileBuffer` 等属于运行时启动与传输层。只有用户明确要求“必须在 Native DuckDB / CLI 中逐字执行该初始化”时，才把 Native bootstrap 本身视为不可替换。
 - **DuckDB-Wasm 正式回退路径：**当交付物是 HTML / Browser，或用户已授权浏览器 DuckDB，且 Native DuckDB 不可用时，必须先切到 DuckDB-Wasm，而不是直接 `BLOCKED_ENV`。Wasm 只允许改运行时 bootstrap；数据源、Sheet 白名单和 `read_xlsx` 语义必须保持。若 VFS 需要本地别名，必须记录“原始 URL → 注册文件名”的映射，禁止把映射伪装成数据源变化。
-- **Fallback 顺序：**兼容的 Native DuckDB → 已授权的 DuckDB-Wasm → `BLOCKED_ENV`。不得因为 Native 缺失而跳过可用的 Wasm；也不得从 Wasm 再静默降级到 Python / Connector。
-- 只有两种情况直接 `BLOCKED_ENV`：用户显式要求 Native-only / byte-for-byte bootstrap 且当前 Native 不可用；或所有已授权 DuckDB runtime 都实际失败。
+- **Runtime Placement Gate：**运行时类型与运行位置分开判断。顺序为：当前环境可用的 Native DuckDB → 当前环境可用的 DuckDB-Wasm → 已经存在且本轮已获授权使用的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。本地浏览器、网络或扩展失败，只能证明该 placement 失败，不能直接证明 DuckDB-Wasm 能力整体失败。
+- **Execution Mutation Permission Gate：**为了获得运行环境而创建 branch、workflow、commit、PR、云任务或其他持久化外部资源，均属于写操作。分析、测试、生成报告本身不自动授权这些写操作；只有用户明确授权对应系统写入，或该远程 runner 已存在且调用不需要持久化修改时才能使用。不得把“临时分支 / 临时 workflow”视为无副作用。
+- **Fallback 顺序：**兼容的 Native DuckDB → 本地 DuckDB-Wasm → 已授权且无需越权创建的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。不得因为 Native 或本地浏览器缺失而跳过已经可用的授权 runner；也不得从 DuckDB runtime 再静默降级到 Python / Connector。
+- 只有两种情况直接 `BLOCKED_ENV`：用户显式要求 Native-only / byte-for-byte bootstrap 且当前 Native 不可用；或所有当前可用、已授权且不需要越权写入才能获得的 DuckDB runtime placement 都实际失败。
 - 可以使用其他工具做环境诊断或独立交叉验证，但必须与 DuckDB 的实际执行结果分开标记。
 - 用户要求真实执行结果时，某条分析 SQL 未在任何已授权 DuckDB runtime 中实际执行，就写 `待执行 / BLOCKED_ENV`，不得基于它继续推出新的事实结论。
 - 用户明确限制表 / Sheet 时，范围约束优先于任何 dataset-planning、字典、expected、QA、dashboard 或历史样本建议。范围外内容只能读取必要 metadata 来确认名称，不能读取内容或影响分析。
@@ -80,7 +82,7 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 11. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
 12. 用户要求完整人物分析报告时，输出 **Hypothesis-Driven Dialogue HTML**：现象 → 当前问题 → 与本轮角色能力一致的判断/追问 → 竞争解释或边界挑战 → Diagnostic SQL → Result → 判断状态变化 → 稳健性检查 → 下一问题。用户未定义角色职责时，才使用默认 Analysis Lead / Critical Analyst 模型。
 
-**Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。
+**Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。**执行环境写权限与 Skill 修改权限分开判断：**为了跑分析而创建临时 branch、workflow、commit 或其他远程资源，同样属于仓库/外部系统写入，不能借“只是执行分析”绕过权限门。
 
 ## Default HTML Delivery Contract
 
@@ -107,7 +109,7 @@ DuckDB-Wasm / Browser
 
 规则：
 
-- **Runtime Fallback Gate：**HTML / Browser 任务中，Native DuckDB 缺失或无法加载扩展时，先尝试 DuckDB-Wasm；只有 Wasm 也失败，或用户显式要求 Native-only，才标 `BLOCKED_ENV`。
+- **Runtime Fallback Gate：**HTML / Browser 任务中，Native DuckDB 缺失或无法加载扩展时，按 Runtime Placement Gate 继续尝试 DuckDB-Wasm；本地 Wasm placement 失败后，还要检查是否存在已授权且无需新增持久化写入的远程 Wasm runner。只有所有合法 placement 都失败，或用户显式要求 Native-only，才标 `BLOCKED_ENV`。
 - 不把 Native DuckDB 的扩展加载方式直接复制到 DuckDB-Wasm。
 - DuckDB-Wasm 的远程文件读取必须按浏览器/VFS/CORS 约束处理；优先使用 `registerFileURL` / `registerFileBuffer` 等 Wasm 数据注册能力。
 - DuckDB-Wasm 需要 Excel 时可 `LOAD excel`；不要因为 Native 示例使用 `httpfs` 就假设 Wasm 也应 `LOAD httpfs`。
