@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## 2026-10-05 — controlled-language finishing pass
+
+Problem:
+- The expert-blog route could already produce a strong thesis and mechanism, but some sentences still carried wording noise, unstable terminology, hidden actors or weak verbs.
+- Applying a full simplified-technical-document style improved precision but flattened blog rhythm and author voice.
+
+A/B reference:
+- `hylarucoder/hai-stack/skills/hai-simplified-technical/`
+- The comparison confirmed that controlled language is useful as a final wording pass, not as the narrative engine for expert blogs.
+
+Change:
+- added a final expression-layer pass: one concept/one term, one main idea per sentence, explicit actors when needed, concrete verbs, conclusion-first explanatory paragraphs, measurement-condition preservation, and state separation;
+- explicitly rejected fixed sentence-length limits, mandatory list conversion, standards-style modal vocabulary and blanket rhetoric removal for expert blogs;
+- preserved the existing thesis-driven narrative, evidence discipline, bilingual layout and author judgment.
+
+New regression:
+- `tests/regression/expert-blog-controlled-language.md`
+
+Verification target:
+- the Claude Code blog becomes more precise and easier to scan without turning into a README, runbook or compliance manual.
+
+Known remaining issue:
+- repository-wide CI still has a pre-existing failure in `dataset-dashboard-builder`; this change is validated by the note-reforge-specific contracts and semantic retest.
+
 ## 2026-10-05 — narrative routing and expert-writing upgrade
 
 Problem:
