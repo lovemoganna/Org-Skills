@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - "skills/**"
+      - "plugins/org-museum/**"
       - ".github/workflows/skills-regression.yml"
   pull_request:
     paths:
       - "skills/**"
+      - "plugins/org-museum/**"
       - ".github/workflows/skills-regression.yml"
 
 permissions:
