@@ -136,3 +136,11 @@
 | 数据质量规则存在于 checklist，但未执行也能继续进入月度趋势等下游分析 | 将一致性检查升级为 Mandatory Data Quality Gate，状态固定为 PASS / FAIL / NOT_APPLICABLE / BLOCKED；未执行不得 PASS | **会改变下游结论的检查必须是阻塞 Gate。** 规则存在但不强制执行，等于没有规则 |
 | 浏览器渲染因环境阻塞时，静态 QA 通过仍容易被表述成“完整验收” | Rendered QA 增加 PASS / FAIL / BLOCKED；BLOCKED 必须披露 `RENDER_QA_BLOCKED`，不能由 DOM/源码检查替代 | **未真实执行的 QA 不能记 PASS。** 严格验收要求下，BLOCKED 表示验收未完成 |
 
+## V19：Harness Coverage 与版本漂移
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Skill 已新增阻塞 Gate，但正式 DuckDB-Wasm runner 仍是旧 Harness；旧 run 成功被误用于证明当前 HEAD 已完成 E2E | 新增 Harness Coverage Gate 与 `tests/mandatory-gates.json`；workflow 监听 `skills/sql-business-thinking/**`，运行时逐项核对 Registry Gate、记录 skill revision / registry version，并在缺项时返回 `HARNESS_STALE` | **规则版本与执行器版本必须绑定。** 文档里存在的阻塞 Gate，如果机器执行器没有覆盖，就不能宣称 E2E PASS |
+| 日期一致性异常由外部交叉验证发现，而不是 DuckDB-Wasm 正式 Harness 自己发现 | 将 `order_id_date_consistency` 写入正式 Wasm Harness，并将失败传播为 `time_analysis = BLOCKED_DATA_QUALITY` | **会阻塞结论的 Gate 必须在正式执行路径内自产证据。** 外部交叉验证只能辅助，不能替代正式 runtime evidence |
+
+
