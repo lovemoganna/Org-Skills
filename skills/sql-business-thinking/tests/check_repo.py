@@ -40,6 +40,7 @@ critical_rules = [
     "Runtime Placement Gate",
     "Execution Mutation Permission Gate",
     "Harness Coverage Gate",
+    "Downstream Gate Propagation Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
@@ -96,6 +97,7 @@ assert "分析权限不等于仓库写权限" in regression, "execution mutation
 assert "关键数据质量检查未执行即阻塞下游" in regression, "mandatory data-quality gate regression missing"
 assert "Rendered QA 被环境阻塞" in regression, "rendered QA blocked regression missing"
 assert "Skill 与正式 Harness 版本漂移" in regression, "harness drift regression missing"
+assert "Gate 已失败但报告仍渲染旧趋势结果" in regression, "gate-to-report propagation regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -111,6 +113,9 @@ assert "Mandatory Data Quality Gate" in (ROOT / "references" / "dataset-planning
 assert "未执行不等于 PASS" in (ROOT / "references" / "dataset-planning.md").read_text(encoding="utf-8"), "data quality not-run guard missing"
 assert "PASS / FAIL / BLOCKED" in report_rendering, "rendered QA state model missing"
 assert "RENDER_QA_BLOCKED" in report_rendering, "rendered QA blocked disclosure missing"
+assert "Downstream Gate Propagation Contract" in report_rendering, "report gate propagation contract missing"
+assert "已有 Result 不代表可展示" in report_rendering, "blocked result suppression rule missing"
+assert "SUPPRESSED" in report_rendering, "suppressed-by-gate rendering state missing"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
 
 gate_registry = json.loads((ROOT / "tests" / "mandatory-gates.json").read_text(encoding="utf-8"))
