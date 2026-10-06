@@ -65,7 +65,9 @@
 
 - Mandatory Data Quality Gate 是否按实际字段触发；
 - 被触发的关键检查是否真实执行；未执行不得记 PASS；
-- 时间一致性失败时，时间趋势是否被阻塞或降级；
+- 时间一致性失败时，时间趋势是否被真正阻塞，而不是换成“仅供参考 / 结构展示”继续渲染；
+- ReportSpec 是否携带 Gate 依赖与状态；被 FAIL / BLOCKED Gate 依赖的 KPI、图表、排名、趋势和结论是否全部 suppressed；
+- 是否存在“旧 Result 已有，所以仍展示”的 Gate bypass；
 - 粒度；
 - 时间匹配；
 - JOIN 基数；
@@ -107,7 +109,8 @@ P3：纯审美微调，不做，除非它影响理解。
 - Hypothesis Frontier：主要 Pattern 的 H1/H2、反证、Diagnostic Test、状态变化；
 - Analysis Depth：主要发现是否超越“多少 / 谁最大 / 占多少”，并完成 Why / Alternative / Robustness / So What；
 - 低价值查询扫描：删除“查完也不改变下一步”的非必要查询；
-- 与上一版业务结论 diff。
+- 与上一版业务结论 diff；
+- Gate-to-Report 传播检查：若 `time_analysis = BLOCKED_DATA_QUALITY`，HTML 正文不得存在月度/日度趋势图或时间结论，只允许显示阻塞原因、冲突样本、诊断 SQL 与解锁条件。
 - HTML 实体文件交付：默认路径存在、文件非空、最终回复链接与实际文件一致（如适用）。
 
 正确内容若发生无授权变化，视为回归，立即修复或回退。
