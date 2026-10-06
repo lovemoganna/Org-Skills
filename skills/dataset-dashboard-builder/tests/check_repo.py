@@ -173,7 +173,7 @@ insight_hierarchy = (ROOT / "references" / "insight-hierarchy.md").read_text(enc
 for rule in ["Mode-aware Hierarchy Gate", "North Star Gate", "Internal Takeaway Gate", "Visible Copy Rule", "Amount × Count Dual-Signal Gate", "Event-Driven Spike Gate", "Driver Decomposition Gate", "Pareto Gate", "Exception Logic Gate", "Operational State Gate", "Internal Role Boundary", "Analytical Restraint Gate", "High-Value Acceptance"]:
     assert rule in insight_hierarchy, f"insight hierarchy rule missing: {rule}"
 
-for rule in ["breadth", "intensity", "concentration", "Top1", "Top2", "remove-Top1", "in-process"]:
+for rule in ["广度", "ticket", "concentration", "Top1", "Top2", "remove-Top1", "in-process"]:
     assert rule in insight_hierarchy, f"insight hierarchy behavior missing: {rule}"
 
 decision_diagnostics = (ROOT / "references" / "decision-diagnostics.md").read_text(encoding="utf-8")
