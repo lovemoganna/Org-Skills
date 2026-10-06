@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 2026-10-05 — cognition-layer upgrade
+
+Problem:
+- A polished technical source could survive reforge with high factual fidelity but little knowledge gain: the output could remain a cleaner restatement instead of exposing reusable mechanisms and decision rules.
+
+Real-world test:
+- MDN, "How to use promises".
+- The source clearly contains dependency, concurrency, error-boundary, and API-semantics relationships that should be promoted into reusable judgments rather than merely reworded.
+
+Root cause:
+- The Skill strongly covered preservation, structure, evidence, boundaries, and usability, but did not explicitly require a fact → ontology/relationship → mechanism → judgment loop before writing.
+
+Change:
+- Added an internal "三魂七魄" cognition layer: 本体 / 机制 / 判断 plus 事实 / 证据 / 结构 / 边界 / 冲突 / 行动 / 检索.
+- Added the default internal sequence: 事实 → 本体与关系 → 机制 → 判断 → 行动 → 反查证据与边界.
+- Explicitly prohibited rendering this internal model as ten user-facing sections.
+- Added a rule for already-polished sources: preserve good structure, but do not accept pure paraphrase as an upgrade.
+- Added failure modes for "same content, nicer layout" and cognition-framework bloat.
+
+New regression:
+- `tests/regression/polished-source-knowledge-gain.md`
+
+Verification target:
+- On the MDN Promise sample, the reforge must surface dependency-driven sequencing, the fetch 404/response.ok boundary, and the fact that async/await does not change Promise dependency semantics, without inventing facts or materially bloating the note.
+
+Known remaining issue:
+- This is a semantic regression contract, not an automated model-output grader; future evaluations still need a real sample run to judge whether the produced note actually crosses the mechanism/judgment threshold.
+
 ## 2026-10-05
 
 Problem:

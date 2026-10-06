@@ -20,6 +20,9 @@ readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 regression = (
     SKILL_ROOT / "tests" / "regression" / "minimal-invocation-entry.md"
 ).read_text(encoding="utf-8")
+cognition_regression = (
+    SKILL_ROOT / "tests" / "regression" / "polished-source-knowledge-gain.md"
+).read_text(encoding="utf-8")
 
 CALL = "用 note-reforge 炼成下一版：<文件 / 目录>"
 CANONICAL = "skills/note-reforge/SKILL.md"
@@ -39,5 +42,9 @@ assert "allow_implicit_invocation: true" in agent
 assert CALL in readme
 assert "Start a new conversation with only:" in regression
 assert "same invocation string uses the new canonical behavior" in regression
+assert "#### 炼化内核:三魂七魄" in canonical
+assert "事实 → 本体与关系 → 机制 → 判断 → 行动 → 反查证据与边界" in canonical
+assert "dependency determines sequencing" in cognition_regression
+assert "404" in cognition_regression and "response.ok" in cognition_regression
 
-print("note-reforge invocation contract: OK")
+print("note-reforge invocation + cognition contracts: OK")
