@@ -31,12 +31,25 @@ def main():
             f"safe inline limit is {SAFE_INPUT_CHARS}. Do not truncate. Use another authorized transport."
         )
 
+    allow = bool(args.allow_design_notes)
+    issue_title = f"[sqlbt-render-qa] {digest[:12]}"
+    issue_body = "\n".join([
+        "SQLBT_RENDER_QA_V1",
+        f"expected_sha256={digest}",
+        f"allow_design_notes={'true' if allow else 'false'}",
+        f"html_gzip_base64={payload}",
+    ])
+
     result = {
         "workflow": ".github/workflows/sql-business-thinking-render-qa.yml",
         "inputs": {
             "html_gzip_base64": payload,
             "expected_sha256": digest,
-            "allow_design_notes": bool(args.allow_design_notes),
+            "allow_design_notes": allow,
+        },
+        "issue_envelope": {
+            "title": issue_title,
+            "body": issue_body,
         },
         "artifact_sha256": digest,
         "raw_bytes": len(raw),
