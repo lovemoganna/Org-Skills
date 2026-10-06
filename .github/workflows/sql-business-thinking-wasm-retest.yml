@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/sql-business-thinking-wasm-retest.yml"
+      - "skills/sql-business-thinking/**"
 
 permissions:
   contents: read
@@ -14,6 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
+      - name: Checkout current Skill revision
+        uses: actions/checkout@v4
+
+      - name: Register current gate contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp skills/sql-business-thinking/tests/mandatory-gates.json mandatory-gates.json
+          printf '%s' "$GITHUB_SHA" > skill-revision.txt
+
       - name: Download original workbook export
         shell: bash
         run: |
@@ -55,7 +66,20 @@ jobs:
           import * as duckdb from './duckdb.bundle.mjs';
 
           const allow = ['users','fiat_transactions','crypto_transactions','exchange_rates'];
-          const out = { runtime: {}, source: {}, sheets: {}, quality: {} };
+          const registry = await (await fetch('./mandatory-gates.json')).json();
+          const skillRevision = (await (await fetch('./skill-revision.txt')).text()).trim();
+          const out = {
+            runtime: { skill_revision: skillRevision },
+            source: {},
+            sheets: {},
+            quality: {},
+            gates: {
+              registry_version: registry.version,
+              required: registry.gates.map(g => g.id),
+              statuses: {},
+              downstream: {}
+            }
+          };
           const clean = (v) => {
             if (typeof v === 'bigint') return v.toString();
             if (v instanceof Date) return v.toISOString();
@@ -248,6 +272,82 @@ jobs:
               SELECT 'crypto', MIN(created_at), MAX(created_at)
               FROM crypto_transactions_raw
             `);
+
+            out.quality.order_id_date_consistency = await run(`
+              WITH fiat AS (
+                SELECT
+                  'fiat' AS source,
+                  fiat_order_id AS order_id,
+                  CAST(STRPTIME(SUBSTR(fiat_order_id, 4, 8), '%Y%m%d') AS DATE) AS id_date,
+                  CAST(created_at AS DATE) AS created_date
+                FROM fiat_transactions_raw
+                WHERE REGEXP_MATCHES(fiat_order_id, '^fo_[0-9]{8}_')
+              ),
+              crypto AS (
+                SELECT
+                  'crypto' AS source,
+                  crypto_order_id AS order_id,
+                  CAST(STRPTIME(SUBSTR(crypto_order_id, 4, 8), '%Y%m%d') AS DATE) AS id_date,
+                  CAST(created_at AS DATE) AS created_date
+                FROM crypto_transactions_raw
+                WHERE REGEXP_MATCHES(crypto_order_id, '^co_[0-9]{8}_')
+              )
+              SELECT source, order_id, id_date, created_date
+              FROM (
+                SELECT * FROM fiat
+                UNION ALL
+                SELECT * FROM crypto
+              )
+              WHERE id_date <> created_date
+              ORDER BY source, order_id
+            `);
+
+            const num = (v) => Number(v ?? 0);
+            out.gates.statuses.user_key_uniqueness =
+              out.quality.user_duplicate_uids.rows.length === 0 ? 'PASS' : 'FAIL';
+            out.gates.statuses.order_id_uniqueness =
+              out.quality.order_id_uniqueness.rows.every(r => num(r.duplicate_rows) === 0) ? 'PASS' : 'FAIL';
+            out.gates.statuses.orphan_uid =
+              out.quality.orphan_uids.rows.length === 0 ? 'PASS' : 'FAIL';
+            out.gates.statuses.status_completion =
+              out.quality.status_completion.rows.every(r =>
+                num(r.completed_before_created) === 0 &&
+                (r.status !== 'completed' || num(r.null_completed_at) === 0)
+              ) ? 'PASS' : 'FAIL';
+            out.gates.statuses.amount_fee_validity =
+              out.quality.amount_fee_checks.rows.every(r =>
+                num(r.null_amount) === 0 &&
+                num(r.nonpositive_amount) === 0 &&
+                num(r.null_fee) === 0 &&
+                num(r.negative_fee) === 0
+              ) ? 'PASS' : 'FAIL';
+            out.gates.statuses.rate_key_uniqueness =
+              out.quality.rate_key_check.rows.length === 0 ? 'PASS' : 'FAIL';
+            out.gates.statuses.rate_coverage =
+              out.quality.rate_coverage.rows.every(r => num(r.rate_rows) > 0) ? 'PASS' : 'FAIL';
+            out.gates.statuses.join_cardinality_users =
+              out.quality.join_cardinality_users.rows.every(r => num(r.before_rows) === num(r.after_rows)) ? 'PASS' : 'FAIL';
+            out.gates.statuses.order_id_date_consistency =
+              out.quality.order_id_date_consistency.rows.length === 0 ? 'PASS' : 'FAIL';
+
+            const required = new Set(out.gates.required);
+            const implemented = new Set(Object.keys(out.gates.statuses));
+            const missing = [...required].filter(id => !implemented.has(id));
+            const unexpected = [...implemented].filter(id => !required.has(id));
+            out.gates.coverage = {
+              state: missing.length === 0 && unexpected.length === 0 ? 'PASS' : 'HARNESS_STALE',
+              missing,
+              unexpected
+            };
+            if (out.gates.coverage.state !== 'PASS') {
+              throw new Error('HARNESS_STALE ' + JSON.stringify(out.gates.coverage));
+            }
+
+            out.gates.downstream.time_analysis =
+              out.gates.statuses.order_id_date_consistency === 'PASS'
+                ? 'READY'
+                : 'BLOCKED_DATA_QUALITY';
+
             await conn.close();
             await db.terminate();
             document.getElementById('result').textContent = JSON.stringify(out);
