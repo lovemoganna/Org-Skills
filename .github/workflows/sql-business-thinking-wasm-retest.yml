@@ -185,31 +185,31 @@ jobs:
             `);
             out.quality.status_completion = await run(`
               SELECT 'fiat' AS source, status, COUNT(*) AS rows,
-                     SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS null_completed_at,
-                     SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS completed_before_created
+                     CAST(SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS BIGINT) AS null_completed_at,
+                     CAST(SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS BIGINT) AS completed_before_created
               FROM fiat_transactions_raw
               GROUP BY status
               UNION ALL
               SELECT 'crypto', status, COUNT(*),
-                     SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END),
-                     SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END)
+                     CAST(SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS BIGINT),
+                     CAST(SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS BIGINT)
               FROM crypto_transactions_raw
               GROUP BY status
               ORDER BY source, status
             `);
             out.quality.amount_fee_checks = await run(`
               SELECT 'fiat' AS source,
-                     SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS null_amount,
-                     SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS nonpositive_amount,
-                     SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS null_fee,
-                     SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS negative_fee
+                     CAST(SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS BIGINT) AS null_amount,
+                     CAST(SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS BIGINT) AS nonpositive_amount,
+                     CAST(SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS BIGINT) AS null_fee,
+                     CAST(SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS BIGINT) AS negative_fee
               FROM fiat_transactions_raw
               UNION ALL
               SELECT 'crypto',
-                     SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END),
-                     SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END),
-                     SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END),
-                     SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END)
+                     CAST(SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS BIGINT),
+                     CAST(SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS BIGINT),
+                     CAST(SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS BIGINT),
+                     CAST(SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS BIGINT)
               FROM crypto_transactions_raw
             `);
             out.quality.rate_rows = await run(`
