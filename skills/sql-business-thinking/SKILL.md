@@ -41,6 +41,7 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 - **Runtime Placement Gate：**运行时类型与运行位置分开判断。顺序为：当前环境可用的 Native DuckDB → 当前环境可用的 DuckDB-Wasm → 已经存在且本轮已获授权使用的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。本地浏览器、网络或扩展失败，只能证明该 placement 失败，不能直接证明 DuckDB-Wasm 能力整体失败。
 - **Execution Mutation Permission Gate：**为了获得运行环境而创建 branch、workflow、commit、PR、云任务或其他持久化外部资源，均属于写操作。分析、测试、生成报告本身不自动授权这些写操作；只有用户明确授权对应系统写入，或该远程 runner 已存在且调用不需要持久化修改时才能使用。不得把“临时分支 / 临时 workflow”视为无副作用。
 - **Harness Coverage Gate：**任何被用来宣称“Skill 已完成真实 E2E 执行”的 Native / Wasm runner，必须覆盖当前仓库 `skills/sql-business-thinking/tests/mandatory-gates.json` 中全部阻塞 Gate，并在产物中记录 Gate registry version、执行 commit / revision 与每个 Gate 的状态。缺少任一 Gate、runner revision 落后于当前 Skill、或 Gate registry 与 Harness 不一致时，标 `HARNESS_STALE`，不得宣称 E2E PASS。新增阻塞 Gate 时必须同一轮更新 registry、Harness 与回归测试。**Gate 判定只能基于已归一化的标量结果；DuckDB-Wasm / Arrow 的 HUGEINT、DECIMAL、TypedArray 或对象序列化值必须先 CAST / normalize，禁止让序列化类型本身制造 PASS/FAIL。**
+- **Result Freshness Gate：**用户说“重新跑 / 重跑 / 重新分析 / 当前结果 / 最新结果 / 完整跑一轮 / E2E”时，所有会进入本轮关键结论的业务 SQL 必须在**本轮 run**、基于**本轮数据 revision**、使用**当前 Skill revision**重新执行。只重新跑 Gate、只核对行数/样本、或证明数据“看起来没变”，都不能把历史 Result 升级成本轮 fresh Result。若确需复用历史结果，只能标 `REUSED_VERIFIED_RESULT`，同时记录原 run / data revision / skill revision 与本轮一致性校验；最终措辞必须明确“复用”，不得写“重新跑完 / 当前 SQL 已执行 / E2E PASS”。
 - **Downstream Gate Propagation Gate：**Mandatory Gate 的状态必须进入 ReportSpec。任何分析块依赖的 Gate 为 `FAIL` 或 `BLOCKED` 时，该块必须标记 `BLOCKED_DATA_QUALITY` 或对应阻塞状态，并禁止渲染其 KPI、趋势图、排名、业务结论或“仅供参考”的弱化版本。可以保留触发阻塞的 SQL、Result、冲突样本和解锁条件作为审计证据。**已有查询结果不等于允许展示。** Renderer 必须按 Gate 状态决定内容资格，而不是只看 Result 是否存在。
 - **Fallback 顺序：**兼容的 Native DuckDB → 本地 DuckDB-Wasm → 已授权且无需越权创建的远程 DuckDB-Wasm runner → `BLOCKED_ENV`。不得因为 Native 或本地浏览器缺失而跳过已经可用的授权 runner；也不得从 DuckDB runtime 再静默降级到 Python / Connector。
 - 只有两种情况直接 `BLOCKED_ENV`：用户显式要求 Native-only / byte-for-byte bootstrap 且当前 Native 不可用；或所有当前可用、已授权且不需要越权写入才能获得的 DuckDB runtime placement 都实际失败。
@@ -107,7 +108,8 @@ Validated Findings
 - 一个图只承担一个独立结论；图数量由独立结论数决定，不由字段数或 SQL 数决定；
 - 页面先锁定一种 Layout Archetype，再渲染；不得边生成边拼版；
 - 正文只保留“回答问题 / 改变判断 / 解释限制 / 提供必要验证入口”的内容，其余删除或折叠；
-- Presentation Engine 不得重新分析、改口径、补数据或绕过 Mandatory Gate。正确性优先于视觉效果。
+- Presentation Engine 不得重新分析、改口径、补数据或绕过 Mandatory Gate。正确性优先于视觉效果；
+- **Artifact Presentation Gate：**候选竞争、淘汰理由、Layout Archetype 选择、Renderer 策略、Information Budget 判断等属于内部 ReportSpec / audit 信息，默认不得进入业务正文。最终 Artifact 必须反查可见文本，删除“候选比较后选择……”“这里选择……而不是……”等设计过程说明；除非用户明确要求解释设计决策。
 
 **Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。**执行环境写权限与 Skill 修改权限分开判断：**为了跑分析而创建临时 branch、workflow、commit 或其他远程资源，同样属于仓库/外部系统写入，不能借“只是执行分析”绕过权限门。
 
