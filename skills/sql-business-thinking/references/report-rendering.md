@@ -183,6 +183,8 @@ Renderer 只读，不重新分析。
 ## 11. DuckDB-Wasm Runtime Contract
 
 - **Browser Execution Harness：**当 HTML / Browser 是正式交付物且 Native DuckDB 不可用时，DuckDB-Wasm 是正式执行路径，不是展示性 fallback；不得因此直接产出 `BLOCKED_ENV` 报告。
+- **Runtime Placement：**先尝试当前环境 Wasm；若本地浏览器 / 网络 / 扩展 placement 失败，只能记录该 placement 失败。若已有本轮可授权使用且无需创建 branch / workflow / commit / 云任务的远程 Wasm runner，应继续执行；不得把“本地 Wasm 失败”写成“Wasm 能力失败”。
+- **Mutation Boundary：**为了获得远程执行环境而新建 branch、workflow、commit、PR 或其他持久化资源，属于外部系统写操作。用户只要求分析 / 报告时不得自动创建；必须另有明确写权限。
 - 使用官方 stable DuckDB-Wasm；
 - jsDelivr bundle 用 `selectBundle(getJsDelivrBundles())`；
 - Excel 能力用 `LOAD excel`；
@@ -221,7 +223,14 @@ Renderer 只读，不重新分析。
 
 ## 13. Rendered QA
 
-不能只看源码。至少做：
+不能只看源码。Rendered QA 每一项必须记录状态：`PASS / FAIL / BLOCKED`。
+
+- `PASS`：检查已真实执行且通过；
+- `FAIL`：检查已执行但不满足要求，必须修复后重跑；
+- `BLOCKED`：应执行，但浏览器、图形环境、网络策略或其他运行条件阻止了真实检查。**BLOCKED 不能记成 PASS，也不能写“完整验收通过”。**
+- 用户要求“全部验收通过”时，任何 `BLOCKED` 都表示验收未完成；仍可交付阶段性文件时，必须显式标记 `RENDER_QA_BLOCKED` 和未验证项。
+
+至少做：
 
 1. DOM 结构检查：关键区块非空、ID 唯一、按钮映射完整；
 2. 桌面渲染烟测：首屏、核心图表、数据质量、Skills 评估；
@@ -233,7 +242,7 @@ Renderer 只读，不重新分析。
 8. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
 9. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
 
-**重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。**
+**重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。无法检查时状态只能是 `BLOCKED`，不得用源码检查替代 Rendered QA。**
 
 ## 14. Skills 评估展示
 
