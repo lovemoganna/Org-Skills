@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 2026-10-05
+
+Problem:
+- New conversations could require users to repeat the Skill or restate its default workflow before execution.
+
+Root cause:
+- Invocation and execution rules were not separated into a stable entry contract and a canonical runtime source.
+
+Change:
+- Added the fixed invocation `用 note-reforge 炼成下一版：<文件 / 目录>`.
+- Declared that the invocation is complete by itself and must not trigger repeated Skill pasting, rule explanation, or default-flow confirmation.
+- Declared `skills/note-reforge/SKILL.md` on the current repository default branch as the runtime canonical source.
+
+New regression:
+- `tests/regression/minimal-invocation-entry.md`
+
+Verification target:
+- A new conversation can receive only the fixed invocation plus a target and proceed by loading the latest canonical Skill.
+
+Known remaining issue:
+- The plugin installation must expose the bootstrap entry that performs the canonical read; the canonical file alone cannot make an unloaded new conversation discover itself.
+
 ## 2026-10-03
 
 Problem:
