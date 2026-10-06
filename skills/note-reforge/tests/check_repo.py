@@ -20,6 +20,9 @@ readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 regression = (
     SKILL_ROOT / "tests" / "regression" / "minimal-invocation-entry.md"
 ).read_text(encoding="utf-8")
+compact_regression = (
+    SKILL_ROOT / "tests" / "regression" / "compact-note-no-bloat.md"
+).read_text(encoding="utf-8")
 cognition_regression = (
     SKILL_ROOT / "tests" / "regression" / "polished-source-knowledge-gain.md"
 ).read_text(encoding="utf-8")
@@ -49,6 +52,8 @@ assert "allow_implicit_invocation: true" in agent
 assert CALL in readme
 assert "Start a new conversation with only:" in regression
 assert "same invocation string uses the new canonical behavior" in regression
+assert "Keep the note compact." in compact_regression
+assert "最小必要升级" in canonical
 assert "#### 炼化内核:三魂七魄" in canonical
 assert "事实 → 本体与关系 → 机制 → 判断 → 行动 → 反查证据与边界" in canonical
 assert "dependency determines sequencing" in cognition_regression
