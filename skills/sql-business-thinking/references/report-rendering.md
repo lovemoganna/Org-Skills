@@ -139,16 +139,27 @@ Top N 按 active population 自适应，覆盖全体样本的 Top N 不进核心
 
 ## 6. 图表
 
-| 问题 | 默认形式 |
-|---|---|
-| 每用户金额 + 构成 | 排名表 + 水平堆叠条 |
-| 集中度 | 贡献占比 + 累计占比 |
-| 总体两类构成 | 100% 堆叠条 |
-| 用户重叠 | 小样本数字集合关系 |
-| 时间变化 | 折线 |
-| 数据质量 | 审计表 |
+图表不再使用“问题类型 → 默认图型”的硬映射。先读取 `visualization-rendering.md`，按以下流程选型：
 
-图表必须回答问题，不做装饰。标题写问题，不写“Chart 1”。
+```text
+Presentation Question
+→ Data Shape
+→ 至少 3 个合理候选（不足 3 个则比较全部）
+→ Semantic Fit / Unit Honesty / Label Capacity / Reading Speed / Narrative Value / Implementation Reliability
+→ Selected Chart
+```
+
+强制规则：
+
+- 一个图只承担一个独立结论；
+- 图数量由独立结论数决定，不由字段数、SQL 数或“页面需要几张图”决定；
+- 连续金额、余额、价格等不得为了视觉风格任意拆成点 / 格 / tick；
+- 两个图表达同一结论时，只保留更诚实、更快读的一张；
+- 标题默认写结论，不写图型名；结论尚未确定的诊断图才使用问题式标题；
+- 重要图的 ReportSpec 必须保存候选与淘汰理由，但选型过程不进入正文；
+- 被 Gate 阻断的分析不参与图型候选竞争，直接进入 `SUPPRESSED_BY_GATE`。
+
+具体协议见 `visualization-rendering.md`。
 
 ## 7. SQL / 结果
 
