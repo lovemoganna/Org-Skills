@@ -32,7 +32,9 @@ jobs:
         run: |
           set -euo pipefail
           npm init -y >/dev/null
-          npm install --no-save @duckdb/duckdb-wasm@1.33.0 esbuild puppeteer-core >/dev/null
+          echo "npm_duckdb_wasm=$(npm view @duckdb/duckdb-wasm version)"
+          npm install --no-save @duckdb/duckdb-wasm esbuild puppeteer-core >/dev/null
+          node -p "'installed_duckdb_wasm=' + require('./node_modules/@duckdb/duckdb-wasm/package.json').version"
           npx esbuild node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser.mjs \
             --bundle --platform=browser --format=esm --outfile=duckdb.bundle.mjs
           cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm .
