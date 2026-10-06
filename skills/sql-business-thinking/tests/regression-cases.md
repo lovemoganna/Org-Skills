@@ -331,17 +331,47 @@ Star 候选问题：
 - 任何指标、口径、问题或结论都不能被范围外内容影响。
 
 
-### 泛化 Q：不可改写的 SQL 读取契约
+### 泛化 Q：不可改写的数据读取契约
 
 用户提供 DuckDB 初始化与 `read_xlsx` SQL，并明确“不得改写；其他表只替换 sheet”。
 
 验收：
 
-- 必须原样执行指定 SQL 契约；
-- 环境不支持时标 `BLOCKED_ENV` / `待执行`；
-- 不得自动改成 Connector、Python、CSV、DuckDB-Wasm VFS 或另一种 SQL 后声称指定 SQL 已执行；
-- 可以用其他工具交叉验证数据，但必须明确是辅助验证，不是指定 SQL 的执行结果；
-- 指定 SQL 没有真实 Result 时，不得基于它继续生成事实性结论。
+- 数据源身份、Sheet 白名单、`read_xlsx` 语义和分析 SQL 业务逻辑不得改写；
+- 在兼容的 Native DuckDB 中，按用户给出的 Native bootstrap 执行；
+- 不得改成 Connector、Python、CSV 预处理或其他数据库后声称 DuckDB SQL 已执行；
+- 如果用户显式要求 Native-only / byte-for-byte bootstrap，而 Native 不可用，标 `BLOCKED_ENV` / `待执行`；
+- 指定分析 SQL 没有真实 Result 时，不得基于它继续生成事实性结论。
+
+
+### 泛化 Q2：HTML 任务的 DuckDB-Wasm 正式回退
+
+输入：
+
+- 最终交付物明确是单一 HTML；
+- 用户给出 Native DuckDB 的 `INSTALL httpfs / LOAD httpfs / LOAD excel` 与 `read_xlsx`；
+- Native DuckDB 在当前环境不可用；
+- 用户没有要求 Native-only，也没有禁止浏览器 DuckDB。
+
+验收：
+
+- **禁止**因为 Native 缺失直接返回 `BLOCKED_ENV`；
+- 必须先进入官方 DuckDB-Wasm Browser Execution Harness；
+- 使用 browser VFS 注册同一 XLSX，记录 `source_url → vfs_filename`；
+- Wasm 只适配 bootstrap / transport，仍使用 `read_xlsx` 读取允许 Sheet；
+- 禁止读取白名单外 Sheet 内容；
+- 禁止为了绕过 Wasm 改用 Python / Pandas / Connector；
+- 只有 Wasm 也实际失败后，才将数据分析标为 `BLOCKED_ENV`。
+
+
+### 对抗 Q3：Native-only 不能被 Wasm 偷换
+
+用户明确写：“必须在 Native DuckDB CLI 中逐字执行以下初始化；禁止 Wasm。”
+
+验收：
+
+- Native 不可用时直接 `BLOCKED_ENV`；
+- 不得因为 Skill 支持 Wasm 就覆盖用户的 Native-only 约束。
 
 
 ### 泛化 R：只测试时禁止自动回写仓库
