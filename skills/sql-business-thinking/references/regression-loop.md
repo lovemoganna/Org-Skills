@@ -132,6 +132,7 @@ P3：纯审美微调，不做，除非它影响理解。
 - Result Freshness QA：若用户要求重跑/当前/最新，关键业务 Result 必须带本轮执行证据；历史 Result 只能作为 `REUSED_VERIFIED_RESULT`。
 - Render QA Placement：本地浏览器失败后，检查是否存在已授权且无需新增持久化写入的远程浏览器 runner；未检查合法远程 placement 时不得直接标 `RENDER_QA_BLOCKED`。
 - Canonical Remote Render Runner：若使用远程 QA，优先检查 `.github/workflows/sql-business-thinking-render-qa.yml`；payload 必须由 `tests/prepare-render-qa-payload.py` 基于最终 HTML bytes 生成，`render-qa.json.artifact_sha256` 必须等于本轮 `expected_sha256`。
+- Chat connector trigger：若当前 GitHub connector 无 `workflow_dispatch`，检查 helper 是否生成 `issue_envelope`；只有用户已授权远程发送当前 HTML 时，才能创建一次性 `[sqlbt-render-qa]` Issue。workflow 读取后必须擦除正文并关闭 Issue；不得把 payload 提交进 Git 历史。
 - Remote payload size：超过 helper 的 60,000 字符 inline 上限时必须返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE` 或切换其他已授权 transport；禁止截断后继续验收。
 - HTML 实体文件交付：默认路径存在、文件非空、最终回复链接与实际文件一致（如适用）。
 
