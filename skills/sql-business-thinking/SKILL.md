@@ -84,6 +84,31 @@ description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。
 11. 时间维表 exact-date / as-of 均不可用时，如果只有一个无歧义 snapshot，可用于探索性估值，但结果名称必须包含 snapshot 日期/口径，禁止叫历史成交额。
 12. 用户要求完整人物分析报告时，输出 **Hypothesis-Driven Dialogue HTML**：现象 → 当前问题 → 与本轮角色能力一致的判断/追问 → 竞争解释或边界挑战 → Diagnostic SQL → Result → 判断状态变化 → 稳健性检查 → 下一问题。用户未定义角色职责时，才使用默认 Analysis Lead / Critical Analyst 模型。
 
+## Presentation Engine Contract
+
+分析完成后，若用户要求 HTML / 报告 / dashboard / 可视化交付，必须先读取 `references/visualization-rendering.md`，再生成 ReportSpec。
+
+核心顺序：
+
+```text
+Validated Findings
+→ Data Shape
+→ Chart Candidate Competition Gate
+→ Unit Honesty Gate
+→ One-Chart-One-Conclusion Gate
+→ Layout Archetype Gate
+→ Information Budget Gate
+→ Renderer
+```
+
+硬规则：
+
+- 图型不是按字段名或习惯直接映射；重要图默认比较多个候选，再按语义、单位诚实、标签容量、阅读速度和实现可靠性淘汰；
+- 一个图只承担一个独立结论；图数量由独立结论数决定，不由字段数或 SQL 数决定；
+- 页面先锁定一种 Layout Archetype，再渲染；不得边生成边拼版；
+- 正文只保留“回答问题 / 改变判断 / 解释限制 / 提供必要验证入口”的内容，其余删除或折叠；
+- Presentation Engine 不得重新分析、改口径、补数据或绕过 Mandatory Gate。正确性优先于视觉效果。
+
 **Reverse Skill Audit Gate：**Autopilot 的 HTML 生成后必须反查最终报告，区分“报告缺陷 / 分析逻辑缺陷 / Skill 规则缺陷 / 规则冲突 / 输入契约缺陷 / 测试缺陷”。发现可泛化 Skill 缺陷时，必须形成具体修正建议和回归样本；只有用户明确授权修改 Skill / 仓库时才执行回写与提交。测试任务未授权写仓库时，禁止边测边改。**执行环境写权限与 Skill 修改权限分开判断：**为了跑分析而创建临时 branch、workflow、commit 或其他远程资源，同样属于仓库/外部系统写入，不能借“只是执行分析”绕过权限门。
 
 ## Default HTML Delivery Contract
@@ -119,7 +144,7 @@ DuckDB-Wasm / Browser
 - 远程文件失败必须区分：扩展失败、CORS/网络失败、文件格式失败、SQL 失败。
 - 有记录结果时，运行时失败不等于分析结果无效；明确“记录”与“实时”两种状态。
 
-如果任务要求 HTML / DuckDB-Wasm，读取 `references/report-rendering.md` 与 `references/regression-loop.md`。如果用户明确要求人物会话 / 角色模拟 / 教学回放，同时读取 `references/dialogue-rendering.md`。
+如果任务要求 HTML / DuckDB-Wasm，读取 `references/report-rendering.md`、`references/visualization-rendering.md` 与 `references/regression-loop.md`。如果用户明确要求人物会话 / 角色模拟 / 教学回放，同时读取 `references/dialogue-rendering.md`。
 
 ## 简单题走快速通道
 
