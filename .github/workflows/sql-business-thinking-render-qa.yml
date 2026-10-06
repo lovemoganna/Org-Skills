@@ -1,0 +1,291 @@
+name: SQL Business Thinking Remote Render QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      html_gzip_base64:
+        description: "gzip-compressed HTML encoded as single-line base64. Use only for HTML authorized for remote QA."
+        required: true
+        type: string
+      expected_sha256:
+        description: "SHA256 of the uncompressed HTML bytes. Required to bind QA to the exact artifact."
+        required: true
+        type: string
+      allow_design_notes:
+        description: "Allow presentation-selection rationale in visible body text."
+        required: false
+        default: false
+        type: boolean
+  push:
+    paths:
+      - ".github/workflows/sql-business-thinking-render-qa.yml"
+      - "skills/sql-business-thinking/tests/render-qa-fixture.html"
+
+permissions:
+  contents: read
+
+jobs:
+  render-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout current revision
+        uses: actions/checkout@v4
+
+      - name: Prepare exact HTML artifact
+        id: prepare
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HTML_GZIP_BASE64: ${{ inputs.html_gzip_base64 }}
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+        run: |
+          set -euo pipefail
+          mkdir -p render-input render-output
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            python3 - <<'PY'
+          import base64, gzip, os, pathlib
+          payload = os.environ["HTML_GZIP_BASE64"].strip()
+          raw = gzip.decompress(base64.b64decode(payload))
+          pathlib.Path("render-input/report.html").write_bytes(raw)
+          PY
+          else
+            cp skills/sql-business-thinking/tests/render-qa-fixture.html render-input/report.html
+          fi
+
+          actual_sha256="$(sha256sum render-input/report.html | awk '{print $1}')"
+          expected_sha256="${EXPECTED_SHA256:-}"
+          if [ -z "$expected_sha256" ]; then
+            expected_sha256="$actual_sha256"
+          fi
+          echo "actual_sha256=$actual_sha256" >> "$GITHUB_OUTPUT"
+          echo "expected_sha256=$expected_sha256" >> "$GITHUB_OUTPUT"
+          printf '%s' "$actual_sha256" > render-output/artifact.sha256
+          printf '%s' "$GITHUB_SHA" > render-output/runner-revision.txt
+
+      - name: Install Chromium runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright >/dev/null
+          npx playwright install --with-deps chromium
+
+      - name: Start local artifact server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8000 --directory render-input >render-output/http-server.log 2>&1 &
+          echo $! > render-output/http-server.pid
+          python3 - <<'PY'
+          import time, urllib.request
+          for _ in range(50):
+              try:
+                  with urllib.request.urlopen("http://127.0.0.1:8000/report.html", timeout=1) as r:
+                      if r.status == 200:
+                          raise SystemExit(0)
+              except Exception:
+                  time.sleep(0.1)
+          raise SystemExit("local artifact server did not become ready")
+          PY
+
+      - name: Run desktop and mobile Chromium QA
+        id: render
+        shell: bash
+        env:
+          EXPECTED_SHA256: ${{ steps.prepare.outputs.expected_sha256 }}
+          ACTUAL_SHA256: ${{ steps.prepare.outputs.actual_sha256 }}
+          ALLOW_DESIGN_NOTES: ${{ inputs.allow_design_notes || 'false' }}
+        run: |
+          set -euo pipefail
+          cat > render-qa.cjs <<'JS'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+
+          const actual = (process.env.ACTUAL_SHA256 || '').trim().toLowerCase();
+          const expected = (process.env.EXPECTED_SHA256 || '').trim().toLowerCase();
+          const allowDesignNotes = String(process.env.ALLOW_DESIGN_NOTES || 'false') === 'true';
+
+          const result = {
+            state: 'PASS',
+            artifact_sha256: actual,
+            expected_sha256: expected,
+            runner_revision: process.env.GITHUB_SHA,
+            event_name: process.env.GITHUB_EVENT_NAME,
+            checks: {},
+            viewports: {},
+            page_errors: [],
+            console_errors: [],
+            forbidden_text_matches: []
+          };
+
+          function fail(name, detail) {
+            result.state = 'FAIL';
+            result.checks[name] = { state: 'FAIL', detail };
+          }
+          function pass(name, detail) {
+            if (!result.checks[name]) result.checks[name] = { state: 'PASS', detail };
+          }
+
+          (async () => {
+            if (!actual || !expected || actual !== expected) {
+              fail('artifact_digest', { actual, expected });
+              fs.writeFileSync('render-output/render-qa.json', JSON.stringify(result, null, 2));
+              process.exit(1);
+            }
+            pass('artifact_digest', { actual, expected });
+
+            const browser = await chromium.launch({
+              headless: true,
+              args: ['--disable-dev-shm-usage']
+            });
+
+            const targets = [
+              { name: 'desktop', width: 1440, height: 900 },
+              { name: 'mobile', width: 390, height: 844 }
+            ];
+
+            for (const target of targets) {
+              const page = await browser.newPage({ viewport: { width: target.width, height: target.height } });
+              page.on('pageerror', err => result.page_errors.push({ viewport: target.name, message: String(err) }));
+              page.on('console', msg => {
+                if (msg.type() === 'error') result.console_errors.push({ viewport: target.name, message: msg.text() });
+              });
+
+              await page.goto('http://127.0.0.1:8000/report.html', {
+                waitUntil: 'domcontentloaded',
+                timeout: 30000
+              });
+              await page.waitForTimeout(1200);
+
+              const metrics = await page.evaluate(() => {
+                const de = document.documentElement;
+                const body = document.body;
+                const visibleText = (body?.innerText || '').trim();
+                const all = [...document.querySelectorAll('body *')];
+                let maxRight = 0;
+                let maxElement = null;
+                for (const el of all) {
+                  const r = el.getBoundingClientRect();
+                  if (r.right > maxRight) {
+                    maxRight = r.right;
+                    maxElement = {
+                      tag: el.tagName,
+                      id: el.id || '',
+                      className: typeof el.className === 'string' ? el.className : ''
+                    };
+                  }
+                }
+                return {
+                  title: document.title,
+                  bodyTextLength: visibleText.length,
+                  h1Count: document.querySelectorAll('h1').length,
+                  chartCount: document.querySelectorAll('canvas, svg').length,
+                  docScrollWidth: de.scrollWidth,
+                  docClientWidth: de.clientWidth,
+                  bodyScrollWidth: body?.scrollWidth || 0,
+                  bodyClientWidth: body?.clientWidth || 0,
+                  maxRight,
+                  maxElement,
+                  visibleText
+                };
+              });
+
+              const overflow = metrics.docScrollWidth > metrics.docClientWidth + 1;
+              result.viewports[target.name] = {
+                width: target.width,
+                height: target.height,
+                overflow,
+                metrics: {
+                  title: metrics.title,
+                  bodyTextLength: metrics.bodyTextLength,
+                  h1Count: metrics.h1Count,
+                  chartCount: metrics.chartCount,
+                  docScrollWidth: metrics.docScrollWidth,
+                  docClientWidth: metrics.docClientWidth,
+                  bodyScrollWidth: metrics.bodyScrollWidth,
+                  bodyClientWidth: metrics.bodyClientWidth,
+                  maxRight: metrics.maxRight,
+                  maxElement: metrics.maxElement
+                }
+              };
+
+              if (metrics.bodyTextLength === 0) fail('body_nonempty_' + target.name, metrics);
+              else pass('body_nonempty_' + target.name, metrics.bodyTextLength);
+
+              if (overflow) fail('page_width_' + target.name, {
+                scrollWidth: metrics.docScrollWidth,
+                clientWidth: metrics.docClientWidth,
+                maxElement: metrics.maxElement
+              });
+              else pass('page_width_' + target.name, {
+                scrollWidth: metrics.docScrollWidth,
+                clientWidth: metrics.docClientWidth
+              });
+
+              if (!allowDesignNotes) {
+                const forbidden = [
+                  '候选比较后选择',
+                  '这里选择',
+                  '而不是环形图',
+                  'candidate_charts',
+                  'rejected_candidates',
+                  'selected_chart',
+                  'Layout Archetype',
+                  'Information Budget'
+                ];
+                for (const token of forbidden) {
+                  if (metrics.visibleText.includes(token)) {
+                    result.forbidden_text_matches.push({ viewport: target.name, token });
+                  }
+                }
+              }
+
+              await page.screenshot({
+                path: 'render-output/' + target.name + '.png',
+                fullPage: true
+              });
+              await page.close();
+            }
+
+            if (result.page_errors.length) fail('page_errors', result.page_errors);
+            else pass('page_errors', []);
+
+            if (result.forbidden_text_matches.length) {
+              fail('artifact_presentation', result.forbidden_text_matches);
+            } else {
+              pass('artifact_presentation', { allowDesignNotes });
+            }
+
+            result.checks.console_errors = {
+              state: result.console_errors.length ? 'WARN' : 'PASS',
+              detail: result.console_errors
+            };
+
+            await browser.close();
+            fs.writeFileSync('render-output/render-qa.json', JSON.stringify(result, null, 2));
+            if (result.state !== 'PASS') process.exit(1);
+          })().catch(err => {
+            result.state = 'FAIL';
+            result.checks.runner_exception = { state: 'FAIL', detail: String(err && err.stack || err) };
+            fs.writeFileSync('render-output/render-qa.json', JSON.stringify(result, null, 2));
+            process.exit(1);
+          });
+          JS
+
+          node render-qa.cjs
+
+      - name: Upload render QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-business-thinking-render-qa
+          path: |
+            render-output/render-qa.json
+            render-output/artifact.sha256
+            render-output/runner-revision.txt
+            render-output/desktop.png
+            render-output/mobile.png
+            render-output/http-server.log
+          if-no-files-found: warn
+          retention-days: 30
