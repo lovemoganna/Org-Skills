@@ -82,6 +82,31 @@ Dataset / Assignment（仅显式存在时）
 
 **局部顺序优先级高于全局视觉摘要。**报告质量以“读者能否知道当前为什么写这段 SQL、结果如何改变下一步”为第一标准。
 
+## 2B. Downstream Gate Propagation Contract
+
+ReportSpec 生成前，必须把 Mandatory Gate 状态绑定到每个分析块的依赖关系。
+
+规则：
+
+1. 分析块依赖的 Gate 为 `PASS` 时，才允许进入 KPI、图表、排名、趋势或业务结论。
+2. Gate 为 `FAIL` / `BLOCKED` 时，该分析块状态必须改为 `BLOCKED_DATA_QUALITY` 或对应阻塞状态。
+3. 被阻塞的分析块禁止继续渲染“仅供参考”“趋势仍可看”“先展示结构”等弱化版本；旧查询结果即使已经存在，也只能作为折叠审计证据，不能进入正式可视化或结论。
+4. 正文必须展示：失败 Gate、触发证据、受影响分析、解锁条件。读者应一眼看出“为什么这个分析没有结果”。
+5. 阻塞只传播到依赖该 Gate 的分析。与该 Gate 无关且已通过自身 Gate 的分析继续正常展示。
+6. Renderer QA 必须反查：若 `time_analysis = BLOCKED_DATA_QUALITY`，正文中不得存在月度/日度趋势图、时间排名或基于时间字段的正式结论。
+
+示例：
+
+```text
+order_id_date_consistency = FAIL
+→ time_analysis = BLOCKED_DATA_QUALITY
+→ 月度趋势图：SUPPRESSED
+→ 时间结论：SUPPRESSED
+→ 保留：冲突订单、诊断 SQL、解锁条件
+```
+
+**已有 Result 不代表可展示。内容资格由 Gate 状态决定。**
+
 ## 3. Answer Coverage Gate
 
 生成 ReportSpec 前列：
