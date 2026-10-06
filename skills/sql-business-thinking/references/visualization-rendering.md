@@ -226,7 +226,20 @@ SUPPRESSED_BY_GATE
 
 Renderer 只渲染 `PRIMARY / SECONDARY / AUDIT` 对应层级；`SUPPRESSED_BY_GATE` 不得进入业务图表正文。
 
-## 11. Renderer 边界
+## 11. Artifact Presentation Gate
+
+候选竞争、淘汰理由、模板 / Layout Archetype 选择、Unit Honesty 判定过程、Information Budget 判断和 Renderer 策略默认属于内部 ReportSpec / audit，不属于业务正文。
+
+最终 Artifact 必须反查可见文本：
+
+- 不得出现“候选比较后选择……”“这里选择……而不是……”“为了更快读所以……”等面向实现过程的说明；
+- 不得把 `candidate_charts`、`rejected_candidates`、`selected_chart`、`Layout Archetype` 等内部字段直接渲染给普通读者；
+- 图表标题、说明文字只解释业务结论、数据口径、限制和读图方法；
+- 用户明确要求“为什么选这个图 / 解释设计决策”时，才允许把设计 rationale 放入单独的 Design Notes，不与业务结论混写。
+
+**ReportSpec 可以完整，正文必须克制。**
+
+## 12. Renderer 边界
 
 Renderer 只读已验证 Result 和 ReportSpec。
 
