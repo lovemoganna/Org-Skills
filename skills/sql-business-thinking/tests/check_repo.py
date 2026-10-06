@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,6 +39,7 @@ critical_rules = [
     "Explicit Execution Contract Gate",
     "Runtime Placement Gate",
     "Execution Mutation Permission Gate",
+    "Harness Coverage Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
@@ -93,6 +95,7 @@ assert "本地 Wasm 失败不等于 Wasm 整体失败" in regression, "runtime p
 assert "分析权限不等于仓库写权限" in regression, "execution mutation permission regression missing"
 assert "关键数据质量检查未执行即阻塞下游" in regression, "mandatory data-quality gate regression missing"
 assert "Rendered QA 被环境阻塞" in regression, "rendered QA blocked regression missing"
+assert "Skill 与正式 Harness 版本漂移" in regression, "harness drift regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -109,6 +112,18 @@ assert "未执行不等于 PASS" in (ROOT / "references" / "dataset-planning.md"
 assert "PASS / FAIL / BLOCKED" in report_rendering, "rendered QA state model missing"
 assert "RENDER_QA_BLOCKED" in report_rendering, "rendered QA blocked disclosure missing"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
+
+gate_registry = json.loads((ROOT / "tests" / "mandatory-gates.json").read_text(encoding="utf-8"))
+assert gate_registry.get("version"), "mandatory gate registry version missing"
+gate_ids = [g["id"] for g in gate_registry.get("gates", [])]
+assert gate_ids, "mandatory gate registry is empty"
+
+workflow = (ROOT.parents[1] / ".github" / "workflows" / "sql-business-thinking-wasm-retest.yml").read_text(encoding="utf-8")
+assert 'skills/sql-business-thinking/**' in workflow, "wasm workflow does not track current skill changes"
+for gate_id in gate_ids:
+    assert gate_id in workflow, f"wasm harness missing registered gate: {gate_id}"
+for token in ["HARNESS_STALE", "skill_revision", "registry_version", "BLOCKED_DATA_QUALITY"]:
+    assert token in workflow, f"wasm harness contract missing: {token}"
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
 assert "Star = 数据分析小白" in dialogue, "novice role semantic override example missing"
