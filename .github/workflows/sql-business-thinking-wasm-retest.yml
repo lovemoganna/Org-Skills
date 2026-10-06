@@ -12,7 +12,7 @@ permissions:
 jobs:
   discovery:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Download original workbook export
         shell: bash
@@ -22,10 +22,22 @@ jobs:
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx' \
             -o workbook.xlsx
           python - <<'PY'
-          import zipfile
+          import os, zipfile
           assert zipfile.is_zipfile("workbook.xlsx"), "Google export is not a valid XLSX"
-          print("xlsx_bytes", __import__("os").path.getsize("workbook.xlsx"))
+          print("xlsx_bytes", os.path.getsize("workbook.xlsx"))
           PY
+
+      - name: Prepare local DuckDB-Wasm browser runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null
+          npm install --no-save @duckdb/duckdb-wasm@1.33.0 esbuild puppeteer-core >/dev/null
+          npx esbuild node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser.mjs \
+            --bundle --platform=browser --format=esm --outfile=duckdb.bundle.mjs
+          cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm .
+          cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js .
+          ls -lh duckdb.bundle.mjs duckdb-eh.wasm duckdb-browser-eh.worker.js workbook.xlsx
 
       - name: Build browser DuckDB-Wasm probe
         shell: bash
@@ -38,7 +50,7 @@ jobs:
           <pre id="result"></pre>
           <pre id="error"></pre>
           <script type="module">
-          import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.33.0/+esm';
+          import * as duckdb from './duckdb.bundle.mjs';
 
           const allow = ['users','fiat_transactions','crypto_transactions','exchange_rates'];
           const out = { runtime: {}, source: {}, sheets: {} };
@@ -60,11 +72,12 @@ jobs:
           });
 
           try {
-            const bundle = await duckdb.selectBundle(duckdb.getJsDelivrBundles());
-            const workerUrl = URL.createObjectURL(new Blob([
-              'importScripts("' + bundle.mainWorker + '");'
-            ], {type: 'text/javascript'}));
-            const worker = new Worker(workerUrl);
+            const bundle = {
+              mainModule: new URL('./duckdb-eh.wasm', location.href).href,
+              mainWorker: new URL('./duckdb-browser-eh.worker.js', location.href).href,
+              pthreadWorker: null
+            };
+            const worker = new Worker(bundle.mainWorker);
             const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
             await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
@@ -103,42 +116,52 @@ jobs:
           </html>
           HTML
 
-      - name: Run in headless browser
+          cat > run-probe.mjs <<'JS'
+          import puppeteer from 'puppeteer-core';
+          import {writeFileSync} from 'node:fs';
+
+          const executablePath = process.env.CHROME;
+          const browser = await puppeteer.launch({
+            executablePath,
+            headless: true,
+            args: ['--no-sandbox', '--disable-dev-shm-usage']
+          });
+          const page = await browser.newPage();
+          page.on('console', msg => console.log('[browser]', msg.type(), msg.text()));
+          page.on('pageerror', err => console.error('[pageerror]', err.stack || String(err)));
+          await page.goto('http://127.0.0.1:8765/probe.html', {waitUntil: 'networkidle2', timeout: 120000});
+          await page.waitForFunction(
+            () => document.title === 'DONE' || document.title === 'ERROR',
+            {timeout: 120000}
+          );
+          const title = await page.title();
+          const result = await page.$eval('#result', el => el.textContent || '');
+          const error = await page.$eval('#error', el => el.textContent || '');
+          await browser.close();
+          if (title !== 'DONE') {
+            console.error('BROWSER_ERROR_BEGIN');
+            console.error(error);
+            console.error('BROWSER_ERROR_END');
+            process.exit(1);
+          }
+          if (!result) throw new Error('Empty DuckDB discovery result');
+          writeFileSync('discovery.json', result);
+          console.log('DISCOVERY_JSON_BEGIN');
+          console.log(result);
+          console.log('DISCOVERY_JSON_END');
+          JS
+
+      - name: Run real DuckDB-Wasm discovery
         shell: bash
         run: |
           set -euo pipefail
-          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          export CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           echo "chrome=$CHROME"
           python3 -m http.server 8765 >/tmp/http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
-          "$CHROME" \
-            --headless \
-            --no-sandbox \
-            --disable-gpu \
-            --virtual-time-budget=120000 \
-            --dump-dom \
-            http://127.0.0.1:8765/probe.html > rendered.html 2>/tmp/chrome.err || true
-          python3 - <<'PY'
-          import html, re, sys
-          text = open("rendered.html", encoding="utf-8", errors="replace").read()
-          m = re.search(r'<pre id="result">(.*?)</pre>', text, re.S)
-          e = re.search(r'<pre id="error">(.*?)</pre>', text, re.S)
-          if e and html.unescape(e.group(1)).strip():
-              print("BROWSER_ERROR_BEGIN")
-              print(html.unescape(e.group(1)))
-              print("BROWSER_ERROR_END")
-              sys.exit(1)
-          if not m or not html.unescape(m.group(1)).strip():
-              print(open("/tmp/chrome.err", encoding="utf-8", errors="replace").read())
-              raise SystemExit("No DuckDB result in rendered DOM")
-          payload = html.unescape(m.group(1))
-          open("discovery.json","w",encoding="utf-8").write(payload)
-          print("DISCOVERY_JSON_BEGIN")
-          print(payload)
-          print("DISCOVERY_JSON_END")
-          PY
+          node run-probe.mjs
 
       - name: Upload discovery evidence
         uses: actions/upload-artifact@v4
