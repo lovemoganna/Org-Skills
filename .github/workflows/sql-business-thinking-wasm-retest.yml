@@ -55,7 +55,7 @@ jobs:
           import * as duckdb from './duckdb.bundle.mjs';
 
           const allow = ['users','fiat_transactions','crypto_transactions','exchange_rates'];
-          const out = { runtime: {}, source: {}, sheets: {} };
+          const out = { runtime: {}, source: {}, sheets: {}, quality: {} };
           const clean = (v) => {
             if (typeof v === 'bigint') return v.toString();
             if (v instanceof Date) return v.toISOString();
@@ -84,6 +84,7 @@ jobs:
             await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
             const buf = new Uint8Array(await (await fetch('./workbook.xlsx')).arrayBuffer());
+            const sourceBytes = buf.byteLength;
             await db.registerFileBuffer('workbook.xlsx', buf);
             const conn = await db.connect();
             await conn.query('INSTALL excel; LOAD excel;');
@@ -93,18 +94,160 @@ jobs:
             out.source.mapping = {
               source_url: 'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
               vfs_filename: 'workbook.xlsx',
-              bytes: buf.byteLength
+              bytes: sourceBytes
             };
 
             for (const sheet of allow) {
               const src = "read_xlsx('workbook.xlsx', sheet = '" + sheet + "', header = true)";
+              await conn.query('CREATE OR REPLACE VIEW ' + sheet + '_raw AS SELECT * FROM ' + src);
               out.sheets[sheet] = {
-                count: rows(await conn.query('SELECT COUNT(*) AS row_count FROM ' + src)),
-                schema: rows(await conn.query('DESCRIBE SELECT * FROM ' + src)),
-                summary: rows(await conn.query('SUMMARIZE SELECT * FROM ' + src)),
-                sample: rows(await conn.query('SELECT * FROM ' + src + ' LIMIT 5'))
+                count: rows(await conn.query('SELECT COUNT(*) AS row_count FROM ' + sheet + '_raw')),
+                schema: rows(await conn.query('DESCRIBE SELECT * FROM ' + sheet + '_raw')),
+                summary: rows(await conn.query('SUMMARIZE SELECT * FROM ' + sheet + '_raw')),
+                sample: rows(await conn.query('SELECT * FROM ' + sheet + '_raw LIMIT 5'))
               };
             }
+
+            const run = async (sql) => ({sql, rows: rows(await conn.query(sql))});
+            out.quality = {};
+            out.quality.user_duplicate_uids = await run(`
+              SELECT uid, COUNT(*) AS rows,
+                     COUNT(DISTINCT user_name) AS names,
+                     COUNT(DISTINCT country_code) AS countries,
+                     COUNT(DISTINCT base_fiat_currency) AS base_currencies,
+                     COUNT(DISTINCT kyc_level) AS kyc_levels,
+                     COUNT(DISTINCT account_status) AS account_statuses
+              FROM users_raw
+              GROUP BY uid
+              HAVING COUNT(*) > 1
+              ORDER BY rows DESC, uid
+            `);
+            out.quality.user_duplicate_rows = await run(`
+              SELECT *
+              FROM users_raw
+              WHERE uid IN (
+                SELECT uid FROM users_raw GROUP BY uid HAVING COUNT(*) > 1
+              )
+              ORDER BY uid, user_name, created_at
+            `);
+            out.quality.order_id_uniqueness = await run(`
+              SELECT 'fiat' AS source,
+                     COUNT(*) AS rows,
+                     COUNT(DISTINCT fiat_order_id) AS distinct_order_ids,
+                     COUNT(*) - COUNT(DISTINCT fiat_order_id) AS duplicate_rows
+              FROM fiat_transactions_raw
+              UNION ALL
+              SELECT 'crypto',
+                     COUNT(*),
+                     COUNT(DISTINCT crypto_order_id),
+                     COUNT(*) - COUNT(DISTINCT crypto_order_id)
+              FROM crypto_transactions_raw
+            `);
+            out.quality.orphan_uids = await run(`
+              WITH u AS (SELECT DISTINCT uid FROM users_raw),
+              tx AS (
+                SELECT 'fiat' AS source, CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+                FROM fiat_transactions_raw
+                UNION ALL
+                SELECT 'crypto', CAST(CAST(uid AS BIGINT) AS VARCHAR)
+                FROM crypto_transactions_raw
+              )
+              SELECT tx.source, tx.uid, COUNT(*) AS rows
+              FROM tx
+              LEFT JOIN u USING(uid)
+              WHERE u.uid IS NULL
+              GROUP BY tx.source, tx.uid
+              ORDER BY tx.source, rows DESC, tx.uid
+            `);
+            out.quality.status_completion = await run(`
+              SELECT 'fiat' AS source, status, COUNT(*) AS rows,
+                     SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS null_completed_at,
+                     SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS completed_before_created
+              FROM fiat_transactions_raw
+              GROUP BY status
+              UNION ALL
+              SELECT 'crypto', status, COUNT(*),
+                     SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END)
+              FROM crypto_transactions_raw
+              GROUP BY status
+              ORDER BY source, status
+            `);
+            out.quality.amount_fee_checks = await run(`
+              SELECT 'fiat' AS source,
+                     SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS null_amount,
+                     SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS nonpositive_amount,
+                     SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS null_fee,
+                     SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS negative_fee
+              FROM fiat_transactions_raw
+              UNION ALL
+              SELECT 'crypto',
+                     SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END)
+              FROM crypto_transactions_raw
+            `);
+            out.quality.rate_rows = await run(`
+              SELECT asset, asset_name, asset_type, quote_currency,
+                     rate_to_usdt, usdt_to_asset_rate, effective_date, source
+              FROM exchange_rates_raw
+              ORDER BY asset, source
+            `);
+            out.quality.rate_key_check = await run(`
+              SELECT asset, effective_date,
+                     COUNT(*) AS rows,
+                     COUNT(DISTINCT rate_to_usdt) AS distinct_rates,
+                     MIN(rate_to_usdt) AS min_rate,
+                     MAX(rate_to_usdt) AS max_rate
+              FROM exchange_rates_raw
+              GROUP BY asset, effective_date
+              HAVING COUNT(*) > 1
+              ORDER BY asset, effective_date
+            `);
+            out.quality.rate_coverage = await run(`
+              WITH needed AS (
+                SELECT DISTINCT currency AS asset FROM fiat_transactions_raw
+                UNION
+                SELECT DISTINCT asset FROM crypto_transactions_raw
+              )
+              SELECT n.asset,
+                     COUNT(r.asset) AS rate_rows,
+                     COUNT(DISTINCT r.rate_to_usdt) AS distinct_rates,
+                     MIN(r.rate_to_usdt) AS min_rate,
+                     MAX(r.rate_to_usdt) AS max_rate,
+                     MIN(r.effective_date) AS min_effective_date,
+                     MAX(r.effective_date) AS max_effective_date
+              FROM needed n
+              LEFT JOIN exchange_rates_raw r USING(asset)
+              GROUP BY n.asset
+              ORDER BY n.asset
+            `);
+            out.quality.join_cardinality_users = await run(`
+              WITH u AS (
+                SELECT uid, COUNT(*) AS n FROM users_raw GROUP BY uid
+              ),
+              f AS (
+                SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid FROM fiat_transactions_raw
+              ),
+              c AS (
+                SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid FROM crypto_transactions_raw
+              )
+              SELECT 'fiat' AS source,
+                     (SELECT COUNT(*) FROM f) AS before_rows,
+                     (SELECT COUNT(*) FROM f JOIN users_raw u2 ON f.uid = u2.uid) AS after_rows
+              UNION ALL
+              SELECT 'crypto',
+                     (SELECT COUNT(*) FROM c),
+                     (SELECT COUNT(*) FROM c JOIN users_raw u2 ON c.uid = u2.uid)
+            `);
+            out.quality.time_ranges = await run(`
+              SELECT 'fiat' AS source, MIN(created_at) AS min_created_at, MAX(created_at) AS max_created_at
+              FROM fiat_transactions_raw
+              UNION ALL
+              SELECT 'crypto', MIN(created_at), MAX(created_at)
+              FROM crypto_transactions_raw
+            `);
             await conn.close();
             await db.terminate();
             document.getElementById('result').textContent = JSON.stringify(out);
@@ -168,6 +311,6 @@ jobs:
       - name: Upload discovery evidence
         uses: actions/upload-artifact@v4
         with:
-          name: sql-business-thinking-wasm-discovery
+          name: sql-business-thinking-wasm-quality
           path: discovery.json
           if-no-files-found: error
