@@ -10,12 +10,12 @@
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
 | 面对陌生数据集，从业务问题推导数据逻辑与 SQL | `sql-business-thinking` | skills/sql-business-thinking/ |
 | 扫描多表数据集并生成高价值定制看板 | `dataset-dashboard-builder` | skills/dataset-dashboard-builder/ |
-| 把非结构化业务材料转化为可开发、可验收、可追踪的风控 BRD | `bprd-plus` | skills/bprd-plus/SKILL.md |
+| 把业务材料转化为短、准、可开发、可验收的 BRD | `bprd-plus` | skills/bprd-plus/SKILL.md |
 
-## BRD / 风控产品需求
+## BRD / 产品与系统需求
 
-- `bprd-plus`：会议纪要、需求描述、旧版 BRD、领导反馈等 → 材料解析 → 信息提取 → 泛化建模 → 字段建模 → BRD 生成 → 独立自检 → 反例验证 → 生命周期归档。
-- 适用：风控事件接入、系统改造、规范标准类 BRD。
+- `bprd-plus`：需求材料 → 事实与边界 → 泛化建模 → 最小充分 BRD → 反例验证 → Compression Gate。
+- 适用：产品功能、系统改造、事件接入、规范标准和风控 BRD。风控专项按需读取 `references/risk-control.md`。
 - 固定调用：`用 bprd-plus 根据以下材料写 BRD：<材料>`
 - 自检：`用 bprd-plus 自检这份 BRD`
 - 定向修改：`用 bprd-plus 按下面的反馈修改 BRD：<反馈>`
@@ -42,7 +42,7 @@
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
 | `sql-business-thinking` | 把业务问题拆成数据逻辑，再翻译成 SQL | `skills/sql-business-thinking/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |
-| `bprd-plus` | 将非结构化业务材料转化为可开发、可验收、可追踪的风控 BRD | `skills/bprd-plus/SKILL.md` | Active |
+| `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
 
 ## 目录约定
 
