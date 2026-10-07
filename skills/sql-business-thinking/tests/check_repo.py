@@ -124,6 +124,11 @@ assert "可加性必须带条件" in regression, "conditional-additivity regress
 assert "D07 不得演变成指标 DSL" in regression, "D07 anti-DSL regression missing"
 assert "候选指标必须有判断价值" in regression, "metric-value regression missing"
 assert "D07 应有淘汰结果" in regression, "metric-rejection regression missing"
+assert "分析深度不等于看板资格" in regression, "dashboard-depth-separation regression missing"
+assert "简单指标可以进入看板" in regression, "dashboard-simple-metric regression missing"
+assert "一次性诊断默认不进核心看板" in regression, "dashboard-diagnostic-exclusion regression missing"
+assert "Report / Dashboard 分流" in report_rendering, "report-dashboard split missing"
+assert "Monitoring Dashboard" in visualization_rendering, "monitoring dashboard layout missing"
 assert "底层口径约束继续生效" in regression, "metric-guard retention regression missing"
 assert "调试模式一次只执行指定阶段" in regression, "single-stage debug regression missing"
 assert "已确认上游不得被下游静默修改" in regression, "upstream lock regression missing"
@@ -299,10 +304,11 @@ for token in [
     "D06 本体识别规则库",
     "D10 SQL 设计",
     "D11 SQL 执行与真实结果",
-    "D19 ReportSpec",
-    "D20 可视化计划",
-    "D21 最终 Artifact",
-    "D22 成品验收",
+    "D19 看板资格",
+    "D20 ReportSpec",
+    "D21 可视化计划",
+    "D22 最终 Artifact",
+    "D23 成品验收",
     "待执行",
     "待检查",
     "通过",
@@ -323,14 +329,14 @@ assert "模型自检通过不得自动写成“通过”" in debug_stages, "mode
 assert "只有用户明确确认当前阶段没有问题后" in debug_stages, "user confirmation gate missing"
 assert "分析循环" in debug_stages, "debug analysis loop missing"
 assert "不等于固定的 Dxx+1" in debug_stages, "debug next-stage branching missing"
-assert "而不是机械执行一次 D01 → D22" in debug_stages, "full regression must preserve loops"
+assert "而不是机械执行一次 D01 → D23" in debug_stages, "full regression must preserve loops"
 assert "不决定最终工程拆分方式" in debug_stages, "engineering form must remain undecided"
 assert "单个 Skill 内部分段、多个独立 Skill、子模块" in debug_stages, "engineering alternatives missing"
 for token in ["自检自修", "先找根因，再修改", "一次只改一个根因", "修后必须重新执行当前阶段", "同一问题重复出现且没有新证据时停止"]:
     assert token in debug_stages, f"self-repair contract missing: {token}"
 assert "多个独立质量检查必须拆为 D03 子步骤" in debug_stages, "data-quality substep split missing"
-assert "D22 中可以独立失败的 QA 必须拆成子步骤" in debug_stages, "artifact QA substep split missing"
-for stage_id in [f"D{i:02d}" for i in range(1, 23)]:
+assert "D23 中可以独立失败的 QA 必须拆成子步骤" in debug_stages, "artifact QA substep split missing"
+for stage_id in [f"D{i:02d}" for i in range(1, 24)]:
     m = re.search(rf"### {stage_id} [^\n]+\n(.*?)(?=\n### D\d{{2}} |\n## 8\.)", debug_stages, re.S)
     assert m, f"stage card missing: {stage_id}"
     card = m.group(1)
