@@ -286,3 +286,13 @@
 | Dashboard 只消费已验证发现，容易漏掉简单但长期重要的状态指标 | D19 以 D07 高价值指标为基础；已有 D17/D18 时仅作为补充证据 | 看板资格取决于持续监控价值，不取决于分析深度 |
 | 一次性根因、竞争解释、稳健性证据容易挤进首页 | Report / Dashboard 分流；诊断过程默认下沉 Report / Drilldown | Dashboard 核心层只保留持续重要、会变化、变化后需要关注或行动的数据 |
 | 报告与 Dashboard 共用同一内容筛选逻辑 | ReportSpec 与 DashboardSpec 分层 | Report 负责解释，Dashboard 负责监控；两者不能互相代替 |
+
+
+## V34：D20 交付 Schema 分离
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Report 模式仍强制携带 Dashboard 输入与字段 | D20 输入按交付类型分开；Report 只生成 ReportSpec | 不同交付物不能为了统一 Schema 强行共用字段 |
+| DashboardSpec 继承完整分析字段 | Dashboard 只保留通过 D19 的核心项、下钻项、排除项和必要限制 | Dashboard 只表达监控职责，不复制分析报告 |
+| Hybrid 容易重新合并成一个大对象 | Hybrid 并列持有 ReportSpec 与 DashboardSpec | 共享事实可以复用，职责和 Schema 必须独立 |
+| D20 容易在组织内容时重新分析 | 明确 D20 不新增 SQL、不改口径、不新增事实、不选图 | Spec 阶段只组织已确认内容，不产生新分析事实 |
