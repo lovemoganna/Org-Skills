@@ -434,25 +434,25 @@ SQL 逻辑错误：需回退 D10。运行环境或权限问题：在 D11 修复�
 
 通过：核心看板只保留持续重要、可重复计算、变化后需要关注或行动、适合快速读取的数据。一次性根因、诊断过程、竞争解释和稳健性证据默认不进核心看板。
 
-### D20 ReportSpec
+### D20 交付规范
 
 依赖：Report = D18；Dashboard = D19；Hybrid = D18 + D19。
 
-输入：按交付类型读取。
-Report：决策级发现、证据、限制、交付要求。
-Dashboard：看板资格结果、必要口径、限制、交付要求。
-Hybrid：同时读取 Report 与 Dashboard 两组输入。
+输入：已确认的交付要求，以及对应上游结果。
+Report：决策级发现、证据、限制。
+Dashboard：看板资格结果、必要口径、限制。
+Hybrid：同时读取两组输入。
 
-任务：先确定 Report、Dashboard 或 Hybrid，再生成对应规范。不选图，不生成 Artifact。
+任务：读取已确认的交付类型，生成对应 Spec。不得在本阶段新增、升级或改成交付类型。交付类型仍无法确认时，标记阻塞，不自行猜测。不选图，不生成 Artifact。
 
-输出：按交付类型生成。
-Report：只输出 ReportSpec。
-Dashboard：只输出 DashboardSpec。
-Hybrid：分别输出 ReportSpec 与 DashboardSpec，不合并成一个混合 Schema。
+输出：
+Report：ReportSpec。
+Dashboard：DashboardSpec。
+Hybrid：独立的 ReportSpec 与 DashboardSpec。
 
-检查：ReportSpec 是否只组织已确认分析内容；DashboardSpec 是否只使用 D19 合格项；Report 模式是否错误携带 Dashboard 字段；Dashboard 模式是否错误携带分析诊断字段；Hybrid 是否保持两个 Spec 独立；是否重新分析、改口径或新增事实。
+检查：交付类型是否来自已确认要求；是否在 D20 被擅自改变；ReportSpec 是否只组织已确认分析内容；DashboardSpec 是否只使用 D19 合格项；Hybrid 是否保持两个 Spec 独立；是否重新分析、改口径、新增事实或选图。
 
-通过：每种交付模式只生成自己需要的 Spec。Report 与 Dashboard 的输入、字段和职责不交叉；Hybrid 只并列组合，不互相污染。
+通过：D20 只把已确认内容组织成对应 Spec，不决定交付类型，不混用 Report 与 Dashboard 职责。
 
 ### D21 可视化计划
 
