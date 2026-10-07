@@ -25,6 +25,7 @@ required = {
     "regression-loop.md",
     "skill-change-log.md",
     "ontology-analysis.md",
+    "debug-stages.md",
 }
 existing = {p.name for p in (ROOT / "references").glob("*.md")}
 assert required <= existing, f"missing required references: {sorted(required-existing)}"
@@ -111,6 +112,11 @@ assert "分析信号后只沿本体局部展开" in regression, "ontology-local-
 assert "复杂问题必须从原子问题生长" in regression, "composite-question provenance regression missing"
 assert "Lisp 必须人类可读" in regression, "readable-lisp regression missing"
 assert "Gate 称“阶段”" in regression, "chinese-analysis-terminology regression missing"
+assert "调试模式一次只执行指定阶段" in regression, "single-stage debug regression missing"
+assert "已确认上游不得被下游静默修改" in regression, "upstream lock regression missing"
+assert "后续发现上游问题必须需回退" in regression, "rollback regression missing"
+assert "从指定阶段继续不得自动补跑上游" in regression, "resume-without-autofill regression missing"
+assert "全部阶段通过后完整链路回归" in regression, "full-chain regression missing"
 assert "无 Task Owner 却虚构领导任务" in regression, "dataset-driven arc regression missing"
 assert "低价值问题必须被淘汰" in regression, "low-value question regression missing"
 assert "Question Frontier 非预写 checklist" in regression, "dynamic frontier regression missing"
@@ -266,6 +272,32 @@ assert issue_body.startswith("SQLBT_RENDER_QA_V1\n"), "issue render envelope ver
 assert f"expected_sha256={expected_fixture_sha}" in issue_body, "issue render sha missing"
 assert "allow_design_notes=false" in issue_body, "issue render design-note default missing"
 assert f"html_gzip_base64={payload['inputs']['html_gzip_base64']}" in issue_body, "issue render payload mismatch"
+
+debug_stages = (ROOT / "references" / "debug-stages.md").read_text(encoding="utf-8")
+for token in [
+    "正常模式",
+    "调试模式",
+    "D01 范围与执行契约",
+    "D05 本体原子知识库",
+    "D06 本体识别规则库",
+    "D10 SQL 与真实结果",
+    "D19 成品验收",
+    "待执行",
+    "待检查",
+    "通过",
+    "需修正",
+    "需回退",
+    "阻塞",
+    "完整链路回归",
+]:
+    assert token in debug_stages, f"debug stage contract missing: {token}"
+for field in ["当前阶段：", "依赖阶段：", "输入：", "本阶段任务：", "输出：", "检查结果：", "通过条件：", "状态："]:
+    assert field in debug_stages, f"debug output field missing: {field}"
+assert "不得自动执行这些阶段" in debug_stages, "debug resume must not auto-run missing dependencies"
+assert "默认锁定" in debug_stages, "upstream lock contract missing"
+assert "一次只执行指定阶段" in skill, "debug router single-stage stop missing"
+assert "正常模式保持不变" in skill, "normal mode preservation missing"
+assert "references/debug-stages.md" in skill, "debug reference not wired into skill"
 
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
 assert "默认 `Star = Analysis Lead`、`Lucy = Critical Analyst`" in dialogue, "default role fallback missing"
