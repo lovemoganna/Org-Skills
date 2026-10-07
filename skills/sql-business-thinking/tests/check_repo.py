@@ -128,7 +128,7 @@ assert "分析深度不等于看板资格" in regression, "dashboard-depth-separ
 assert "简单指标可以进入看板" in regression, "dashboard-simple-metric regression missing"
 assert "一次性诊断默认不进核心看板" in regression, "dashboard-diagnostic-exclusion regression missing"
 assert "Report / Dashboard 分流" in report_rendering, "report-dashboard split missing"
-assert "Monitoring Dashboard" in visualization_rendering, "monitoring dashboard layout missing"
+assert "Monitoring Dashboard" in visualization, "monitoring dashboard layout missing"
 assert "底层口径约束继续生效" in regression, "metric-guard retention regression missing"
 assert "调试模式一次只执行指定阶段" in regression, "single-stage debug regression missing"
 assert "已确认上游不得被下游静默修改" in regression, "upstream lock regression missing"
