@@ -221,10 +221,16 @@ Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill�
 ```json
 {
   "meta": {},
+  "delivery_mode": "report | dashboard | hybrid",
   "question": "",
   "answers": {},
   "answer_blocks": [],
   "findings": [],
+  "dashboard": {
+    "core_items": [],
+    "drilldown_items": [],
+    "excluded_items": []
+  },
   "visuals": [],
   "quality_issues": [],
   "limitations": [],
