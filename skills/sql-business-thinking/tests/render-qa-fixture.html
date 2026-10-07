@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hans">
 <head>
-<meta charset="utf-8">\n<meta name="render-qa-fixture-version" content="v2">
+<meta charset="utf-8">\n<meta name="render-qa-fixture-version" content="v3">\n<meta name="sqlbt-render-readiness" content="required">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Render QA Fixture</title>
 <style>
@@ -29,5 +29,17 @@ th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
 <div class="table-wrap"><table><thead><tr><th>Item</th><th>Value</th><th>Note</th></tr></thead><tbody><tr><td>A</td><td>100</td><td>fixture</td></tr></tbody></table></div>
 </section>
 </main>
+<script>
+document.documentElement.dataset.renderReady = "false";
+setTimeout(() => {
+  const p = document.createElement("p");
+  p.id = "async-proof";
+  p.hidden = true;
+  p.textContent = "ASYNC_READY";
+  document.body.appendChild(p);
+  document.documentElement.dataset.renderReady = "true";
+  window.__SQLBT_RENDER_READY__ = true;
+}, 700);
+</script>
 </body>
 </html>
