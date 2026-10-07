@@ -18,6 +18,12 @@ jobs:
       - name: Checkout current Skill revision
         uses: actions/checkout@v4
 
+      - name: Run SQL Business Thinking integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python skills/sql-business-thinking/tests/check_repo.py
+
       - name: Register current gate contract
         shell: bash
         run: |
