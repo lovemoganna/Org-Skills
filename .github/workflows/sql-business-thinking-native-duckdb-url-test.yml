@@ -1,0 +1,142 @@
+name: SQL Business Thinking Native DuckDB URL Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sql-business-thinking-native-duckdb-url-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  d02-native-url:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install DuckDB 1.4.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 \
+            https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip \
+            -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+
+      - name: Run exact read_xlsx URL contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > d02.sql <<'SQL'
+          INSTALL httpfs;
+          LOAD httpfs;
+          INSTALL excel;
+          LOAD excel;
+
+          .mode csv
+          .once users.csv
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'users',
+            header = true
+          );
+
+          .once fiat_transactions.csv
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'fiat_transactions',
+            header = true
+          );
+
+          .once crypto_transactions.csv
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'crypto_transactions',
+            header = true
+          );
+
+          .once exchange_rates.csv
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'exchange_rates',
+            header = true
+          );
+          SQL
+
+          ./duckdb < d02.sql
+
+      - name: Verify outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, hashlib, json, pathlib, subprocess
+
+          sheets = [
+              "users",
+              "fiat_transactions",
+              "crypto_transactions",
+              "exchange_rates",
+          ]
+          evidence = {
+              "duckdb_version": subprocess.check_output(["./duckdb", "-version"], text=True).strip(),
+              "source_url": "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx",
+              "initialization": [
+                  "INSTALL httpfs;",
+                  "LOAD httpfs;",
+                  "INSTALL excel;",
+                  "LOAD excel;",
+              ],
+              "sheets": {},
+          }
+
+          sql_text = pathlib.Path("d02.sql").read_text()
+          evidence["sql_sha256"] = hashlib.sha256(sql_text.encode()).hexdigest()
+          assert sql_text.count("INSTALL httpfs;") == 1
+          assert sql_text.count("LOAD httpfs;") == 1
+          assert sql_text.count("INSTALL excel;") == 1
+          assert sql_text.count("LOAD excel;") == 1
+          assert sql_text.count("read_xlsx(") == 4
+          assert sql_text.count("header = true") == 4
+
+          for sheet in sheets:
+              path = pathlib.Path(f"{sheet}.csv")
+              assert path.exists() and path.stat().st_size > 0, f"missing output: {path}"
+              with path.open(newline="", encoding="utf-8") as fh:
+                  rows = list(csv.reader(fh))
+              assert rows, f"empty output: {sheet}"
+              evidence["sheets"][sheet] = {
+                  "columns": rows[0],
+                  "row_count": max(len(rows) - 1, 0),
+                  "csv_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+              }
+
+          pathlib.Path("d02-evidence.json").write_text(
+              json.dumps(evidence, ensure_ascii=False, indent=2),
+              encoding="utf-8",
+          )
+          print(json.dumps(evidence, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-business-thinking-native-d02
+          path: |
+            d02.sql
+            d02-evidence.json
+            users.csv
+            fiat_transactions.csv
+            crypto_transactions.csv
+            exchange_rates.csv
+          if-no-files-found: error
