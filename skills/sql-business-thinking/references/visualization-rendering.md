@@ -5,7 +5,7 @@
 本协议只负责 **Presentation Engine**。它不得重新定义业务口径、改 SQL、补数据、绕过 Gate 或升级未经验证的判断。
 
 ```text
-Validated Findings
+Qualified Content
 → Presentation Question
 → Data Shape
 → Chart Candidate Competition
@@ -24,6 +24,12 @@ Validated Findings
 - 什么能说；
 - 什么不能说；
 - 哪个 Gate 阻断了什么。
+
+交付资格层决定：
+
+- Report 可以保留哪些已验证发现与证据；
+- Dashboard 哪些数据具有持续监控资格；
+- 哪些一次性诊断只能进入下钻或报告。
 
 表达层决定：
 
@@ -147,6 +153,26 @@ Hero 判断
 适合：用户明确要求人物推演、教学回放或代码逐步产生。
 
 沿用 `report-rendering.md` 的 Dialogue-Driven Report Override，不受 A/B 的首屏规则覆盖。
+
+### D. Monitoring Dashboard
+
+适合：持续监控当前业务状态。
+
+```text
+核心状态
+→ 需要立即关注的异常
+→ 关键结构 / 趋势
+→ 必要下钻入口
+```
+
+硬规则：
+
+- 只使用已经通过看板资格的数据；
+- 首屏优先回答“现在是否需要关注”；
+- 不展示完整分析过程；
+- 一次性根因、竞争解释、稳健性过程默认进入下钻或报告；
+- 简单但长期重要的状态数据可以进入核心看板；
+- 不用更多图表证明分析很深入。
 
 硬规则：
 
