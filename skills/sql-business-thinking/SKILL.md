@@ -1,6 +1,6 @@
 ---
 name: sql-business-thinking
-description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。用于 SQL 学习与练习、业务取数、陌生数据集分析、多表查询设计、SQL 纠错与逻辑审查、复盘一段 SQL 为什么这样写。用户说“帮我取个数”“这个 SQL 对不对”“这题怎么下手”“再来一题”时也使用，哪怕没提训练。用户自己还没想清要查什么时，用提问把目的启发出来。默认先带用户自己搭思路，不直接代写完整 SQL；用户明确说“直接写”“给最终 SQL”“跳过训练”才进入 Direct 模式。需要输出 HTML/报告时，在分析完成后切换到 ReportSpec → Renderer，并执行 artifact regression loop。用户明确要求人物会话、教学回放或角色模拟时，把会话本身视为交付物的一部分；如果用户要求“代码在会话中逐步产生”，进入 Dialogue-Driven Report 模式：讨论、SQL、结果和判断修正必须原位交错，禁止把 SQL 事后集中到独立验证台。
+description: 训练用户把业务问题拆成数据逻辑，再翻译成 SQL。用于 SQL 学习与练习、业务取数、陌生数据集分析、多表查询设计、SQL 纠错与逻辑审查、复盘一段 SQL 为什么这样写。用户说“帮我取个数”“这个 SQL 对不对”“这题怎么下手”“再来一题”时也使用，哪怕没提训练。用户自己还没想清要查什么时，用提问把目的启发出来。默认先带用户自己搭思路，不直接代写完整 SQL；用户明确说“直接写”“给最终 SQL”“跳过训练”才进入 Direct 模式。需要输出 HTML、报告或看板时，读取已确认交付类型，先生成对应交付规范，再进入可视化与 Renderer，并执行 artifact regression loop。用户明确要求人物会话、教学回放或角色模拟时，把会话本身视为交付物的一部分；如果用户要求“代码在会话中逐步产生”，进入 Dialogue-Driven Report 模式：讨论、SQL、结果和判断修正必须原位交错，禁止把 SQL 事后集中到独立验证台。
 ---
 # SQL Business Thinking
 
@@ -102,20 +102,18 @@ Debug 支持：单跑、重跑、继续、回退、完整链路回归。每阶�
 
 ## Presentation Engine Contract
 
-分析完成后，若用户要求 HTML / 报告 / dashboard / 可视化交付，必须先读取 `references/visualization-rendering.md`，再生成 ReportSpec。
+用户要求 HTML、报告、Dashboard 或可视化交付时，先读取已确认交付类型并生成对应交付规范，再进入可视化计划。不得在表达阶段改变交付类型。
 
 核心顺序：
 
 ```text
-Validated Findings
-→ Data Shape
-→ Chart Candidate Competition Gate
-→ Unit Honesty Gate
-→ One-Chart-One-Conclusion Gate
-→ Layout Archetype Gate
-→ Information Budget Gate
+已确认分析内容 / 看板资格结果
+→ D20 交付规范
+→ D21 可视化计划
 → Renderer
 ```
+
+D21 再读取 `references/visualization-rendering.md`，执行图型、单位、布局和信息预算检查。
 
 硬规则：
 
