@@ -391,16 +391,26 @@ SQL 对了再问：这张表拿来干什么？能比较什么、发现什么异�
 - `references/report-rendering.md`
 - `references/regression-loop.md`
 
-分析阶段仍按本 Skill 执行。分析完成后强制转换：
+分析阶段仍按本 Skill 执行。分析完成后先按交付类型分流：
 
 ```text
-原始分析事件
-→ Answer Coverage Gate
+Report
+→ 决策级发现
 → ReportSpec
 → Renderer
 → Rendered QA
 → Regression Loop
+
+Dashboard
+→ 高价值指标 + 已验证发现
+→ 看板资格判断
+→ DashboardSpec
+→ Renderer
+→ Rendered QA
+→ Regression Loop
 ```
+
+Dashboard 不是分析报告的压缩版。分析过程可以很深，但核心看板只保留需要持续监控、会变化、变化后需要关注或行动、可稳定重复计算的数据。简单但长期重要的状态指标可以进入看板；一次性诊断、竞争解释和稳健性过程默认进入报告或下钻。
 
 禁止直接把 `skill_call / msg / code / result / finding` 的时间顺序当作最终报告结构。
 
