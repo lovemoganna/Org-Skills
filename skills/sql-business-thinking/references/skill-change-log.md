@@ -188,4 +188,12 @@
 | 任意 Issue 都可能误触发昂贵的 Chromium job | job 限定仓库 owner + `[sqlbt-render-qa]` 标题前缀 + `SQLBT_RENDER_QA_V1` envelope | **触发面也需要身份与协议 Gate。** 能写 Issue 不等于能触发 Render QA |
 | Chat connector fallback 可能绕过远程发送授权 | 继续要求当前 HTML 已获用户授权发送到 GitHub Actions；未授权时不创建 issue envelope | **可达性不能覆盖数据边界。** 技术触发与外发授权仍是两道独立 Gate |
 
+## V25：Execution Evidence Hardening
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| Remote Render Runner 只等 `DOMContentLoaded + 1.2s`，DuckDB-Wasm 尚未完成时也可能截图并 PASS | 新增 Async Render Readiness Gate；异步 Artifact 用 meta 声明 readiness，最终状态完成后设置 READY marker；runner 必须等待，超时为 `ASYNC_NOT_READY` | **页面可打开不等于页面已完成。** 异步 Artifact 必须有显式完成协议 |
+| Fresh SQL 因 `SELECT 'fiat' source`、`(...) before` 等 implicit alias / keyword collision 触发 Parser Error | 新增 SQL Alias Safety Gate：生成 alias 必须显式 `AS`；keyword 风险改安全名或一致引用 | **生成 SQL 不依赖 parser 猜 alias。** Parser Error 与数据质量分开 |
+| Gate Result 已 normalize，但普通业务 Result 的 TypedArray / Arrow wrapper 仍泄漏为 `{"0":3,...}` | 新增 Result Scalar Normalization Gate；Wasm harness 的统一 `clean` 覆盖 ArrayBuffer views，并用单元素 TypedArray 做 runtime probe | **Normalization 是 Result Store 边界，不是 Gate 特例。** Renderer 不负责猜 scalar |
+| Google Sheets XLSX/ZIP transport bytes 可变化，且 buffer 在 VFS 注册后可能 detach | 新增 Logical Data Revision Gate；Wasm harness 在注册前记录 transport bytes/SHA，再对固定表顺序 + 固定行顺序 + schema 列序 + normalized scalar 的逻辑数据计算 SHA256 | **Freshness 绑定逻辑数据，不绑定容器封装。** transport identity 与 business data revision 分开 |
 
