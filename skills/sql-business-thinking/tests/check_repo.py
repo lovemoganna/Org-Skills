@@ -323,7 +323,7 @@ for stage_id in [f"D{i:02d}" for i in range(1, 23)]:
     card = m.group(1)
     for field in ["依赖：", "输入：", "任务：", "输出：", "检查：", "通过："]:
         assert field in card, f"{stage_id} missing compact field: {field}"
-assert "一次只执行指定阶段" in skill, "debug router single-stage stop missing"
+assert "一次只执行一个阶段" in skill, "debug router single-stage stop missing"
 assert "正常模式保持不变" in skill, "normal mode preservation missing"
 assert "references/debug-stages.md" in skill, "debug reference not wired into skill"
 
