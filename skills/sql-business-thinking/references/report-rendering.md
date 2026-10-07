@@ -216,22 +216,20 @@ Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill�
 
 不要每个 SQL 后在正文机械重复“能说明/不能说明”；附录保留完整教学版。
 
-## 10. ReportSpec
+## 10. ReportSpec / DashboardSpec
+
+先确定 `delivery_mode`，再选择对应 Schema。不得为了统一格式强行给 Report 加 Dashboard 字段，或给 Dashboard 加分析字段。
+
+### Report
 
 ```json
 {
   "meta": {},
-  "delivery_mode": "report | dashboard | hybrid",
+  "delivery_mode": "report",
   "question": "",
   "answers": {},
   "answer_blocks": [],
   "findings": [],
-  "dashboard": {
-    "core_items": [],
-    "drilldown_items": [],
-    "excluded_items": []
-  },
-  "visuals": [],
   "quality_issues": [],
   "limitations": [],
   "decision_log": [],
@@ -241,6 +239,39 @@ Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill�
   "appendix": {}
 }
 ```
+
+ReportSpec 只组织已确认的分析答案、证据、限制和必要分析深度。
+
+### Dashboard
+
+```json
+{
+  "meta": {},
+  "delivery_mode": "dashboard",
+  "dashboard": {
+    "core_items": [],
+    "drilldown_items": [],
+    "excluded_items": []
+  },
+  "limitations": []
+}
+```
+
+DashboardSpec 只消费 D19 已通过看板资格的数据。不得携带完整 findings、analysis trace、竞争解释、稳健性过程或一次性诊断链。
+
+### Hybrid
+
+Hybrid 不创建第三套混合 Schema。分别保留一个 ReportSpec 和一个 DashboardSpec：
+
+```json
+{
+  "delivery_mode": "hybrid",
+  "report_spec": {},
+  "dashboard_spec": {}
+}
+```
+
+两者共享已确认事实，但字段、职责和可见内容保持独立。
 
 Renderer 只读，不重新分析。
 
