@@ -38,6 +38,7 @@ jobs:
           LOAD httpfs;
           INSTALL excel;
           LOAD excel;
+          SET force_download = true;
 
           CREATE OR REPLACE TEMP VIEW users_raw AS
           SELECT * FROM read_xlsx(
