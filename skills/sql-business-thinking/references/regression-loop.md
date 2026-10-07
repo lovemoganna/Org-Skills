@@ -78,7 +78,7 @@
 ### E. 证据新鲜度与表达机制
 
 - 用户要求“重新跑 / 当前 / 最新 / 完整跑一轮 / E2E”时，进入关键结论的业务 SQL 是否都在本轮 run 重新执行；
-- Freshness 使用的 data revision 是否为固定表/主键/列序与统一 normalization 后的逻辑数据指纹；是否错误把 XLSX/ZIP transport SHA 当成业务 revision；
+- Freshness 使用的 logical data revision 是否为固定表/主键/列序与统一 normalization 后的逻辑数据指纹；是否错误把 XLSX/ZIP transport SHA 当成业务 revision；
 - raw bytes / SHA 是否在 registerFileBuffer 等可能 detach/transfer buffer 的操作前采集；
 - 是否存在“只重新跑 Gate / 只比对行数或样本 / 数据看起来没变”后，把历史 Result 当 fresh Result 的情况；
 - 复用历史 Result 时是否显式标 `REUSED_VERIFIED_RESULT`，并记录原 run / data revision / skill revision；是否避免使用“重新跑完 / 当前 SQL 已执行 / E2E PASS”等误导措辞；
