@@ -402,12 +402,14 @@ Report
 → Regression Loop
 
 Dashboard
-→ 高价值指标 + 已验证发现
+→ 高价值指标
 → 看板资格判断
 → DashboardSpec
 → Renderer
 → Rendered QA
 → Regression Loop
+
+如果当前分析已经产生已验证发现或决策级发现，可以作为看板资格的补充证据；Dashboard-only 不要求先完成深度分析链。
 ```
 
 Dashboard 不是分析报告的压缩版。分析过程可以很深，但核心看板只保留需要持续监控、会变化、变化后需要关注或行动、可稳定重复计算的数据。简单但长期重要的状态指标可以进入看板；一次性诊断、竞争解释和稳健性过程默认进入报告或下钻。
