@@ -438,15 +438,21 @@ SQL 逻辑错误：需回退 D10。运行环境或权限问题：在 D11 修复�
 
 依赖：Report = D18；Dashboard = D19；Hybrid = D18 + D19。
 
-输入：决策级发现、看板资格结果、证据、限制、交付要求。
+输入按交付类型分开：
+Report：决策级发现、证据、限制、交付要求。
+Dashboard：看板资格结果、必要口径、限制、交付要求。
+Hybrid：同时读取 Report 与 Dashboard 两组输入。
 
-任务：先区分 Report、Dashboard 或 Hybrid，再建立答案覆盖和信息层级。不选图，不生成 Artifact。
+任务：先确定 Report、Dashboard 或 Hybrid，再生成对应规范。不选图，不生成 Artifact。
 
-输出：ReportSpec；包含 Dashboard 时同时输出 DashboardSpec。
+输出按交付类型分开：
+Report：只输出 ReportSpec。
+Dashboard：只输出 DashboardSpec。
+Hybrid：分别输出 ReportSpec 与 DashboardSpec，不合并成一个混合 Schema。
 
-检查：报告是否允许保留必要分析深度；Dashboard 是否只使用 D19 合格项；是否把诊断证据、分析路径或一次性发现塞进核心看板；是否重新分析、改口径或新增事实。
+检查：ReportSpec 是否只组织已确认分析内容；DashboardSpec 是否只使用 D19 合格项；Report 模式是否错误携带 Dashboard 字段；Dashboard 模式是否错误携带分析诊断字段；Hybrid 是否保持两个 Spec 独立；是否重新分析、改口径或新增事实。
 
-通过：ReportSpec 完整覆盖问题；DashboardSpec 只包含已通过看板资格的数据。报告深度与看板监控职责不混用。
+通过：每种交付模式只生成自己需要的 Spec。Report 与 Dashboard 的输入、字段和职责不交叉；Hybrid 只并列组合，不互相污染。
 
 ### D21 可视化计划
 
