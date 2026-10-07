@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="zh-Hans">
+<html lang="zh-Hans" data-render-ready="false">
 <head>
-<meta charset="utf-8">\n<meta name="render-qa-fixture-version" content="v3">\n<meta name="sqlbt-render-readiness" content="required">
+<meta charset="utf-8">\n<meta name="render-qa-fixture-version" content="v4">\n<meta name="sqlbt-render-readiness" content="required">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Render QA Fixture</title>
 <style>
@@ -30,7 +30,6 @@ th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
 </section>
 </main>
 <script>
-document.documentElement.dataset.renderReady = "false";
 setTimeout(() => {
   const p = document.createElement("p");
   p.id = "async-proof";
