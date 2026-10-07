@@ -78,6 +78,8 @@
 ### E. 证据新鲜度与表达机制
 
 - 用户要求“重新跑 / 当前 / 最新 / 完整跑一轮 / E2E”时，进入关键结论的业务 SQL 是否都在本轮 run 重新执行；
+- Freshness 使用的 data revision 是否为固定表/主键/列序与统一 normalization 后的逻辑数据指纹；是否错误把 XLSX/ZIP transport SHA 当成业务 revision；
+- raw bytes / SHA 是否在 registerFileBuffer 等可能 detach/transfer buffer 的操作前采集；
 - 是否存在“只重新跑 Gate / 只比对行数或样本 / 数据看起来没变”后，把历史 Result 当 fresh Result 的情况；
 - 复用历史 Result 时是否显式标 `REUSED_VERIFIED_RESULT`，并记录原 run / data revision / skill revision；是否避免使用“重新跑完 / 当前 SQL 已执行 / E2E PASS”等误导措辞；
 - 重要图是否比较过至少 3 个合理候选；不足 3 个时是否比较全部；
@@ -90,6 +92,9 @@
 - 每个可见区块是否至少满足“回答问题 / 改变判断 / 解释限制 / 提供必要验证入口”之一；
 - 是否存在为了填满模板而制造 KPI、图表或次级模块；
 - 图表标题是否优先表达结论，而不是“柱状图 / Chart 1”之类图型名。
+- 所有 DuckDB Result 是否在进入业务计算、ReportSpec 和 Renderer 前经过统一 scalar normalization；是否仍存在 `{"0":3,...}`、TypedArray、Arrow wrapper 等伪标量泄漏；
+- 生成 SQL 是否对 alias 显式使用 `AS`；是否存在与 DuckDB keyword 冲突的裸 alias；Parser Error 是否被错误归因于数据；
+- 异步 HTML 是否声明 Render Readiness；Rendered QA 是否真正等到 READY marker，而不是只等 `DOMContentLoaded + sleep`。
 
 ### F. 生成机制
 
@@ -131,6 +136,7 @@ P3：纯审美微调，不做，除非它影响理解。
 - Artifact Presentation QA：扫描最终可见正文，候选竞争、淘汰理由、Layout Archetype、Renderer 策略、Information Budget 等内部 rationale 不得泄露；除非用户明确要求设计说明。
 - Result Freshness QA：若用户要求重跑/当前/最新，关键业务 Result 必须带本轮执行证据；历史 Result 只能作为 `REUSED_VERIFIED_RESULT`。
 - Render QA Placement：本地浏览器失败后，检查是否存在已授权且无需新增持久化写入的远程浏览器 runner；未检查合法远程 placement 时不得直接标 `RENDER_QA_BLOCKED`。
+- Async Render Readiness：Artifact 声明 `sqlbt-render-readiness=required` 时，桌面与手机都必须记录 READY marker；超时为 `ASYNC_NOT_READY`，不得用固定 sleep 代替。
 - Canonical Remote Render Runner：若使用远程 QA，优先检查 `.github/workflows/sql-business-thinking-render-qa.yml`；payload 必须由 `tests/prepare-render-qa-payload.py` 基于最终 HTML bytes 生成，`render-qa.json.artifact_sha256` 必须等于本轮 `expected_sha256`。
 - Chat connector trigger：若当前 GitHub connector 无 `workflow_dispatch`，检查 helper 是否生成 `issue_envelope`；只有用户已授权远程发送当前 HTML 时，才能创建一次性 `[sqlbt-render-qa]` Issue。workflow 读取后必须擦除正文并关闭 Issue；不得把 payload 提交进 Git 历史。
 - Remote payload size：超过 helper 的 60,000 字符 inline 上限时必须返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE` 或切换其他已授权 transport；禁止截断后继续验收。
