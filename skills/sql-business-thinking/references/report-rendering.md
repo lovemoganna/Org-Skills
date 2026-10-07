@@ -107,6 +107,28 @@ order_id_date_consistency = FAIL
 
 **已有 Result 不代表可展示。内容资格由 Gate 状态决定。**
 
+## 2C. Report / Dashboard 分流
+
+Report 用于回答问题，允许保留必要的分析深度和证据链。
+
+Dashboard 用于持续监控当前状态。Dashboard 核心层只允许使用已经通过看板资格的数据。
+
+Dashboard 核心项必须满足：
+
+1. 需要持续或重复监控。
+2. 会随业务状态变化。
+3. 变化后需要关注、判断或行动。
+4. 可以稳定重复计算。
+5. 目标用户可以快速判断当前状态。
+
+一次性根因、诊断切片、竞争解释、稳健性过程、运行日志默认不进入 Dashboard 核心层。
+
+简单指标不因分析深度低被淘汰。只要长期重要且需要持续监控，就可以进入 Dashboard。
+
+交付模式先区分 Report、Dashboard 或 Hybrid。Hybrid 中，Dashboard 展示当前状态和必须持续看的信息；Report 或 Drilldown 承担原因、证据和诊断过程。
+
+Dashboard 不是分析报告的压缩版，也不是已验证发现的全集。
+
 ## 3. Answer Coverage Gate
 
 生成 ReportSpec 前列：
