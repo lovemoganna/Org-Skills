@@ -137,7 +137,7 @@ assert "Hybrid 保持两个 Spec 独立" in regression, "hybrid schema split reg
 assert "D20 不重新分析" in regression, "D20 no-reanalysis regression missing"
 assert "D20 不得决定交付类型" in regression, "D20 delivery-mode ownership regression missing"
 assert "交付类型未确认时不得猜测" in regression, "D20 unknown delivery-mode regression missing"
-assert "### D20 交付规范" in debug_stages, "D20 neutral stage name missing"
+assert "### D20 交付规范" in (ROOT / "references" / "debug-stages.md").read_text(encoding="utf-8"), "D20 neutral stage name missing"
 assert "D20 交付规范" in skill, "main skill delivery stage routing missing"
 assert "D21 可视化计划" in skill, "main skill visualization stage routing missing"
 assert skill.index("D20 交付规范") < skill.index("D21 可视化计划"), "main skill delivery/visualization order reversed"
