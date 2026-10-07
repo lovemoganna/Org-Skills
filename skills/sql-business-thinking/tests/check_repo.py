@@ -135,6 +135,9 @@ assert "Report 不携带 Dashboard 字段" in regression, "report schema split r
 assert "Dashboard 不携带完整分析字段" in regression, "dashboard schema split regression missing"
 assert "Hybrid 保持两个 Spec 独立" in regression, "hybrid schema split regression missing"
 assert "D20 不重新分析" in regression, "D20 no-reanalysis regression missing"
+assert "D20 不得决定交付类型" in regression, "D20 delivery-mode ownership regression missing"
+assert "交付类型未确认时不得猜测" in regression, "D20 unknown delivery-mode regression missing"
+assert "### D20 交付规范" in debug_stages, "D20 neutral stage name missing"
 assert '"delivery_mode": "report"' in report_rendering, "report schema missing"
 assert '"delivery_mode": "dashboard"' in report_rendering, "dashboard schema missing"
 assert '"report_spec": {}' in report_rendering and '"dashboard_spec": {}' in report_rendering, "hybrid split schema missing"
@@ -314,7 +317,7 @@ for token in [
     "D10 SQL 设计",
     "D11 SQL 执行与真实结果",
     "D19 看板资格",
-    "D20 ReportSpec",
+    "D20 交付规范",
     "D21 可视化计划",
     "D22 最终 Artifact",
     "D23 成品验收",
