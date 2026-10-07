@@ -83,8 +83,12 @@ jobs:
           const clean = (v) => {
             if (typeof v === 'bigint') return v.toString();
             if (v instanceof Date) return v.toISOString();
+            if (ArrayBuffer.isView(v)) {
+              const values = Array.from(v, clean);
+              return values.length === 1 ? values[0] : values;
+            }
+            if (Array.isArray(v)) return v.map(clean);
             if (v && typeof v === 'object') {
-              if (Array.isArray(v)) return v.map(clean);
               const o = {};
               for (const [k,x] of Object.entries(v)) o[k] = clean(x);
               return o;
@@ -96,6 +100,13 @@ jobs:
             for (const f of table.schema.fields) o[f.name] = clean(row[f.name]);
             return o;
           });
+          const sha256Hex = async (input) => {
+            const bytes = typeof input === 'string'
+              ? new TextEncoder().encode(input)
+              : input;
+            const hash = await crypto.subtle.digest('SHA-256', bytes);
+            return [...new Uint8Array(hash)].map(x => x.toString(16).padStart(2, '0')).join('');
+          };
 
           try {
             const bundle = {
@@ -107,8 +118,10 @@ jobs:
             const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
             await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
-            const buf = new Uint8Array(await (await fetch('./workbook.xlsx')).arrayBuffer());
-            const sourceBytes = buf.byteLength;
+            const sourceArrayBuffer = await (await fetch('./workbook.xlsx')).arrayBuffer();
+            const sourceBytes = sourceArrayBuffer.byteLength;
+            const sourceTransportSha256 = await sha256Hex(sourceArrayBuffer.slice(0));
+            const buf = new Uint8Array(sourceArrayBuffer);
             await db.registerFileBuffer('workbook.xlsx', buf);
             const conn = await db.connect();
             await conn.query('INSTALL excel; LOAD excel;');
@@ -118,8 +131,16 @@ jobs:
             out.source.mapping = {
               source_url: 'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
               vfs_filename: 'workbook.xlsx',
-              bytes: sourceBytes
+              transport_bytes: sourceBytes,
+              transport_sha256: sourceTransportSha256
             };
+            out.runtime.scalar_normalization_probe = clean(new Int32Array([3]));
+            if (out.runtime.scalar_normalization_probe !== 3) {
+              throw new Error('RESULT_SHAPE_INVALID scalar normalization probe');
+            }
+            out.runtime.alias_safety_probe = rows(await conn.query(
+              "SELECT 'fiat' AS rail, 1 AS before_rows, 2 AS after_rows"
+            ));
 
             for (const sheet of allow) {
               const src = "read_xlsx('workbook.xlsx', sheet = '" + sheet + "', header = true)";
@@ -130,6 +151,28 @@ jobs:
                 summary: rows(await conn.query('SUMMARIZE SELECT * FROM ' + sheet + '_raw')),
                 sample: rows(await conn.query('SELECT * FROM ' + sheet + '_raw LIMIT 5'))
               };
+            }
+
+            const logicalOrder = {
+              users: 'uid',
+              fiat_transactions: 'fiat_order_id',
+              crypto_transactions: 'crypto_order_id',
+              exchange_rates: 'asset, effective_date, source'
+            };
+            const logicalDataset = [];
+            for (const sheet of allow) {
+              const logicalRows = rows(await conn.query(
+                'SELECT * FROM ' + sheet + '_raw ORDER BY ' + logicalOrder[sheet]
+              ));
+              logicalDataset.push({ sheet, rows: logicalRows });
+            }
+            out.source.logical_revision = {
+              algorithm: 'sha256',
+              contract: 'sqlbt-logical-v1|fixed-sheet-order|fixed-row-order|schema-column-order|normalized-scalars',
+              value: await sha256Hex(JSON.stringify(logicalDataset))
+            };
+            if (!/^[0-9a-f]{64}$/.test(out.source.logical_revision.value)) {
+              throw new Error('INVALID_LOGICAL_DATA_REVISION');
             }
 
             const run = async (sql) => ({sql, rows: rows(await conn.query(sql))});
