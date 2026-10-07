@@ -1094,3 +1094,49 @@ DISTINCT 主体数
 3. Hybrid 中两层必须分开。
 4. Dashboard 不得成为 Report 的压缩版。
 5. DashboardSpec 只能消费已经通过看板资格的数据。
+
+
+## V34：D20 交付 Schema 分离
+
+### Report 不携带 Dashboard 字段
+
+失败样本：delivery_mode=report，但 ReportSpec 仍固定包含 dashboard、core_items、drilldown_items、excluded_items。
+
+验收：
+
+1. Report 模式只输出 ReportSpec。
+2. ReportSpec 不包含 Dashboard 专属字段。
+3. Report 输入不要求 D19 看板资格结果。
+4. Report 只组织已确认答案、发现、证据、限制和必要分析深度。
+
+### Dashboard 不携带完整分析字段
+
+失败样本：delivery_mode=dashboard，但 DashboardSpec 固定包含完整 findings、learning_replay、decision_log 或一次性诊断链。
+
+验收：
+
+1. Dashboard 模式只输出 DashboardSpec。
+2. DashboardSpec 只消费 D19 已通过看板资格的数据。
+3. 一次性诊断、竞争解释、稳健性过程默认不进入 DashboardSpec。
+4. Dashboard 不因统一 Schema 被迫携带 Report 字段。
+
+### Hybrid 保持两个 Spec 独立
+
+失败样本：Hybrid 把 Report 和 Dashboard 字段重新合并进一个大对象。
+
+验收：
+
+1. Hybrid 同时保留 ReportSpec 与 DashboardSpec。
+2. 两个 Spec 可以共享已确认事实，但字段和职责独立。
+3. ReportSpec 不受 Dashboard 信息预算限制。
+4. DashboardSpec 不继承 Report 的分析过程字段。
+
+### D20 不重新分析
+
+验收：
+
+1. D20 不新增 SQL。
+2. D20 不改口径。
+3. D20 不新增事实。
+4. D20 不选图。
+5. D20 只组织已确认内容。
