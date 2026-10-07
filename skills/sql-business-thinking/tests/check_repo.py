@@ -117,6 +117,10 @@ assert "已确认上游不得被下游静默修改" in regression, "upstream loc
 assert "后续发现上游问题必须需回退" in regression, "rollback regression missing"
 assert "从指定阶段继续不得自动补跑上游" in regression, "resume-without-autofill regression missing"
 assert "全部阶段通过后完整链路回归" in regression, "full-chain regression missing"
+assert "模型不得自行确认阶段通过" in regression, "self-approval regression missing"
+assert "SQL 设计与执行必须分离" in regression, "sql design execution split regression missing"
+assert "分析循环不得退化为线性流水线" in regression, "analysis-loop regression missing"
+assert "工程拆分形式保持未定" in regression, "engineering-form regression missing"
 assert "无 Task Owner 却虚构领导任务" in regression, "dataset-driven arc regression missing"
 assert "低价值问题必须被淘汰" in regression, "low-value question regression missing"
 assert "Question Frontier 非预写 checklist" in regression, "dynamic frontier regression missing"
@@ -280,8 +284,12 @@ for token in [
     "D01 范围与执行契约",
     "D05 本体原子知识库",
     "D06 本体识别规则库",
-    "D10 SQL 与真实结果",
-    "D19 成品验收",
+    "D10 SQL 设计",
+    "D11 SQL 执行与真实结果",
+    "D19 ReportSpec",
+    "D20 可视化计划",
+    "D21 最终 Artifact",
+    "D22 成品验收",
     "待执行",
     "待检查",
     "通过",
@@ -295,6 +303,16 @@ for field in ["当前阶段：", "依赖阶段：", "输入：", "本阶段任�
     assert field in debug_stages, f"debug output field missing: {field}"
 assert "不得自动执行这些阶段" in debug_stages, "debug resume must not auto-run missing dependencies"
 assert "默认锁定" in debug_stages, "upstream lock contract missing"
+assert "调试状态记录" in debug_stages, "debug state record missing"
+for token in ["输入标识", "输出标识", "用户确认", "失效原因"]:
+    assert token in debug_stages, f"debug state field missing: {token}"
+assert "模型自检通过不得自动写成“通过”" in debug_stages, "model must not self-approve debug stage"
+assert "只有用户明确确认当前阶段没有问题后" in debug_stages, "user confirmation gate missing"
+assert "分析循环" in debug_stages, "debug analysis loop missing"
+assert "不等于固定的 Dxx+1" in debug_stages, "debug next-stage branching missing"
+assert "而不是机械执行一次 D01 → D22" in debug_stages, "full regression must preserve loops"
+assert "不决定最终工程拆分方式" in debug_stages, "engineering form must remain undecided"
+assert "单个 Skill 内部分段、多个独立 Skill、子模块" in debug_stages, "engineering alternatives missing"
 assert "一次只执行指定阶段" in skill, "debug router single-stage stop missing"
 assert "正常模式保持不变" in skill, "normal mode preservation missing"
 assert "references/debug-stages.md" in skill, "debug reference not wired into skill"
