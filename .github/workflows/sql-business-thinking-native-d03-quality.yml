@@ -1,0 +1,318 @@
+name: SQL Business Thinking Native D03 Quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sql-business-thinking-native-d03-quality.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  d03-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install DuckDB 1.4.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 \
+            https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip \
+            -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+
+      - name: Run D03 quality checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > d03.sql <<'SQL'
+          INSTALL httpfs;
+          LOAD httpfs;
+          INSTALL excel;
+          LOAD excel;
+
+          CREATE OR REPLACE TEMP VIEW users_raw AS
+          SELECT * FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'users',
+            header = true
+          );
+
+          CREATE OR REPLACE TEMP VIEW fiat_transactions_raw AS
+          SELECT * FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'fiat_transactions',
+            header = true
+          );
+
+          CREATE OR REPLACE TEMP VIEW crypto_transactions_raw AS
+          SELECT * FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'crypto_transactions',
+            header = true
+          );
+
+          CREATE OR REPLACE TEMP VIEW exchange_rates_raw AS
+          SELECT * FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'exchange_rates',
+            header = true
+          );
+
+          .mode csv
+
+          .once user_key_uniqueness.csv
+          SELECT uid, COUNT(*) AS row_count
+          FROM users_raw
+          GROUP BY uid
+          HAVING COUNT(*) > 1
+          ORDER BY row_count DESC, uid;
+
+          .once order_id_uniqueness.csv
+          SELECT 'fiat' AS source,
+                 COUNT(*) AS row_count,
+                 COUNT(DISTINCT fiat_order_id) AS distinct_order_ids,
+                 COUNT(*) - COUNT(DISTINCT fiat_order_id) AS duplicate_rows
+          FROM fiat_transactions_raw
+          UNION ALL
+          SELECT 'crypto' AS source,
+                 COUNT(*) AS row_count,
+                 COUNT(DISTINCT crypto_order_id) AS distinct_order_ids,
+                 COUNT(*) - COUNT(DISTINCT crypto_order_id) AS duplicate_rows
+          FROM crypto_transactions_raw;
+
+          .once orphan_uid.csv
+          WITH tx AS (
+            SELECT 'fiat' AS source, CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM fiat_transactions_raw
+            UNION ALL
+            SELECT 'crypto' AS source, CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM crypto_transactions_raw
+          ),
+          u AS (
+            SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM users_raw
+          )
+          SELECT tx.source, tx.uid, COUNT(*) AS row_count
+          FROM tx
+          LEFT JOIN u USING (uid)
+          WHERE u.uid IS NULL
+          GROUP BY tx.source, tx.uid
+          ORDER BY tx.source, row_count DESC, tx.uid;
+
+          .once status_completion.csv
+          SELECT 'fiat' AS source,
+                 status,
+                 COUNT(*) AS row_count,
+                 SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS null_completed_at,
+                 SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS completed_before_created
+          FROM fiat_transactions_raw
+          GROUP BY status
+          UNION ALL
+          SELECT 'crypto' AS source,
+                 status,
+                 COUNT(*) AS row_count,
+                 SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) AS null_completed_at,
+                 SUM(CASE WHEN completed_at < created_at THEN 1 ELSE 0 END) AS completed_before_created
+          FROM crypto_transactions_raw
+          GROUP BY status
+          ORDER BY source, status;
+
+          .once amount_fee_validity.csv
+          SELECT 'fiat' AS source,
+                 SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS null_amount,
+                 SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS nonpositive_amount,
+                 SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS null_fee,
+                 SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS negative_fee
+          FROM fiat_transactions_raw
+          UNION ALL
+          SELECT 'crypto' AS source,
+                 SUM(CASE WHEN amount IS NULL THEN 1 ELSE 0 END) AS null_amount,
+                 SUM(CASE WHEN amount <= 0 THEN 1 ELSE 0 END) AS nonpositive_amount,
+                 SUM(CASE WHEN fee IS NULL THEN 1 ELSE 0 END) AS null_fee,
+                 SUM(CASE WHEN fee < 0 THEN 1 ELSE 0 END) AS negative_fee
+          FROM crypto_transactions_raw;
+
+          .once rate_key_uniqueness.csv
+          SELECT asset,
+                 effective_date,
+                 COUNT(*) AS row_count,
+                 COUNT(DISTINCT rate_to_usdt) AS distinct_rates,
+                 MIN(rate_to_usdt) AS min_rate,
+                 MAX(rate_to_usdt) AS max_rate
+          FROM exchange_rates_raw
+          GROUP BY asset, effective_date
+          HAVING COUNT(*) > 1
+          ORDER BY asset, effective_date;
+
+          .once rate_coverage.csv
+          WITH needed AS (
+            SELECT DISTINCT currency AS asset FROM fiat_transactions_raw
+            UNION
+            SELECT DISTINCT asset FROM crypto_transactions_raw
+          )
+          SELECT n.asset,
+                 COUNT(r.asset) AS rate_rows,
+                 COUNT(DISTINCT r.rate_to_usdt) AS distinct_rates,
+                 MIN(r.rate_to_usdt) AS min_rate,
+                 MAX(r.rate_to_usdt) AS max_rate,
+                 MIN(r.effective_date) AS min_effective_date,
+                 MAX(r.effective_date) AS max_effective_date
+          FROM needed n
+          LEFT JOIN exchange_rates_raw r USING (asset)
+          GROUP BY n.asset
+          ORDER BY n.asset;
+
+          .once join_cardinality_users.csv
+          WITH f AS (
+            SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM fiat_transactions_raw
+          ),
+          c AS (
+            SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM crypto_transactions_raw
+          ),
+          u AS (
+            SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid
+            FROM users_raw
+          )
+          SELECT 'fiat' AS source,
+                 (SELECT COUNT(*) FROM f) AS before_rows,
+                 (SELECT COUNT(*) FROM f JOIN u USING (uid)) AS after_rows
+          UNION ALL
+          SELECT 'crypto' AS source,
+                 (SELECT COUNT(*) FROM c) AS before_rows,
+                 (SELECT COUNT(*) FROM c JOIN u USING (uid)) AS after_rows;
+
+          .once order_id_date_consistency.csv
+          WITH fiat AS (
+            SELECT
+              'fiat' AS source,
+              fiat_order_id AS order_id,
+              CAST(STRPTIME(SUBSTR(fiat_order_id, 4, 8), '%Y%m%d') AS DATE) AS id_date,
+              CAST(created_at AS DATE) AS created_date
+            FROM fiat_transactions_raw
+            WHERE REGEXP_MATCHES(fiat_order_id, '^fo_[0-9]{8}_')
+          ),
+          crypto AS (
+            SELECT
+              'crypto' AS source,
+              crypto_order_id AS order_id,
+              CAST(STRPTIME(SUBSTR(crypto_order_id, 4, 8), '%Y%m%d') AS DATE) AS id_date,
+              CAST(created_at AS DATE) AS created_date
+            FROM crypto_transactions_raw
+            WHERE REGEXP_MATCHES(crypto_order_id, '^co_[0-9]{8}_')
+          )
+          SELECT source, order_id, id_date, created_date
+          FROM (
+            SELECT * FROM fiat
+            UNION ALL
+            SELECT * FROM crypto
+          )
+          WHERE id_date <> created_date
+          ORDER BY source, order_id;
+          SQL
+
+          ./duckdb < d03.sql
+
+      - name: Evaluate D03 statuses
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, hashlib, json, pathlib, subprocess
+
+          def read_csv(name):
+              path = pathlib.Path(name + ".csv")
+              assert path.exists(), f"missing {path}"
+              with path.open(newline="", encoding="utf-8") as fh:
+                  return list(csv.DictReader(fh))
+
+          def num(v):
+              if v in (None, ""):
+                  return 0
+              return int(float(v))
+
+          raw = {
+              "user_key_uniqueness": read_csv("user_key_uniqueness"),
+              "order_id_uniqueness": read_csv("order_id_uniqueness"),
+              "orphan_uid": read_csv("orphan_uid"),
+              "status_completion": read_csv("status_completion"),
+              "amount_fee_validity": read_csv("amount_fee_validity"),
+              "rate_key_uniqueness": read_csv("rate_key_uniqueness"),
+              "rate_coverage": read_csv("rate_coverage"),
+              "join_cardinality_users": read_csv("join_cardinality_users"),
+              "order_id_date_consistency": read_csv("order_id_date_consistency"),
+          }
+
+          statuses = {}
+          statuses["user_key_uniqueness"] = "PASS" if not raw["user_key_uniqueness"] else "FAIL"
+          statuses["order_id_uniqueness"] = "PASS" if all(num(r["duplicate_rows"]) == 0 for r in raw["order_id_uniqueness"]) else "FAIL"
+          statuses["orphan_uid"] = "PASS" if not raw["orphan_uid"] else "FAIL"
+          statuses["status_completion"] = "PASS" if all(
+              num(r["completed_before_created"]) == 0 and
+              (r["status"] != "completed" or num(r["null_completed_at"]) == 0)
+              for r in raw["status_completion"]
+          ) else "FAIL"
+          statuses["amount_fee_validity"] = "PASS" if all(
+              num(r["null_amount"]) == 0 and
+              num(r["nonpositive_amount"]) == 0 and
+              num(r["null_fee"]) == 0 and
+              num(r["negative_fee"]) == 0
+              for r in raw["amount_fee_validity"]
+          ) else "FAIL"
+          statuses["rate_key_uniqueness"] = "PASS" if not raw["rate_key_uniqueness"] else "FAIL"
+          statuses["rate_coverage"] = "PASS" if all(num(r["rate_rows"]) > 0 for r in raw["rate_coverage"]) else "FAIL"
+          statuses["join_cardinality_users"] = "PASS" if all(
+              num(r["before_rows"]) == num(r["after_rows"])
+              for r in raw["join_cardinality_users"]
+          ) else "FAIL"
+          statuses["order_id_date_consistency"] = "PASS" if not raw["order_id_date_consistency"] else "FAIL"
+
+          sql = pathlib.Path("d03.sql").read_text(encoding="utf-8")
+          assert sql.count("INSTALL httpfs;") == 1
+          assert sql.count("LOAD httpfs;") == 1
+          assert sql.count("INSTALL excel;") == 1
+          assert sql.count("LOAD excel;") == 1
+          assert sql.count("read_xlsx(") == 4
+          assert sql.count("header = true") == 4
+
+          evidence = {
+              "duckdb_version": subprocess.check_output(["./duckdb", "-version"], text=True).strip(),
+              "source_url": "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx",
+              "sql_sha256": hashlib.sha256(sql.encode()).hexdigest(),
+              "statuses": statuses,
+              "results": raw,
+          }
+          pathlib.Path("d03-evidence.json").write_text(
+              json.dumps(evidence, ensure_ascii=False, indent=2),
+              encoding="utf-8",
+          )
+          print(json.dumps(evidence, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-business-thinking-native-d03
+          path: |
+            d03.sql
+            d03-evidence.json
+            user_key_uniqueness.csv
+            order_id_uniqueness.csv
+            orphan_uid.csv
+            status_completion.csv
+            amount_fee_validity.csv
+            rate_key_uniqueness.csv
+            rate_coverage.csv
+            join_cardinality_users.csv
+            order_id_date_consistency.csv
+          if-no-files-found: error
