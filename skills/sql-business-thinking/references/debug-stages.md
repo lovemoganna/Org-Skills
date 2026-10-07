@@ -436,7 +436,7 @@ SQL 逻辑错误：需回退 D10。运行环境或权限问题：在 D11 修复�
 
 ### D20 ReportSpec
 
-依赖按交付类型确定：Report 依赖 D18；Dashboard 依赖 D19；Hybrid 同时依赖 D18、D19。
+依赖：Report = D18；Dashboard = D19；Hybrid = D18 + D19。
 
 输入：决策级发现、看板资格结果、证据、限制、交付要求。
 
