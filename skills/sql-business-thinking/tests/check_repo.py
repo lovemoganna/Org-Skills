@@ -313,6 +313,16 @@ assert "不等于固定的 Dxx+1" in debug_stages, "debug next-stage branching m
 assert "而不是机械执行一次 D01 → D22" in debug_stages, "full regression must preserve loops"
 assert "不决定最终工程拆分方式" in debug_stages, "engineering form must remain undecided"
 assert "单个 Skill 内部分段、多个独立 Skill、子模块" in debug_stages, "engineering alternatives missing"
+for token in ["自检自修", "先找根因，再修改", "一次只改一个根因", "修后必须重新执行当前阶段", "同一问题重复出现且没有新证据时停止"]:
+    assert token in debug_stages, f"self-repair contract missing: {token}"
+assert "多个独立质量检查必须拆为 D03 子步骤" in debug_stages, "data-quality substep split missing"
+assert "D22 中可以独立失败的 QA 必须拆成子步骤" in debug_stages, "artifact QA substep split missing"
+for stage_id in [f"D{i:02d}" for i in range(1, 23)]:
+    m = re.search(rf"### {stage_id} [^\n]+\n(.*?)(?=\n### D\d{{2}} |\n## 8\.)", debug_stages, re.S)
+    assert m, f"stage card missing: {stage_id}"
+    card = m.group(1)
+    for field in ["依赖：", "输入：", "任务：", "输出：", "检查：", "通过："]:
+        assert field in card, f"{stage_id} missing compact field: {field}"
 assert "一次只执行指定阶段" in skill, "debug router single-stage stop missing"
 assert "正常模式保持不变" in skill, "normal mode preservation missing"
 assert "references/debug-stages.md" in skill, "debug reference not wired into skill"
