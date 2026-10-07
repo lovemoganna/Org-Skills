@@ -612,6 +612,72 @@ Star 候选问题：
 - HTML 未获远程发送授权时禁止使用该触发通道。
 
 
+### 泛化 Q18：异步 Artifact 不能在未 READY 时判 Render PASS
+
+输入：
+
+- HTML 在 `DOMContentLoaded` 后继续执行 DuckDB-Wasm / fetch / chart 初始化；
+- 页面声明 `<meta name="sqlbt-render-readiness" content="required">`；
+- 1.2 秒时页面可见，但异步任务尚未完成。
+
+验收：
+
+- Rendered QA 必须等待 `document.documentElement.dataset.renderReady === "true"` 或 `window.__SQLBT_RENDER_READY__ === true`；
+- 固定 sleep、DOMContentLoaded、页面可打开都不能代替 READY；
+- 桌面和手机都必须独立达到 READY；
+- 超时必须记 `ASYNC_NOT_READY` 并 FAIL；
+- READY 后再执行宽度、page error、正文与截图检查。
+
+
+### 泛化 Q19：生成 SQL 的 implicit alias / keyword collision 必须提前拦截
+
+输入：
+
+- 生成 SQL 含 `SELECT 'fiat' source` 或 `SELECT (...) before`；
+- DuckDB 将 alias 解析为 keyword / grammar token，导致 Parser Error。
+
+验收：
+
+- 生成 alias 必须写显式 `AS`；
+- 可能与 DuckDB keyword 冲突时改成安全语义名，如 `rail`、`before_rows`、`after_rows`，或一致双引号引用；
+- 可用 `duckdb_keywords()` 做 runtime 校验；
+- Parser Error 不得被归因于数据质量；
+- 修正 alias 后原查询应可继续执行。
+
+
+### 泛化 Q20：普通业务 Result 也必须统一 scalar normalization
+
+输入：
+
+- DuckDB-Wasm / Arrow 返回一个逻辑标量，但序列化结果为 TypedArray / Arrow wrapper，例如 `{"0":3,...}`；
+- 该值来自业务分析 Result，不是 Mandatory Gate。
+
+验收：
+
+- 统一 normalization boundary 必须覆盖 Gate Result 和普通业务 Result；
+- 单元素 TypedArray / view 必须归一成单标量；
+- bigint、Date、DECIMAL、数组和嵌套对象必须有确定规则；
+- ReportSpec / Renderer 不得临时猜 `{"0":3,...}` 的真实值；
+- 发现本应为 scalar 的复合对象时标 `RESULT_SHAPE_INVALID`，不得直接进入结论。
+
+
+### 泛化 Q21：XLSX transport SHA 不能冒充 logical data revision
+
+输入：
+
+- 同一 Google Sheet 连续导出两次 XLSX；
+- ZIP bytes / 文件大小 / raw SHA 可能变化，但四张允许表逻辑内容相同；
+- `registerFileBuffer` 可能 transfer / detach 原始 buffer。
+
+验收：
+
+- Freshness 默认 data revision 必须对允许表按固定表顺序、主键顺序、列顺序和统一 normalization 后的逻辑内容计算 SHA256；
+- raw XLSX bytes / SHA 只做 transport evidence；
+- transport bytes / SHA 必须在 `registerFileBuffer` 前采集；
+- 逻辑内容相同但 ZIP bytes 不同时，logical revision 必须保持相同；
+- 逻辑内容变化时，logical revision 必须变化。
+
+
 ### 泛化 R：只测试时禁止自动回写仓库
 
 用户要求“测试 Skill / 找缺口”，并明确本轮不修改 Skill。
