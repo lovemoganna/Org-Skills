@@ -46,6 +46,9 @@ critical_rules = [
     "Runtime Placement Gate",
     "Execution Mutation Permission Gate",
     "Harness Coverage Gate",
+    "Result Scalar Normalization Gate",
+    "SQL Alias Safety Gate",
+    "Logical Data Revision Gate",
     "Result Freshness Gate",
     "Downstream Gate Propagation Gate",
     "Chart Candidate Competition Gate",
@@ -54,6 +57,7 @@ critical_rules = [
     "Layout Archetype Gate",
     "Information Budget Gate",
     "Artifact Presentation Gate",
+    "Async Render Readiness Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
 ]
@@ -119,6 +123,10 @@ assert "最终 Artifact 不得泄露内部选图过程" in regression, "artifact
 assert "本地 Render QA 失败不能直接收口" in regression, "render placement regression missing"
 assert "Remote Render payload 不能截断" in regression, "remote render payload-size regression missing"
 assert "Connector 无 workflow_dispatch 时可用一次性 Issue 触发 Remote Render" in regression, "connector issue render regression missing"
+assert "异步 Artifact 不能在未 READY 时判 Render PASS" in regression, "async readiness regression missing"
+assert "生成 SQL 的 implicit alias / keyword collision 必须提前拦截" in regression, "sql alias safety regression missing"
+assert "普通业务 Result 也必须统一 scalar normalization" in regression, "result scalar normalization regression missing"
+assert "XLSX transport SHA 不能冒充 logical data revision" in regression, "logical data revision regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
 assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
 assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
@@ -157,6 +165,9 @@ assert "Artifact Presentation Gate" in visualization, "artifact presentation gat
 assert "ReportSpec 可以完整，正文必须克制" in visualization, "report-vs-body presentation boundary missing"
 assert "Result Freshness QA" in regression_loop, "freshness QA missing from regression loop"
 assert "Render QA Placement" in regression_loop, "render placement QA missing from regression loop"
+assert "Async Render Readiness" in regression_loop, "async readiness QA missing from regression loop"
+assert "scalar normalization" in regression_loop, "scalar normalization QA missing from regression loop"
+assert "logical data" in regression_loop.lower(), "logical data revision QA missing from regression loop"
 assert "未真实执行的检查不得写 PASS" in regression_loop, "regression-loop blocked QA guard missing"
 
 gate_registry = json.loads((ROOT / "tests" / "mandatory-gates.json").read_text(encoding="utf-8"))
@@ -170,6 +181,18 @@ for gate_id in gate_ids:
     assert gate_id in workflow, f"wasm harness missing registered gate: {gate_id}"
 for token in ["HARNESS_STALE", "skill_revision", "registry_version", "BLOCKED_DATA_QUALITY"]:
     assert token in workflow, f"wasm harness contract missing: {token}"
+for token in [
+    "ArrayBuffer.isView",
+    "scalar_normalization_probe",
+    "RESULT_SHAPE_INVALID",
+    "transport_sha256",
+    "logical_revision",
+    "sqlbt-logical-v1",
+    "sourceArrayBuffer",
+    "before_rows",
+    "after_rows",
+]:
+    assert token in workflow, f"wasm freshness/shape contract missing: {token}"
 
 render_workflow_path = ROOT.parents[1] / ".github" / "workflows" / "sql-business-thinking-render-qa.yml"
 assert render_workflow_path.exists(), "canonical remote render workflow missing"
@@ -194,13 +217,21 @@ for token in [
     "desktop.png",
     "mobile.png",
     "sql-business-thinking-render-qa",
+    "sqlbt-render-readiness",
+    "ASYNC_NOT_READY",
+    "renderReady",
+    "waitForFunction",
 ]:
+
     assert token in render_workflow, f"remote render workflow contract missing: {token}"
 
 payload_helper = ROOT / "tests" / "prepare-render-qa-payload.py"
 render_fixture = ROOT / "tests" / "render-qa-fixture.html"
 assert payload_helper.exists(), "remote render payload helper missing"
 assert render_fixture.exists(), "remote render fixture missing"
+fixture_text = render_fixture.read_text(encoding="utf-8")
+assert 'name="sqlbt-render-readiness"' in fixture_text, "async render fixture declaration missing"
+assert 'data-render-ready' in fixture_text or 'dataset.renderReady' in fixture_text, "async render fixture READY marker missing"
 payload_json = subprocess.check_output(
     [sys.executable, str(payload_helper), str(render_fixture)],
     text=True,
