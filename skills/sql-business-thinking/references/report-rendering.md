@@ -296,7 +296,9 @@ Rendered QA 的“浏览器能力”和“执行位置”分开判断，顺序�
 - inline payload 安全上限由 helper 固定为 60,000 字符。超过时返回 `REMOTE_RENDER_PAYLOAD_TOO_LARGE`，不得截断或把不完整 HTML 送去验收；
 - 远程 runner 会生成 `sql-business-thinking-render-qa` artifact，至少包含 `render-qa.json`、`artifact.sha256`、桌面截图与手机截图；
 - 只有 `render-qa.json.state = PASS` 且其中 `artifact_sha256 == expected_sha256`，才允许把远程 Rendered QA 记为 PASS；
-- 远程 runner 会检查桌面 1440×900、手机 390×844、整页宽度、page error 和 Artifact Presentation；历史 artifact / screenshot 不能替代当前 digest 的结果。
+- 若 HTML 声明 `<meta name="sqlbt-render-readiness" content="required">`，runner 必须等待 `document.documentElement.dataset.renderReady === "true"` 或 `window.__SQLBT_RENDER_READY__ === true`；未到 READY 就截图或检查正文视为无效 QA。超时必须记录 `ASYNC_NOT_READY` 并 FAIL；
+- 未声明异步 readiness 的静态 Artifact 也应至少等待 fonts ready + 两次 animation frame，再开始几何与截图检查；
+- 远程 runner 会检查桌面 1440×900、手机 390×844、整页宽度、page error、Artifact Presentation 与 readiness；历史 artifact / screenshot 不能替代当前 digest 的结果。
 
 隐私边界：
 
@@ -318,10 +320,11 @@ Rendered QA 的“浏览器能力”和“执行位置”分开判断，顺序�
 4. 功能检查：JS 语法、SQL 按钮映射、fallback、错误显示；
 5. 内容检查：每个问题有 Answer Block；关键数字一致；限制没有被视觉弱化；显式要求的人物会话正文可见。
 6. Artifact Presentation QA：检查最终可见正文，不得泄露 Chart Candidate Competition、rejected candidates、Layout Archetype 选择、Renderer 策略、Information Budget 判断等内部设计过程；“候选比较后选择……”“这里选择……而不是……”等说明默认视为 FAIL。只有用户明确要求解释设计决策时才允许进入正文。
-7. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
-8. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
-9. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
-10. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
+7. Async Readiness QA：若 Artifact 声明异步 readiness，桌面与手机都必须在 READY marker 后再检查；`DOMContentLoaded + 固定 sleep` 不能单独判 PASS。
+8. Dialogue QA（如适用）：Conversation Arc 完整；本轮绑定的 Analysis Lead / Critical Analyst 职责正确；Lucy 不得退化成陪练；每句通过 Turn Delta Gate；没有提前知道未验证结果；最终 synthesis / report-back 可反向追溯；台词不含内部流程标签。普通模式会话不被 SQL/Skill Trace 打断；Code-in-Conversation 模式必须验证“问题质量挑战 → SQL → Result → Frontier 更新”的邻接顺序。
+9. Progressive Order QA（Code-in-Conversation）：最终 KPI 未在证据之前出现；没有跨阶段滚动摘要；每个具体数字第一次出现之前能找到对应 result 节点；正文没有第二套 SQL 副本。
+10. Question Quality QA：每个进入 SQL 的问题都有 Trigger / Consequence / Answerability / Priority；至少检查是否存在“无论结果如何下一步都一样”的废问题；下一问必须能由上一轮 Frontier 更新解释，禁止预先排好的 checklist 式推进。
+11. Hypothesis Depth QA：主要发现存在 H1 + 至少一个竞争解释；Lucy 至少一次攻击解释本身；存在能区分解释的 Diagnostic Test；关键结论做过有意义的 Robustness Check；最终 Insight 不能只是排名/比例复述。
 
 **重要：源码中“有 Hero 节点”不等于 Hero 渲染成功。必须检查渲染输出。无法检查时状态只能是 `BLOCKED`，不得用源码检查替代 Rendered QA。**
 
