@@ -24,6 +24,7 @@ required = {
     "visualization-rendering.md",
     "regression-loop.md",
     "skill-change-log.md",
+    "ontology-analysis.md",
 }
 existing = {p.name for p in (ROOT / "references").glob("*.md")}
 assert required <= existing, f"missing required references: {sorted(required-existing)}"
@@ -60,6 +61,14 @@ critical_rules = [
     "Async Render Readiness Gate",
     "Mandatory Data Quality Gate",
     "Role Contract Gate",
+    "本体前置阶段",
+    "本体原子知识库",
+    "本体识别规则库",
+    "问题质量阶段",
+    "分析信号",
+    "本体局部展开",
+    "分析深度阶段",
+    "稳健性检查",
 ]
 haystack = skill + "\n" + "\n".join(
     p.read_text(encoding="utf-8") for p in (ROOT / "references").glob("*.md")
@@ -96,6 +105,12 @@ assert "Mobile Width Gate" in report_rendering, "mobile width gate missing"
 assert "scrollWidth <= document.documentElement.clientWidth" in report_rendering, "rendered mobile geometry assertion missing"
 assert "Grid/Flex 宽内容移动端溢出" in regression, "mobile overflow regression missing"
 assert "Lucy 退化成陪练 / SQL 助手" in regression, "question-quality original failure sample missing"
+assert "两张本体表先行" in regression, "ontology-first regression missing"
+assert "本体识别规则不得退化为分析查询" in regression, "business-pattern regression missing"
+assert "分析信号后只沿本体局部展开" in regression, "ontology-local-expansion regression missing"
+assert "复杂问题必须从原子问题生长" in regression, "composite-question provenance regression missing"
+assert "Lisp 必须人类可读" in regression, "readable-lisp regression missing"
+assert "Gate 称“阶段”" in regression, "chinese-analysis-terminology regression missing"
 assert "无 Task Owner 却虚构领导任务" in regression, "dataset-driven arc regression missing"
 assert "低价值问题必须被淘汰" in regression, "low-value question regression missing"
 assert "Question Frontier 非预写 checklist" in regression, "dynamic frontier regression missing"
