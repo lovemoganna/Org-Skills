@@ -438,14 +438,14 @@ SQL 逻辑错误：需回退 D10。运行环境或权限问题：在 D11 修复�
 
 依赖：Report = D18；Dashboard = D19；Hybrid = D18 + D19。
 
-输入按交付类型分开：
+输入：按交付类型读取。
 Report：决策级发现、证据、限制、交付要求。
 Dashboard：看板资格结果、必要口径、限制、交付要求。
 Hybrid：同时读取 Report 与 Dashboard 两组输入。
 
 任务：先确定 Report、Dashboard 或 Hybrid，再生成对应规范。不选图，不生成 Artifact。
 
-输出按交付类型分开：
+输出：按交付类型生成。
 Report：只输出 ReportSpec。
 Dashboard：只输出 DashboardSpec。
 Hybrid：分别输出 ReportSpec 与 DashboardSpec，不合并成一个混合 Schema。
