@@ -13,7 +13,7 @@
 - [`SKILL.md`](SKILL.md)：主协议与路由。
 - [`references/dataset-planning.md`](references/dataset-planning.md)：陌生数据集勘察、时间维表、JOIN 基数与分析地图。
 - [`references/ontology-analysis.md`](references/ontology-analysis.md)：本体前置、业务模式、分析信号与局部展开。
-- [`references/debug-stages.md`](references/debug-stages.md)：开发调试用分步阶段、锁定、回退、重跑和完整回归。
+- [`references/debug-stages.md`](references/debug-stages.md)：开发调试用逻辑阶段、状态记录、锁定、回退、重跑和完整回归；阶段边界不代表最终工程拆分方式。
 - [`references/protocol.md`](references/protocol.md)：判级、暂停、账本、代码增长、复盘。
 - [`references/dialogue-rendering.md`](references/dialogue-rendering.md)：人物角色绑定、协作推演与 Code-in-Conversation。
 - [`references/report-rendering.md`](references/report-rendering.md)：ReportSpec、HTML/DuckDB-Wasm 与渲染验收。
