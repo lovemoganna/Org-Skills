@@ -197,3 +197,15 @@
 | Gate Result 已 normalize，但普通业务 Result 的 TypedArray / Arrow wrapper 仍泄漏为 `{"0":3,...}` | 新增 Result Scalar Normalization Gate；Wasm harness 的统一 `clean` 覆盖 ArrayBuffer views，并用单元素 TypedArray 做 runtime probe | **Normalization 是 Result Store 边界，不是 Gate 特例。** Renderer 不负责猜 scalar |
 | Google Sheets XLSX/ZIP transport bytes 可变化，且 buffer 在 VFS 注册后可能 detach | 新增 Logical Data Revision Gate；Wasm harness 在注册前记录 transport bytes/SHA，再对固定表顺序 + 固定行顺序 + schema 列序 + normalized scalar 的逻辑数据计算 SHA256 | **Freshness 绑定逻辑数据，不绑定容器封装。** transport identity 与 business data revision 分开 |
 
+
+
+## V26：本体前置、局部展开与中文分析语言
+
+| 暴露缺陷 | 本轮修正 | 可泛化规则 |
+|---|---|---|
+| 陌生数据集仍可能直接从字段生成指标和问题 | 增加业务语义还原、本体原子知识库和本体识别规则库 | 先定义业务世界，再生成指标和问题 |
+| 本体识别规则可能被查询逻辑污染 | 规则库只描述业务行为和业务模式 | “怎么算”不能冒充“发生了什么” |
+| 发现差异后容易横向扫描全部维度 | 分析信号后只沿本体关系局部展开 | 证据指向哪里，本体就沿哪里展开 |
+| 复杂问题仍可能由模型直接脑补 | 复杂问题必须引用已验证原子问题或分析信号 | 复杂问题必须从证据中长出来 |
+| Lisp 容易演变为程序 DSL | Lisp 只做人可读结构锚定 | 本体负责约束，Lisp 负责清楚 |
+| Gate、Signal、Frontier、Finding 增加理解成本 | 用户可见分析语言统一为阶段、分析信号、问题边界、假设边界、发现、已验证发现 | 机器标识可保留英文，业务语言优先可理解 |
