@@ -127,7 +127,7 @@ assert "D07 应有淘汰结果" in regression, "metric-rejection regression miss
 assert "分析深度不等于看板资格" in regression, "dashboard-depth-separation regression missing"
 assert "简单指标可以进入看板" in regression, "dashboard-simple-metric regression missing"
 assert "Dashboard-only 可以从 D07 直接进入看板资格判断" in regression, "dashboard-only path regression missing"
-assert "依赖：D07。若当前分析已经产生 D17 已验证发现或 D18 决策级发现" in debug_stages, "dashboard stage must not require deep-analysis findings"
+assert "依赖：D07。若当前分析已经产生 D17 已验证发现或 D18 决策级发现" in (ROOT / "references" / "debug-stages.md").read_text(encoding="utf-8"), "dashboard stage must not require deep-analysis findings"
 assert "一次性诊断默认不进核心看板" in regression, "dashboard-diagnostic-exclusion regression missing"
 assert "Report / Dashboard 分流" in report_rendering, "report-dashboard split missing"
 assert "Monitoring Dashboard" in (ROOT / "references" / "visualization-rendering.md").read_text(encoding="utf-8"), "monitoring dashboard layout missing"
