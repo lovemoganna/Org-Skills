@@ -456,6 +456,12 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify actual HTTP Origin and system Clipboard API
         run: node skills/ontology-constrained-analysis/tests/test_sql_browser.cjs
+      - name: Download the same-run real analytical HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: ontology-real-workbook
+      - name: Verify real report on desktop and mobile HTTP Origin
+        run: node skills/ontology-constrained-analysis/tests/test_real_report_browser.cjs
 
   wasm-vfs:
     needs: ontology-native-data-gate
