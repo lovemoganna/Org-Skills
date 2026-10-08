@@ -1463,3 +1463,19 @@ D11 DuckDB-Wasm run `37725587099`，数据逻辑 revision `561287b5d150e3c117355
 执行 `python tests/check_d18_decisions.py`，复用经验证的 D17 聚合样例，检查 1 项具有明确判断后果的口径解释约束，并拒绝风险、实时待办、资源配置、UID 身份和根因等 12 类无证据主张/失效输入。这个测试不执行 SQL，不证明运营事件存在。
 
 完成 D18 后，如果当前交付为 Report，可以进入 D20；是否执行 D19 仅取决于上游已锁定交付类型，不能为了看板强行扩展交付范围。
+
+
+## V48：D21 真实 Report 可视化计划
+
+D20 实际输入：`tests/verified-d20-report-spec.json`，引用 D11 DuckDB-Wasm run `37725587099`，逻辑数据 revision `561287b5d150e3c11735562b0a4f3d670b9e5b8ccecb818d1a26bcfb720b3335`，全量质量 Gate PASS。
+
+D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 已确认的三个内容 ID：`report-decision`、`report-denominator-sensitivity`、`report-status-breakdown`。Report 使用 Evidence Report 布局；核心判断用文字，分母敏感性用对照表，方向状态构成用计数表。不生成独立 Dashboard，也不添加根因、UID 归属、金额或新指标。
+
+验收：
+
+1. 用 Git blob SHA 锁定 D20 原文；变更 D20 后 D21 必须失效，不能默默保留旧结果。
+2. 三个 content_ref 都能定位到已通过 Gate 的 D20 项，并绑定真实 D11 Result。
+3. D21 不复制和改写 D20 数值，不生成新的 SQL、分析结论或图表数据。
+4. 只选最清楚的表格或文字，无需制造图表多样性。
+5. 执行 `python tests/check_d21_visualization_plan.py`，正常计划通过，11 个被篡改的引用、来源、口径和权限样例拒绝。
+6. D21 不是 D22 HTML 产物，不能据此宣称 Rendered QA 已完成。
