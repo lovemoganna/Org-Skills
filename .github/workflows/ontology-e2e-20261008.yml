@@ -1,0 +1,110 @@
+name: Ontology E2E 2026-10-08
+on:
+  push:
+    branches: [ontology-e2e-20261008]
+    paths: [".github/workflows/ontology-e2e-20261008.yml"]
+permissions:
+  contents: read
+jobs:
+  real-workbook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Install DuckDB
+        run: python -m pip install --disable-pip-version-check duckdb==1.4.2
+      - name: Read authorized XLSX sheets and execute independent checks
+        shell: bash
+        run: |
+          python - <<'PY'
+          import concurrent.futures, datetime, decimal, hashlib, json, pathlib, traceback
+          import duckdb
+          src = "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          allowed = ("users", "fiat_transactions", "crypto_transactions", "exchange_rates")
+          selection = """SELECT *
+          FROM read_xlsx(
+              'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+              sheet = 'users',
+              header = true
+          );"""
+          out={"engine":"DuckDB 1.4.2","source":src,"allowed_sheets":allowed,"phase":"runtime","init":[],"materializations":[],"schemas":{},"raw_rows":{},"checks":[],"queries":[],"execution_mode":"sequential load; concurrent read-only isolated connections"}
+          def ser(v):
+              if isinstance(v,(datetime.date,datetime.datetime,datetime.time,decimal.Decimal)):return str(v)
+              if isinstance(v,(bytes,bytearray)):return v.hex()
+              return v
+          def dump():
+              pathlib.Path("ontology-e2e-20261008.json").write_text(json.dumps(out,ensure_ascii=False,default=ser,indent=2))
+          def qident(k):return '"'+k.replace('"','""')+'"'
+          def has(t,*cols): return set(cols).issubset(set(out["schemas"].get(t,[])))
+          try:
+              con=duckdb.connect("ontology-20261008.duckdb")
+              out["duckdb_version"]=con.execute("SELECT version()").fetchone()[0]
+              for stmt in ("INSTALL httpfs;","LOAD httpfs;","INSTALL excel;","LOAD excel;"):
+                  con.execute(stmt);out["init"].append({"sql":stmt,"status":"PASS"})
+              out["phase"]="source"
+              for sheet in allowed:
+                  select=selection.replace("sheet = 'users'","sheet = '"+sheet+"'")
+                  query="CREATE TABLE "+qident(sheet)+" AS\n"+select
+                  con.execute(query)
+                  meta=con.execute("DESCRIBE "+qident(sheet)).fetchall()
+                  out["schemas"][sheet]=[x[0] for x in meta]
+                  cur=con.execute("SELECT * FROM "+qident(sheet))
+                  cols=[x[0] for x in cur.description]
+                  rows=cur.fetchall()
+                  out["raw_rows"][sheet]=[dict(zip(cols,map(ser,row))) for row in rows]
+                  out["materializations"].append({"table":sheet,"read_xlsx_calls":1,"count":len(rows),"columns":cols,"query":query,"status":"PASS"})
+              con.close()
+              out["phase"]="analysis"
+              qs=[]
+              def add(n,s,sql):
+                  qs.append({"name":n,"scope":s,"sql":sql})
+              for t in allowed:
+                  add("row_count_"+t,t,"SELECT COUNT(*) AS row_count FROM "+qident(t))
+              for t in ("fiat_transactions","crypto_transactions"):
+                  dim = "currency" if t=="fiat_transactions" else "asset"
+                  if has(t,dim,"status","direction","amount"):
+                      add("instrument_state_"+t,t,"SELECT "+qident(dim)+" AS instrument,status,direction,COUNT(*) AS records,SUM(TRY_CAST(amount AS DOUBLE)) AS amount_native FROM "+qident(t)+" GROUP BY 1,2,3 ORDER BY 1,2,3")
+                  if has(t,dim,"status","direction","amount","uid"):
+                      add("per_user_direction_"+t,t,"SELECT "+qident(dim)+" AS instrument,status,TRY_CAST(uid AS VARCHAR) AS uid,COUNT(*) AS records,SUM(CASE WHEN direction='deposit' THEN TRY_CAST(amount AS DOUBLE) WHEN direction='withdrawal' THEN -TRY_CAST(amount AS DOUBLE) ELSE NULL END) AS sample_net_native FROM "+qident(t)+" GROUP BY 1,2,3 ORDER BY 1,2,3")
+                  if has(t,dim,"created_at","status"):
+                      add("created_time_"+t,t,"SELECT "+qident(dim)+" AS instrument,status,COUNT(*) AS records,MIN(TRY_CAST(created_at AS TIMESTAMP)) AS first_created,MAX(TRY_CAST(created_at AS TIMESTAMP)) AS last_created FROM "+qident(t)+" GROUP BY 1,2 ORDER BY 1,2")
+                  if has(t,"uid") and has("users","uid"):
+                      add("uid_integrity_"+t,t,"WITH a AS (SELECT TRY_CAST(uid AS BIGINT) AS uid_key,COUNT(*) AS n FROM "+qident(t)+" GROUP BY 1), u AS (SELECT TRY_CAST(uid AS BIGINT) AS uid_key,COUNT(*) AS n FROM users GROUP BY 1) SELECT COUNT(*) AS tx_uid_groups,SUM(CASE WHEN u.uid_key IS NULL THEN a.n ELSE 0 END) AS unmatched_transactions,SUM(CASE WHEN u.n>1 THEN a.n ELSE 0 END) AS transactions_with_duplicate_user_key FROM a LEFT JOIN u USING(uid_key)")
+                  if has(t,"status","completed_at"):
+                      add("status_time_"+t,t,"SELECT status,COUNT(*) AS records,COUNT(completed_at) AS with_completed_at FROM "+qident(t)+" GROUP BY 1 ORDER BY 1")
+              if has("users","uid"):
+                  add("users_uid_uniqueness","users","SELECT COUNT(*) AS rows,COUNT(DISTINCT TRY_CAST(uid AS BIGINT)) AS unique_uid,COUNT(*)-COUNT(DISTINCT TRY_CAST(uid AS BIGINT)) AS missing_or_duplicated FROM users")
+              if has("fiat_transactions","uid") and has("crypto_transactions","uid"):
+                  add("cross_rail_cooccurrence","users + transactions","WITH f AS (SELECT TRY_CAST(uid AS BIGINT) AS uid,COUNT(*) AS n_fiat FROM fiat_transactions GROUP BY 1), c AS (SELECT TRY_CAST(uid AS BIGINT) AS uid,COUNT(*) AS n_crypto FROM crypto_transactions GROUP BY 1) SELECT f.uid,f.n_fiat,c.n_crypto FROM f JOIN c USING(uid) ORDER BY uid")
+              if has("exchange_rates","asset","rate_to_usdt","effective_date"):
+                  add("rate_coverage","exchange_rates","SELECT asset,COUNT(*) AS rows,COUNT(DISTINCT TRY_CAST(rate_to_usdt AS DOUBLE)) AS distinct_rates,MIN(TRY_CAST(effective_date AS DATE)) AS min_effective_date,MAX(TRY_CAST(effective_date AS DATE)) AS max_effective_date FROM exchange_rates GROUP BY 1 ORDER BY 1")
+              def execute(item):
+                  db=duckdb.connect("ontology-20261008.duckdb",read_only=True)
+                  try:
+                      cur=db.execute(item["sql"])
+                      cols=[x[0] for x in cur.description]
+                      res=[dict(zip(cols,map(ser,r))) for r in cur.fetchall()]
+                      return {**item,"status":"PASS","row_count":len(res),"rows":res}
+                  except Exception as e:
+                      return {**item,"status":"FAIL","error":str(e)}
+                  finally: db.close()
+              with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+                  out["queries"]=list(ex.map(execute,qs))
+              out["phase"]="done"
+              out["checks"]=[{"name":"four_materializations","pass":len(out["materializations"])==4},{"name":"allowed_tables_only","pass":set(out["schemas"])==set(allowed)},{"name":"init_once","pass":len(out["init"])==4},{"name":"SQL_queries","pass":all(x["status"]=="PASS" for x in out["queries"])}]
+              dump()
+              print("ONTOLOGY_E2E_SUMMARY",json.dumps({"version":out["duckdb_version"],"phase":out["phase"],"counts":{x["table"]:x["count"] for x in out["materializations"]},"check_count":len(out["queries"]),"failures":[x["name"] for x in out["queries"] if x["status"]=="FAIL"]},ensure_ascii=False))
+          except Exception as e:
+              out["phase"]="blocked"
+              out["error"]=repr(e)
+              out["traceback"]=traceback.format_exc()
+              dump()
+              print("ONTOLOGY_E2E_BLOCKED",repr(e))
+              traceback.print_exc()
+              raise
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ontology-e2e-20261008-evidence
+          path: ontology-e2e-20261008.json
+          if-no-files-found: warn
