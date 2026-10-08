@@ -54,6 +54,10 @@ DuckDB 不得替换。只锁定 URL 时，可暂存该 URL 的完整原始字节
 
 所有 SQL（静态、生成、示例、验证、最终）统一规范缩进和换行；网页呈现必须统一 SQL 语法高亮，复制操作输出**格式化后的纯 SQL**，不含 HTML、行号或装饰字符。单 HTML 不得依赖未验证的远程 CDN 才能阅读核心报告。详情见 `references/runtime.md`。
 
+单 HTML 的所有 SQL 使用同一 `scripts/sql_ui.js` 格式化、语法高亮和复制入口；静态与动态代码路径一致。真实浏览器、实际页面 Origin、原生 Clipboard API 未实测时不得标记端到端通过；Mock 复制不算验收。
+
+原始 `read_xlsx` 读取通过、CSV 导出成功，不等于四表各物化一次或业务分析完成。物化应在同一 DuckDB 会话中提供 `CREATE ... TABLE ... AS SELECT * FROM read_xlsx(...)` 的真实回执；后续查询只引用物化表。报告逐 Gate 记录真实 Result，未通过时保留阻塞证据。
+
 ## 同源 GitHub 资源恢复
 
 原始 `raw.githubusercontent.com` 无法访问时，先定位对应 `github.com/{owner}/{repo}/blob/{ref}/{path}`，再验证 GitHub 仓库、ref、path 与原 URL 一一对应。能从 GitHub REST blobs 接口获取字节时，必须核对真实字节数、Git Blob SHA-1 以及 SHA-256；这是**同一 Git 对象的传输回退**，不能换用其他仓库、提交、镜像、样例或截图。访问 GitHub 页面不等于取得文件字节。
