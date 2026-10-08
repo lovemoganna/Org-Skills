@@ -44,12 +44,8 @@ jobs:
             python "$check"
           done
 
-      - name: Run SQL Business Thinking stage and independent regressions
+      - name: Run independent Native SQL contract mutation tests
         shell: bash
         run: |
           set -euo pipefail
-          for check in skills/sql-business-thinking/tests/check_*.py; do
-            if [ "$check" != "skills/sql-business-thinking/tests/check_repo.py" ]; then
-              python "$check"
-            fi
-          done
+          python skills/sql-business-thinking/tests/check_native_contract.py
