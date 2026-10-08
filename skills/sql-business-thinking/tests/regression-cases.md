@@ -1495,3 +1495,20 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 4. HTML 不需要 CDN、远程 JS、在线字体即可阅读；默认不显示过程追踪，不包含未经 D19 审核的看板。
 5. 执行 `python tests/check_d22_artifact.py`：正常 HTML 通过，修改比例、记录数、内容引用、SQL 或插入 Dashboard 的反例必须失败。
 6. 浏览器烟雾检查覆盖 1440 宽桌面和 390 宽手机：页面宽度不溢出；两张宽表在各自容器滚动；SQL 审计展开正常。此测试不代替下一阶段 D23 的完整 Rendered QA。
+
+
+## V50：D23 浏览器真实验收
+
+正式对象：`artifacts/verified-d22-report.html`。先执行 `tests/check_d22_artifact.py`，再由 `.github/workflows/sql-business-thinking-wasm-retest.yml` 的 `rendered_qa` job 调用 `tests/d23_rendered_qa.mjs`。
+
+验收项分别记录：
+
+1. 桌面 1440px、移动端 390px、窄屏 320px：内容可见、正文不产生整体横向溢出，两张宽表只在各自容器内横向滚动。
+2. 手机端表格具有可见的“左右滑动”提示；表格滚动容器可以通过键盘聚焦且显示焦点。
+3. 审计区两组 details 默认折叠；鼠标展开/关闭和键盘 Enter 展开/关闭真实通过。
+4. HTML 离线渲染不发网络请求，没有 JS 页面错误，不暗中执行 SQL，不混入 Dashboard。
+5. CJK 字体真实渲染：CI 安装中文字体，至少两种汉字输出的字形图像明显不同；截图必须人工复查，不能因为自动检查 PASS 就忽略中文方框。
+6. 使用 axe-core 检查 WCAG A/AA 常见自动可检测问题，包括宽表 `scrollable-region-focusable`；自动通过不等于所有无障碍标准完全合规。
+7. 上传桌面、移动端和 320px 截图及机器可读 `results.json`，任何独立子检查失败均不得宣称 D23 PASS。
+
+真实失败：首次 CI 手机端滚动表格未提供键盘访问，axe 判 `scrollable-region-focusable` FAIL；补 tabindex、region label 与 focus 样式后通过。首轮截图中文字呈方框但未被程序识别；修复 CI 中文字体并增加字形可辨检测。视觉复核又发现移动端缺少可见的横向滚动提示，补充提示和可执行断言。
