@@ -1,0 +1,105 @@
+name: Ontology Isolated Live Materialization
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ontology-live-isolated.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native DuckDB v1.4.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 2 https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip -o duckdb-cli.zip
+          unzip -q duckdb-cli.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Materialize only four allowed sheets from original URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > ontology-load.sql <<'SQL'
+          INSTALL httpfs;
+          
+          LOAD httpfs;
+          
+          INSTALL excel;
+          
+          LOAD excel;
+          
+          CREATE TABLE users AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'users',
+            header = true
+          );
+          
+          CREATE TABLE fiat_transactions AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'fiat_transactions',
+            header = true
+          );
+          
+          CREATE TABLE crypto_transactions AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'crypto_transactions',
+            header = true
+          );
+          
+          CREATE TABLE exchange_rates AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'exchange_rates',
+            header = true
+          );
+          SQL
+          sha256sum ontology-load.sql > ontology-load.sha256
+          ./duckdb -b analysis.duckdb < ontology-load.sql > duckdb-execution.log 2>&1 || { cat duckdb-execution.log; exit 1; }
+          cat duckdb-execution.log
+      - name: Save original engine schema, evidence and database
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, subprocess, hashlib, datetime, pathlib
+          names=["users","fiat_transactions","crypto_transactions","exchange_rates"]
+          evidence={'status':'EXECUTED','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'engine':'DuckDB 1.4.2 CLI','source_url':'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx','tables':{}}
+          for name in names:
+              def query(sql):
+                  r=subprocess.run(['./duckdb','-csv','analysis.duckdb','-c',sql],capture_output=True,text=True,check=True)
+                  return r.stdout
+              count=query('SELECT COUNT(*) AS rows FROM "'+name+'"')
+              desc=query('DESCRIBE "'+name+'"')
+              evidence['tables'][name]={'count_csv':count,'describe_csv':desc}
+              pathlib.Path(name+'-schema.csv').write_text(desc)
+              print(name, count.strip())
+              print(desc)
+          evidence['db_sha256']=hashlib.sha256(pathlib.Path('analysis.duckdb').read_bytes()).hexdigest()
+          pathlib.Path('ontology-receipt.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload reproducible execution environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ontology-live-original-read-xlsx
+          path: |
+            analysis.duckdb
+            duckdb
+            ontology-load.sql
+            ontology-load.sha256
+            duckdb-execution.log
+            ontology-receipt.json
+            *-schema.csv
+          if-no-files-found: warn
