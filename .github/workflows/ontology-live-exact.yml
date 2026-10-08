@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   source:
     runs-on: ubuntu-latest
@@ -23,4 +24,67 @@ jobs:
         with:
           name: exact-source-evidence
           path: evidence/
+          if-no-files-found: warn
+  gate1:
+    needs: source
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {name: exact-source-evidence, path: evidence/}
+      - name: Verify actual schema and identity relationships
+        shell: bash
+        run: |
+          python - <<'PY_GATE'
+          import csv,json,math,pathlib
+          p=pathlib.Path("evidence")
+          r=json.loads((p/"source-receipt.json").read_text())
+          assert r["status"]=="SOURCE_ONLY_PASS_NOT_GATE1"
+          names=("users","fiat_transactions","crypto_transactions","exchange_rates")
+          assert set(r["tables"])==set(names)
+          schema={n:list(csv.DictReader((p/("schema-"+n+".csv")).open())) for n in names}
+          assert all(rows and all(x.get("column_name") and x.get("column_type") for x in rows) for rows in schema.values())
+          raw={n:list(csv.DictReader((p/(n+".csv")).open())) for n in names}
+          def key(x):
+           v=float(x)
+           assert math.isfinite(v) and v.is_integer() and abs(v)<2**53
+           return int(v)
+          ids={key(x["uid"]) for x in raw["users"]}
+          assert len(ids)==len(raw["users"])
+          joins={}
+          for n,pk in (("fiat_transactions","fiat_order_id"),("crypto_transactions","crypto_order_id")):
+           rows=raw[n];found=[key(x["uid"]) for x in rows]
+           assert all(u in ids for u in found)
+           assert len({x[pk] for x in rows})==len(rows)
+           joins[n]={"rows":len(rows),"orphans":sum(u not in ids for u in found)}
+          record={"status":"PASS_SCOPED_SEMANTIC","source_snapshot_sha256":r["snapshot_sha256"],
+            "schema_types":{k:{x["column_name"]:x["column_type"] for x in v} for k,v in schema.items()},
+            "join_scope":"same uid is association only, not funds transfer",
+            "unit_boundary":"asset or currency separated",
+            "status_boundary":"completed is a record state, not final settlement",
+            "joins":joins}
+          (p/"gate1-ci.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n")
+          print(json.dumps({"status":record["status"],"joins":record["joins"]}))
+          PY_GATE
+      - uses: actions/upload-artifact@v4
+        with: {name: gate1-current-evidence, path: evidence/gate1-ci.json}
+  atomic:
+    needs: gate1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install duckdb==1.4.2
+      - uses: actions/download-artifact@v4
+        with: {name: exact-source-evidence, path: evidence/}
+      - uses: actions/download-artifact@v4
+        with: {name: gate1-current-evidence, path: evidence/}
+      - name: Execute post-Gate1 atomic SQL with independent read-only connections
+        run: python skills/ontology-constrained-analysis/analysis-trials/atomic_runner.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ontology-atomic-results
+          path: atomic/
           if-no-files-found: warn
