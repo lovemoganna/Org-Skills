@@ -44,6 +44,16 @@ DuckDB 不得替换。只锁定 URL 时，可暂存该 URL 的完整原始字节
 
 原始源 URL 可使用 `scripts/source_gate.py` 获取与校验。失败时脚本必须生成阻塞审计报告。规则见 `references/runtime.md`。
 
+## 浏览器与单 HTML 交付门禁
+
+涉及浏览器、DuckDB-WASM、单 HTML、远程数据或跨域资源时，先验证最终运行位置的真实能力，再实现或宣称可用。不得把服务器端可访问、连接器可读取、示例代码可运行，等同于最终浏览器可用。
+
+必须记录：实际页面 Origin（包括 `file://` 的限制）、目标 URL 的浏览器 GET/HEAD 与实际 CORS 响应、Range 请求、DuckDB-WASM 资源及扩展可用性、内存预算、数据导入方式、实际 SQL 结果。没有可操作的浏览器环境时，标记“浏览器未实测”；不得把文档说明当作环境测试。
+
+仅锁定数据源而未锁定读取 SQL 时，可将**从原 URL 取得且完整性校验通过**的原始字节注册到 DuckDB-WASM 虚拟文件系统，然后由原指定的 DuckDB 读取函数处理。远程 XLSX 直接读取失败时，优先尝试同源原始 XLSX 字节的 `registerFileBuffer` / `registerFileHandle` 与 `read_xlsx`，但必须实测扩展和函数；不得转为 CSV 或其他引擎。用户固定完整 SQL / URL 参数时，不得静默修改。
+
+所有 SQL（静态、生成、示例、验证、最终）统一规范缩进和换行；网页呈现必须统一 SQL 语法高亮，复制操作输出**格式化后的纯 SQL**，不含 HTML、行号或装饰字符。单 HTML 不得依赖未验证的远程 CDN 才能阅读核心报告。详情见 `references/runtime.md`。
+
 ## 执行纪律
 
 每次只处理一个阶段：
