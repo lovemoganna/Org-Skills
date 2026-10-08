@@ -4,6 +4,7 @@ on:
     branches: [run/ontology-four-sheet-20261008]
     paths:
       - "test-assets/ontology-four-sheet-20261008/full-analysis.sql"
+      - "test-assets/ontology-four-sheet-20261008/ontology-model.json"
       - ".github/workflows/ontology-four-sheet-full-analysis.yml"
   workflow_dispatch:
 permissions:
