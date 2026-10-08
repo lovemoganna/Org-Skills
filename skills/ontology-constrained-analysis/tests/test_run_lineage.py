@@ -39,6 +39,20 @@ class SequenceRegression(unittest.TestCase):
         d=fixture()
         d["queries"][0]["timestamp"]=(datetime.fromisoformat(d["stages"][0]["at"])-timedelta(seconds=1)).isoformat()
         self.assertTrue(any("ANALYSIS_SQL_BEFORE_GATE1" in e for e in check(d)))
+    def test_single_sum_before_gate_is_analysis(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "net-amount":{"sql":"SELECT SUM(amount) FROM orders"}}}
+        self.assertTrue(any("PRIOR_ANALYSIS_BEFORE_GATE1" in e for e in check(d,prior)))
+
+    def test_multi_table_simple_counts_before_gate_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries":{
+            "row-counts":{"sql":"SELECT COUNT(*) FROM orders UNION ALL SELECT COUNT(*) FROM users"}}}
+        self.assertEqual([],check(d,prior))
+
     def test_schema_discovery_before_gate_allowed(self):
         d=fixture();before=(datetime.fromisoformat(d["stages"][0]["at"])-timedelta(seconds=1)).isoformat()
         prior={"generated_at":before,"queries":{"schema-only":{"sql":"DESCRIBE orders"}}}
