@@ -69,57 +69,80 @@ jobs:
           for name in ['flights','weather','planes']:
               run('schema_'+name, 'DESCRIBE SELECT * FROM '+name)
           run('native_semantics','SELECT MIN(year) AS min_year, MAX(year) AS max_year, COUNT(*) FILTER (WHERE dep_delay IS NOT NULL) AS delays_known, COUNT(*) FILTER (WHERE dep_delay IS NULL) AS delays_missing, COUNT(*) FILTER (WHERE hour IS NOT NULL) AS scheduled_hour_known FROM flights')
-          dup_weather=run('weather_key_uniqueness','SELECT COUNT(*) AS duplicated_keys FROM (SELECT origin, year, month, day, hour FROM weather GROUP BY 1,2,3,4,5 HAVING COUNT(*) > 1)')[0]['duplicated_keys']
-          dup_planes=run('plane_key_uniqueness','SELECT COUNT(*) AS duplicated_tailnums FROM (SELECT tailnum FROM planes WHERE tailnum IS NOT NULL GROUP BY 1 HAVING COUNT(*) > 1)')[0]['duplicated_tailnums']
-          out['checks']['weather_relation_valid']=dup_weather==0
-          out['checks']['planes_relation_valid']=dup_planes==0
-          run('flight_plane_coverage', 'SELECT COUNT(*) AS flights, COUNT(p.tailnum) AS matched_plane_rows, COUNT(*) FILTER (WHERE f.tailnum IS NULL) AS no_tailnum FROM flights f LEFT JOIN planes p ON f.tailnum = p.tailnum')
-          if dup_weather != 0:
-              out['checks']['stop_reason']='WEATHER_JOIN_FANOUT'
+          flight_cols={r['column_name'] for r in out['results']['schema_flights']}
+          weather_cols={r['column_name'] for r in out['results']['schema_weather']}
+          plane_cols={r['column_name'] for r in out['results']['schema_planes']}
+          required={'origin','month','hour','dep_delay'}
+          missing=sorted(required-flight_cols)
+          if missing:
+              raise RuntimeError('FLIGHT_REQUIRED_FIELDS_ABSENT:'+','.join(missing))
+          weather_keys={'origin','year','month','day','hour'}
+          if not weather_keys.issubset(weather_cols):
+              out['checks']['weather_relation_status']='BLOCKED_MISSING_KEYS'
+              out['checks']['weather_missing_keys']=sorted(weather_keys-weather_cols)
           else:
-              run('weather_join_coverage', 'SELECT COUNT(*) AS flights, COUNT(w.origin) AS matched_weather, COUNT(*) FILTER (WHERE w.precip IS NOT NULL) AS precip_known FROM flights f LEFT JOIN weather w ON f.origin=w.origin AND f.year=w.year AND f.month=w.month AND f.day=w.day AND f.hour=w.hour')
-              con.execute("""CREATE TEMP VIEW matched AS SELECT f.origin, f.month, f.dep_delay, f.carrier, f.dest, w.precip
-                FROM flights f JOIN weather w ON f.origin=w.origin AND f.year=w.year AND f.month=w.month AND f.day=w.day AND f.hour=w.hour
-                WHERE f.dep_delay IS NOT NULL AND w.precip IS NOT NULL AND w.precip >= 0""")
-              run('wet_dry','''SELECT CASE WHEN precip > 0 THEN 'wet' ELSE 'dry' END AS condition, COUNT(*) AS flights,
-                     COUNT(*) FILTER (WHERE dep_delay > 0) AS late_count,
-                     ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay > 0)/COUNT(*),2) AS late_pct,
-                     ROUND(AVG(dep_delay),2) AS avg_dep_delay_minutes, ROUND(MEDIAN(dep_delay),2) AS median_dep_delay_minutes
-                     FROM matched GROUP BY 1 ORDER BY 1''')
-              run('airport_month','''SELECT origin, month,
-                   COUNT(*) FILTER (WHERE precip > 0) AS wet_n,
-                   COUNT(*) FILTER (WHERE precip = 0) AS dry_n,
-                   ROUND(100.0*COUNT(*) FILTER (WHERE precip > 0 AND dep_delay > 0)/NULLIF(COUNT(*) FILTER (WHERE precip>0),0),2) AS wet_late_pct,
-                   ROUND(100.0*COUNT(*) FILTER (WHERE precip = 0 AND dep_delay > 0)/NULLIF(COUNT(*) FILTER (WHERE precip=0),0),2) AS dry_late_pct
-                   FROM matched GROUP BY 1,2 ORDER BY 1,2''')
-              run('month_airport_standardized','''WITH strata AS (
-                   SELECT origin, month,
-                   COUNT(*) FILTER (WHERE precip>0) AS wet_n,
-                   COUNT(*) FILTER (WHERE precip=0) AS dry_n,
-                   COUNT(*) FILTER (WHERE precip>0 AND dep_delay>0)::DOUBLE / NULLIF(COUNT(*) FILTER (WHERE precip>0),0) AS wet_rate,
-                   COUNT(*) FILTER (WHERE precip=0 AND dep_delay>0)::DOUBLE / NULLIF(COUNT(*) FILTER (WHERE precip=0),0) AS dry_rate
-                   FROM matched GROUP BY 1,2
-                   )
-                   SELECT COUNT(*) AS comparable_strata,
-                   SUM(wet_n+dry_n) AS flights_in_comparable_strata,
-                   ROUND(100.0*SUM((wet_n+dry_n)*(wet_rate-dry_rate))/SUM(wet_n+dry_n),2) AS pooled_weighted_diff_pp,
-                   COUNT(*) FILTER (WHERE wet_rate>dry_rate) AS strata_wet_higher,
-                   COUNT(*) FILTER (WHERE wet_rate<dry_rate) AS strata_dry_higher
-                   FROM strata WHERE wet_n>0 AND dry_n>0''')
-              run('tail_robustness','''WITH cut AS (SELECT QUANTILE_CONT(dep_delay,0.99) AS high_cut FROM matched),
-                   limited AS (SELECT m.* FROM matched m CROSS JOIN cut WHERE m.dep_delay <= cut.high_cut)
-                   SELECT CASE WHEN precip>0 THEN 'wet' ELSE 'dry' END AS condition,
-                   COUNT(*) AS flights, ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_pct,
-                   ROUND(AVG(dep_delay),2) AS mean_minutes
-                   FROM limited GROUP BY 1 ORDER BY 1''')
+              weather_duplicates=run('weather_key_uniqueness',
+                  'SELECT COUNT(*) AS duplicated_keys FROM (SELECT origin,year,month,day,hour FROM weather GROUP BY 1,2,3,4,5 HAVING COUNT(*)>1)')[0]['duplicated_keys']
+              out['checks']['weather_relation_status']='READY' if weather_duplicates==0 else 'BLOCKED_JOIN_FANOUT'
+          if 'tailnum' in flight_cols and 'tailnum' in plane_cols:
+              plane_duplicates=run('plane_key_uniqueness',
+                  'SELECT COUNT(*) AS duplicated_tailnums FROM (SELECT tailnum FROM planes WHERE tailnum IS NOT NULL GROUP BY 1 HAVING COUNT(*)>1)')[0]['duplicated_tailnums']
+              out['checks']['plane_relation_status']='READY' if plane_duplicates==0 else 'BLOCKED_JOIN_FANOUT'
+              if plane_duplicates==0:
+                  run('flight_plane_coverage',
+                      'SELECT COUNT(*) AS flights, COUNT(p.tailnum) AS matched_plane_rows, COUNT(*) FILTER (WHERE f.tailnum IS NULL) AS no_tailnum FROM flights f LEFT JOIN planes p ON f.tailnum=p.tailnum')
+          else:
+              out['checks']['plane_relation_status']='BLOCKED_NO_JOIN_KEY'
+          run('flight_hour_rates',"""SELECT hour AS scheduled_hour, COUNT(*) AS flights,
+              COUNT(*) FILTER (WHERE dep_delay>0) AS late_departures,
+              ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_share_pct,
+              ROUND(AVG(dep_delay),2) AS mean_delay_min
+              FROM flights WHERE dep_delay IS NOT NULL AND hour BETWEEN 0 AND 23
+              GROUP BY 1 ORDER BY 1""")
+          con.execute("""CREATE TEMP VIEW period_flights AS
+              SELECT origin, month, carrier, dep_delay,
+              CASE WHEN hour BETWEEN 6 AND 11 THEN '06-11'
+                   WHEN hour BETWEEN 18 AND 23 THEN '18-23'
+                   ELSE NULL END AS period
+              FROM flights WHERE dep_delay IS NOT NULL
+              AND (hour BETWEEN 6 AND 11 OR hour BETWEEN 18 AND 23)""")
+          run('period_compare',"""SELECT period,COUNT(*) AS flights,
+               COUNT(*) FILTER (WHERE dep_delay>0) AS late_departures,
+               ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_share_pct,
+               ROUND(AVG(dep_delay),2) AS mean_delay_minutes,
+               ROUND(MEDIAN(dep_delay),2) AS median_delay_minutes
+               FROM period_flights GROUP BY 1 ORDER BY 1""")
+          run('origin_period',"""SELECT origin,period,COUNT(*) AS flights,
+               ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_share_pct
+               FROM period_flights GROUP BY 1,2 ORDER BY 1,2""")
+          run('month_origin_standardized',"""WITH strata AS(
+               SELECT origin,month,
+               COUNT(*) FILTER (WHERE period='06-11') AS early_n,
+               COUNT(*) FILTER (WHERE period='18-23') AS evening_n,
+               COUNT(*) FILTER (WHERE period='06-11' AND dep_delay>0)::DOUBLE/NULLIF(COUNT(*) FILTER (WHERE period='06-11'),0) AS early_rate,
+               COUNT(*) FILTER (WHERE period='18-23' AND dep_delay>0)::DOUBLE/NULLIF(COUNT(*) FILTER (WHERE period='18-23'),0) AS evening_rate
+               FROM period_flights GROUP BY 1,2)
+               SELECT COUNT(*) AS comparable_strata,
+               SUM(early_n+evening_n) AS flights_in_comparable_strata,
+               ROUND(100.0*SUM((early_n+evening_n)*(evening_rate-early_rate))/SUM(early_n+evening_n),2) AS weighted_evening_minus_morning_pp,
+               COUNT(*) FILTER (WHERE evening_rate>early_rate) AS evening_higher_strata,
+               COUNT(*) FILTER (WHERE evening_rate<early_rate) AS morning_higher_strata
+               FROM strata WHERE early_n>0 AND evening_n>0""")
+          run('late_tail_sensitivity',"""WITH cutoff AS(
+               SELECT QUANTILE_CONT(dep_delay,0.99) AS p99 FROM period_flights),
+               limited AS (SELECT p.* FROM period_flights p CROSS JOIN cutoff WHERE p.dep_delay<=cutoff.p99)
+               SELECT period,COUNT(*) AS flights,
+               ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_share_pct,
+               ROUND(AVG(dep_delay),2) AS mean_delay_minutes
+               FROM limited GROUP BY 1 ORDER BY 1""")
           path=output/'blind-analysis-results.json'
           path.write_text(json.dumps(out,ensure_ascii=False,indent=2,default=str))
           (output/'blind-analysis-sql.sql').write_text('\n\n'.join('-- '+k+'\n'+v.rstrip(';')+';' for k,v in out['sql'].items()))
           printable={'duckdb':out['duckdb'],'sources':[{'url':s['url'],'bytes':s['bytes'],'sha256':s['sha256'],'length_verified':s['length_verified']} for s in manifest],
           'checks':out['checks'],'results':{k:v for k,v in out['results'].items() if not k.startswith('schema_') and k!='airport_month'}}
           print('BLIND_ANALYSIS_JSON='+json.dumps(printable,ensure_ascii=False,default=str))
-          if not out['checks']['weather_relation_valid'] or not out['checks']['planes_relation_valid']:
-              raise SystemExit('JOIN_CARDINALITY_BLOCKED')
+          if missing:
+              raise SystemExit('FLIGHT_SCHEMA_BLOCKED')
           PY
       - name: Upload raw receipts and SQL
         if: always()
