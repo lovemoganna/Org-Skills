@@ -81,6 +81,8 @@ def validate(model, schemas):
                 errors.append(f"ATOM_{n}:INVALID_EVIDENCE:{ref}")
                 continue
             table, sep, column = ref.partition(".")
+            if not sep or not column:
+                errors.append(f"ATOM_{n}:SOURCE_MUST_NAME_FIELD:{ref}")
             if table not in schemas:
                 errors.append(f"ATOM_{n}:FORBIDDEN_OR_UNKNOWN_TABLE:{table}")
             elif sep and column not in schemas[table]:
