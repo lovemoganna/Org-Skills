@@ -13,7 +13,7 @@ CHARTS = {"text", "comparison_table", "count_table"}
 
 def blob_sha(text):
     raw = text.encode("utf-8")
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 
 def validate(plan, spec, source_text):
