@@ -118,7 +118,6 @@ ORDER BY account_status;
 -- fiat_status
 .once artifacts/fiat_status.csv
 SELECT status, direction, COUNT(*) AS orders,
-  SUM(amount) AS sum_amount_mixed_currency_not_aggregable,
   COUNT(*) FILTER (WHERE completed_at IS NULL) AS completion_time_null,
   COUNT(*) FILTER (WHERE completed_at < created_at) AS completion_time_before_created
 FROM fiat_transactions
