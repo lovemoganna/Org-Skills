@@ -265,7 +265,7 @@ JOIN series_state AS s
     zb=zero_breakdown
     assert zb[0]+zb[1]==int(d["zero_cells"]), "ZERO_ACCOUNTING_FAILED"
     findings.append({
-        "title":"绝大多数零值来自210条全零序列",
+        "title":"零值构成："+str(m[1])+"条全零序列",
         "fact":"全零序列贡献 "+str(zb[0])+" 个零值，其余曾出现非零读数的序列贡献 "+str(zb[1])+" 个零值；总体均值 "+str(zb[2])+"，仅保留曾出现非零读数的序列均值 "+str(zb[3])+"（原文件单位未知）。",
         "alternative":"全零源的业务含义不明，可能为未启用、真实零负荷或源端补零。",
         "limit":"不能据此认定全零记录必须删除；两种均值反映不同统计总体，均应披露。"
