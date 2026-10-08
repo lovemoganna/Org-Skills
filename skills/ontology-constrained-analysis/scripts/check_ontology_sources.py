@@ -106,7 +106,7 @@ def validate(model, schemas):
 
 
 
-def validate_relation_domains(model, values):
+def validate_relation_domains(model, values, schemas=None):
     """Verify explicitly claimed category membership with observed value sets.
 
     Evidence values must be extracted from the CURRENT allowed DuckDB tables.
@@ -124,6 +124,14 @@ def validate_relation_domains(model, values):
         category_source = claim.get("category_source")
         if relation not in registered:
             errors.append(f"DOMAIN_{i}:UNKNOWN_RELATION")
+        if schemas is not None:
+            for ref in (source, category_source):
+                if not isinstance(ref, str) or ref.count(".") != 1:
+                    errors.append(f"DOMAIN_{i}:INVALID_DOMAIN_FIELD:{ref}")
+                    continue
+                table, column = ref.split(".")
+                if table not in schemas or column not in schemas[table]:
+                    errors.append(f"DOMAIN_{i}:FORBIDDEN_OR_UNKNOWN_DOMAIN_FIELD:{ref}")
         if not source or not category_source or source not in values or category_source not in values:
             errors.append(f"DOMAIN_{i}:UNVERIFIED_OBSERVED_VALUES")
             continue
@@ -147,7 +155,7 @@ def main():
         errors = validate(model, schemas)
         if model.get("relation_domain_claims"):
             observed = json.loads(Path(args.domain_values).read_text(encoding="utf-8")) if args.domain_values else {}
-            errors.extend(validate_relation_domains(model, observed))
+            errors.extend(validate_relation_domains(model, observed, schemas))
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         errors = [f"INPUT_ERROR:{exc}"]
     receipt = {
