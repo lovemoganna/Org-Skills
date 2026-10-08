@@ -15,6 +15,16 @@ async function probe(){
   const body=await response.arrayBuffer();
   out.remote_fetch={status:response.ok?'ACCESSIBLE':'HTTP_ERROR',http_status:response.status,bytes:body.byteLength,sha256:await hash(body),cors_header:response.headers.get('access-control-allow-origin'),range_header:response.headers.get('accept-ranges')};
  }catch(e){out.remote_fetch={status:'BLOCKED',error:String(e)}}finally{clearTimeout(timer)}
+ // HEAD and Range are separate capability probes. A readable GET alone does not prove Range.
+ for(const check of ['HEAD','RANGE']){
+  const c=new AbortController(),timeout=setTimeout(()=>c.abort(),9000);
+  try{
+   const opt=check==='HEAD'?{method:'HEAD',signal:c.signal,mode:'cors'}:{headers:{Range:'bytes=0-31'},signal:c.signal,mode:'cors'};
+   const resp=await fetch(remote,opt);
+   const size=check==='RANGE'?(await resp.arrayBuffer()).byteLength:null;
+   out.remote_fetch[check.toLowerCase()]={status:resp.status,bytes:size,content_range:resp.headers.get('content-range'),accept_ranges:resp.headers.get('accept-ranges')};
+  }catch(e){out.remote_fetch[check.toLowerCase()]={error:String(e)}}finally{clearTimeout(timeout)}
+ }
  let db;
  try{
   const worker=new Worker(new URL('./duckdb-browser-eh.worker.js',location.href));
@@ -27,9 +37,11 @@ async function probe(){
   out.duckdb.initialization=commands;out.duckdb.status='READY';
   const response=await fetch('./source.xlsx');if(!response.ok)throw Error('original source GET HTTP '+response.status);
   const bytes=await response.arrayBuffer(),expected=await(await fetch('./source-receipt.json')).json(),actual=await hash(bytes);
-  if(bytes.byteLength!==expected.bytes||actual!==expected.sha256)throw Error('SOURCE_BYTES_MISMATCH');
+  const sourceLength=bytes.byteLength;
+  if(sourceLength!==expected.bytes||actual!==expected.sha256)throw Error('SOURCE_BYTES_MISMATCH');
   await db.registerFileBuffer('source.xlsx',new Uint8Array(bytes));
-  out.vfs={status:'BYTES_VERIFIED_REGISTERED',bytes:bytes.byteLength,sha256:actual,source_url:remote,registered_path:'source.xlsx',path_changed_from_fixed_remote_SQL:true};
+  out.vfs={status:'BYTES_VERIFIED_REGISTERED',bytes:sourceLength,sha256:actual,source_url:remote,registered_path:'source.xlsx',path_changed_from_fixed_remote_SQL:true,
+    equals_browser_direct_export:out.remote_fetch.sha256?actual===out.remote_fetch.sha256:null};
   for(const sheet of allow){
    await conn.query("CREATE TEMP TABLE "+sheet+" AS SELECT * FROM read_xlsx('source.xlsx', sheet = '"+sheet+"', header = true);");
    out.sheets[sheet]={row_count:rows(await conn.query('SELECT COUNT(*) AS row_count FROM '+sheet))[0].row_count};
