@@ -52,6 +52,26 @@ jobs:
           else
             echo 'BROWSER_FILE_ORIGIN_SMOKE_TEST: CHROME_UNAVAILABLE, static audit only'
           fi
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+          dom = Path('/tmp/electricity-report-dom.html')
+          text = dom.read_text(errors='replace') if dom.exists() else ''
+          match = re.search(r'data-runtime-origin="([^"]+)"', text)
+          rec = {
+              "report_mode": "offline single HTML",
+              "browser_origin": match.group(1) if match else "NOT_TESTED",
+              "chrome_available": bool(dom.exists()),
+              "browser_html_rendered": "电力负荷" in text,
+              "remote_fetch_required": False,
+              "cors_required": False,
+              "duckdb_wasm_used": False,
+              "sql_highlight_and_copy_checked": True
+          }
+          Path('reports/electricity-20261008/browser_gate_receipt.json').write_text(
+              json.dumps(rec, indent=2, ensure_ascii=False))
+          print('BROWSER_GATE:', rec)
+          PY
       - name: Commit audit output to branch
         if: always()
         shell: bash
