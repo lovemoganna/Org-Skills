@@ -33,15 +33,26 @@ const mime={'.html':'text/html; charset=utf-8','.mjs':'application/javascript','
   if(!['PARTIAL_CONTENT_CONFIRMED','NOT_CONFIRMED'].includes(result.remote_fetch?.range_capability)) {
     throw new Error('RANGE_PROBE_NOT_CLASSIFIED');
   }
-  if(!['PASS','BLOCKED'].includes(result.fixed_url_sql?.status)){
-    throw new Error('FIXED_REMOTE_SQL_UNVERIFIED_OR_INCONSISTENT');
+  const permitted=['users','fiat_transactions','crypto_transactions','exchange_rates'];
+  if(!['PASS','PARTIAL_OR_BLOCKED'].includes(result.fixed_url_sql?.status)) {
+    throw new Error('FIXED_REMOTE_SQL_NOT_CLASSIFIED');
   }
-  if(result.fixed_url_sql.status==='PASS' &&
-     String(result.fixed_url_sql.row_count)!==String(result.sheets?.users?.row_count)) {
-    throw new Error('FIXED_REMOTE_SQL_ROW_COUNT_MISMATCH');
+  for(const sheet of permitted){
+    const v=result.fixed_url_sql.sheets?.[sheet];
+    if(!v||!['PASS','BLOCKED','ROW_COUNT_MISMATCH'].includes(v.status)) {
+      throw new Error('FIXED_REMOTE_SQL_SHEET_MISSING_OR_UNCLASSIFIED: '+sheet);
+    }
+    if(v.status==='PASS' && String(v.row_count)!==String(result.sheets?.[sheet]?.row_count)) {
+      throw new Error('FIXED_REMOTE_SQL_ROW_COUNT_MISMATCH: '+sheet);
+    }
+  }
+  const fullSuccess=permitted.every(sheet=>result.fixed_url_sql.sheets[sheet].status==='PASS');
+  if((result.fixed_url_sql.status==='PASS')!==fullSuccess) {
+    throw new Error('FIXED_REMOTE_SQL_AGGREGATE_STATUS_INVALID');
   }
   console.log('CAPABILITY_VERDICTS',JSON.stringify({
     exact_remote_sql:result.fixed_url_sql.status,
+    fixed_sql_sheets:Object.fromEntries(permitted.map(sheet=>[sheet,result.fixed_url_sql.sheets[sheet].status])),
     range:result.remote_fetch.range_capability,
     vfs:result.status
   }));
