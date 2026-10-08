@@ -403,6 +403,7 @@ jobs:
           if-no-files-found: error
 
   sql-browser:
+    needs: ontology-native-data-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -420,6 +421,7 @@ jobs:
         run: node skills/ontology-constrained-analysis/tests/test_sql_browser.cjs
 
   wasm-vfs:
+    needs: ontology-native-data-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
