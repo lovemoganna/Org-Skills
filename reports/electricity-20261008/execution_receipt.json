@@ -1,0 +1,69 @@
+{
+  "source_url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt",
+  "checked_utc": "2026-10-08T07:43:46.125389+00:00",
+  "stages": [
+    {
+      "stage": "Source Gate",
+      "status": "PASS"
+    },
+    {
+      "stage": "Format Gate",
+      "status": "PASS"
+    },
+    {
+      "stage": "DuckDB Grain + Quality Gate",
+      "status": "PASS"
+    }
+  ],
+  "sql": [],
+  "status": "BLOCKED",
+  "source": {
+    "http_status": 200,
+    "content_length": "30363176",
+    "content_type": "text/plain; charset=utf-8",
+    "bytes": 30363176,
+    "sha256": "c765fe5543010d52f0c0622e424b9923e3851580c5ecf61c7ed6c99be2be155a",
+    "local_path": "reports/electricity-20261008/LD2011_2014.txt"
+  },
+  "format": {
+    "delimiter": ";",
+    "header_width": 371,
+    "first_record_width": 371,
+    "decimal_example": "71,7703349282297",
+    "first_time": "2011-01-01 00:15:00",
+    "headers_sample": [
+      "",
+      "MT_001",
+      "MT_002",
+      "MT_003",
+      "MT_004"
+    ],
+    "newline": "CRLF"
+  },
+  "runtime": {
+    "duckdb": "1.4.2",
+    "platform": "linux",
+    "html_mode": "single self-contained static HTML",
+    "browser_remote_fetch": false,
+    "wasm": false,
+    "cors_required": false,
+    "file_origin": "opaque/null when opened as file://; no fetch calls"
+  },
+  "profile": {
+    "time_rows": "9999",
+    "long_rows": "3699630",
+    "clients": "370",
+    "unique_timestamps": "9999",
+    "min_time": "2011-01-01 00:15:00",
+    "max_time": "2011-04-15 03:45:00",
+    "bad_timestamp_cells": "0",
+    "blank_cells": "0",
+    "bad_numeric_cells": "0",
+    "zero_cells": "2126479",
+    "negative_cells": "0",
+    "min_value": "0.0",
+    "max_value": "37083.3333333333"
+  },
+  "error": "AssertionError: ",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Org-Skills/Org-Skills/skills/ontology-constrained-analysis/scripts/electricity_case_runner.py\", line 293, in <module>\n    try:main()\n        ^^^^^^\n  File \"/home/runner/work/Org-Skills/Org-Skills/skills/ontology-constrained-analysis/scripts/electricity_case_runner.py\", line 135, in main\n    assert len(ontology)>=4 and all(len(x)==13 for x in ontology)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}
