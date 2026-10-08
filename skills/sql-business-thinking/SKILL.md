@@ -113,16 +113,16 @@ Debug 支持：单跑、重跑、继续、回退、完整链路回归。每阶�
 → Renderer
 ```
 
-D21 再读取 `references/visualization-rendering.md`，执行图型、单位、布局和信息预算检查。
+D21 再读取 `references/visualization-rendering.md`，只读 D20 Spec 并单独生成 VisualizationPlan；执行图型、单位、布局和信息预算检查。
 
 硬规则：
 
-- 图型不是按字段名或习惯直接映射；重要图默认比较多个候选，再按语义、单位诚实、标签容量、阅读速度和实现可靠性淘汰；
+- 图型由数据形状和要表达的判断决定；简单场景直接选最清楚的方案，仅有真实取舍时比较候选；
 - 一个图只承担一个独立结论；图数量由独立结论数决定，不由字段数或 SQL 数决定；
 - 页面先锁定一种 Layout Archetype，再渲染；不得边生成边拼版；
 - 正文只保留“回答问题 / 改变判断 / 解释限制 / 提供必要验证入口”的内容，其余删除或折叠；
 - Presentation Engine 不得重新分析、改口径、补数据或绕过 Mandatory Gate。正确性优先于视觉效果；
-- **Artifact Presentation Gate：**候选竞争、淘汰理由、Layout Archetype 选择、Renderer 策略、Information Budget 判断等属于内部 ReportSpec / audit 信息，默认不得进入业务正文。最终 Artifact 必须反查可见文本，删除“候选比较后选择……”“这里选择……而不是……”等设计过程说明；除非用户明确要求解释设计决策。
+- **Artifact Presentation Gate：**必要选型理由、Layout Archetype、Renderer 策略和 Information Budget 判断属于内部 VisualizationPlan / audit，默认不得进入业务正文。最终 Artifact 必须反查可见文本，删除“候选比较后选择……”“这里选择……而不是……”等设计过程说明；除非用户明确要求解释设计决策。
 - **Canonical Remote Render Runner：**当本地 Rendered QA placement 失败且用户已授权把最终 HTML 送到远程 QA 时，优先复用仓库现有 `.github/workflows/sql-business-thinking-render-qa.yml`。用 `tests/prepare-render-qa-payload.py` 基于最终 HTML 原始 bytes 生成 gzip+base64 与 SHA256；只有 runner 返回当前 digest 对应的 `render-qa.json.state = PASS` 才算远程 Rendered QA PASS。若当前 GitHub connector 不暴露 `workflow_dispatch`，可使用 helper 生成的 `issue_envelope` 创建一次性 `[sqlbt-render-qa]` Issue 触发同一 runner；workflow 必须在读取后立即擦除 Issue 正文并关闭 Issue，禁止把 payload 写入 Git 历史。超过 inline payload 上限、HTML 未获远程发送授权、或不存在合法触发通道时，不得偷换成历史截图或截断 payload，按 Placement Gate 继续判断。
 - **Async Render Readiness Gate：**HTML 若包含异步数据加载、DuckDB-Wasm、延迟图表初始化或其他会在 `DOMContentLoaded` 后继续改变正文的任务，Artifact 必须声明 `<meta name="sqlbt-render-readiness" content="required">`，并且只在最终可见状态完成后设置 `document.documentElement.dataset.renderReady = "true"` 或 `window.__SQLBT_RENDER_READY__ = true`。Rendered QA 必须等待该 marker；固定 sleep、`DOMContentLoaded`、旧截图或“页面能打开”都不能证明异步 Artifact 已完成。超时标 `ASYNC_NOT_READY`，不得 PASS。
 
