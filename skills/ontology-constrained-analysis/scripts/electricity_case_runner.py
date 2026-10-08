@@ -57,7 +57,7 @@ def main():
     if not re.match(r"^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$",values[0]):raise RuntimeError("SOURCE_BAD_TIMESTAMP")
     stage("Format Gate","PASS")
     import duckdb
-    LOG["runtime"]={"duckdb":duckdb.__version__,"platform":sys.platform,"html_mode":"single self-contained static HTML","browser_remote_fetch":False,"wasm":False,"cors_required":False,"file_origin":"opaque/null when opened as file://; no fetch calls"}
+    LOG["runtime"]={"duckdb":duckdb.__version__,"platform":sys.platform,"html_mode":"single self-contained static HTML","browser_remote_fetch":False,"wasm":False,"cors_required":False,"file_origin":"browser-dependent; actual test in browser_gate_receipt.json; no fetch calls"}
     c=duckdb.connect(database=":memory:")
     c.execute("SET threads=4")
     sql_events=[]
@@ -442,7 +442,7 @@ function copySQL(button){const sql=button.parentElement.querySelector('code').te
     body+="<h2>五、复杂问题、竞争解释与稳健性（Gate 3）</h2>"+(finding_html or "<p>无可被本轮数据支持的 Validated Finding。</p>")
     body+="<h2>六、决策价值与展示约束（Gate 4）</h2><p>可用于决定是否先清洗全零序列、采用序列配对而非单看总体均值，以及确认样本覆盖范围；不支持因果推断、停电识别或完整电网总负荷判断。由于数据为一次性固定 TXT，缺少更新契约、决策使用者和持续监控场景，当前不生成 Dashboard。</p>"
     body+="<h2>七、实际 SQL 与真实结果</h2><p>所有 SQL 保留换行和缩进，并统一离线语法高亮；点击复制获得无标记的原始格式化 SQL。结果过多的表只显示已执行结果的前若干行，截断会标注。</p>"+sql_html
-    body+="<h2>八、复现与运行时审计</h2><p>执行环境为 GitHub Actions Ubuntu 原生 DuckDB；唯一数据 URL 为 <a href='"+E(URL)+"'>指定 TXT</a>。由脚本下载同一 URL 原始字节至临时路径并计算 SHA-256。报告为无外部依赖的单 HTML，浏览器 file:// 的 Origin 为 opaque/null；HTML 内不存在 fetch、XHR、WASM 或跨域请求，因此不依赖远程 CORS，也不声称已测试 DuckDB-WASM。运行时原生 DuckDB，不替换引擎。</p><p>记录文件：execution_receipt.json、sql_results.json、source_gate_receipt.json。同一分析必须重新联网取得同一 URL 的字节，并检查 SHA-256 是否改变；结果只适用于本次哈希对应的文件。</p>"
+    body+="<h2>八、复现与运行时审计</h2><p>执行环境为 GitHub Actions Ubuntu 原生 DuckDB；唯一数据 URL 为 <a href='"+E(URL)+"'>指定 TXT</a>。由脚本下载同一 URL 原始字节至临时路径并计算 SHA-256。报告为无外部依赖的单 HTML，浏览器实际 Origin 由 Chrome 测试回执 browser_gate_receipt.json 记录；HTML 内不存在 fetch、XHR、WASM 或跨域请求，因此不依赖远程 CORS，也不声称已测试 DuckDB-WASM。运行时原生 DuckDB，不替换引擎。</p><p>记录文件：execution_receipt.json、sql_results.json、source_gate_receipt.json。同一分析必须重新联网取得同一 URL 的字节，并检查 SHA-256 是否改变；结果只适用于本次哈希对应的文件。</p>"
     (OUT/"analysis_report.html").write_text(template.replace("__BODY__",body),encoding="utf-8")
     for obsolete in ("source_gate_blocked.md", "source_gate_blocked.html"):
         (OUT/obsolete).unlink(missing_ok=True)
