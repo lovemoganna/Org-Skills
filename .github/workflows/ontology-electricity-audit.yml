@@ -41,6 +41,50 @@ jobs:
                 "sha256": "c765fe5543010d52f0c0622e424b9923e3851580c5ecf61c7ed6c99be2be155a"}]}
           Path("/tmp/electricity-manifest.json").write_text(json.dumps(m))
           PY
+          python - <<'PY'
+          import importlib.util
+          import tempfile
+          from pathlib import Path
+          name="source_gate"
+          spec=importlib.util.spec_from_file_location(name,"skills/ontology-constrained-analysis/scripts/source_gate.py")
+          mod=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          original=mod.urllib.request.urlopen
+          class Response:
+              def __init__(self,code,headers,first,fail=False):
+                  self.status=code
+                  self.headers=headers
+                  self.first=first
+                  self.fail=fail
+                  self.calls=0
+              def __enter__(self):return self
+              def __exit__(self,*args):return False
+              def read(self,n):
+                  self.calls+=1
+                  if self.calls==1:return self.first
+                  if self.fail:raise OSError("simulated interrupted stream")
+                  return b""
+          calls=[]
+          def fake_open(request,timeout):
+              calls.append(dict(request.header_items()))
+              if len(calls)==1:
+                  return Response(200,{"Content-Length":"11","ETag":'"stable"'},b"abcdef",True)
+              assert request.get_header("Range")=="bytes=6-"
+              assert request.get_header("If-range")=='"stable"'
+              return Response(206,{"Content-Range":"bytes 6-10/11","ETag":'"stable"'},b"ghijk")
+          try:
+              mod.urllib.request.urlopen=fake_open
+              with tempfile.TemporaryDirectory() as d:
+                  entry={"name":"fixture.txt","url":"https://raw.githubusercontent.com/x/y/main/fixture.txt"}
+                  first=mod._fetch_raw_resumable(entry,Path(d),5)
+                  assert first["status"]=="SOURCE_BYTES_UNAVAILABLE" and first["partial_bytes_untrusted"]==6
+                  second=mod._fetch_raw_resumable(entry,Path(d),5)
+                  assert second["status"]=="BYTES_VERIFIED" and second["resumed_from_bytes"]==6
+                  assert (Path(d)/"fixture.txt").read_bytes()==b"abcdefghijk"
+                  print("HTTP_RANGE_RESUME_TEST: PASS")
+          finally:
+              mod.urllib.request.urlopen=original
+          PY
           ONTOLOGY_SOURCE_PREFER_GITHUB_BLOB=1 python \
             skills/ontology-constrained-analysis/scripts/source_gate.py \
             --manifest /tmp/electricity-manifest.json \
