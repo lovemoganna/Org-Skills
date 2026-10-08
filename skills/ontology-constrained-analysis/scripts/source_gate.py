@@ -6,96 +6,100 @@ import argparse, concurrent.futures, hashlib, html, json, pathlib, sys, tempfile
 from datetime import datetime, timezone
 
 
-def fetch_one(entry, dest, timeout):
-    url, name = entry['url'], entry['name']
-    status = {'name': name, 'url': url, 'status': 'SOURCE_BYTES_UNAVAILABLE'}
-    tmp = None
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent':'ontology-source-gate/1.0'}), timeout=timeout) as response:
-            with tempfile.NamedTemporaryFile('wb', dir=dest, delete=False, prefix='.partial_') as f:
-                tmp = pathlib.Path(f.name)
-                for chunk in iter(lambda: response.read(1024 * 1024), b''):
-                    f.write(chunk)
-        data_sha = hashlib.sha256()
-        blob_sha = hashlib.sha1()
-        size = tmp.stat().st_size
-        blob_sha.update(f'blob {size}\0'.encode())
-        with tmp.open('rb') as f:
-            for chunk in iter(lambda: f.read(1024 * 1024), b''):
-                data_sha.update(chunk); blob_sha.update(chunk)
-        expected_blob_sha = entry.get('git_blob_sha')
-        if expected_blob_sha and blob_sha.hexdigest() != expected_blob_sha:
-            status.update(status='INTEGRITY_FAILED', error='Git Blob SHA differs from expected', bytes=size, git_blob_sha=blob_sha.hexdigest())
-            return status
-        target = dest / name
-        tmp.replace(target)
-        tmp = None
-        status.update(status='BYTES_VERIFIED', bytes=size, sha256=data_sha.hexdigest(), git_blob_sha=blob_sha.hexdigest(), local_path=str(target))
-    except Exception as exc:
-        status['error'] = f'{type(exc).__name__}: {exc}'
-    finally:
-        if tmp and tmp.exists(): tmp.unlink()
-    return status
-
-
+# Transport implementations follow; no analytics occur in this module.
 
 # Same-file GitHub recovery: REST Contents resolves path/ref to a Git blob;
 # REST Git Blobs returns the full encoded bytes. Both hash and size are verified.
 def _verified_github_blob(entry, dest, timeout):
-    import base64, re, urllib.parse
-    url=entry["url"]
-    parsed=urllib.parse.urlsplit(url)
-    parts=parsed.path.strip("/").split("/")
-    if parsed.scheme!="https" or parsed.netloc!="raw.githubusercontent.com" or len(parts)<4:
-        raise ValueError("GitHub fallback requires an exact raw.githubusercontent.com owner/repo/ref/path")
-    owner,repo=parts[:2]
-    ref=entry.get("github_ref",parts[2])
-    path=entry.get("github_path","/".join(parts[3:]))
-    if "/".join(parts[2:])!=ref+"/"+path or ".." in parts or not path:
-        raise ValueError("GitHub fallback URL/ref/path ambiguity")
-    base=f"https://api.github.com/repos/{owner}/{repo}"
-    def api_json(endpoint):
-        request=urllib.request.Request(endpoint,headers={"User-Agent":"ontology-source-gate/2.0","Accept":"application/vnd.github+json"})
-        with urllib.request.urlopen(request,timeout=timeout) as response:
-            if response.status!=200:
-                raise IOError(f"GitHub REST HTTP {response.status}")
-            return json.load(response)
-    metadata_url=base+"/contents/"+urllib.parse.quote(path,safe="/")+"?ref="+urllib.parse.quote(ref,safe="")
-    metadata=api_json(metadata_url)
-    sha=metadata.get("sha")
-    if metadata.get("type")!="file" or not isinstance(sha,str) or not re.fullmatch(r"[0-9a-f]{40}",sha):
-        raise ValueError("GitHub Contents metadata missing valid Git blob")
-    if entry.get("git_blob_sha") and entry["git_blob_sha"]!=sha:
-        raise ValueError("GitHub branch blob differs from pinned original")
-    blob_url=base+"/git/blobs/"+sha
-    blob=api_json(blob_url)
-    if blob.get("sha")!=sha or blob.get("encoding")!="base64":
-        raise ValueError("GitHub Git Blobs response inconsistent")
-    payload=base64.b64decode(blob["content"])
-    if len(payload)!=metadata["size"] or len(payload)!=blob["size"]:
-        raise IOError("GitHub blob content length mismatch")
-    target=dest/entry["name"]
-    with tempfile.NamedTemporaryFile("wb",dir=dest,delete=False,prefix=".githubblob_") as stream:
-        stream.write(payload)
-        partial=pathlib.Path(stream.name)
-    try:
-        sha256=hashlib.sha256()
-        git=hashlib.sha1()
-        git.update(f"blob {len(payload)}\0".encode())
-        with partial.open("rb") as f:
-            for block in iter(lambda:f.read(1024*1024),b""):
-                sha256.update(block)
-                git.update(block)
-        if git.hexdigest()!=sha:
-            raise IOError("Git Blob SHA-1 mismatch after full decode")
-        if entry.get("sha256") and sha256.hexdigest()!=entry["sha256"]:
-            raise IOError("Expected SHA-256 mismatch")
-        partial.replace(target)
-        return {"name":entry["name"],"url":url,"status":"BYTES_VERIFIED",
-                "bytes":len(payload),"sha256":sha256.hexdigest(),"git_blob_sha":git.hexdigest(),
-                "transport":"github_git_blob_api","transport_url":blob_url,"local_path":str(target)}
-    finally:
-        partial.unlink(missing_ok=True)
+    """Resolve the exact repository file and stream its original bytes.
+
+    Metadata and web previews are not source bytes. Require metadata SHA/size
+    and verify the downloaded bytes against both before accepting any result.
+    """
+    import re
+    import urllib.parse
+    parsed = urllib.parse.urlsplit(entry["url"])
+    parts = parsed.path.strip("/").split("/")
+    if parsed.scheme != "https" or parsed.netloc != "raw.githubusercontent.com" or len(parts) < 4:
+        raise ValueError("GITHUB_RAW_URL_REQUIRED")
+    owner, repo = parts[:2]
+    ref = entry.get("github_ref", parts[2])
+    path = entry.get("github_path", "/".join(parts[3:]))
+    if "/".join(parts[2:]) != ref + "/" + path or ".." in parts or not path:
+        raise ValueError("GITHUB_REF_PATH_AMBIGUOUS")
+    quote = urllib.parse.quote
+    root = f"https://api.github.com/repos/{owner}/{repo}"
+    metadata_url = (root + "/contents/" + quote(path, safe="/")
+                    + "?ref=" + quote(ref, safe=""))
+    req = urllib.request.Request(metadata_url, headers={
+        "User-Agent": "ontology-source-gate/4.0",
+        "Accept": "application/vnd.github.object+json",
+    })
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        metadata = json.load(response)
+    sha, size = metadata.get("sha"), metadata.get("size")
+    if (metadata.get("type") != "file" or not isinstance(sha, str)
+            or not re.fullmatch(r"[0-9a-f]{40}", sha)
+            or type(size) is not int or size < 1):
+        raise ValueError("GITHUB_METADATA_INVALID")
+    if entry.get("git_blob_sha") and entry["git_blob_sha"] != sha:
+        raise ValueError("GITHUB_REF_CHANGED")
+    if entry.get("expected_bytes") is not None and entry["expected_bytes"] != size:
+        raise ValueError("GITHUB_SIZE_CHANGED")
+    blob_url = root + "/git/blobs/" + sha
+    file_url = ("https://github.com/" + owner + "/" + repo + "/raw/"
+                + quote(ref, safe="/") + "/" + quote(path, safe="/"))
+    attempts = []
+    for transport, endpoint, accept in (
+        ("github_git_blob_raw", blob_url, "application/vnd.github.raw+json"),
+        ("github_file_raw", file_url, "application/octet-stream"),
+    ):
+        partial = None
+        try:
+            request = urllib.request.Request(endpoint, headers={
+                "User-Agent": "ontology-source-gate/4.0",
+                "Accept": accept, "Accept-Encoding": "identity",
+            })
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                if response.status != 200:
+                    raise IOError(f"HTTP {response.status}")
+                with tempfile.NamedTemporaryFile("wb", dir=dest, delete=False,
+                                                 prefix=".githubblob_") as stream:
+                    partial = pathlib.Path(stream.name)
+                    for chunk in iter(lambda: response.read(1024 * 1024), b""):
+                        stream.write(chunk)
+            actual_size = partial.stat().st_size
+            if actual_size != size:
+                raise IOError(f"GITHUB_SIZE_MISMATCH: {actual_size}/{size}")
+            git = hashlib.sha1(f"blob {actual_size}\0".encode())
+            digest = hashlib.sha256()
+            with partial.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    git.update(chunk)
+                    digest.update(chunk)
+            if git.hexdigest() != sha:
+                raise IOError("GITHUB_GIT_BLOB_SHA_MISMATCH")
+            if entry.get("sha256") and digest.hexdigest() != entry["sha256"]:
+                raise IOError("SOURCE_SHA256_MISMATCH")
+            target = dest / entry["name"]
+            partial.replace(target)
+            partial = None
+            return {
+                "name": entry["name"], "url": entry["url"],
+                "status": "BYTES_VERIFIED", "bytes": actual_size,
+                "sha256": digest.hexdigest(), "git_blob_sha": git.hexdigest(),
+                "transport": transport, "transport_url": endpoint,
+                "github_metadata_url": metadata_url,
+                "local_path": str(target), "transport_fallback_errors": attempts,
+            }
+        except Exception as exc:
+            attempts.append({"transport": transport, "endpoint": endpoint,
+                             "error": f"{type(exc).__name__}: {exc}"})
+        finally:
+            if partial is not None:
+                partial.unlink(missing_ok=True)
+    raise IOError("GITHUB_SAME_BLOB_TRANSFER_FAILED: "
+                  + json.dumps(attempts, ensure_ascii=False))
 
 
 def _fetch_raw_resumable(entry, dest, timeout):
@@ -141,6 +145,10 @@ def _fetch_raw_resumable(entry, dest, timeout):
         size = partial.stat().st_size
         if not size or (expected is not None and size != expected):
             raise IOError(f"Incomplete transfer: {size}/{expected} bytes")
+        if expected is None and not (entry.get("sha256") or entry.get("git_blob_sha")):
+            raise IOError("UNVERIFIABLE_LENGTH: pin a hash or require Content-Length")
+        if entry.get("expected_bytes") is not None and size != entry["expected_bytes"]:
+            raise IOError(f"PINNED_LENGTH_MISMATCH: {size}/{entry['expected_bytes']} bytes")
         sha = hashlib.sha256()
         git = hashlib.sha1()
         git.update(f"blob {size}\0".encode())
@@ -163,7 +171,6 @@ def _fetch_raw_resumable(entry, dest, timeout):
         return status
 
 
-_raw_fetch_one=fetch_one
 def fetch_one(entry,dest,timeout):
     import os,time
     attempts=[]
@@ -179,6 +186,10 @@ def fetch_one(entry,dest,timeout):
                 result["transport"]="raw_url"
                 result["attempts"]=attempts
                 return result
+            if "MISMATCH" in result.get("error", ""):
+                result["status"] = "INTEGRITY_FAILED"
+                result["attempts"] = attempts
+                return result
             if attempt<2:
                 time.sleep(min(2**attempt,4))
     try:
@@ -187,14 +198,19 @@ def fetch_one(entry,dest,timeout):
         result["attempts"]=attempts
         return result
     except Exception as exc:
-        attempts.append({"transport":"github_git_blob_api","status":"FAILED",
+        attempts.append({"transport":"github_same_blob_fallback","status":"FAILED",
                          "error":type(exc).__name__+": "+str(exc)})
         return {"name":entry["name"],"url":entry["url"],"status":"SOURCE_BYTES_UNAVAILABLE",
-                "error":attempts[-1]["error"],"attempts":attempts}
+                "error":" | ".join(a.get("error","") for a in attempts if a.get("error")),
+                "attempts":attempts}
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--manifest',required=True); p.add_argument('--out',required=True); p.add_argument('--timeout',type=float,default=30)
-    a=p.parse_args(); manifest=json.loads(pathlib.Path(a.manifest).read_text()); out=pathlib.Path(a.out); out.mkdir(parents=True,exist_ok=True)
+    p=argparse.ArgumentParser(); p.add_argument('--manifest',required=True); p.add_argument('--out',required=True); p.add_argument('--timeout',type=float,default=30); p.add_argument('--prefer-github-blob',action='store_true')
+    a=p.parse_args();
+    if a.prefer_github_blob:
+        import os
+        os.environ['ONTOLOGY_SOURCE_PREFER_GITHUB_BLOB']='1'
+    manifest=json.loads(pathlib.Path(a.manifest).read_text()); out=pathlib.Path(a.out); out.mkdir(parents=True,exist_ok=True)
     entries=manifest['files']
     if not isinstance(entries,list): raise SystemExit('files must be a list')
     if any(not isinstance(e,dict) or not isinstance(e.get('name'),str) or not isinstance(e.get('url'),str) or pathlib.PurePath(e['name']).name != e['name'] or e['name'] in ('.','..') for e in entries):
