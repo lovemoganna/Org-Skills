@@ -1479,3 +1479,19 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 4. 只选最清楚的表格或文字，无需制造图表多样性。
 5. 执行 `python tests/check_d21_visualization_plan.py`，正常计划通过，11 个被篡改的引用、来源、口径和权限样例拒绝。
 6. D21 不是 D22 HTML 产物，不能据此宣称 Rendered QA 已完成。
+
+
+## V49：D22 已验证单 HTML 报告
+
+真实上游：`tests/verified-d20-report-spec.json` 与 `tests/verified-d21-visualization-plan.json`，D11 run `37725587099`。交付仅为 Report，不包含 Dashboard。
+
+实际 Artifact：`artifacts/verified-d22-report.html`，单文件、离线可读；包含已锁定核心判断、分母敏感性对照、状态构成、限制及折叠 SQL/执行证据，不重新执行 SQL。
+
+验收：
+
+1. HTML 只渲染 `report-decision`、`report-denominator-sensitivity`、`report-status-breakdown` 三个内容引用，均来自 Gate PASS 的 D20 内容。
+2. 全记录和终态分母对照仅引用已验证的 83.33%、84.62%、100.00%；状态计数与 D20 原文逐项一致。
+3. 审计区 SQL 与 D10 文件逐字一致，SHA256、D11 run、数据逻辑 revision、D20 Git blob SHA 有明确引用；不得把静态记录写成实时结果。
+4. HTML 不需要 CDN、远程 JS、在线字体即可阅读；默认不显示过程追踪，不包含未经 D19 审核的看板。
+5. 执行 `python tests/check_d22_artifact.py`：正常 HTML 通过，修改比例、记录数、内容引用、SQL 或插入 Dashboard 的反例必须失败。
+6. 浏览器烟雾检查覆盖 1440 宽桌面和 390 宽手机：页面宽度不溢出；两张宽表在各自容器滚动；SQL 审计展开正常。此测试不代替下一阶段 D23 的完整 Rendered QA。
