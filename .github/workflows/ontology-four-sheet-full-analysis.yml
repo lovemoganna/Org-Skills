@@ -1,0 +1,69 @@
+name: Ontology Four Sheet Full Analysis
+on:
+  push:
+    branches: [run/ontology-four-sheet-20261008]
+    paths:
+      - "test-assets/ontology-four-sheet-20261008/full-analysis.sql"
+      - ".github/workflows/ontology-four-sheet-full-analysis.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned DuckDB 1.4.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fSL --retry 2 'https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip' -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Execute one-session four-sheet analysis with exact read_xlsx
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          cp test-assets/ontology-four-sheet-20261008/full-analysis.sql artifacts/full-analysis.sql
+          ./duckdb -bail -csv :memory: < artifacts/full-analysis.sql > artifacts/stdout.log 2> artifacts/stderr.log || {
+            echo 'DUCKDB_SQL_FAILED'; cat artifacts/stderr.log; exit 1;
+          }
+          cat artifacts/data_counts.csv
+          cat artifacts/quality_keys.csv
+          cat artifacts/atomic_usdt.csv
+          cat artifacts/complex_usdt_by_user.csv
+          cat artifacts/robust_usdt_leave_one_out.csv
+      - name: Assert source contract and forbidden-sheet isolation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re, json, csv
+          p=Path('test-assets/ontology-four-sheet-20261008/full-analysis.sql')
+          t=p.read_text()
+          names=re.findall(r"sheet\s*=\s*'([^']+)'",t,re.I)
+          expected=['users','fiat_transactions','crypto_transactions','exchange_rates']
+          assert names==expected,(names,expected)
+          for s in expected:
+            assert len(re.findall(r'CREATE\s+TEMP\s+TABLE\s+'+s+r'\s+AS\s+SELECT\s+\*\s+FROM\s+read_xlsx',t,re.I))==1,s
+          for stmt in ('INSTALL httpfs;','LOAD httpfs;','INSTALL excel;','LOAD excel;'):
+            assert t.count(stmt)==1,stmt
+          src="https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          assert t.count(src)==4
+          Path('artifacts').mkdir(exist_ok=True)
+          receipt={'status':'SOURCE_CONTRACT_PASS','read_xlsx_sheet_names':names,'fixed_url_occurrences':t.count(src),'init_once':True,'materialize_once_per_sheet':True,'forbidden_sheets_accessed':False,'scope':'SQL source static verification'}
+          (Path('artifacts')/'contract-receipt.json').write_text(json.dumps(receipt,indent=2))
+          print(receipt)
+          PY
+      - name: Upload real execution receipts or failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ontology-four-sheet-full-analysis
+          path: artifacts/
+          if-no-files-found: error
