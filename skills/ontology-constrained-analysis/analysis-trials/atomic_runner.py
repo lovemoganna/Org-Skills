@@ -33,7 +33,7 @@ SELECT t.*,COUNT(r.asset) AS rate_observations,
  MAX(r.effective_date) AS latest_rate_day,
  SUM(CASE WHEN r.effective_date BETWEEN t.first_tx_day AND t.last_tx_day THEN 1 ELSE 0 END) AS rates_within_tx_period
 FROM tx_dates t LEFT JOIN exchange_rates r ON t.asset=r.asset
-GROUP BY ALL ORDER BY asset""",
+GROUP BY ALL ORDER BY t.asset""",
 "Q04-cross-rail":"""WITH f AS (
  SELECT TRY_CAST(uid AS BIGINT) AS uid_key,COUNT(*) AS fiat_orders
  FROM fiat_transactions GROUP BY 1
