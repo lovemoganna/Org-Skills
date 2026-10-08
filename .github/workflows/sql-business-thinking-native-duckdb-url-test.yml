@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/sql-business-thinking-native-duckdb-url-test.yml"
+      - "skills/sql-business-thinking/SKILL.md"
+      - "skills/sql-business-thinking/references/**"
+      - "skills/sql-business-thinking/tests/**"
   workflow_dispatch:
 
 permissions:
