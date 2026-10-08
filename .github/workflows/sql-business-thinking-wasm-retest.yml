@@ -537,6 +537,16 @@ jobs:
           set -euo pipefail
           python skills/sql-business-thinking/tests/check_d22_artifact.py
 
+      - name: Install CJK fonts for visual QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fc-cache -f
+          fc-list :lang=zh family | grep -q "Noto Sans CJK"
+          fc-match "sans-serif:lang=zh-cn" | head -1
+
       - name: Prepare browser accessibility checker
         shell: bash
         run: |
