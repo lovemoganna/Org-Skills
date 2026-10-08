@@ -62,7 +62,7 @@ python scripts/source_gate.py --manifest manifest.json --out artifacts/source --
 
 - 单 HTML 离线必须可阅读核心报告；不得依赖未经验证的 CDN 样式/脚本。
 - 所有静态、动态、示例、验证、最终 SQL 块统一使用 `scripts/sql_ui.js` 格式化、语法高亮、纯 SQL 复制。格式化只服务展示，不改变已执行 SQL；复制不能包含 HTML、行号或装饰字符。
-- 浏览器中分别实测格式、响应式布局、实际原生 Clipboard API。Clipboard 不可用时准确提示失败或使用已验证回退，不能把模拟点击等同系统剪贴板成功。
+- 浏览器中分别实测格式、响应式布局及原生 Clipboard API。移动端展开 SQL 时，长行只能在代码容器内滚动，不得撑宽整页或遮挡正文。Clipboard 不可用时准确提示失败或使用已验证回退；模拟点击不等于系统剪贴板成功。
 - 对于固定 SQL，保留“实际执行 SQL”和“仅展示用格式化 SQL”的区别；两者差异可追溯。
 
 ## 6. 阻塞报告与证据回执
