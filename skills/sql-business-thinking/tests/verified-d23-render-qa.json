@@ -35,5 +35,6 @@
     "reflow_320.png",
     "audit_closed_mobile.png"
   ],
-  "limitations": "Validates historical Report artifact only. Does not imply operational risk, realtime status or full end-to-end live SQL execution in the HTML."
+  "limitations": "Validates historical Report artifact only. Does not imply operational risk, realtime status or full end-to-end live SQL execution in the HTML.",
+  "artifact_sha256": "3733a07fc07daf1a2865d01ace1cdde16d415cb62431e32e6a342886f8629be7"
 }
