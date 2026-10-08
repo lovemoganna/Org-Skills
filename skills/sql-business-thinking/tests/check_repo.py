@@ -390,5 +390,6 @@ assert "What / Where / Why / Alternative / Test / Robustness / So What" in dialo
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_delivery_handoff.py")], check=True)
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d08_questions.py")], check=True)
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d09_priority.py")], check=True)
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_d12_signal.py")], check=True)
 
 print("OK: sql-business-thinking repository integrity")
