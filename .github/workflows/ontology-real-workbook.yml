@@ -121,7 +121,7 @@ jobs:
           assert sql_text.count("INSTALL excel;") == 1
           assert sql_text.count("LOAD excel;") == 1
           assert sql_text.count("read_xlsx(") == 4
-          assert sql_text.count("CREATE TEMP TABLE ") == 8 # four statements and four verification strings
+          assert sql_text.count("CREATE TEMP TABLE ") == 4
           for sheet in sheets:
               assert sql_text.count("CREATE TEMP TABLE " + sheet + " AS") == 1
               assert sql_text.count("SELECT * FROM " + sheet + ";") == 1
