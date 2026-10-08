@@ -397,6 +397,65 @@ jobs:
                 ? 'READY'
                 : 'BLOCKED_DATA_QUALITY';
 
+            // D11: execute the unchanged D10 SQL file, only after all quality gates pass.
+            if (Object.values(out.gates.statuses).some(s => s !== 'PASS')) {
+              out.d11 = { state: 'BLOCKED_DATA_QUALITY', rows: [] };
+            } else {
+              const sqlPath = 'skills/sql-business-thinking/tests/d10-fiat-direction-status.sql';
+              const sqlResponse = await fetch('./' + sqlPath);
+              if (!sqlResponse.ok) throw new Error('D10_SQL_FILE_UNAVAILABLE');
+              const lockedSql = await sqlResponse.text();
+              if (!lockedSql.includes('FROM fiat_transactions') ||
+                  !lockedSql.includes('GROUP BY direction')) {
+                throw new Error('D10_SQL_CONTRACT_INVALID');
+              }
+              // The D01 canonical view name is distinct from the runner's _raw staging view.
+              await conn.query('CREATE OR REPLACE VIEW fiat_transactions AS SELECT * FROM fiat_transactions_raw');
+              const execution = await run(lockedSql);
+              const measured = execution.rows;
+              const totalRaw = num(out.sheets.fiat_transactions.count[0].row_count);
+              const categories = ['total_order_records','completed_records',
+                'in_progress_records','terminal_noncompleted_records','unknown_status_records'];
+              if (measured.some(r => categories.some(k => !Number.isFinite(num(r[k]))))) {
+                throw new Error('D11_RESULT_SHAPE_INVALID');
+              }
+              const totalResult = measured.reduce((sum, r) => sum + num(r.total_order_records), 0);
+              if (totalResult !== totalRaw) throw new Error('D11_TOTAL_ROWS_MISMATCH');
+              const directions = measured.map(r => r.direction);
+              if (new Set(directions).size !== directions.length) throw new Error('D11_DIRECTION_NOT_UNIQUE');
+              for (const r of measured) {
+                const total = num(r.total_order_records);
+                const parts = num(r.completed_records) + num(r.in_progress_records)
+                  + num(r.terminal_noncompleted_records) + num(r.unknown_status_records);
+                if (parts !== total) throw new Error('D11_STATE_PARTITION_MISMATCH');
+                const expected = total === 0 ? null : num(r.completed_records) / total;
+                const actual = r.completed_state_share === null ? null : Number(r.completed_state_share);
+                if ((expected === null) !== (actual === null) ||
+                    (expected !== null && Math.abs(actual - expected) > 1e-12)) {
+                  throw new Error('D11_RATIO_MISMATCH');
+                }
+              }
+              out.d11 = {
+                state: 'PASS',
+                sql_path: sqlPath,
+                sql_sha256: await sha256Hex(lockedSql),
+                executed_sql: lockedSql,
+                source_logical_revision: out.source.logical_revision.value,
+                skill_revision: out.runtime.skill_revision,
+                duckdb_version: out.runtime.duckdb,
+                gate_coverage: out.gates.coverage.state,
+                gate_statuses: out.gates.statuses,
+                validation: {
+                  source_fiat_rows: totalRaw,
+                  result_fiat_rows: totalResult,
+                  state_partition: 'PASS',
+                  ratio_recalculation: 'PASS',
+                  direction_uniqueness: 'PASS'
+                },
+                rows: measured
+              };
+            }
+
             await conn.close();
             await db.terminate();
             document.getElementById('result').textContent = JSON.stringify(out);
@@ -457,7 +516,7 @@ jobs:
           sleep 1
           node run-probe.mjs
 
-      - name: Upload discovery evidence
+      - name: Upload discovery and D11 evidence
         uses: actions/upload-artifact@v4
         with:
           name: sql-business-thinking-wasm-quality
