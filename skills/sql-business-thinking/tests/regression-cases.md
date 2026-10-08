@@ -1541,3 +1541,27 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 5. DuckDB-Wasm 远程 XLSX 受浏览器 CORS 限制属于潜在环境约束，不是上述日志的已验证失败根因。不得把环境假设写成已发生错误。
 
 验收：先查失败步骤与原始日志，最小案例复现后才选择“Skill 缺陷 / 执行偏差 / 环境问题 / 测试错误”；修复对应层；旧失败、新反例和完整回归均需真实检查，报告不能把尚未运行的 CI 写成 PASS。
+
+## V52：精简与执行契约反例
+
+### Case：完整执行指令覆盖先前单阶段限制
+
+先输入“当前只确认范围，不得读取表”，再输入“现在一口气顺序执行完毕 Skill”。
+
+验收：第二条只更新执行范围，不解除白名单与不可改写 SQL 约束。按 D01 起的实际依赖和 D08–D17 循环推进；阶段失败先合法恢复，仍阻塞则停止并标明后续待执行。不得继续强制“单阶段就停”，也不得自行标 E2E PASS。单阶段请求和“从指定阶段继续”仍只执行所指定阶段。
+
+### Case：仅允许替换 sheet，却擅自使用 VFS 路径
+
+输入指定完整 `INSTALL/LOAD`、远程 XLSX URL 和 `read_xlsx` SQL，明确“不得改写，其他 sheet 只替换 sheet 参数”。
+
+验收：即使 Native DuckDB 不可用，也不得把 URL 改成 `workbook.xlsx` 并宣称原 SQL 已执行；替代 placement 必须满足原样契约，否则 `BLOCKED_ENV`。用户明确允许浏览器 VFS 适配时才可登记 URL 与文件名映射，仍须保留 DuckDB `read_xlsx`。
+
+### Case：旧运行器通过质量检查，但宣称最新版 Skill 完整通过
+
+真实失败模式：历史 runner revision 为 `7662bda5`，后续 Skill 已更新。runner 只执行 Gate 和预置法币 SQL，未执行当前 Autopilot 自主选题及完整循环。
+
+验收：区分“历史 DuckDB SQL 确认通过”和“当前 Skill 完整 E2E”。需要 current Skill revision、data revision、runner revision、所有必需 Gate、全链路新 SQL 与最终 Artifact QA 的证据；任一缺失均不得写 E2E PASS；runner 版本不一致标 `HARNESS_STALE`。不能通过删掉断言或复用旧日志来制造成功。
+
+### Case：删除冗余主入口不等于削弱约束
+
+精简后仍验证 Learn、Direct、Autopilot、Debug 四种入口、单阶段与完整连续运行、源表白名单、URL 原样 SQL、DuckDB 真实性、逻辑数据版本、下游 Gate 传播、报告/看板分流、HTML 实体验收和仓库写入许可。主入口只保留路由及阻塞规则，历史案例与技术细节按需引用。禁止恢复多个互相竞争的“主规则”。
