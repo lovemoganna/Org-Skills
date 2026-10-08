@@ -5,7 +5,7 @@
 import * as duckdb from './duckdb.bundle.mjs';
 const remote='https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx';
 const allow=['users','fiat_transactions','crypto_transactions','exchange_rates'];
-const out={origin:location.origin,remote,remote_fetch:{status:'UNTESTED'},vfs:{status:'UNTESTED'},duckdb:{status:'UNTESTED'},sheets:{}};
+const out={origin:location.origin,remote,remote_fetch:{status:'UNTESTED'},fixed_url_sql:{status:'NOT_TESTED'},vfs:{status:'UNTESTED'},duckdb:{status:'UNTESTED'},sheets:{}};
 const rows=t=>t.toArray().map(r=>Object.fromEntries(t.schema.fields.map(f=>[f.name,typeof r[f.name]==='bigint'?r[f.name].toString():r[f.name]])));
 const hash=async data=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',data))].map(x=>x.toString(16).padStart(2,'0')).join('');
 async function probe(){
@@ -25,6 +25,9 @@ async function probe(){
    out.remote_fetch[check.toLowerCase()]={status:resp.status,bytes:size,content_range:resp.headers.get('content-range'),accept_ranges:resp.headers.get('accept-ranges')};
   }catch(e){out.remote_fetch[check.toLowerCase()]={error:String(e)}}finally{clearTimeout(timeout)}
  }
+ const part=out.remote_fetch.range;
+ out.remote_fetch.range_capability=(part?.status===206&&part.bytes===32&&/^bytes 0-31\\/\\d+$/.test(part.content_range||''))
+   ?'PARTIAL_CONTENT_CONFIRMED':'NOT_CONFIRMED';
  let db;
  try{
   const worker=new Worker(new URL('./duckdb-browser-eh.worker.js',location.href));
@@ -35,6 +38,19 @@ async function probe(){
   const commands=['INSTALL httpfs;','LOAD httpfs;','INSTALL excel;','LOAD excel;'];
   for(const sql of commands)await conn.query(sql);
   out.duckdb.initialization=commands;out.duckdb.status='READY';
+  // This probes the literal remote URL, not the VFS alias. Failure does not invalidate
+  // a separately verified same-source VFS read, and VFS success never upgrades this probe.
+  const fixedSql="SELECT COUNT(*) AS row_count FROM read_xlsx('"+remote+"', sheet = 'users', header = true)";
+  out.fixed_url_sql={status:'NOT_TESTED',sql:fixedSql};
+  let directConn;
+  try{
+   directConn=await db.connect();
+   const directRows=rows(await directConn.query(fixedSql));
+   out.fixed_url_sql={status:'PASS',sql:fixedSql,row_count:directRows[0]?.row_count??null};
+  }catch(e){
+   out.fixed_url_sql={status:'BLOCKED',sql:fixedSql,error:String(e)};
+  }finally{try{await directConn?.close()}catch{}}
+
   const response=await fetch('./source.xlsx');if(!response.ok)throw Error('original source GET HTTP '+response.status);
   const bytes=await response.arrayBuffer(),expected=await(await fetch('./source-receipt.json')).json(),actual=await hash(bytes);
   const sourceLength=bytes.byteLength;
@@ -45,6 +61,9 @@ async function probe(){
   for(const sheet of allow){
    await conn.query("CREATE TEMP TABLE "+sheet+" AS SELECT * FROM read_xlsx('source.xlsx', sheet = '"+sheet+"', header = true);");
    out.sheets[sheet]={row_count:rows(await conn.query('SELECT COUNT(*) AS row_count FROM '+sheet))[0].row_count};
+  }
+  if(out.fixed_url_sql.status==='PASS'&&String(out.fixed_url_sql.row_count)!==String(out.sheets.users.row_count)){
+   out.fixed_url_sql.status='ROW_COUNT_MISMATCH';
   }
   out.status='VFS_READ_XLSX_PASS';await conn.close();await db.terminate();
  }catch(e){out.status='VFS_READ_XLSX_BLOCKED';out.error=String(e);try{await db?.terminate()}catch{}}
