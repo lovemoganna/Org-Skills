@@ -6,5 +6,6 @@
   "remote_fetch_required": false,
   "cors_required": false,
   "duckdb_wasm_used": false,
-  "sql_highlight_and_copy_checked": true
+  "sql_highlight_static_checked": true,
+  "clipboard_user_action_tested": false
 }

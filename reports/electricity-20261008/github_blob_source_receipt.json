@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-10-08T08:24:57.660895+00:00",
+  "complete": true,
+  "results": [
+    {
+      "name": "LD2011_2014.txt",
+      "url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt",
+      "status": "BYTES_VERIFIED",
+      "bytes": 30363176,
+      "sha256": "c765fe5543010d52f0c0622e424b9923e3851580c5ecf61c7ed6c99be2be155a",
+      "git_blob_sha": "9027e543ffee8cc4295773fd691b57bd5888318c",
+      "transport": "github_git_blob_api",
+      "transport_url": "https://api.github.com/repos/movingpictures83/Electricity/git/blobs/9027e543ffee8cc4295773fd691b57bd5888318c",
+      "local_path": "/tmp/electricity-github-blob-source/LD2011_2014.txt",
+      "attempts": [
+        {
+          "transport": "github_git_blob_api",
+          "status": "BYTES_VERIFIED"
+        }
+      ]
+    }
+  ]
+}
