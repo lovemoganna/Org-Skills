@@ -54,15 +54,11 @@ DuckDB 不得替换。只锁定 URL 时，可暂存该 URL 的完整原始字节
 
 所有 SQL（静态、生成、示例、验证、最终）统一规范缩进和换行；网页呈现必须统一 SQL 语法高亮，复制操作输出**格式化后的纯 SQL**，不含 HTML、行号或装饰字符。单 HTML 不得依赖未验证的远程 CDN 才能阅读核心报告。详情见 `references/runtime.md`。
 
-## 浏览器与交付运行时 Gate
+## 同源 GitHub 资源恢复
 
-当报告涉及单 HTML、浏览器、DuckDB-WASM、远程文件或跨域资源时，先实际核验最终运行环境，记录以下状态：浏览器 Origin、远程请求是否受 CORS 限制、资源是否取得完整字节、DuckDB 可用性、读取函数及文件注册方式。未经验证不得宣称浏览器可以直接读取远程 URL。
+原始 `raw.githubusercontent.com` 无法访问时，先定位对应 `github.com/{owner}/{repo}/blob/{ref}/{path}`，再验证 GitHub 仓库、ref、path 与原 URL 一一对应。能从 GitHub REST blobs 接口获取字节时，必须核对真实字节数、Git Blob SHA-1 以及 SHA-256；这是**同一 Git 对象的传输回退**，不能换用其他仓库、提交、镜像、样例或截图。访问 GitHub 页面不等于取得文件字节。
 
-纯静态单 HTML 可以交付离线结果，不必强制嵌入 DuckDB-WASM；但必须检查 HTML 不依赖未验证的外部资源，并记录 file:// 场景的限制。需要浏览器实时运行 SQL 时，必须验证 DuckDB-WASM 实际可用。远程 XLSX 因 CORS 或 read_xlsx URL 限制无法直接读取时，若用户未锁定读取路径或 SQL，应先取得同一来源完整字节并注册到 DuckDB-WASM VFS，再继续以 read_xlsx 读取；不能改用其他来源或引擎。
-
-所有 SQL（静态、动态、教程、验证、最终）统一格式化，保留换行、缩进及结构层级。HTML 中使用一致的 SQL 语法高亮，复制控件只复制格式化后的纯 SQL。不得只格式化展示文本而保留另一套未验证的执行 SQL。SQL 与 Result 一起纳入审计文件。
-
-本地网络或引擎受限时，必须检查当前权限下真正可执行的远程同引擎环境（例如可用的 GitHub Actions Runner），而不是直接停止。使用远程 Runner 必须保留指定 URL、DuckDB、约束范围、源字节 SHA-256 以及 SQL/Result 日志；未运行成功不得将 CI 配置当作成功。
+本地运行时无网络或 DuckDB 时，检查用户已授权且可执行的 GitHub Actions 原生 DuckDB Runner；仅以真实 SQL、Result 和执行回执确认成功。详细契约见 `references/runtime.md`。
 
 ## 执行纪律
 
