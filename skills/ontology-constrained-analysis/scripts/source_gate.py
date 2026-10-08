@@ -97,13 +97,79 @@ def _verified_github_blob(entry, dest, timeout):
     finally:
         partial.unlink(missing_ok=True)
 
+
+def _fetch_raw_resumable(entry, dest, timeout):
+    """Resume only a byte range validated by an unchanged HTTP ETag."""
+    import re
+    name, url = entry["name"], entry["url"]
+    partial = dest / ("." + name + ".raw.partial")
+    sidecar = dest / ("." + name + ".raw.etag.json")
+    status = {"name": name, "url": url, "status": "SOURCE_BYTES_UNAVAILABLE"}
+    try:
+        meta = json.loads(sidecar.read_text("utf-8")) if sidecar.exists() else {}
+        offset = partial.stat().st_size if partial.exists() and meta.get("url") == url and meta.get("etag") else 0
+        if not offset:
+            partial.unlink(missing_ok=True)
+            sidecar.unlink(missing_ok=True)
+        headers = {"User-Agent": "ontology-source-gate/3.0", "Accept-Encoding": "identity"}
+        if offset:
+            headers["Range"] = f"bytes={offset}-"
+            headers["If-Range"] = meta["etag"]
+        request = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            etag = response.headers.get("ETag")
+            if response.status == 206:
+                m = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
+                if not offset or not m or int(m.group(1)) != offset or int(m.group(2)) < offset:
+                    raise IOError("Unsafe HTTP 206 Content-Range; resumed bytes rejected")
+                if etag and etag != meta["etag"]:
+                    raise IOError("HTTP ETag changed across partial transfer")
+                expected = int(m.group(3))
+                mode = "ab"
+            elif response.status == 200:
+                expected = int(response.headers["Content-Length"]) if response.headers.get("Content-Length") else None
+                mode = "wb"
+            else:
+                raise IOError(f"Unexpected raw HTTP status: {response.status}")
+            if etag:
+                sidecar.write_text(json.dumps({"url": url, "etag": etag}), "utf-8")
+            else:
+                sidecar.unlink(missing_ok=True)
+            with partial.open(mode) as stream:
+                for chunk in iter(lambda: response.read(1024 * 1024), b""):
+                    stream.write(chunk)
+        size = partial.stat().st_size
+        if not size or (expected is not None and size != expected):
+            raise IOError(f"Incomplete transfer: {size}/{expected} bytes")
+        sha = hashlib.sha256()
+        git = hashlib.sha1()
+        git.update(f"blob {size}\0".encode())
+        with partial.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                sha.update(chunk)
+                git.update(chunk)
+        if entry.get("sha256") and sha.hexdigest() != entry["sha256"]:
+            raise ValueError("SOURCE_SHA256_MISMATCH")
+        if entry.get("git_blob_sha") and git.hexdigest() != entry["git_blob_sha"]:
+            raise ValueError("SOURCE_GIT_BLOB_SHA_MISMATCH")
+        partial.replace(dest / name)
+        sidecar.unlink(missing_ok=True)
+        return {"name": name, "url": url, "status": "BYTES_VERIFIED",
+                "bytes": size, "sha256": sha.hexdigest(), "git_blob_sha": git.hexdigest(),
+                "local_path": str(dest / name), "resumed_from_bytes": offset}
+    except Exception as exc:
+        status["error"] = type(exc).__name__ + ": " + str(exc)
+        status["partial_bytes_untrusted"] = partial.stat().st_size if partial.exists() else 0
+        return status
+
+
 _raw_fetch_one=fetch_one
 def fetch_one(entry,dest,timeout):
     import os,time
     attempts=[]
     if os.getenv("ONTOLOGY_SOURCE_PREFER_GITHUB_BLOB")!="1":
         for attempt in range(3):
-            result=_raw_fetch_one(entry,dest,timeout)
+            result=_fetch_raw_resumable(entry,dest,timeout)
             attempts.append({"attempt":attempt+1,"transport":"raw_url","status":result["status"],
                              "error":result.get("error")})
             if result["status"]=="BYTES_VERIFIED":
