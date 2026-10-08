@@ -208,6 +208,7 @@ main{max-width:1190px;margin:auto;padding:44px 28px 70px}
 h1{font-size:31px;line-height:1.3;margin:8px 0}h2{font-size:21px;margin:42px 0 15px;padding-bottom:10px;border-bottom:2px solid var(--ink)}
 h3{font-size:17px;margin:24px 0 8px}p{margin:10px 0}small,.muted{color:var(--sub)}
 .meta{border-top:3px solid var(--ink);padding-top:16px;font-size:13px;color:var(--sub)}
+.muted{overflow-wrap:anywhere}
 .lead{font-size:17px;margin:16px 0 26px;max-width:950px}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
 .stat{border:1px solid var(--line);padding:16px;background:var(--soft)}
