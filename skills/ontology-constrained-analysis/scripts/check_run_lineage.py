@@ -60,6 +60,37 @@ def check(chain, prior=None):
             statement = q.get("sql", "") if isinstance(q, dict) else ""
             if early and re.search(r"\b(?:JOIN|GROUP\s+BY|SUM\s*\(|AVG\s*\(|CASE\s+WHEN|UNION(?:\s+ALL)?)\b", statement, re.I):
                 errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + ident)
+    # A numeric narrative must be reconstructed from THIS run's SQL Result.
+    # Templates/bindings are an audit contract, not expected test answers.
+    import re
+    by_id = {str(q.get("id")): q for q in chain.get("queries", [])}
+    for finding in chain.get("findings", []):
+        facts = finding.get("facts", "")
+        if not isinstance(facts, str):
+            errors.append("FINDING_FACTS_NOT_TEXT:" + str(finding.get("id")))
+            continue
+        if not re.search(r"\\d", facts):
+            continue
+        receipt = finding.get("fact_verification")
+        if not isinstance(receipt, dict) or not receipt.get("bindings") or not receipt.get("template"):
+            errors.append("UNVERIFIED_NUMERIC_CLAIM:" + str(finding.get("id")))
+            continue
+        resolved = {}
+        for key, link in receipt["bindings"].items():
+            try:
+                query = by_id[str(link["query"])]
+                if query.get("status") != "PASS":
+                    raise ValueError("SQL_NOT_PASSED")
+                resolved[key] = query["rows"][int(link["row"])][link["column"]]
+            except (KeyError, IndexError, TypeError, ValueError) as exc:
+                errors.append("CLAIM_RESULT_BINDING_MISSING:" + str(finding.get("id")) + ":" + key)
+        if len(resolved) == len(receipt["bindings"]):
+            try:
+                rebuilt = receipt["template"].format(**resolved)
+                if rebuilt != facts:
+                    errors.append("STALE_OR_HARDCODED_NUMERIC_CLAIM:" + str(finding.get("id")))
+            except (KeyError, ValueError, TypeError):
+                errors.append("CLAIM_TEMPLATE_INVALID:" + str(finding.get("id")))
     # Keep these statuses independent: a report build is not a passed Gate 3.
     if not chain.get("queries"):
         errors.append("NO_ACTUAL_SQL_RESULTS")
