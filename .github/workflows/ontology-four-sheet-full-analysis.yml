@@ -22,6 +22,46 @@ jobs:
           unzip -q duckdb.zip
           chmod +x duckdb
           ./duckdb -version
+      - name: Gate 1 validate both ontology tables before analytical SQL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python - <<'PY'
+          import json,pathlib,re
+          path=pathlib.Path('test-assets/ontology-four-sheet-20261008/ontology-model.json')
+          model=json.loads(path.read_text())
+          atoms=model['ontology_atoms'];rules=model['ontology_rules']
+          atom_required=['一级标签','二级标签','三级标签','原子名称','原子层级','本体类别','类型','单位或值域','主体','粒度','时间语义','关系','知识点解释','来源']
+          rule_required=['一级标签','二级标签','三级标签','识别标准','Lisp 表达式','规则定义','当前状态']
+          assert atoms and rules
+          assert len(atoms)==len({r['原子名称'] for r in atoms}), 'DUPLICATE_ATOM'
+          assert len(rules)==len({(r['一级标签'],r['二级标签'],r['三级标签']) for r in rules}), 'DUPLICATE_RULE'
+          fields={
+            'users':{'uid','user_name','country_code','base_fiat_currency','kyc_level','account_status','created_at'},
+            'fiat_transactions':{'fiat_order_id','uid','direction','currency','amount','fee','channel','status','created_at','completed_at'},
+            'crypto_transactions':{'crypto_order_id','uid','direction','asset','network','amount','fee','tx_hash','address','status','confirmations','created_at','completed_at'},
+            'exchange_rates':{'asset','asset_name','asset_type','quote_currency','rate_to_usdt','usdt_to_asset_rate','effective_date','source'}
+          }
+          for row in atoms:
+            assert all(row.get(k) for k in atom_required),('ATOM_FIELDS',row.get('原子名称'))
+            source=row['来源'].split('.')
+            assert source[0] in fields,('FORBIDDEN_SOURCE',source)
+            assert len(source)<3,('UNEXPECTED_SOURCE',source)
+            if len(source)==2:assert source[1] in fields[source[0]],('UNKNOWN_SOURCE_FIELD',source)
+            assert row['关系'].count('|')==2,('INVALID_RELATION_TRIPLE',row['原子名称'])
+          for row in rules:
+            assert all(row.get(k) for k in rule_required),('RULE_FIELDS',row.get('三级标签'))
+            assert row['Lisp 表达式'].count('(')==row['Lisp 表达式'].count(')'),('UNBALANCED_LISP',row.get('三级标签'))
+            assert '资金最终结算' not in row['规则定义'] and '不可撤销' not in row['规则定义']
+          assert all(x.get('关系','').count('|')==2 for x in model['links'])
+          receipt={'gate':'Gate 1','status':'STRUCTURE_AND_SOURCE_VOCABULARY_PASS','atoms':len(atoms),'rules':len(rules),'cross_object_contracts':len(model['links']),'semantic_limitations':model['semantic_boundaries'],'note':'Business semantic review still requires observational SQL Result; no mathematical proof from formatting alone'}
+          out=pathlib.Path('artifacts')
+          (out/'gate1-validator.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2))
+          print(receipt)
+          PY
+          cp test-assets/ontology-four-sheet-20261008/ontology-model.json artifacts/ontology-model.json
+          cp skills/ontology-constrained-analysis/scripts/sql_ui.js artifacts/sql_ui.js
       - name: Execute one-session four-sheet analysis with exact read_xlsx
         shell: bash
         run: |
