@@ -20,7 +20,7 @@ def model():
             "本体类别": "事件", "类型": "记录", "单位或值域": "订单",
             "主体": "交易", "粒度": "单笔", "时间语义": "创建时点",
             "关系": "用户|发起|交易", "知识点解释": "记录的交易事件",
-            "证据来源": "orders",
+            "证据来源": "orders.id",
         }],
         "ontology_rules": [{
             "一级标签": "业务", "二级标签": "方向", "三级标签": "入金订单",
@@ -58,6 +58,20 @@ class GateOneSourceContract(unittest.TestCase):
         errors = validate(value, self.schemas)
         self.assertTrue(any("LEGACY_SOURCE_LABEL" in e for e in errors))
         self.assertTrue(any("MISSING_证据来源" in e for e in errors))
+
+    def test_table_only_source_fails(self):
+        value = model()
+        value["ontology_atoms"][0]["证据来源"] = "orders"
+        errors = validate(value, self.schemas)
+        self.assertTrue(any("SOURCE_MUST_NAME_FIELD" in e for e in errors))
+
+    def test_table_only_derived_source_fails(self):
+        value = model()
+        value["ontology_atoms"][0]["证据来源"] = {
+            "sources": ["orders"], "derivation": "per order"
+        }
+        errors = validate(value, self.schemas)
+        self.assertTrue(any("SOURCE_MUST_NAME_FIELD" in e for e in errors))
 
     def test_forbidden_source_fails(self):
         value = model()
