@@ -68,7 +68,7 @@ def main():
         lines += [
             '', '## 已验证与未执行', '',
             '已验证：指定 URL 的本次请求状态；仅当单个文件标为 BYTES_VERIFIED 时，其字节数和哈希可用于证明本地字节完整性。',
-            '未执行：缺失文件的格式解析、CSV 记录数和数据质量、DuckDB SQL、本体、指标、Signal、Finding、Dashboard。',
+            '未执行：缺失文件的格式解析、有效记录数和数据质量、DuckDB SQL、本体、指标、Signal、Finding、Dashboard。',
             '', '## 复跑', '',
             '```bash',
             'python scripts/source_gate.py --manifest <原始URL清单.json> --out <输出目录>',
@@ -79,7 +79,7 @@ def main():
         md='\n'.join(lines)+'\n'
         (out/'source_gate_blocked.md').write_text(md, encoding='utf-8')
         rows=''.join('<tr><td>'+html.escape(r['url'])+'</td><td>'+html.escape(r['status'])+'</td><td>'+str(r.get('bytes','未取得'))+'</td><td>'+html.escape(str(r.get('error','')))+'</td></tr>' for r in results)
-        page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Source Gate 阻塞审计</title><style>body{font:16px/1.6 system-ui;margin:4vw auto;max-width:1100px;padding:0 16px;color:#182538}table{border-collapse:collapse;width:100%;font-size:13px;table-layout:fixed;overflow-wrap:anywhere}td,th{border:1px solid #d7dce2;padding:9px;text-align:left}th{background:#f2f4f8}code{background:#eef1f4;padding:2px 5px}</style><h1>Source Gate 阻塞审计</h1><p><strong>阻塞，未完成业务分析</strong>。检查时间：'+html.escape(receipt['checked_at_utc'])+'</p><table><thead><tr><th>URL</th><th>状态</th><th>字节</th><th>实际错误</th></tr></thead><tbody>'+rows+'</tbody></table><h2>执行边界</h2><p>未取得完整指定源字节时，不解析缺失的 CSV，不执行 DuckDB SQL，不生成本体、Finding 或 Dashboard。</p><h2>恢复条件</h2><p>全部指定 URL 原始字节进入环境并校验后，才能继续 DuckDB 分析。报告已交付 ≠ 业务分析已完成。</p></html>'
+        page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Source Gate 阻塞审计</title><style>body{font:16px/1.6 system-ui;margin:4vw auto;max-width:1100px;padding:0 16px;color:#182538}table{border-collapse:collapse;width:100%;font-size:13px;table-layout:fixed;overflow-wrap:anywhere}td,th{border:1px solid #d7dce2;padding:9px;text-align:left}th{background:#f2f4f8}code{background:#eef1f4;padding:2px 5px}</style><h1>Source Gate 阻塞审计</h1><p><strong>阻塞，未完成业务分析</strong>。检查时间：'+html.escape(receipt['checked_at_utc'])+'</p><table><thead><tr><th>URL</th><th>状态</th><th>字节</th><th>实际错误</th></tr></thead><tbody>'+rows+'</tbody></table><h2>执行边界</h2><p>未取得完整指定源字节时，不解析缺失的指定源文件，不执行 DuckDB SQL，不生成本体、Finding 或 Dashboard。</p><h2>恢复条件</h2><p>全部指定 URL 原始字节进入环境并校验后，才能继续 DuckDB 分析。报告已交付 ≠ 业务分析已完成。</p></html>'
         (out/'source_gate_blocked.html').write_text(page,encoding='utf-8')
     else:
         for f in ('source_gate_blocked.md','source_gate_blocked.html'):
