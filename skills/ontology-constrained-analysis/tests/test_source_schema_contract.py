@@ -69,6 +69,16 @@ class GateOneSourceContract(unittest.TestCase):
         observed = {"rates.asset": ["ETH", "BTC"], "crypto.asset": ["BTC", "ETH"]}
         self.assertEqual([], validate_relation_domains(value, observed))
 
+    def test_semantic_domain_from_forbidden_table_fails(self):
+        value = model()
+        value["relation_domain_claims"] = [{
+            "relation": "用户|发起|交易",
+            "source": "forbidden.asset", "category_source": "orders.id"
+        }]
+        observed = {"forbidden.asset":["X"],"orders.id":["X"]}
+        errors = validate_relation_domains(value, observed, self.schemas)
+        self.assertTrue(any("FORBIDDEN_OR_UNKNOWN_DOMAIN_FIELD" in e for e in errors))
+
     def test_missing_observed_category_evidence_fails(self):
         value = model()
         value["relation_domain_claims"] = [{
