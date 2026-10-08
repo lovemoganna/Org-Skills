@@ -88,3 +88,5 @@ jobs:
           name: ontology-atomic-results
           path: atomic/
           if-no-files-found: warn
+
+# Retest after DuckDB Q02/Q03 parser and binder repairs; stage gates remain sequential.
