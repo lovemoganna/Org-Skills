@@ -206,7 +206,15 @@ assert "SUPPRESSED" in report_rendering, "suppressed-by-gate rendering state mis
 visualization = (ROOT / "references" / "visualization-rendering.md").read_text(encoding="utf-8")
 for token in ["Chart Candidate Competition Gate", "Unit Honesty Gate", "One-Chart-One-Conclusion Gate", "Layout Archetype Gate", "Information Budget Gate", "Deletion Gate", "Presentation Engine"]:
     assert token in visualization, f"presentation contract missing: {token}"
-assert "至少 3 个合理候选" in visualization, "chart candidate competition threshold missing"
+assert "至少 3 个合理候选" not in visualization, "D21 must not force three chart candidates"
+assert "高度相似的图形轮廓" not in visualization, "D21 still discourages legitimate repeated chart types"
+assert "## 10. VisualizationPlan（独立输出）" in visualization, "standalone D21 plan missing"
+assert "D20 的 ReportSpec / DashboardSpec 只读" in visualization, "D20 output is not protected from D21"
+assert "content_ref" in visualization and "D20 Spec 中实际存在且允许展示的内容" in visualization, "D21 content traceability missing"
+assert "简单场景直接选最准确" in regression, "D21 simple chart behavior regression missing"
+assert "D21 不得修改 D20 Spec" in regression, "D21 upstream immutability regression missing"
+assert "不得为了视觉多样性换图型" in regression, "D21 repeated chart regression missing"
+assert "D21 按交付类型工作" in regression, "D21 mode regression missing"
 assert "图数量由 **独立结论数** 决定" in visualization, "independent-conclusion chart count rule missing"
 assert "为了填模板新增未验证 KPI" in visualization, "template fill fabrication guard missing"
 assert "visualization-rendering.md" in skill, "presentation reference not wired into skill"
