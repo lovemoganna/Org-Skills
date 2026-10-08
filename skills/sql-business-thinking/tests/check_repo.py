@@ -190,16 +190,16 @@ assert "生成 SQL 的 implicit alias / keyword collision 必须提前拦截" in
 assert "普通业务 Result 也必须统一 scalar normalization" in regression, "result scalar normalization regression missing"
 assert "XLSX transport SHA 不能冒充 logical data revision" in regression, "logical data revision regression missing"
 assert "只测试时禁止自动回写仓库" in regression, "audit-only mutation guard regression missing"
-assert "用户显式给出的角色名、能力水平、职责、行为方式和知识边界全部优先" in skill, "full role contract priority missing"
-assert "用户明确限制表 / Sheet 时" in skill, "explicit source scope priority missing"
-assert "DuckDB-Wasm 正式回退路径" in skill, "wasm runtime fallback contract missing"
+assert "角色名、能力、职责和知识边界优先于默认角色" in skill, "full role contract priority missing"
+assert "范围外工作表不得读取内容" in skill and "expected 或 QA 结果" in skill, "explicit source scope priority missing"
+assert "本地 DuckDB-Wasm" in skill and "远程 Wasm runner" in skill, "wasm runtime fallback contract missing"
 assert "Runtime Placement Gate" in skill, "runtime placement gate missing"
-assert "Execution Mutation Permission Gate" in skill, "execution mutation permission gate missing"
-assert "本地浏览器、网络或扩展失败，只能证明该 placement 失败" in skill, "local placement failure semantics missing"
-assert "Fallback 顺序" in skill, "runtime fallback order missing"
-assert "不得改用 Python / Pandas / Connector" in skill, "non-duckdb substitution guard missing"
-assert "只有用户明确授权修改 Skill / 仓库时才执行回写" in skill, "skill mutation permission gate missing"
-assert "执行环境写权限与 Skill 修改权限分开判断" in skill, "execution-vs-skill permission separation missing"
+assert "创建分支、提交、PR、工作流、Issue" in skill and "需单独授权" in skill, "execution mutation permission gate missing"
+assert "每个 placement 实测后才判失败" in skill, "local placement failure semantics missing"
+assert skill.index("Native DuckDB") < skill.index("本地 DuckDB-Wasm") < skill.index("远程 Wasm runner"), "runtime fallback order missing"
+assert "禁止默换 CSV/Pandas/Connector" in skill and "不得无声切换引擎" in skill, "non-duckdb substitution guard missing"
+assert "只有获授权修改仓库时才回写和提交" in skill, "skill mutation permission gate missing"
+assert "Skill 修改权限与运行环境写权限分别判断" in skill, "execution-vs-skill permission separation missing"
 assert "Mandatory Data Quality Gate" in (ROOT / "references" / "dataset-planning.md").read_text(encoding="utf-8"), "mandatory data quality gate missing"
 assert "未执行不等于 PASS" in (ROOT / "references" / "dataset-planning.md").read_text(encoding="utf-8"), "data quality not-run guard missing"
 assert "PASS / FAIL / BLOCKED" in report_rendering, "rendered QA state model missing"
@@ -230,7 +230,7 @@ assert "tests/prepare-render-qa-payload.py" in report_rendering, "remote render 
 assert "REMOTE_RENDER_PAYLOAD_TOO_LARGE" in report_rendering, "remote render oversize guard missing"
 assert "Artifact Presentation QA" in report_rendering, "artifact presentation QA missing"
 assert "REUSED_VERIFIED_RESULT" in skill, "reused-result state missing"
-assert "本轮 run" in skill and "当前 Skill revision" in skill, "result freshness revision binding missing"
+assert "本轮" in skill and "当前数据与当前 Skill revision" in skill, "result freshness revision binding missing"
 assert "Artifact Presentation Gate" in visualization, "artifact presentation gate missing from visualization contract"
 assert "VisualizationPlan 可以保留必要的表达理由，正文必须克制" in visualization, "plan-vs-body presentation boundary missing"
 assert "Result Freshness QA" in regression_loop, "freshness QA missing from regression loop"
@@ -347,7 +347,7 @@ for token in [
     assert token in debug_stages, f"debug stage contract missing: {token}"
 for field in ["当前阶段：", "依赖阶段：", "输入：", "本阶段任务：", "输出：", "检查结果：", "通过条件：", "状态："]:
     assert field in debug_stages, f"debug output field missing: {field}"
-assert "不得自动执行这些阶段" in debug_stages, "debug resume must not auto-run missing dependencies"
+assert "不自动补跑" in debug_stages, "debug resume must not auto-run missing dependencies"
 assert "默认锁定" in debug_stages, "upstream lock contract missing"
 assert "调试状态记录" in debug_stages, "debug state record missing"
 for token in ["输入标识", "输出标识", "用户确认", "失效原因"]:
@@ -355,10 +355,10 @@ for token in ["输入标识", "输出标识", "用户确认", "失效原因"]:
 assert "模型自检通过不得自动写成“通过”" in debug_stages, "model must not self-approve debug stage"
 assert "用户明确授权自动修复、复测和验收" in debug_stages, "explicit user preauthorization gate missing"
 assert "默认需用户确认" in debug_stages, "default user confirmation gate missing"
-assert "没有授权连续推进时仍只执行指定阶段" in skill, "debug does not preserve stage isolation"
+assert "单阶段 Debug" in skill and "明确要求一口气完成" in skill, "debug scope priority missing"
 assert "分析循环" in debug_stages, "debug analysis loop missing"
 assert "不等于固定的 Dxx+1" in debug_stages, "debug next-stage branching missing"
-assert "而不是机械执行一次 D01 → D23" in debug_stages, "full regression must preserve loops"
+assert "不能机械走一次 D01 至 D23" in debug_stages, "full regression must preserve loops"
 assert "不决定最终工程拆分方式" in debug_stages, "engineering form must remain undecided"
 assert "单个 Skill 内部分段、多个独立 Skill、子模块" in debug_stages, "engineering alternatives missing"
 for token in ["自检自修", "先找根因，再修改", "一次只改一个根因", "修后必须重新执行当前阶段", "同一问题重复出现且没有新证据时停止"]:
@@ -371,8 +371,8 @@ for stage_id in [f"D{i:02d}" for i in range(1, 24)]:
     card = m.group(1)
     for field in ["依赖：", "输入：", "任务：", "输出：", "检查：", "通过："]:
         assert field in card, f"{stage_id} missing compact field: {field}"
-assert "一次只执行一个阶段" in skill, "debug router single-stage stop missing"
-assert "正常模式保持不变" in skill, "normal mode preservation missing"
+assert "单阶段 Debug" in skill and "不必逐次请求已预授权的确认" in skill, "debug scoped and full-chain routing missing"
+assert "普通 Direct/Autopilot 不逐阶段索取确认" in skill, "normal mode preservation missing"
 assert "references/debug-stages.md" in skill, "debug reference not wired into skill"
 
 dialogue = (ROOT / "references" / "dialogue-rendering.md").read_text(encoding="utf-8")
@@ -432,5 +432,16 @@ assert d23_info["status"] == "PASS" and d23_info["remote_render_run"], "D23_ACCE
 assert set(d23_info["screenshots"]) == {
     "desktop_1440.png", "mobile_390.png", "reflow_320.png", "audit_closed_mobile.png"
 }, "D23_SCREENSHOT_NAMES_STALE"
+
+
+# Regression: cleanup must preserve both execution paths and strict runtime fidelity.
+for token in ["完整连续执行请求", "单阶段请求", "从指定阶段继续", "不能机械走一次 D01 至 D23"]:
+    assert token in debug_stages, f"debug mode scope regression: {token}"
+for token in ["原样不变或仅允许替换", "VFS 别名", "不能宣称满足原样契约", "HARNESS_STALE", "只跑预置 SQL"]:
+    assert token in skill, f"strict execution or stale harness regression: {token}"
+assert skill.count("## 1. 选择模式与按需加载") == 1, "canonical router duplicated"
+assert skill.count("## 3. 运行时、结果与真实性") == 1, "runtime contract duplicated"
+assert skill.count("## 6. 报告、看板与 HTML") == 1, "delivery contract duplicated"
+assert len(skill.splitlines()) < 200, "main skill has regrown into on-demand reference content"
 
 print("OK: sql-business-thinking repository integrity")
