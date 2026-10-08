@@ -58,7 +58,7 @@ def check(chain, prior=None):
         import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
-            if early and re.search(r"\b(?:JOIN|GROUP\s+BY|SUM\s*\(|AVG\s*\(|CASE\s+WHEN)\b", statement, re.I):
+            if early and re.search(r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)", statement, re.I):
                 errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + ident)
     # A numeric narrative must be reconstructed from THIS run's SQL Result.
     # Templates/bindings are an audit contract, not expected test answers.
