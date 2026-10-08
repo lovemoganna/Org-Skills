@@ -219,7 +219,9 @@ Top1 占近一半流量
 
 ## 10. VisualizationPlan（独立输出）
 
-D21 单独输出 VisualizationPlan。D20 的 ReportSpec / DashboardSpec 只读、不得追加或修改字段。
+D21 只在 D20 已完成并通过、内容有真实证据时，才单独输出 VisualizationPlan。D20 的 ReportSpec / DashboardSpec 只读、不得追加或修改字段。
+
+D20 尚未产生可核验 Spec 时，D21 只能标“阻塞”并指出缺口。测试样例可验证规则，但不能被标为本轮真实数据的展示计划。
 
 每个计划项最少记录：
 
