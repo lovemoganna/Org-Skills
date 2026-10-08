@@ -6,6 +6,10 @@ on:
     paths:
       - ".github/workflows/ontology-real-workbook.yml"
       - "skills/ontology-constrained-analysis/**"
+  pull_request:
+    paths:
+      - ".github/workflows/ontology-real-workbook.yml"
+      - "skills/ontology-constrained-analysis/**"
   workflow_dispatch:
 
 permissions:
@@ -251,6 +255,30 @@ jobs:
           SQL
 
           ./duckdb < ontology-materialize.sql
+
+      - name: Reject original mixed-category ontology relation using live DuckDB exports
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, sys
+          sys.path.insert(0, 'skills/ontology-constrained-analysis/scripts')
+          from check_ontology_sources import validate_relation_domains
+          def domain(filename, column):
+              with open(filename, newline='', encoding='utf-8-sig') as f:
+                  return [row[column] for row in csv.DictReader(f) if row[column]]
+          original_relation = '汇率记录|对应|加密资产'
+          model = {'ontology_atoms': [{'关系': original_relation}],
+                   'relation_domain_claims': [{
+                     'relation': original_relation, 'source': 'exchange_rates.asset',
+                     'category_source': 'crypto_transactions.asset'
+                   }]}
+          observed = {'exchange_rates.asset': domain('exchange_rates.csv','asset'),
+                      'crypto_transactions.asset': domain('crypto_transactions.csv','asset')}
+          failures = validate_relation_domains(model, observed)
+          assert any('RELATION_DOMAIN_MISMATCH' in e for e in failures), failures
+          print('PASS: incorrect narrowed category rejected using actual four-sheet source outputs')
+          PY
 
       - name: Verify outputs
         shell: bash
