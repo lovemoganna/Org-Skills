@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>Ontology DuckDB-WASM runtime gate</title>
+<pre id="result">RUNNING</pre>
+<script type="module">
+import * as duckdb from './duckdb.bundle.mjs';
+const remote='https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx';
+const allow=['users','fiat_transactions','crypto_transactions','exchange_rates'];
+const out={origin:location.origin,remote,remote_fetch:{status:'UNTESTED'},vfs:{status:'UNTESTED'},duckdb:{status:'UNTESTED'},sheets:{}};
+const rows=t=>t.toArray().map(r=>Object.fromEntries(t.schema.fields.map(f=>[f.name,typeof r[f.name]==='bigint'?r[f.name].toString():r[f.name]])));
+const hash=async data=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',data))].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function probe(){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),9000);
+ try{
+  const response=await fetch(remote,{signal:controller.signal,mode:'cors'});
+  const body=await response.arrayBuffer();
+  out.remote_fetch={status:response.ok?'ACCESSIBLE':'HTTP_ERROR',http_status:response.status,bytes:body.byteLength,sha256:await hash(body),cors_header:response.headers.get('access-control-allow-origin'),range_header:response.headers.get('accept-ranges')};
+ }catch(e){out.remote_fetch={status:'BLOCKED',error:String(e)}}finally{clearTimeout(timer)}
+ let db;
+ try{
+  const worker=new Worker(new URL('./duckdb-browser-eh.worker.js',location.href));
+  db=new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(),worker);
+  await db.instantiate(new URL('./duckdb-eh.wasm',location.href).href,null);
+  const conn=await db.connect();
+  out.duckdb.version=rows(await conn.query('SELECT version() AS version'));
+  const commands=['INSTALL httpfs;','LOAD httpfs;','INSTALL excel;','LOAD excel;'];
+  for(const sql of commands)await conn.query(sql);
+  out.duckdb.initialization=commands;out.duckdb.status='READY';
+  const response=await fetch('./source.xlsx');if(!response.ok)throw Error('original source GET HTTP '+response.status);
+  const bytes=await response.arrayBuffer(),expected=await(await fetch('./source-receipt.json')).json(),actual=await hash(bytes);
+  if(bytes.byteLength!==expected.bytes||actual!==expected.sha256)throw Error('SOURCE_BYTES_MISMATCH');
+  await db.registerFileBuffer('source.xlsx',new Uint8Array(bytes));
+  out.vfs={status:'BYTES_VERIFIED_REGISTERED',bytes:bytes.byteLength,sha256:actual,source_url:remote,registered_path:'source.xlsx',path_changed_from_fixed_remote_SQL:true};
+  for(const sheet of allow){
+   await conn.query("CREATE TEMP TABLE "+sheet+" AS SELECT * FROM read_xlsx('source.xlsx', sheet = '"+sheet+"', header = true);");
+   out.sheets[sheet]={row_count:rows(await conn.query('SELECT COUNT(*) AS row_count FROM '+sheet))[0].row_count};
+  }
+  out.status='VFS_READ_XLSX_PASS';await conn.close();await db.terminate();
+ }catch(e){out.status='VFS_READ_XLSX_BLOCKED';out.error=String(e);try{await db?.terminate()}catch{}}
+}
+try{await probe()}catch(e){out.status='PROBE_ERROR';out.error=String(e)}
+window.__ontologyProbe=out;document.querySelector('#result').textContent=JSON.stringify(out,null,2);
+</script></html>
