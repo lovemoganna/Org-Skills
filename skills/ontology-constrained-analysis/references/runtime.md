@@ -71,7 +71,7 @@ DuckDB 浏览器/WASM
 
 分别确认用户锁定的是“数据来源”还是“读取函数”。
 
-- 只锁定五个 CSV URL 和 DuckDB：可以从相同 URL 取原始字节，暂存到本地，再由 DuckDB `read_csv` 读取；这是传输缓冲，不是更换来源。必须记录 URL、实际文件字节数、SHA-256、读取时间和 DuckDB 实际使用的暂存路径。不能用镜像、其他仓库、示例数据替换。
+- 只锁定源 URL 和 DuckDB、未锁定读取函数：可以从相同 URL 获取完整原始字节并暂存本地，再由 DuckDB 使用适合实际文件格式的读取函数读取；这是传输缓冲，不是更换来源。必须记录 URL、实际文件字节数、SHA-256、读取时间和 DuckDB 实际使用的暂存路径。不能用镜像、其他仓库、示例数据替换。
 - 同时锁定 `read_csv('https://...')`、`read_xlsx('https://...')` 或完整读取 SQL：必须保持函数、URL 和参数，不得擅自改成本地路径。
 - 无论何种方式，网络允许看见 GitHub 元数据不代表容器已取得文件字节；`Blob SHA` 不能代替本地文件哈希和读取成功。
 - 暂存路径可以不同于原始 URL，但来源链必须可逐字节复核。
@@ -80,13 +80,13 @@ DuckDB 浏览器/WASM
 
 ## 阻塞交付合同
 
-优先执行 `python scripts/source_gate.py --manifest <manifest.json> --out <out>`；失败必须生成 `source_gate_receipt.json`、`source_gate_blocked.md` 和 `source_gate_blocked.html`。禁止因源不可达只输出状态消息而丢失报告。源 Gate 通过后仍需独立 DuckDB CSV 解析检查，不能将 Source Gate 通过等同分析成功。
+优先执行 `python scripts/source_gate.py --manifest <manifest.json> --out <out>`；失败必须生成 `source_gate_receipt.json`、`source_gate_blocked.md` 和 `source_gate_blocked.html`。禁止因源不可达只输出状态消息而丢失报告。源 Gate 通过后仍需独立 DuckDB 文件格式解析检查，不能将 Source Gate 通过等同分析成功。
 
 遇到源不可用时，必须写出：
 
 ```text
 本次状态：阻塞，不等于分析通过
-已验证：URL/元数据/本地字节/CSV解析/DuckDB读取（逐项标注）
+已验证：URL/元数据/本地字节/文件格式解析/DuckDB读取（逐项标注）
 实际错误：原文
 最后成功阶段：有证据的阶段
 后续状态：未执行，不得用计划结果替代
