@@ -1,0 +1,66 @@
+{
+  "stage": "D21",
+  "delivery_mode": "report",
+  "source_spec_path": "skills/sql-business-thinking/tests/verified-d20-report-spec.json",
+  "source_spec_blob_sha": "e328595aa72bef32fe37d20be24c6fd2bcc548c7",
+  "source_result_run_id": 37725587099,
+  "source_result_ref": "D11-R1",
+  "source_data_revision": "561287b5d150e3c11735562b0a4f3d670b9e5b8ccecb818d1a26bcfb720b3335",
+  "layout_archetype": "Evidence Report",
+  "items": [
+    {
+      "id": "view-main-judgment",
+      "content_ref": "report-decision",
+      "presentation_question": "单一 completed 占比是否足以给入金、出金方向排名？",
+      "data_shape": "一项已验证的受限解释判断",
+      "selected_chart": "text",
+      "unit_contract": "不新增数值；只引用 D20 judgment",
+      "layout_role": "hero",
+      "visibility": "PRIMARY"
+    },
+    {
+      "id": "view-denominator",
+      "content_ref": "report-denominator-sensitivity",
+      "presentation_question": "为何改变分母就会翻转入金、出金方向的排序？",
+      "data_shape": "两个方向乘以两个分母口径的对照",
+      "selected_chart": "comparison_table",
+      "unit_contract": "占比按 0–100% 显示；每列必须明确全部记录分母或终态记录分母；终态口径是辅助敏感性检查",
+      "layout_role": "main_evidence",
+      "visibility": "PRIMARY"
+    },
+    {
+      "id": "view-status-mix",
+      "content_ref": "report-status-breakdown",
+      "presentation_question": "两个方向的记录数、completed 与非 completed 状态构成分别是什么？",
+      "data_shape": "两个方向和四类互斥状态的计数矩阵",
+      "selected_chart": "count_table",
+      "unit_contract": "计数单位为订单记录；状态组互斥，不把历史进行中记录称为当前待办",
+      "layout_role": "supporting_evidence",
+      "visibility": "SECONDARY"
+    }
+  ],
+  "excluded": [
+    {
+      "content": "dashboard_core_kpis",
+      "reason": "交付模式仅为 Report，D19 未运行"
+    },
+    {
+      "content": "uid_diagnostic_or_root_cause",
+      "reason": "D15 逐笔 UID 诊断未执行，D11 没有来源结果"
+    },
+    {
+      "content": "third_chart_with_same_conclusion",
+      "reason": "与现有两组证据重复，没有独立判断价值"
+    }
+  ],
+  "renderer_contract": {
+    "read_only_d20": true,
+    "no_new_sql": true,
+    "no_new_metrics": true,
+    "no_recompute": true,
+    "no_dashboard": true,
+    "source_result_gate": "PASS",
+    "sql_evidence_visible_in_audit_not_hero": true,
+    "not_an_artifact": true
+  }
+}
