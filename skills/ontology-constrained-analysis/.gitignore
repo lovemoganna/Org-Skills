@@ -1,0 +1,22 @@
+# Local execution outputs and caches; canonical tests stay tracked.
+__pycache__/
+*.py[cod]
+node_modules/
+.cache/
+.tmp/
+artifacts/
+outputs/
+reports/
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.xlsx
+*.zip
+*.log
+*-receipt.json
+*-results.json
+*.png
+*.webp
+*.html
+# Preserve the intentionally tracked HTML browser fixture.
+!tests/wasm_probe.html
