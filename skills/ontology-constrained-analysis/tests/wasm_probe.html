@@ -26,7 +26,7 @@ async function probe(){
   }catch(e){out.remote_fetch[check.toLowerCase()]={error:String(e)}}finally{clearTimeout(timeout)}
  }
  const part=out.remote_fetch.range;
- out.remote_fetch.range_capability=(part?.status===206&&part.bytes===32&&/^bytes 0-31\\/\\d+$/.test(part.content_range||''))
+ out.remote_fetch.range_capability=(part?.status===206&&part.bytes===32&&/^bytes 0-31\/\d+$/.test(part.content_range||''))
    ?'PARTIAL_CONTENT_CONFIRMED':'NOT_CONFIRMED';
  let db;
  try{
