@@ -323,6 +323,57 @@ FROM series_pairs;""")[0]
             "alternative":"日历、季节、用户类型仍可能解释读数变化。",
             "limit":"未控制天气、节假日与营业属性，不能从此推断因果关系。"
         })
+    # The direction reversed after a combined filter. Separate the two boundary exclusions
+    # before attributing the shift to coverage, calendar effects or sample composition.
+    boundary_sensitivity=run("稳健性R3：逐个排除首尾日期，检验方向翻转来源","""WITH boundaries AS (
+    SELECT
+        MIN(CAST(ts AS DATE)) AS first_day,
+        MAX(CAST(ts AS DATE)) AS last_day
+    FROM readings
+),
+scenarios AS (
+    SELECT 'all_dates' AS scenario, FALSE AS drop_first, FALSE AS drop_last
+    UNION ALL
+    SELECT 'drop_first', TRUE, FALSE
+    UNION ALL
+    SELECT 'drop_last', FALSE, TRUE
+    UNION ALL
+    SELECT 'drop_both', TRUE, TRUE
+),
+per_series AS (
+    SELECT
+        x.scenario,
+        r.client,
+        AVG(r.value) FILTER (
+            WHERE ISODOW(r.ts) BETWEEN 1 AND 5
+        ) AS weekday_mean,
+        AVG(r.value) FILTER (
+            WHERE ISODOW(r.ts) IN (6, 7)
+        ) AS weekend_mean
+    FROM readings AS r
+    CROSS JOIN boundaries AS b
+    CROSS JOIN scenarios AS x
+    WHERE (NOT x.drop_first OR CAST(r.ts AS DATE) != b.first_day)
+      AND (NOT x.drop_last OR CAST(r.ts AS DATE) != b.last_day)
+    GROUP BY x.scenario, r.client
+)
+SELECT
+    scenario,
+    COUNT(*) FILTER (
+        WHERE weekday_mean IS NOT NULL AND weekend_mean IS NOT NULL
+    ) AS comparable_series,
+    COUNT(*) FILTER (WHERE weekend_mean < weekday_mean) AS weekend_lower,
+    COUNT(*) FILTER (WHERE weekend_mean > weekday_mean) AS weekend_higher,
+    ROUND(AVG(weekend_mean - weekday_mean), 5) AS mean_paired_delta
+FROM per_series
+GROUP BY scenario
+ORDER BY scenario;""",10)
+    findings.append({
+        "title":"周内/周末结论对首尾日期过滤高度敏感",
+        "fact":"依次保留或剔除首尾日期的真实配对差值："+str(boundary_sensitivity)+".",
+        "alternative":"首次边界日期自身具有不同的日内或日历负荷形态；仅凭数据不能判断是节日、截断还是其他原因。",
+        "limit":"剔除不完整日期是一种稳健性口径，不是对该日期业务价值或正确性的否定。原始总体差值不应独立作为稳定模式发布。"
+    })
     concentration=run("复杂问题C4：统一采样粒度下各序列累计读数占比","""WITH sums AS (
     SELECT
         client,
