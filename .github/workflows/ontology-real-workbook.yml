@@ -120,10 +120,154 @@ jobs:
           DESCRIBE exchange_rates;
 
           .shell python skills/ontology-constrained-analysis/scripts/live_workbook_gate1.py
+          .read gate1-decision.sql
+
+          .once ontology-instrument-status.csv
+          SELECT 'fiat' AS rail, CAST(currency AS VARCHAR) AS instrument,
+                 CAST(direction AS VARCHAR) AS direction,
+                 CAST(status AS VARCHAR) AS status,
+                 COUNT(*) AS record_count,
+                 SUM(CAST(amount AS DOUBLE)) AS amount_native
+          FROM fiat_transactions
+          GROUP BY currency, direction, status
+          UNION ALL
+          SELECT 'crypto', CAST(asset AS VARCHAR), CAST(direction AS VARCHAR),
+                 CAST(status AS VARCHAR), COUNT(*), SUM(CAST(amount AS DOUBLE))
+          FROM crypto_transactions
+          GROUP BY asset, direction, status
+          ORDER BY rail, instrument, direction, status;
+
+          .once ontology-uid-integrity.csv
+          WITH tx AS (
+            SELECT 'fiat' AS rail, TRY_CAST(uid AS BIGINT) AS uid_key
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'crypto', TRY_CAST(uid AS BIGINT)
+            FROM crypto_transactions
+          )
+          SELECT tx.rail, COUNT(*) AS transaction_records,
+                 SUM(CASE WHEN users.uid IS NULL THEN 1 ELSE 0 END) AS unmatched_records,
+                 COUNT(DISTINCT tx.uid_key) AS distinct_transaction_users
+          FROM tx
+          LEFT JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
+          GROUP BY tx.rail
+          ORDER BY tx.rail;
+
+          .once ontology-account-snapshot.csv
+          WITH tx AS (
+            SELECT 'fiat' AS rail, TRY_CAST(uid AS BIGINT) AS uid_key,
+                   CAST(status AS VARCHAR) AS tx_status
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'crypto', TRY_CAST(uid AS BIGINT), CAST(status AS VARCHAR)
+            FROM crypto_transactions
+          )
+          SELECT CAST(users.account_status AS VARCHAR) AS account_status,
+                 tx.rail, tx.tx_status,
+                 COUNT(*) AS transaction_records,
+                 COUNT(DISTINCT TRY_CAST(users.uid AS BIGINT)) AS distinct_users
+          FROM tx
+          JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
+          GROUP BY users.account_status, tx.rail, tx.tx_status
+          ORDER BY account_status, rail, tx_status;
+
+          .once ontology-status-timestamps.csv
+          SELECT 'fiat' AS rail, CAST(status AS VARCHAR) AS status,
+                 COUNT(*) AS record_count,
+                 SUM(CASE WHEN completed_at IS NOT NULL AND
+                               CAST(completed_at AS VARCHAR) <> 'NULL'
+                          THEN 1 ELSE 0 END) AS with_completion_timestamp
+          FROM fiat_transactions
+          GROUP BY status
+          UNION ALL
+          SELECT 'crypto', CAST(status AS VARCHAR), COUNT(*),
+                 SUM(CASE WHEN completed_at IS NOT NULL AND
+                               CAST(completed_at AS VARCHAR) <> 'NULL'
+                          THEN 1 ELSE 0 END)
+          FROM crypto_transactions
+          GROUP BY status
+          ORDER BY rail, status;
+
+          .once ontology-rate-temporality.csv
+          WITH tx AS (
+            SELECT CAST(currency AS VARCHAR) AS asset,
+                   TRY_CAST(created_at AS TIMESTAMP) AS created_at
+            FROM fiat_transactions
+            UNION ALL
+            SELECT CAST(asset AS VARCHAR),
+                   TRY_CAST(created_at AS TIMESTAMP)
+            FROM crypto_transactions
+          ),
+          tx_summary AS (
+            SELECT asset, COUNT(*) AS transaction_records,
+                   MIN(created_at) AS first_created,
+                   MAX(created_at) AS last_created
+            FROM tx
+            GROUP BY asset
+          ),
+          rate_summary AS (
+            SELECT asset, COUNT(*) AS rate_records,
+                   MAX(TRY_CAST(effective_date AS DATE)) AS last_rate_date,
+                   COUNT(DISTINCT TRY_CAST(rate_to_usdt AS DOUBLE)) AS distinct_rate_values
+            FROM exchange_rates
+            GROUP BY asset
+          )
+          SELECT tx_summary.*, rate_summary.rate_records, rate_summary.last_rate_date,
+                 rate_summary.distinct_rate_values
+          FROM tx_summary
+          LEFT JOIN rate_summary USING (asset)
+          ORDER BY asset;
+
+          .once ontology-cross-rail.csv
+          WITH fiat AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS fiat_records
+            FROM fiat_transactions
+            GROUP BY uid_key
+          ),
+          crypto AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS crypto_records
+            FROM crypto_transactions
+            GROUP BY uid_key
+          )
+          SELECT TRY_CAST(users.uid AS BIGINT) AS uid_key,
+                 CAST(users.account_status AS VARCHAR) AS account_status,
+                 COALESCE(fiat.fiat_records, 0) AS fiat_records,
+                 COALESCE(crypto.crypto_records, 0) AS crypto_records
+          FROM users
+          LEFT JOIN fiat ON fiat.uid_key = TRY_CAST(users.uid AS BIGINT)
+          LEFT JOIN crypto ON crypto.uid_key = TRY_CAST(users.uid AS BIGINT)
+          ORDER BY uid_key;
+
+          .once ontology-usdt-driver.csv
+          WITH per_user AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key,
+                   SUM(CASE
+                         WHEN direction = 'deposit' THEN CAST(amount AS DOUBLE)
+                         WHEN direction = 'withdrawal' THEN -CAST(amount AS DOUBLE)
+                         ELSE NULL
+                       END) AS sample_net_usdt,
+                   SUM(CASE WHEN direction = 'deposit'
+                            THEN CAST(amount AS DOUBLE) ELSE 0 END) AS deposits_usdt,
+                   SUM(CASE WHEN direction = 'withdrawal'
+                            THEN CAST(amount AS DOUBLE) ELSE 0 END) AS withdrawals_usdt,
+                   COUNT(*) AS record_count
+            FROM crypto_transactions
+            WHERE asset = 'USDT'
+              AND status = 'completed'
+              AND direction IN ('deposit', 'withdrawal')
+            GROUP BY uid_key
+          )
+          SELECT uid_key, sample_net_usdt, deposits_usdt, withdrawals_usdt,
+                 record_count,
+                 SUM(sample_net_usdt) OVER () AS overall_net_usdt,
+                 SUM(sample_net_usdt) OVER () - sample_net_usdt AS net_without_user
+          FROM per_user
+          ORDER BY ABS(sample_net_usdt) DESC, uid_key;
+
 
           SQL
 
-          ./duckdb < ontology-materialize.sql
+          ./duckdb -bail < ontology-materialize.sql
 
       - name: Reject original mixed-category ontology relation using live DuckDB exports
         shell: bash
@@ -176,7 +320,7 @@ jobs:
 
           sql_text = pathlib.Path("ontology-materialize.sql").read_text()
           evidence["sql_sha256"] = hashlib.sha256(sql_text.encode()).hexdigest()
-          evidence["test_scope"] = "pre-Gate1 neutral source loading, schema and source contract only; no business SQL, Finding or final browser"
+          evidence["test_scope"] = "same-session fixed read_xlsx -> current-source semantic Gate 1 -> smoke analytical SQL, not full Gate 2-4 Finding proof"
           assert sql_text.count("INSTALL httpfs;") == 1
           assert sql_text.count("LOAD httpfs;") == 1
           assert sql_text.count("INSTALL excel;") == 1
@@ -191,7 +335,33 @@ jobs:
           evidence["gate1_source_contract"] = gate["status"]
           assert gate["status"] == "PASS_STRUCTURE_AND_NARROW_SEMANTICS", gate["errors"]
           assert sql_text.index(".shell python skills/ontology-constrained-analysis/scripts/live_workbook_gate1.py") > sql_text.index("CREATE TEMP TABLE exchange_rates AS")
-          assert ".once ontology-instrument-status.csv" not in sql_text, "analysis before Gate1"
+          assert ".read gate1-decision.sql" in sql_text
+          assert sql_text.index(".read gate1-decision.sql") < sql_text.index(".once ontology-instrument-status.csv"), "BUSINESS_SQL_BEFORE_GATE1"
+          decision = pathlib.Path("gate1-decision.sql").read_text(encoding="utf-8")
+          assert "GATE1_APPROVED" in decision, decision
+          evidence["gate1_semantic_review"] = gate["semantic_review"]
+          assert gate["semantic_review"]["status"] == "PASS"
+          analysis_names = [
+              "ontology-source-profile",
+              "ontology-instrument-status",
+              "ontology-uid-integrity",
+              "ontology-account-snapshot",
+              "ontology-status-timestamps",
+              "ontology-rate-temporality",
+              "ontology-cross-rail",
+              "ontology-usdt-driver",
+          ]
+          evidence["analysis_query_receipts"] = {}
+          for name in analysis_names:
+              file = pathlib.Path(name + ".csv")
+              assert file.exists() and file.stat().st_size > 0, f"missing SQL result: {name}"
+              with file.open(newline="", encoding="utf-8") as fh:
+                  data = list(csv.reader(fh))
+              assert data and data[0], f"missing SQL result schema: {name}"
+              evidence["analysis_query_receipts"][name] = {
+                  "rows": len(data) - 1,
+                  "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+              }
 
           assert sql_text.count("header = true") == 4
 
