@@ -315,7 +315,7 @@ D20 Spec 只读。D21 单独生成 VisualizationPlan，Renderer 读取两者，�
 - Analysis Lead 左、Critical Analyst 右，并显示本轮绑定后的实际角色名；如果会话是用户要求的交付物，正文展示完整权威 Conversation Arc；已有完整正文会话时不再保留旧版会话附录；
 - SQL 深色等宽；
 - 交互必须有 hover/focus/disabled；
-- **Mobile Width Gate：**任何 Grid/Flex 内容列只要包含 `pre/code/table`，内容子项必须允许收缩（例如 `min-width: 0`）；代码块和表格只能在自己的 wrapper 内横向滚动，wrapper 必须 `max-width: 100%`。禁止让宽表/长 SQL 把 `body/documentElement` 撑宽；
+- **Mobile Width Gate：**任何 Grid/Flex 内容列只要包含 `pre/code/table`，内容子项必须允许收缩（例如 `min-width: 0`）；嵌套 Grid/Flex 的直接子项也必须可收缩，不得仅设置外层容器。代码块和表格只能在自己的 wrapper 内横向滚动，wrapper 必须 `max-width: 100%`。当 `table.scrollWidth` 超过可见宽度时，必须实测所属 wrapper 的 `scrollWidth > clientWidth` 且可横向滚动；仅裁切 `body` 溢出或检查 `documentElement.scrollWidth` 不算通过。禁止让宽表/长 SQL 把 `body/documentElement` 撑宽；
 - 提供打印/PDF 时加 print CSS，附录默认不打印。
 
 ## 13. Rendered QA
