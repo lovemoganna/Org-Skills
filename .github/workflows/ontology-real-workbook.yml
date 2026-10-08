@@ -411,6 +411,12 @@ jobs:
           print(json.dumps(evidence, ensure_ascii=False, indent=2))
           PY
 
+      - name: Build gated business report and validate factual lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python skills/ontology-constrained-analysis/scripts/real_workbook_report.py
+
       - name: Upload evidence
         uses: actions/upload-artifact@v4
         with:
@@ -428,6 +434,9 @@ jobs:
             gate1-receipt.json
             gate1-decision.sql
             ontology-query-receipts.jsonl
+            ontology-analysis.html
+            ontology-run-chain.json
+            ontology-run-acceptance.json
           if-no-files-found: error
 
   sql-browser:
