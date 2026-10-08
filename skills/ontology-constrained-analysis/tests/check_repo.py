@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -123,6 +124,23 @@ class SourceGateTests(unittest.TestCase):
             )
             self.assertFalse(receipt["complete"])
             self.assertIn("mock DNS error", receipt["results"][0]["error"])
+
+
+
+class SkillIntegrityTests(unittest.TestCase):
+    def test_skill_structure(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "check_structure.py")],
+            capture_output=True, text=True, check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_eval_definition_integrity(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "check_eval_integrity.py")],
+            capture_output=True, text=True, check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
