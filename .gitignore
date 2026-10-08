@@ -1,0 +1,26 @@
+# Local runtime and test caches; keep source fixtures and historical evidence tracked.
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/node_modules/
+
+# Root-level temporary files produced by the existing DuckDB / Wasm CI jobs.
+/d02.sql
+/d03.sql
+/d02-evidence.json
+/d03-evidence.json
+/holdout.sql
+/holdout.xlsx
+/holdout-result.csv
+/workbook.xlsx
+/duckdb.zip
+/duckdb
+/duckdb.bundle.mjs
+/duckdb-eh.wasm
+/duckdb-browser-eh.worker.js
+/render-input/
+/render-output/
+
+# Local QA output only. Do not ignore committed report/SQL/JSON fixtures.
+/skills/sql-business-thinking/tests/results.json
+/skills/sql-business-thinking/tests/screenshots/
