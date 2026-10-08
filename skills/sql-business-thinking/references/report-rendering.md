@@ -218,7 +218,9 @@ Skill Trace 仍属于审计信息，不让角色在台词里说“调用 Skill�
 
 ## 10. ReportSpec / DashboardSpec
 
-先确定 `delivery_mode`，再选择对应 Schema。不得为了统一格式强行给 Report 加 Dashboard 字段，或给 Dashboard 加分析字段。
+只读取已确认的 `delivery_mode`，再选择对应 Schema。D20 必须先确认对应上游阶段已通过、可见内容有真实证据且未被 Gate 阻断。没有 D18 的 Report 或没有 D19 的 Dashboard，只能标“阻塞”，不能生成正式 Spec。
+
+下列 JSON 是**结构示意，不是已经完成的产物**。空数组、空对象不能证明分析已执行。可展示内容必须保留源结果引用和 Gate 状态；没有决策级发现时只能如实报告，不得从候选问题推测发现。不得为统一格式强行添加另一模式的字段。
 
 ### Report
 
