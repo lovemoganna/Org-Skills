@@ -185,23 +185,22 @@ jobs:
         run: |
           set -euo pipefail
           npm init -y >/dev/null
-          npm install --no-save puppeteer-core >/dev/null
-          export CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
-          test -n "$CHROME"
+          npm install --no-save playwright >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
           python3 -m http.server 8765 --directory live-evidence >live-evidence/http.log 2>&1 &
           cat > browser-acceptance.mjs <<'JS'
-          import puppeteer from 'puppeteer-core';
+          import {chromium} from 'playwright';
           import {readFileSync,writeFileSync} from 'node:fs';
           import {createHash} from 'node:crypto';
           const e=JSON.parse(readFileSync('live-evidence/acceptance.json','utf8'));
           const sha=createHash('sha256').update(readFileSync('live-evidence/report.html')).digest('hex');
           if(sha!==e.report_sha256) throw new Error('ARTIFACT_MISMATCH');
-          const browser=await puppeteer.launch({executablePath:process.env.CHROME,headless:true,args:['--no-sandbox']});
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
           const results=[];
           for(const [name,width,height] of [['desktop',1440,900],['mobile',390,844],['narrow',320,700]]){
-            const page=await browser.newPage(); await page.setViewport({width,height});
+            const page=await browser.newPage({viewport:{width,height}});
             const errors=[];page.on('pageerror',err=>errors.push(String(err)));
-            await page.goto('http://127.0.0.1:8765/report.html',{waitUntil:'networkidle0'});
+            await page.goto('http://127.0.0.1:8765/report.html',{waitUntil:'networkidle'});
             await page.evaluate(()=>document.fonts.ready);
             const m=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,textLength:document.body.innerText.length,tableCount:document.querySelectorAll('table').length,detailsCount:document.querySelectorAll('details').length}));
             const success=m.scrollWidth<=width+1 && m.textLength>300 && m.tableCount>=1 && m.detailsCount>=5 && errors.length===0;
