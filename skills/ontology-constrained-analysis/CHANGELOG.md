@@ -1,5 +1,12 @@
 # Changelog
 
+## v16.4 — Canonical Gate 1 source-column regression (2026-10-08)
+
+- 修复历史四表本体测试资产：`来源` 更名为规范列 `证据来源`，逐项保留原始表字段证据值；该数据专用资产保留在原测试分支。
+- Gate 1 禁止报告生成时静默重命名后冒充本体验收；新增通用结构/来源检查脚本，以当前 DuckDB DESCRIBE 输出为依据核验允许表和字段，不预置数据集列名。
+- 增加旧列名、禁用表、未知字段、合法/非法派生来源回归；该脚本只做结构和来源检查，不取代业务语义审查。
+- 原先真实 SQL、读取契约、四 Gate、Lisp、Signal/Finding、Dashboard 判定及其他有效约束均保持不变。
+
 ## v16.3 — Audit-led consolidation (2026-10-08)
 
 - 将 SKILL.md 中重复的源恢复、浏览器及 SQL UI 细则合并到已有 `references/runtime.md`；入口仅保留执行契约、四个 Gate、核心拒绝条件与按需读取。
