@@ -75,3 +75,5 @@ assert any(a["started_at"]<b["ended_at"] and b["started_at"]<a["ended_at"] for i
 "source_run_id":37793839441,"snapshot_sha256":R["snapshot_sha256"],"tasks":results},
 ensure_ascii=False,indent=2)+"\n")
 print(json.dumps({"status":"PARALLEL_QUERIES_DONE","rows":{r["question_id"]:r["row_count"] for r in results}}))
+
+# Trigger independent branch workflow after definition registration.
