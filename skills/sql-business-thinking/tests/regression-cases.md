@@ -1204,3 +1204,22 @@ DISTINCT 主体数
 2. Dashboard 的 VisualizationPlan 只表达 DashboardSpec 已通过看板资格的内容。
 3. Hybrid 的两组计划对应各自 Spec，不混合内容。
 4. D21 不更改已确认交付类型，也不进入 Artifact 生成。
+
+
+## V37：D20/D21 真实依赖与样例隔离
+
+### 缺少 D18 时禁止正式 ReportSpec
+
+当前真实场景：用户只确认了部分本体、指标和候选问题，尚未完成 D11 Result、D17 已验证发现及 D18 决策判断。
+
+验收：D20 Report 标“阻塞”，列出缺少的上游阶段，不生成空壳 ReportSpec，也不得把候选问题变为分析发现。D21 不得越过被阻塞的 D20。
+
+### 已有 Schema 不等于已有分析结果
+
+失败样本：只有带空数组的 ReportSpec 结构示意，就声明 D20/D21 完成。
+
+验收：正式可见内容必须有实际 Result 引用且 Gate 有效。没有发现时可以写“无决策级发现”，但 D18 必须实际完成。结构示意、模拟结果和测试样例不能成为真实报告内容。
+
+### 使用模拟样例做正反向测试
+
+执行 `python tests/check_delivery_handoff.py`。合格 Report / Dashboard / Hybrid 样例应通过；D18 缺失、空壳 Spec、阻塞结果、悬空 content_ref、错误交付结构、未确认的 D19 都必须拒绝。结果标注为“模拟样例测试”，不宣称工作簿真实分析通过。
