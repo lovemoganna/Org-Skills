@@ -1,6 +1,6 @@
 {
   "source_url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt",
-  "checked_utc": "2026-10-08T07:44:49.529012+00:00",
+  "checked_utc": "2026-10-08T07:45:42.986387+00:00",
   "stages": [
     {
       "stage": "Source Gate",
@@ -13,10 +13,30 @@
     {
       "stage": "DuckDB Grain + Quality Gate",
       "status": "PASS"
+    },
+    {
+      "stage": "Ontology Validator Gate 1",
+      "status": "PASS"
+    },
+    {
+      "stage": "Atomic SQL Gate 2",
+      "status": "PASS"
+    },
+    {
+      "stage": "Signal Gate 2",
+      "status": "PASS"
+    },
+    {
+      "stage": "Complex Verification + Competing Explanations + Robustness Gate 3",
+      "status": "PASS"
+    },
+    {
+      "stage": "HTML / Audit Deliverable Gate 4",
+      "status": "PASS"
     }
   ],
   "sql": [],
-  "status": "BLOCKED",
+  "status": "COMPLETE",
   "source": {
     "http_status": 200,
     "content_length": "30363176",
@@ -63,7 +83,5 @@
     "negative_cells": "0",
     "min_value": "0.0",
     "max_value": "37083.3333333333"
-  },
-  "error": "AssertionError: ",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Org-Skills/Org-Skills/skills/ontology-constrained-analysis/scripts/electricity_case_runner.py\", line 294, in <module>\n    try:main()\n        ^^^^^^\n  File \"/home/runner/work/Org-Skills/Org-Skills/skills/ontology-constrained-analysis/scripts/electricity_case_runner.py\", line 136, in main\n    assert len(ontology)>=4 and all(len(x)==13 for x in ontology)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  }
 }
