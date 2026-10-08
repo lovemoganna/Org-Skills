@@ -144,18 +144,14 @@ await db.registerFileBuffer('source_original.txt', bytes);
 
 单 HTML 报告须在无需外网 CSS/JS 的情况下可读。所有 SQL 经过同一格式化流程，保留语句层级、换行、缩进。所有 SQL 容器使用同一套语法高亮规则；静态、动态、教程、验证和最终 SQL 不能各用一套。复制动作读取格式化后的 SQL 原文，不能复制 HTML、行号或转义展示字符。若浏览器不可实测，明确标记复制按钮的运行状态，不能宣称通过端到端验收。
 
-## 浏览器、单 HTML 与 WASM 执行前检查
+## GitHub 同源文件回退
 
-在编写依赖浏览器的方案前，先实测或记录不可用状态：
+当指定 URL 是 `raw.githubusercontent.com/{owner}/{repo}/{ref}/{path}` 且本地不能连通该主机时：
 
-1. 当前页面协议、浏览器实际 Origin、安全上下文及是否允许跨域请求。
-2. 指定源 URL 的 HEAD/GET、CORS 响应、Content-Length、完整字节和可复核哈希；失败不得根据搜索摘要猜测可读性。
-3. DuckDB-WASM 的真实版本、worker/wasm 文件可访问性、所需扩展、函数、VFS 注册方式和可复现 SQL。
-4. 远程 XLSX：只有用户锁定源而未锁定远程读取 SQL 时，才允许把从同源 URL 得到的完整真实 XLSX 字节注册到 WASM VFS，并继续 read_xlsx；禁止重新导出为 CSV 或使用第三方缓存替代。
-5. 单 HTML 只展示本次服务器/原生 DuckDB 已执行结果时，可以完全离线，避免外部 CDN、远程 API 和 WASM。此时需说明浏览器 file:// 的 Origin 限制和 SQL 不在浏览器里重跑。
-6. HTML 所有 SQL 使用一致的格式与语法高亮；复制必须取得格式化纯 SQL，不能包含 HTML span 或丢失缩进。
-
-若浏览器路线被 CORS 阻断，检查其他可用的同引擎环境，包括用户授权且确实可启动的远程 GitHub Actions。只将 Runner 的真实执行回执（源 SHA-256、DuckDB 版本、SQL、Result、终态）认定为成功；工作流配置、日志或元数据不能替代实际查询结果。
+1. 使用同一 owner/repo/ref/path 查找 GitHub 文件元数据，确认与指定文件相符。`github.com` 的大文件预览提示不代表源文件不存在。
+2. 若 GitHub Git Blobs API 能返回完整原始字节，可使用 `api.github.com/repos/{owner}/{repo}/git/blobs/{sha}` 取得原始内容，解码后独立计算 Git Blob SHA-1 与 SHA-256，并与同一路径的元数据 SHA 比对；如提供预期哈希，还必须核对预期哈希。
+3. 任何失败只说明该传输路线不可用；继续检查可用的同引擎执行环境，例如已授权 GitHub Actions Runner。不得把搜索网页、截断内容、API 元数据或文件大小推测当作 DuckDB Result。
+4. `source_gate_receipt.json` 同时保留原 URL、实际获取端点、字节数、SHA-256、Git Blob SHA、请求时间与真实错误。仅在完整性通过后才解析格式和执行 SQL。
 
 ## 禁止降级
 
