@@ -1,0 +1,97 @@
+[
+  {
+    "name": "DuckDB原始TXT读取",
+    "sql": "CREATE TEMP TABLE wide AS\nSELECT *\nFROM read_csv('reports/electricity-20261008/LD2011_2014.txt',\n    delim=';',\n    header=TRUE,\n    all_varchar=TRUE,\n    sample_size=-1\n);\n",
+    "columns": [
+      "Count"
+    ],
+    "rows": [
+      [
+        9999
+      ]
+    ],
+    "truncated": false
+  },
+  {
+    "name": "DuckDB宽表展开并保留NULL",
+    "sql": "CREATE TEMP TABLE readings AS\nSELECT\n    TRY_STRPTIME(\"column000\", '%Y-%m-%d %H:%M:%S') AS ts,\n    client,\n    raw_value,\n    TRY_CAST(REPLACE(raw_value, ',', '.') AS DOUBLE) AS value\nFROM wide\nUNPIVOT INCLUDE NULLS (\n    raw_value FOR client IN (COLUMNS(* EXCLUDE (\"column000\")))\n);\n",
+    "columns": [
+      "Count"
+    ],
+    "rows": [
+      [
+        3699630
+      ]
+    ],
+    "truncated": false
+  },
+  {
+    "name": "完整数据质量与粒度核验",
+    "sql": "SELECT\n    (SELECT COUNT(*) FROM wide) AS time_rows,\n    COUNT(*) AS long_rows,\n    COUNT(DISTINCT client) AS clients,\n    COUNT(DISTINCT ts) AS unique_timestamps,\n    MIN(ts) AS min_time,\n    MAX(ts) AS max_time,\n    COUNT(*) FILTER (WHERE ts IS NULL) AS bad_timestamp_cells,\n    COUNT(*) FILTER (WHERE raw_value IS NULL OR TRIM(raw_value) = '') AS blank_cells,\n    COUNT(*) FILTER (WHERE raw_value IS NOT NULL AND TRIM(raw_value) != '' AND value IS NULL) AS bad_numeric_cells,\n    COUNT(*) FILTER (WHERE value = 0) AS zero_cells,\n    COUNT(*) FILTER (WHERE value < 0) AS negative_cells,\n    MIN(value) AS min_value,\n    MAX(value) AS max_value\nFROM readings;\n",
+    "columns": [
+      "time_rows",
+      "long_rows",
+      "clients",
+      "unique_timestamps",
+      "min_time",
+      "max_time",
+      "bad_timestamp_cells",
+      "blank_cells",
+      "bad_numeric_cells",
+      "zero_cells",
+      "negative_cells",
+      "min_value",
+      "max_value"
+    ],
+    "rows": [
+      [
+        9999,
+        3699630,
+        370,
+        9999,
+        "2011-01-01 00:15:00",
+        "2011-04-15 03:45:00",
+        0,
+        0,
+        0,
+        2126479,
+        0,
+        0.0,
+        37083.3333333333
+      ]
+    ],
+    "truncated": false
+  },
+  {
+    "name": "时间频率与重复时点",
+    "sql": "WITH times AS (\n    SELECT DISTINCT ts\n    FROM readings\n),\nintervals AS (\n    SELECT\n        ts,\n        DATE_DIFF('minute', LAG(ts) OVER (ORDER BY ts), ts) AS step_minutes\n    FROM times\n)\nSELECT\n    step_minutes,\n    COUNT(*) AS interval_count\nFROM intervals\nGROUP BY step_minutes\nORDER BY interval_count DESC, step_minutes\nLIMIT 20;\n",
+    "columns": [
+      "step_minutes",
+      "interval_count"
+    ],
+    "rows": [
+      [
+        15,
+        9998
+      ],
+      [
+        null,
+        1
+      ]
+    ],
+    "truncated": false
+  },
+  {
+    "name": "同一时点与客户重复检查",
+    "sql": "SELECT\n    COUNT(*) AS duplicated_keys\nFROM (\n    SELECT ts, client\n    FROM readings\n    GROUP BY ts, client\n    HAVING COUNT(*) > 1\n) d;\n",
+    "columns": [
+      "duplicated_keys"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "truncated": false
+  }
+]
