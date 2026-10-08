@@ -228,7 +228,7 @@ assert "Artifact Presentation QA" in report_rendering, "artifact presentation QA
 assert "REUSED_VERIFIED_RESULT" in skill, "reused-result state missing"
 assert "本轮 run" in skill and "当前 Skill revision" in skill, "result freshness revision binding missing"
 assert "Artifact Presentation Gate" in visualization, "artifact presentation gate missing from visualization contract"
-assert "ReportSpec 可以完整，正文必须克制" in visualization, "report-vs-body presentation boundary missing"
+assert "VisualizationPlan 可以保留必要的表达理由，正文必须克制" in visualization, "plan-vs-body presentation boundary missing"
 assert "Result Freshness QA" in regression_loop, "freshness QA missing from regression loop"
 assert "Render QA Placement" in regression_loop, "render placement QA missing from regression loop"
 assert "Async Render Readiness" in regression_loop, "async readiness QA missing from regression loop"
