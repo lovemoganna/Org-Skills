@@ -124,6 +124,10 @@ assert "可加性必须带条件" in regression, "conditional-additivity regress
 assert "D07 不得演变成指标 DSL" in regression, "D07 anti-DSL regression missing"
 assert "候选指标必须有判断价值" in regression, "metric-value regression missing"
 assert "D07 应有淘汰结果" in regression, "metric-rejection regression missing"
+assert "D08 问题必须保持状态语义" in regression, "D08 lifecycle test case missing"
+assert "D08 小样本不得升级为异常" in regression, "D08 sparse-cell test case missing"
+assert "D08 允许空问题集" in regression, "D08 no-quotas case missing"
+assert "调试预授权无需逐轮确认" in regression, "delegated debug flow case missing"
 assert "分析深度不等于看板资格" in regression, "dashboard-depth-separation regression missing"
 assert "简单指标可以进入看板" in regression, "dashboard-simple-metric regression missing"
 assert "Dashboard-only 可以从 D07 直接进入看板资格判断" in regression, "dashboard-only path regression missing"
@@ -349,7 +353,9 @@ assert "调试状态记录" in debug_stages, "debug state record missing"
 for token in ["输入标识", "输出标识", "用户确认", "失效原因"]:
     assert token in debug_stages, f"debug state field missing: {token}"
 assert "模型自检通过不得自动写成“通过”" in debug_stages, "model must not self-approve debug stage"
-assert "只有用户明确确认当前阶段没有问题后" in debug_stages, "user confirmation gate missing"
+assert "用户明确授权自动修复、复测和验收" in debug_stages, "explicit user preauthorization gate missing"
+assert "默认需用户确认" in debug_stages, "default user confirmation gate missing"
+assert "没有授权连续推进时仍只执行指定阶段" in skill, "debug does not preserve stage isolation"
 assert "分析循环" in debug_stages, "debug analysis loop missing"
 assert "不等于固定的 Dxx+1" in debug_stages, "debug next-stage branching missing"
 assert "而不是机械执行一次 D01 → D23" in debug_stages, "full regression must preserve loops"
@@ -382,5 +388,6 @@ assert "What / Where / Why / Alternative / Test / Robustness / So What" in dialo
 
 
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_delivery_handoff.py")], check=True)
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_d08_questions.py")], check=True)
 
 print("OK: sql-business-thinking repository integrity")
