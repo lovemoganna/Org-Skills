@@ -40,7 +40,7 @@ jobs:
           LOAD excel;
 
           .mode csv
-          .once users.csv
+          CREATE TEMP TABLE users AS
           SELECT *
           FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
@@ -48,7 +48,11 @@ jobs:
             header = true
           );
 
-          .once fiat_transactions.csv
+          .once users.csv
+          SELECT *
+          FROM users;
+
+          CREATE TEMP TABLE fiat_transactions AS
           SELECT *
           FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
@@ -56,7 +60,11 @@ jobs:
             header = true
           );
 
-          .once crypto_transactions.csv
+          .once fiat_transactions.csv
+          SELECT *
+          FROM fiat_transactions;
+
+          CREATE TEMP TABLE crypto_transactions AS
           SELECT *
           FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
@@ -64,13 +72,21 @@ jobs:
             header = true
           );
 
-          .once exchange_rates.csv
+          .once crypto_transactions.csv
+          SELECT *
+          FROM crypto_transactions;
+
+          CREATE TEMP TABLE exchange_rates AS
           SELECT *
           FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
             sheet = 'exchange_rates',
             header = true
           );
+
+          .once exchange_rates.csv
+          SELECT *
+          FROM exchange_rates;
           SQL
 
           ./duckdb < d02.sql
@@ -108,6 +124,10 @@ jobs:
           assert sql_text.count("LOAD excel;") == 1
           assert sql_text.count("read_xlsx(") == 4
           assert sql_text.count("header = true") == 4
+          assert sql_text.count("CREATE TEMP TABLE ") == 4, "source sheets must be materialized once"
+          for sheet in sheets:
+              assert sql_text.count(f"CREATE TEMP TABLE {sheet} AS") == 1
+              assert f"FROM {sheet};" in sql_text, f"export must use materialized table: {sheet}"
 
           for sheet in sheets:
               path = pathlib.Path(f"{sheet}.csv")

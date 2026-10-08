@@ -40,28 +40,28 @@ jobs:
           LOAD excel;
           SET force_download = true;
 
-          CREATE OR REPLACE TEMP VIEW users_raw AS
+          CREATE TEMP TABLE users_raw AS
           SELECT * FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
             sheet = 'users',
             header = true
           );
 
-          CREATE OR REPLACE TEMP VIEW fiat_transactions_raw AS
+          CREATE TEMP TABLE fiat_transactions_raw AS
           SELECT * FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
             sheet = 'fiat_transactions',
             header = true
           );
 
-          CREATE OR REPLACE TEMP VIEW crypto_transactions_raw AS
+          CREATE TEMP TABLE crypto_transactions_raw AS
           SELECT * FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
             sheet = 'crypto_transactions',
             header = true
           );
 
-          CREATE OR REPLACE TEMP VIEW exchange_rates_raw AS
+          CREATE TEMP TABLE exchange_rates_raw AS
           SELECT * FROM read_xlsx(
             'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
             sheet = 'exchange_rates',
@@ -285,6 +285,8 @@ jobs:
           assert sql.count("LOAD excel;") == 1
           assert sql.count("read_xlsx(") == 4
           assert sql.count("header = true") == 4
+          assert sql.count("CREATE TEMP TABLE ") == 4, "quality checks must materialize each sheet once"
+          assert "CREATE OR REPLACE TEMP VIEW" not in sql
 
           evidence = {
               "duckdb_version": subprocess.check_output(["./duckdb", "-version"], text=True).strip(),
