@@ -1,0 +1,228 @@
+name: SQLBT Strict URL E2E Acceptance
+on:
+  push:
+    branches:
+      - main
+      - test/sqlbt-url-certify-20261008
+    paths:
+      - ".github/workflows/sqlbt-strict-url-acceptance.yml"
+      - "skills/sql-business-thinking/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  strict-url-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run existing core regression without modifying it
+        run: |
+          set -euo pipefail
+          python3 skills/sql-business-thinking/tests/check_repo.py
+          python3 skills/sql-business-thinking/tests/check_native_contract.py
+      - name: Install pinned Native DuckDB 1.4.2
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version | tee duckdb-version.txt
+          grep -F 'v1.4.2' duckdb-version.txt
+      - name: Prepare original source SQL and independent analyses
+        run: |
+          set -euo pipefail
+          mkdir -p live-evidence
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, hashlib
+          root = Path('.')
+          def extract(stage, wf):
+              raw = (root / '.github/workflows' / wf).read_text()
+              m = re.search(r"cat > " + stage + r"\.sql <<'SQL'\n([\s\S]*?)\n\s+SQL\b", raw)
+              assert m, 'original SQL block missing: ' + stage
+              sql = '\n'.join(line[10:] if line.startswith('          ') else line for line in m.group(1).splitlines()) + '\n'
+              assert sql.count('read_xlsx(') == 4
+              for sheet in ('users','fiat_transactions','crypto_transactions','exchange_rates'):
+                  assert re.search(r"sheet\s*=\s*'" + sheet + "'", sql)
+              url = 'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx'
+              assert sql.count("'" + url + "'") == 4
+              return sql
+          d02 = extract('d02','sql-business-thinking-native-duckdb-url-test.yml')
+          d03 = extract('d03','sql-business-thinking-native-d03-quality.yml')
+          Path('live-evidence/d02.sql').write_text(d02)
+          Path('live-evidence/d03.sql').write_text(d03)
+          queries = {
+            'concentration': """WITH completed AS (
+              SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid, fiat_order_id AS order_id, currency AS asset, CAST(amount AS DECIMAL(24,8)) AS amount
+              FROM fiat_transactions WHERE status='completed'
+              UNION ALL
+              SELECT CAST(CAST(uid AS BIGINT) AS VARCHAR), crypto_order_id, asset, CAST(amount AS DECIMAL(24,8))
+              FROM crypto_transactions WHERE status='completed'
+            ), valued AS (
+              SELECT c.*, CAST(c.amount*r.rate_to_usdt AS DECIMAL(24,8)) AS snapshot_usdt
+              FROM completed c JOIN exchange_rates r ON c.asset=r.asset
+            ), ranked AS (
+              SELECT *, ROW_NUMBER() OVER(ORDER BY snapshot_usdt DESC,order_id) AS record_rank FROM valued
+            ), per_user AS (
+              SELECT uid, SUM(snapshot_usdt) AS total FROM valued GROUP BY uid
+            ), ranked_users AS (
+              SELECT *,ROW_NUMBER() OVER(ORDER BY total DESC,uid) AS user_rank FROM per_user
+            )
+            SELECT COUNT(*) AS completed_records, SUM(snapshot_usdt) AS completed_snapshot_total,
+              ROUND(100*(SELECT SUM(total) FROM ranked_users WHERE user_rank<=2)/SUM(snapshot_usdt),3) AS top2_user_pct,
+              ROUND(100*(SELECT SUM(snapshot_usdt) FROM ranked WHERE record_rank<=2)/SUM(snapshot_usdt),3) AS top2_record_pct
+            FROM valued""",
+            'independent_total': """WITH tx AS (
+              SELECT amount,currency AS asset FROM fiat_transactions WHERE status='completed'
+              UNION ALL SELECT amount,asset FROM crypto_transactions WHERE status='completed'
+            ) SELECT COUNT(*) AS derived_rows,SUM(amount*r.rate_to_usdt) AS independently_derived_total
+              FROM tx JOIN exchange_rates r USING(asset)""",
+            'all_status_negative_control': """WITH tx AS (
+              SELECT amount,currency AS asset FROM fiat_transactions
+              UNION ALL SELECT amount,asset FROM crypto_transactions
+            ) SELECT COUNT(*) AS all_rows,SUM(amount*r.rate_to_usdt) AS all_status_total
+              FROM tx JOIN exchange_rates r USING(asset)""",
+            'robustness': """WITH tx AS (
+              SELECT fiat_order_id AS order_id,CAST(CAST(uid AS BIGINT) AS VARCHAR) AS uid,
+                     amount,currency AS asset FROM fiat_transactions WHERE status='completed'
+              UNION ALL SELECT crypto_order_id,CAST(CAST(uid AS BIGINT) AS VARCHAR),
+                     amount,asset FROM crypto_transactions WHERE status='completed'
+            ), valued AS (
+              SELECT tx.*,amount*r.rate_to_usdt AS value_usdt FROM tx JOIN exchange_rates r USING(asset)
+            ), ordered AS (
+              SELECT *,ROW_NUMBER() OVER(ORDER BY value_usdt DESC,order_id) AS row_rank FROM valued
+            ), trimmed AS (SELECT * FROM ordered WHERE row_rank>2),
+            user_sums AS (SELECT uid,SUM(value_usdt) AS value_usdt FROM trimmed GROUP BY uid),
+            user_ranks AS (SELECT *,ROW_NUMBER() OVER(ORDER BY value_usdt DESC,uid) AS user_rank FROM user_sums)
+            SELECT (SELECT SUM(value_usdt) FROM valued) AS original_total,
+              (SELECT SUM(value_usdt) FROM trimmed) AS remaining_total,
+              ROUND(100*(SELECT SUM(value_usdt) FROM user_ranks WHERE user_rank<=2)/
+                NULLIF((SELECT SUM(value_usdt) FROM trimmed),0),3) AS trimmed_top2_pct""",
+            'temporal_coverage': """WITH tx AS (
+              SELECT currency AS asset,CAST(created_at AS DATE) AS tx_day FROM fiat_transactions
+              UNION ALL SELECT asset,CAST(created_at AS DATE) FROM crypto_transactions
+            )
+            SELECT COUNT(*) AS tx_rows,COUNT(*) FILTER(WHERE r.asset IS NOT NULL) AS matched_rows,
+              MIN(tx_day) AS first_date,MAX(tx_day) AS last_date
+            FROM tx LEFT JOIN exchange_rates r ON tx.asset=r.asset AND tx.tx_day=r.effective_date"""
+          }
+          text = d02
+          for name, query in queries.items():
+              assert query.strip().upper().startswith(('WITH','SELECT')) and ';' not in query
+              Path('live-evidence/'+name+'.sql').write_text(query+';\n')
+              text += '\n.mode json\n.once live-evidence/' + name + '.json\n' + query + ';\n'
+          Path('live-evidence/full-run.sql').write_text(text)
+          Path('live-evidence/source-contract-sha256.txt').write_text(hashlib.sha256(d02.encode()).hexdigest() + '\n')
+          PY
+      - name: Execute unchanged URL D02 D03 and new SQL in DuckDB
+        run: |
+          set -euo pipefail
+          ./duckdb :memory: < live-evidence/d02.sql >live-evidence/d02.log 2>live-evidence/d02-errors.log
+          ./duckdb :memory: < live-evidence/d03.sql >live-evidence/d03.log 2>live-evidence/d03-errors.log
+          ./duckdb :memory: < live-evidence/full-run.sql >live-evidence/full.log 2>live-evidence/full-errors.log
+          test ! -s live-evidence/d02-errors.log
+          test ! -s live-evidence/d03-errors.log
+          test ! -s live-evidence/full-errors.log
+          cp user_key_uniqueness.csv order_id_uniqueness.csv orphan_uid.csv status_completion.csv amount_fee_validity.csv rate_key_uniqueness.csv rate_coverage.csv join_cardinality_users.csv order_id_date_consistency.csv live-evidence/
+      - name: Verify every Gate and independent results, generate report
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from decimal import Decimal
+          import csv,json,hashlib,html,os
+          p=Path('live-evidence')
+          def csvrows(name):
+              f=p/(name+'.csv')
+              assert f.is_file(),name
+              with f.open(newline='') as h: return list(csv.DictReader(h))
+          def d(x):return Decimal(str(x or 0))
+          reg=json.loads(Path('skills/sql-business-thinking/tests/mandatory-gates.json').read_text())
+          statuses={}
+          for g in reg['gates']:
+              name=g['id']; r=csvrows(name)
+              if name in ('user_key_uniqueness','orphan_uid','rate_key_uniqueness','order_id_date_consistency'):good=not r
+              elif name=='order_id_uniqueness':good=bool(r) and all(d(x['duplicate_rows'])==0 for x in r)
+              elif name=='status_completion':good=bool(r) and all(d(x['completed_before_created'])==0 and (x['status']!='completed' or d(x['null_completed_at'])==0) for x in r)
+              elif name=='amount_fee_validity':good=bool(r) and all(all(d(x[k])==0 for k in ('null_amount','nonpositive_amount','null_fee','negative_fee')) for x in r)
+              elif name=='rate_coverage':good=bool(r) and all(d(x['rate_rows'])>0 for x in r)
+              elif name=='join_cardinality_users':good=bool(r) and all(d(x['before_rows'])==d(x['after_rows']) for x in r)
+              else:raise AssertionError('HARNESS_STALE '+name)
+              statuses[name]='PASS' if good else 'FAIL'
+          assert len(statuses)==len(reg['gates']) and len(statuses)==9, 'HARNESS_STALE'
+          assert all(v=='PASS' for v in statuses.values()),statuses
+          r={n:json.loads((p/(n+'.json')).read_text()) for n in ('concentration','independent_total','all_status_negative_control','robustness','temporal_coverage')}
+          assert all(len(x)==1 for x in r.values())
+          c=r['concentration'][0];v=r['independent_total'][0];a=r['all_status_negative_control'][0];t=r['robustness'][0]
+          assert d(c['completed_snapshot_total'])==d(v['independently_derived_total'])
+          assert d(c['completed_records'])==d(v['derived_rows'])
+          assert d(a['all_rows'])>d(v['derived_rows']), 'negative status-filter control did not detect change'
+          assert d(t['original_total'])==d(c['completed_snapshot_total'])
+          assert d(t['remaining_total'])<d(t['original_total'])
+          source_hash={name:hashlib.sha256((Path(name+'.csv')).read_bytes()).hexdigest()
+            for name in ('users','fiat_transactions','crypto_transactions','exchange_rates')}
+          steps={name:'PASS' for name in statuses}
+          report='''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SQL Business Thinking · URL 验收</title>
+          <style>body{font:15px system-ui,Arial,sans-serif;margin:24px auto;max-width:920px;padding:0 12px;line-height:1.6}main{min-width:0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:7px}pre{max-width:100%;overflow-x:auto}details{margin:8px 0;padding:8px;border:1px solid #ddd}h1{font-size:25px}</style></head><body><main>
+          <h1>原始 URL · Native DuckDB 1.4.2 验收报告</h1><p>使用原始四张 Google Sheet，以 read_xlsx 读取；汇率只支持快照估值，不能当作历史成交额。</p>'''
+          report += '<p>完成状态记录：'+html.escape(str(c['completed_records']))+'</p>'
+          report += '<p>快照估值：'+html.escape(str(c['completed_snapshot_total']))+' USDT</p>'
+          report += '<p>用户 Top2 占比：'+html.escape(str(c['top2_user_pct']))+'%；剔除最大两笔后：'+html.escape(str(t['trimmed_top2_pct']))+'%</p>'
+          report += '<p>成交日汇率匹配 '+html.escape(str(r['temporal_coverage'][0]['matched_rows']))+'/'+html.escape(str(r['temporal_coverage'][0]['tx_rows']))+'。只有明确业务许可，才能用静态汇率估值。</p>'
+          report += '<h2>质量门禁</h2><table><tr><th>Gate</th><th>Result</th></tr>'+''.join('<tr><td>'+html.escape(k)+'</td><td>'+html.escape(v)+'</td></tr>' for k,v in statuses.items())+'</table>'
+          report += '<h2>SQL 证据</h2>'+''.join('<details><summary>'+html.escape(n)+'</summary><pre>'+html.escape((p/(n+'.sql')).read_text())+'</pre></details>' for n in r)
+          report += '</main></body></html>'
+          (p/'report.html').write_text(report)
+          evidence={'state':'PASS','source_mode':'EXACT_URL','registry_version':reg['version'],
+            'git_commit':os.environ.get('GITHUB_SHA'),'run_id':os.environ.get('GITHUB_RUN_ID'),
+            'skill_sha256':hashlib.sha256(Path('skills/sql-business-thinking/SKILL.md').read_bytes()).hexdigest(),
+            'analysis_sql_sha256':{name:hashlib.sha256((p/(name+'.sql')).read_bytes()).hexdigest() for name in r},
+            'gate_statuses':statuses,'source_csv_sha256':source_hash,'analysis':r,
+            'report_sha256':hashlib.sha256((p/'report.html').read_bytes()).hexdigest(),
+            'source_sql_sha256':(p/'source-contract-sha256.txt').read_text().strip()}
+          (p/'acceptance.json').write_text(json.dumps(evidence,indent=2,ensure_ascii=False))
+          print(json.dumps({'state':'PASS','gates':len(statuses),'report_sha256':evidence['report_sha256']}))
+          PY
+      - name: Test real HTML in desktop and mobile Chromium
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null
+          npm install --no-save playwright >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+          python3 -m http.server 8765 --directory live-evidence >live-evidence/http.log 2>&1 &
+          cat > browser-acceptance.mjs <<'JS'
+          import {chromium} from 'playwright';
+          import {readFileSync,writeFileSync} from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const e=JSON.parse(readFileSync('live-evidence/acceptance.json','utf8'));
+          const sha=createHash('sha256').update(readFileSync('live-evidence/report.html')).digest('hex');
+          if(sha!==e.report_sha256) throw new Error('ARTIFACT_MISMATCH');
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+          const results=[];
+          for(const [name,width,height] of [['desktop',1440,900],['mobile',390,844],['narrow',320,700]]){
+            const page=await browser.newPage({viewport:{width,height}});
+            const errors=[];page.on('pageerror',err=>errors.push(String(err)));
+            await page.goto('http://127.0.0.1:8765/report.html',{waitUntil:'networkidle'});
+            await page.evaluate(()=>document.fonts.ready);
+            const m=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,textLength:document.body.innerText.length,tableCount:document.querySelectorAll('table').length,detailsCount:document.querySelectorAll('details').length}));
+            const success=m.scrollWidth<=width+1 && m.textLength>300 && m.tableCount>=1 && m.detailsCount>=5 && errors.length===0;
+            await page.screenshot({path:'live-evidence/'+name+'.png',fullPage:true});
+            results.push({name,success,metrics:m,errors});await page.close();
+          }
+          await browser.close();
+          writeFileSync('live-evidence/render-qa.json',JSON.stringify({artifact_sha256:sha,checks:results},null,2));
+          if(results.some(x=>!x.success))throw new Error('Rendered QA failed: '+JSON.stringify(results));
+          JS
+          node browser-acceptance.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sqlbt-strict-url-e2e
+          path: |
+            live-evidence/*.json
+            live-evidence/*.sql
+            live-evidence/report.html
+            live-evidence/*.png
+            live-evidence/*errors.log
+          retention-days: 14

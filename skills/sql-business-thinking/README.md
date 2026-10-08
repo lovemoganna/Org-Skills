@@ -41,3 +41,9 @@
 ## 默认 HTML 交付
 
 完整分析报告默认写入 `/mnt/data/sql_business_thinking_report.html`，并在最终回复提供可点击下载链接；用户显式指定其他路径时覆盖默认值。
+
+## 原始 URL 全链路执行验收
+
+仓库工作流 [SQLBT Strict URL E2E Acceptance](../../.github/workflows/sqlbt-strict-url-acceptance.yml) 使用 Native DuckDB 1.4.2，直接重放既有 D02/D03 的原始 Google Sheet URL 和 `read_xlsx` SQL。工作流在本轮数据上执行九项阻塞式质量检查、独立业务 SQL、负控、快照估值稳健性检查，生成实体 HTML，并在真实 HTTP 页面上执行桌面、手机与 320px 窄屏 Chromium QA。结果以带有本轮 Git Commit、运行 ID、SQL 与数据 SHA 的 Actions Artifact 记录。运行失败不能由历史成功记录补位。
+
+**验收边界：**此工作流证明指定回归工作簿的源读取、计算与渲染链路；它使用可检查的测试 SQL，不会独立完成模型自主选题、D04–D18 分析循环或其他工作簿的泛化验证。因此 CI PASS 不能单独宣称完整 Autopilot E2E PASS。完整验收还需当前 Skill 修订下的自主分析、D20–D23 成品证据，以及所有适用 Gate 的记录。任何默认报告中的快照估值不能改称历史真实成交额。

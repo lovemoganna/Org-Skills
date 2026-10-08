@@ -1565,3 +1565,13 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 ### Case：删除冗余主入口不等于削弱约束
 
 精简后仍验证 Learn、Direct、Autopilot、Debug 四种入口、单阶段与完整连续运行、源表白名单、URL 原样 SQL、DuckDB 真实性、逻辑数据版本、下游 Gate 传播、报告/看板分流、HTML 实体验收和仓库写入许可。主入口只保留路由及阻塞规则，历史案例与技术细节按需引用。禁止恢复多个互相竞争的“主规则”。
+
+## V53：嵌套网格宽表的真实滚动反例
+
+### Case：文档宽度正常，但内部宽表不可滚动
+
+真实失败：2026-10-08 Remote Render QA `37800983805`，390px 视口下第二张表宽 570px，其父级 Grid 子项同时膨胀至 570px，导致 `table-wrap.scrollWidth - clientWidth = 0`。页面使用 `overflow-x: clip` 隐藏外溢，因此仅检查 `documentElement.scrollWidth` 会产生假通过。
+
+最小修复：为嵌套 Grid/Flex 直接内容子项设置 `min-width: 0`，让表格的滚动容器实际收缩。表格仍保留自身最小宽度与可读列，不截断文本，也不通过扩大页面宽度绕过问题。
+
+验收：桌面 1440px、手机 390px、窄屏 320px 均实际渲染。当表格宽度超过 wrapper 时，`scrollWidth > clientWidth` 且可以水平滚动；同时页面本身无横向外溢。最终状态必须绑定当前 HTML SHA256 与真实浏览器证据。负例不得因为 Body 被裁切、源码存在 wrapper 或历史截图通过而晋级 PASS。

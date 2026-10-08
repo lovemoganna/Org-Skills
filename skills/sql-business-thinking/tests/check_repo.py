@@ -463,4 +463,12 @@ assert skill.count("## 3. 运行时、结果与真实性") == 1, "runtime contra
 assert skill.count("## 6. 报告、看板与 HTML") == 1, "delivery contract duplicated"
 assert len(skill.splitlines()) < 200, "main skill has regrown into on-demand reference content"
 
+# Real failure regression: a clipped page can conceal an unscrollable nested grid table.
+assert "嵌套 Grid/Flex 的直接子项" in report_rendering, "nested grid shrink requirement missing"
+assert "scrollWidth > clientWidth" in report_rendering, "table scroll interaction not checked"
+assert "嵌套网格宽表的真实滚动反例" in regression, "historical scroll regression missing"
+strict_url_workflow = (REPO_ROOT / ".github/workflows/sqlbt-strict-url-acceptance.yml").read_text(encoding="utf-8")
+for token in ("DuckDB 1.4.2", "check_native_contract.py", "read_xlsx", "source_csv_sha256", "render-qa.json", "playwright"):
+    assert token in strict_url_workflow, f"strict URL acceptance missing: {token}"
+
 print("OK: sql-business-thinking repository integrity")
