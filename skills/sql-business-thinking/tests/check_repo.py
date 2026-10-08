@@ -398,4 +398,26 @@ subprocess.run([sys.executable, str(ROOT / "tests" / "check_d16_robustness.py")]
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d17_findings.py")], check=True)
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d18_decisions.py")], check=True)
 
+# D20 actual-source ReportSpec: reject dashboard leakage, stale provenance or arithmetic drift.
+d20 = json.loads((ROOT / "tests" / "verified-d20-report-spec.json").read_text(encoding="utf-8"))
+assert d20["delivery_mode"] == "report" and "dashboard" not in d20
+assert d20["meta"]["source_run_id"] == 37725587099
+assert d20["meta"]["source_sql_sha256"] == "93530dba3c5e19e0d33964e0e14f1d36180a1c66d1f62e2f492cbe5c59d30b50"
+assert d20["meta"]["data_revision"] == "561287b5d150e3c11735562b0a4f3d670b9e5b8ccecb818d1a26bcfb720b3335"
+assert d20["meta"]["gate_state"] == "PASS"
+assert len(d20["answer_blocks"]) == 2 and len(d20["findings"]) == 1
+assert all(x["gate_state"] == "PASS" and x["result_refs"] == ["D11-R1"] for x in d20["answer_blocks"] + d20["findings"])
+direction = {r["direction"]: r for r in d20["answer_blocks"][0]["rows"]}
+assert sum(r["total"] for r in direction.values()) == 25
+assert sum(r["completed"] for r in direction.values()) == 21
+assert sum(r["ongoing"] for r in direction.values()) == 2
+assert sum(r["terminal_noncompleted"] for r in direction.values()) == 2
+for row in direction.values():
+    assert abs(row["completed_share"] - row["completed"]/row["total"]) < 1e-12
+sensitivity = {r["direction"]: r for r in d20["answer_blocks"][1]["rows"]}
+assert sensitivity["deposit"]["original"] < sensitivity["withdrawal"]["original"]
+assert sensitivity["deposit"]["alternate"] > sensitivity["withdrawal"]["alternate"]
+assert d20["next_question"]["status"] == "unresolved"
+print("PASS: D20 report-only Spec and measured D11 evidence invariants")
+
 print("OK: sql-business-thinking repository integrity")
