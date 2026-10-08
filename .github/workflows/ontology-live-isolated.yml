@@ -66,7 +66,7 @@ jobs:
           );
           SQL
           sha256sum ontology-load.sql > ontology-load.sha256
-          ./duckdb -b analysis.duckdb < ontology-load.sql > duckdb-execution.log 2>&1 || { cat duckdb-execution.log; exit 1; }
+          ./duckdb analysis.duckdb < ontology-load.sql > duckdb-execution.log 2>&1 || { cat duckdb-execution.log; exit 1; }
           cat duckdb-execution.log
       - name: Save original engine schema, evidence and database
         shell: bash
