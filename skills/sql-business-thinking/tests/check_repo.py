@@ -420,5 +420,6 @@ assert sensitivity["deposit"]["alternate"] > sensitivity["withdrawal"]["alternat
 assert d20["next_question"]["status"] == "unresolved"
 print("PASS: D20 report-only Spec and measured D11 evidence invariants")
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d21_visualization_plan.py")], check=True)
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_d22_artifact.py")], check=True)
 
 print("OK: sql-business-thinking repository integrity")
