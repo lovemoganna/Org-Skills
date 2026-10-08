@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 16
     steps:
+      - name: Checkout ontology Skill and pinned Gate1 model
+        uses: actions/checkout@v4
       - name: Install DuckDB
         run: python -m pip install --disable-pip-version-check duckdb==1.4.2
       - name: Read authorized XLSX sheets and execute independent checks
