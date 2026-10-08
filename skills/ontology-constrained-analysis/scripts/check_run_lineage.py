@@ -69,7 +69,7 @@ def check(chain, prior=None):
         if not isinstance(facts, str):
             errors.append("FINDING_FACTS_NOT_TEXT:" + str(finding.get("id")))
             continue
-        if not re.search(r"\\d", facts):
+        if not re.search(r"\d", facts):
             continue
         receipt = finding.get("fact_verification")
         if not isinstance(receipt, dict) or not receipt.get("bindings") or not receipt.get("template"):
