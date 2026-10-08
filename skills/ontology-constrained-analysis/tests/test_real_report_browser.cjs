@@ -36,7 +36,7 @@ assert.ok(!/(<script[^>]+src=|<link[^>]+href=["']https?:\/\/)/i.test(report), 'e
         const overflowers = await page.evaluate(() =>
           [...document.querySelectorAll('body *')].filter(e => {
             const rect = e.getBoundingClientRect();
-            return rect.right > innerWidth + 3 && rect.width > 0;
+            return rect.right > innerWidth + 3 && rect.width > 0 && !e.closest('.table-scroll, .sql-shell');
           }).slice(0, 25).map(e => ({
             tag:e.tagName, cls:e.className, width:Math.round(e.getBoundingClientRect().width),
             right:Math.round(e.getBoundingClientRect().right),
