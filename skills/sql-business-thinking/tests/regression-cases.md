@@ -1529,3 +1529,15 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 7. 当前交付为 Report-only；Dashboard 核心资格、人物会话、实时 SQL 执行控件等不属于这个页面，不得虚构其验收 PASS。
 
 执行 `python tests/check_d23_evidence.py` 反向验证当前 HTML 字节哈希与远程验收证据一致。HTML 任意实质改动必须使旧 D23 验收失效，重新运行浏览器测试。
+
+
+## V51：按证据分类与最小复现
+
+真实失败记录：
+1. `Skills Regression 37755061537`：`note-reforge/tests/check_repo.py` 的 `assert CALL in readme` 失败。最小复现为“canonical SKILL 含固定口令，但根 README 不含”；修 README，不删断言。并修 `skills-regression.yml` 漏掉根 README 的触发路径。
+2. `Wasm Retest 37754904623`：D23 证据缺少 `artifact_sha256`，曾抛 `KeyError`。必须明确判为 `STALE_RENDER_QA`；新测试删除 SHA 字段应失败，原始 QA 字段正确应通过。
+3. `Wasm Retest 37754825920`：HTML 摘要不一致，正确拒绝过期 QA。不得跳过哈希或复用旧截图；只有 HTML 字节与最新审核记录吻合才能通过。
+4. `D23 Render QA 37753869797`：移动端宽表 `scrollable-region-focusable`，属真实页面可访问性问题，不是测试误报。必须改焦点能力并实际跑浏览器，禁止改成忽略 axe。
+5. DuckDB-Wasm 远程 XLSX 受浏览器 CORS 限制属于潜在环境约束，不是上述日志的已验证失败根因。不得把环境假设写成已发生错误。
+
+验收：先查失败步骤与原始日志，最小案例复现后才选择“Skill 缺陷 / 执行偏差 / 环境问题 / 测试错误”；修复对应层；旧失败、新反例和完整回归均需真实检查，报告不能把尚未运行的 CI 写成 PASS。
