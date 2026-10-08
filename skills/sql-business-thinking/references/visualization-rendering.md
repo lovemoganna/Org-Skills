@@ -1,11 +1,12 @@
 # 可视化与报告表达协议
 
-目标：把已经通过 SQL、数据质量 Gate 和分析深度检查的结论，转换成更快、更稳、更克制的最终表达。
+目标：把 D20 已确认的交付内容转换成清楚、准确的展示计划。D21 只读 D20 的 ReportSpec / DashboardSpec，不回写它们。
 
 本协议只负责 **Presentation Engine**。它不得重新定义业务口径、改 SQL、补数据、绕过 Gate 或升级未经验证的判断。
 
 ```text
-Qualified Content
+D20 已确认的 ReportSpec / DashboardSpec（只读）
+→ D21 VisualizationPlan
 → Presentation Question
 → Data Shape
 → Chart Candidate Competition
@@ -74,9 +75,9 @@ Qualified Content
 
 ## 4. Chart Candidate Competition Gate
 
-重要图表默认比较至少 3 个合理候选；不足 3 个时比较全部可用候选。候选比较只需保留内部记录，不把选型过程塞进正文。
+先选能准确表达当前判断的最简单方案。若方案明显合适，直接选，不为凑数量列候选。只有存在真实取舍时，才比较合理方案并记录关键理由。
 
-按以下维度淘汰：
+有争议时按以下维度选择：
 
 1. **Semantic Fit**：几何编码是否真的对应业务含义；
 2. **Unit Honesty**：视觉单位是否真实，不制造不存在的个体或颗粒；
@@ -85,14 +86,7 @@ Qualified Content
 5. **Narrative Value**：是否突出本图唯一结论，而不是同时争抢多个判断；
 6. **Implementation Reliability**：当前 HTML / SVG / Chart.js 环境是否能稳定实现。
 
-最终必须能回答：
-
-```text
-为什么选它？
-为什么最接近的两个候选被淘汰？
-```
-
-禁止用“更高级”“更专业”“更好看”作为淘汰理由。
+最终只需说明选型理由；存在其他合理方案时，说明关键取舍。禁止用“更高级”“更专业”“更好看”作为理由。
 
 ## 5. Unit Honesty Gate
 
@@ -119,7 +113,7 @@ Qualified Content
 - 另一张删除；
 - 不为了“页面丰富”保留重复图。
 
-同一页默认避免连续使用高度相似的图形轮廓，除非这是理解所必需。
+同一页可以重复使用相同图型。语义准确和阅读一致性优先于视觉变化。
 
 ## 7. Layout Archetype Gate
 
@@ -223,23 +217,23 @@ Top1 占近一半流量
 
 如果结论仍未确定或图本身用于诊断，可以使用问题式标题，但不得使用“Chart 1 / 图表 2”。
 
-## 10. ReportSpec 扩展
+## 10. VisualizationPlan（独立输出）
 
-每个正式可视化块至少记录：
+D21 单独输出 VisualizationPlan。D20 的 ReportSpec / DashboardSpec 只读、不得追加或修改字段。
+
+每个计划项最少记录：
 
 ```text
-finding_id
-presentation_question
-gate_dependencies
+content_ref（指向 D20 已确认内容）
+presentation_question（读者要理解的判断）
 data_shape
-candidate_charts
-selected_chart
-rejected_candidates
+selected_chart（可以是表格或文字，不强制画图）
 unit_contract
-single_conclusion
-reading_speed
+layout_role
 visibility
 ```
+
+存在真实选型争议时，补充候选与取舍理由；不存在争议时不额外记录候选清单。不得生成新的业务事实、指标或 SQL。
 
 `visibility` 只能是：
 
@@ -250,24 +244,24 @@ AUDIT
 SUPPRESSED_BY_GATE
 ```
 
-Renderer 只渲染 `PRIMARY / SECONDARY / AUDIT` 对应层级；`SUPPRESSED_BY_GATE` 不得进入业务图表正文。
+Renderer 按 VisualizationPlan 渲染 `PRIMARY / SECONDARY / AUDIT` 对应层级；`SUPPRESSED_BY_GATE` 不得进入业务图表正文。
 
 ## 11. Artifact Presentation Gate
 
-候选竞争、淘汰理由、模板 / Layout Archetype 选择、Unit Honesty 判定过程、Information Budget 判断和 Renderer 策略默认属于内部 ReportSpec / audit，不属于业务正文。
+选型取舍、Layout Archetype、Unit Honesty、Information Budget 和 Renderer 策略属于内部 VisualizationPlan / audit，不属于业务正文。
 
 最终 Artifact 必须反查可见文本：
 
 - 不得出现“候选比较后选择……”“这里选择……而不是……”“为了更快读所以……”等面向实现过程的说明；
-- 不得把 `candidate_charts`、`rejected_candidates`、`selected_chart`、`Layout Archetype` 等内部字段直接渲染给普通读者；
+- 不得把图表候选、选型理由、`selected_chart`、`layout_role` 等内部字段直接渲染给普通读者；
 - 图表标题、说明文字只解释业务结论、数据口径、限制和读图方法；
 - 用户明确要求“为什么选这个图 / 解释设计决策”时，才允许把设计 rationale 放入单独的 Design Notes，不与业务结论混写。
 
-**ReportSpec 可以完整，正文必须克制。**
+**VisualizationPlan 可以保留必要的表达理由，正文必须克制。**
 
 ## 12. Renderer 边界
 
-Renderer 只读已验证 Result 和 ReportSpec。
+Renderer 只读已验证 Result、D20 Spec 和 D21 VisualizationPlan。
 
 禁止：
 
