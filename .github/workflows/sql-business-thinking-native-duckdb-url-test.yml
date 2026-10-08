@@ -155,6 +155,51 @@ jobs:
           print(json.dumps(evidence, ensure_ascii=False, indent=2))
           PY
 
+      - name: Independent XLSX roundtrip with derived expectations
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > holdout.sql <<'SQL'
+          LOAD excel;
+          CREATE TEMP TABLE holdout_source AS
+          SELECT i::INTEGER AS sample_id,
+                 CASE WHEN i % 2 = 0 THEN 'even' ELSE 'odd' END AS sample_group,
+                 CAST(i * 1.25 AS DECIMAL(12, 2)) AS sample_amount
+          FROM range(1, 12) AS t(i);
+
+          COPY holdout_source TO 'holdout.xlsx'
+          (FORMAT xlsx, SHEET 'Independent', HEADER true);
+
+          CREATE TEMP TABLE holdout_materialized AS
+          SELECT *
+          FROM read_xlsx('holdout.xlsx', sheet = 'Independent', header = true);
+
+          .mode csv
+          .once holdout-result.csv
+          WITH differences AS (
+            (SELECT * FROM holdout_source EXCEPT ALL SELECT * FROM holdout_materialized)
+            UNION ALL
+            (SELECT * FROM holdout_materialized EXCEPT ALL SELECT * FROM holdout_source)
+          )
+          SELECT CASE
+            WHEN (SELECT COUNT(*) FROM holdout_source) > 0
+             AND (SELECT COUNT(*) FROM differences) = 0 THEN 'PASS'
+            ELSE error('INDEPENDENT_XLSX_ROUNDTRIP_MISMATCH')
+          END AS state;
+          SQL
+          ./duckdb < holdout.sql
+          python - <<'PY'
+          from pathlib import Path
+          import csv
+          with Path("holdout-result.csv").open(newline="", encoding="utf-8") as f:
+              rows = list(csv.DictReader(f))
+          assert rows == [{"state": "PASS"}], rows
+          sql = Path("holdout.sql").read_text()
+          assert sql.count("read_xlsx(") == 1
+          assert sql.count("CREATE TEMP TABLE holdout_materialized AS") == 1
+          print("PASS: independent XLSX roundtrip using bilateral EXCEPT ALL")
+          PY
+
       - name: Upload evidence
         uses: actions/upload-artifact@v4
         with:
@@ -166,4 +211,6 @@ jobs:
             fiat_transactions.csv
             crypto_transactions.csv
             exchange_rates.csv
+            holdout.sql
+            holdout-result.csv
           if-no-files-found: error
