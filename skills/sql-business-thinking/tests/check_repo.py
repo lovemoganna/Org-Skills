@@ -381,4 +381,6 @@ assert "What / Where / Why / Alternative / Test / Robustness / So What" in dialo
 
 
 
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_delivery_handoff.py")], check=True)
+
 print("OK: sql-business-thinking repository integrity")
