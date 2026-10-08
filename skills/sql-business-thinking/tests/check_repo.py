@@ -16,6 +16,25 @@ refs = set(re.findall(r"references/([A-Za-z0-9._-]+\.md)", skill))
 missing = [name for name in sorted(refs) if not (ROOT / "references" / name).exists()]
 assert not missing, f"missing referenced files: {missing}"
 
+# Remote Native recovery must remain reachable whenever the canonical Skill changes.
+# These are execution-path checks, not assertions about business data or expected answers.
+REPO_ROOT = ROOT.parents[1]
+assert "远程 Native runner" in skill, "remote Native recovery missing from Runtime Placement Gate"
+for workflow_name in (
+    "sql-business-thinking-native-duckdb-url-test.yml",
+    "sql-business-thinking-native-d03-quality.yml",
+):
+    workflow = (REPO_ROOT / ".github" / "workflows" / workflow_name).read_text(encoding="utf-8")
+    for source_path in (
+        "skills/sql-business-thinking/SKILL.md",
+        "skills/sql-business-thinking/references/**",
+        "skills/sql-business-thinking/tests/**",
+    ):
+        assert f'      - "{source_path}"' in workflow, (
+            f"remote Native runner {workflow_name} does not retrigger on {source_path}"
+        )
+    assert "workflow_dispatch:" in workflow, "remote Native manual rerun path missing"
+
 required = {
     "dataset-planning.md",
     "protocol.md",
