@@ -33,7 +33,7 @@ jobs:
           path=pathlib.Path('test-assets/ontology-four-sheet-20261008/ontology-model.json')
           model=json.loads(path.read_text())
           atoms=model['ontology_atoms'];rules=model['ontology_rules']
-          atom_required=['一级标签','二级标签','三级标签','原子名称','原子层级','本体类别','类型','单位或值域','主体','粒度','时间语义','关系','知识点解释','来源']
+          atom_required=['一级标签','二级标签','三级标签','原子名称','原子层级','本体类别','类型','单位或值域','主体','粒度','时间语义','关系','知识点解释','证据来源']
           rule_required=['一级标签','二级标签','三级标签','识别标准','Lisp 表达式','规则定义','当前状态']
           assert atoms and rules
           assert len(atoms)==len({r['原子名称'] for r in atoms}), 'DUPLICATE_ATOM'
@@ -46,7 +46,7 @@ jobs:
           }
           for row in atoms:
             assert all(row.get(k) for k in atom_required),('ATOM_FIELDS',row.get('原子名称'))
-            source=row['来源'].split('.')
+            source=row['证据来源'].split('.')
             assert source[0] in fields,('FORBIDDEN_SOURCE',source)
             assert len(source)<3,('UNEXPECTED_SOURCE',source)
             if len(source)==2:assert source[1] in fields[source[0]],('UNKNOWN_SOURCE_FIELD',source)
