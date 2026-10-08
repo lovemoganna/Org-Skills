@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/ontology-electricity-audit.yml
       - skills/ontology-constrained-analysis/scripts/electricity_case_runner.py
+      - skills/ontology-constrained-analysis/scripts/source_gate.py
+      - skills/ontology-constrained-analysis/SKILL.md
+      - skills/ontology-constrained-analysis/references/runtime.md
 permissions:
   contents: write
 jobs:
@@ -24,6 +27,38 @@ jobs:
           python-version: '3.11'
       - name: Install native DuckDB
         run: python -m pip install --disable-pip-version-check duckdb==1.4.2
+      - name: Verify exact GitHub blob fallback and source hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile skills/ontology-constrained-analysis/scripts/source_gate.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m = {"files": [{"name": "LD2011_2014.txt",
+                "url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt",
+                "git_blob_sha": "9027e543ffee8cc4295773fd691b57bd5888318c",
+                "sha256": "c765fe5543010d52f0c0622e424b9923e3851580c5ecf61c7ed6c99be2be155a"}]}
+          Path("/tmp/electricity-manifest.json").write_text(json.dumps(m))
+          PY
+          ONTOLOGY_SOURCE_PREFER_GITHUB_BLOB=1 python \
+            skills/ontology-constrained-analysis/scripts/source_gate.py \
+            --manifest /tmp/electricity-manifest.json \
+            --out /tmp/electricity-github-blob-source --timeout 120
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/electricity-github-blob-source/source_gate_receipt.json").read_text())
+          f=r["results"][0]
+          assert r["complete"] and f["status"]=="BYTES_VERIFIED"
+          assert f["bytes"]==30363176
+          assert f["transport"]=="github_git_blob_api"
+          assert f["git_blob_sha"]=="9027e543ffee8cc4295773fd691b57bd5888318c"
+          Path("reports/electricity-20261008").mkdir(parents=True,exist_ok=True)
+          Path("reports/electricity-20261008/github_blob_source_receipt.json").write_text(
+              json.dumps(r,ensure_ascii=False,indent=2))
+          print("SAME_SOURCE_GITHUB_BLOB_GATE: PASS",f["bytes"],f["sha256"])
+          PY
       - name: Fetch exact TXT and execute real DuckDB report
         shell: bash
         run: |
@@ -66,7 +101,8 @@ jobs:
               "remote_fetch_required": False,
               "cors_required": False,
               "duckdb_wasm_used": False,
-              "sql_highlight_and_copy_checked": True
+              "sql_highlight_static_checked": True,
+              "clipboard_user_action_tested": False
           }
           Path('reports/electricity-20261008/browser_gate_receipt.json').write_text(
               json.dumps(rec, indent=2, ensure_ascii=False))
