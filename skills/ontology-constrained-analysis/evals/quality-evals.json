@@ -1,0 +1,700 @@
+{
+  "skill_name": "ontology-constrained-analysis",
+  "evals": [
+    {
+      "id": "normal-dataset",
+      "prompt": "对一个真实交易工作簿执行完整业务分析。先理解业务世界，再给出本体、指标、问题、真实验证、Finding 和 Dashboard。",
+      "expected_output": "先还原业务语义并完成两张本体表，再进入指标和真实数据验证；所有后续内容可追溯到本体；没有真实执行结果的分支停止推论。",
+      "assertions": [
+        "本体原子知识库出现在指标之前",
+        "本体识别规则库描述业务模式而不是 SQL 技巧",
+        "Dashboard 晚于 Validated Finding",
+        "真实数据结果与推论明确分开"
+      ],
+      "files": []
+    },
+    {
+      "id": "ambiguous-schema",
+      "prompt": "数据里有 user_type、score、value、status 四个字段，但没有字段说明。请直接分析最重要的业务问题。",
+      "expected_output": "不把字段名直接解释成业务知识；先识别缺失语义并标记未知；不凭字段类型机械生成指标或结论。",
+      "assertions": [
+        "没有擅自定义 user_type、score、value、status 的业务含义",
+        "没有先做 TopN、SUM、AVG 或趋势后再解释业务",
+        "无法确认的信息明确标记为未知或待验证"
+      ],
+      "files": []
+    },
+    {
+      "id": "invalid-relation",
+      "prompt": "用户表和营销活动表都有 country 字段，可以 JOIN。分析用户年龄是否导致某营销活动转化率下降。",
+      "expected_output": "不因 country 可 JOIN 就认定用户与活动存在合法业务关系；先检查本体关系、主体、粒度和时间语义；无法建立关系时拒绝组合。",
+      "assertions": [
+        "明确指出 SQL 可 JOIN 不是合法业务关系证据",
+        "检查关系路径、主体、粒度和时间语义",
+        "关系不成立时停止该分析分支"
+      ],
+      "files": []
+    },
+    {
+      "id": "no-signal",
+      "prompt": "已经完成本体建模。真实验证显示两个核心群体在目标指标上几乎没有差异。继续深挖并给出三个业务 Finding。",
+      "expected_output": "不强行制造 Finding；在没有高价值 Signal 时停止该分支，除非存在新的合法且会改变判断的问题。",
+      "assertions": [
+        "没有把无差异结果包装成异常",
+        "没有为了深度继续枚举字段组合",
+        "触发停止条件或明确给出继续分析所需的新信息"
+      ],
+      "files": []
+    },
+    {
+      "id": "strong-signal",
+      "prompt": "真实数据发现某类交易金额明显集中在极少数主体。请继续分析并形成可进入管理 Dashboard 的结论。",
+      "expected_output": "先把集中现象标记为 Signal，再通过合法本体关系提出复杂问题；至少验证一个可能推翻判断的竞争解释；只有通过验证且具有 Decision Value 时才进入 Dashboard。",
+      "assertions": [
+        "Signal 没有直接升级为原因",
+        "至少检查一个可能的竞争解释",
+        "Finding 区分事实、解释、未解决问题和数据限制",
+        "Dashboard 内容具有明确 Decision Value"
+      ],
+      "files": []
+    },
+    {
+      "id": "aggregation-boundary",
+      "prompt": "建立规则：同一用户24小时内向同一地址提币至少3次，每笔低于5000 USDT，累计达到10000 USDT。判断 SUM、COUNT、BY 是否可以进入本体识别规则。",
+      "expected_output": "允许用 SUM、COUNT、BY 表达稳定业务模式内部的聚合条件，但不能把 GROUP BY、SUM 等查询实现写成业务规则。",
+      "assertions": [
+        "区分业务聚合语义与查询实现",
+        "没有因为出现 SUM 或 COUNT 就错误拒绝规则",
+        "自然语言业务模式先于 Lisp"
+      ],
+      "files": []
+    },
+    {
+      "id": "relation-triple",
+      "prompt": "用户、提币事件、提币金额、提币时间、目标地址之间存在多条业务关系。请登记这些关系并验证后续组合是否合法。",
+      "expected_output": "使用主体|关系|客体 triple 表达多条关系，并依据已登记关系判断组合；不得因 SQL 可 JOIN 直接放行。",
+      "assertions": [
+        "关系使用 canonical triple",
+        "支持一个原子参与多条关系",
+        "组合判断依赖已登记业务关系"
+      ],
+      "files": []
+    },
+    {
+      "id": "self-repair-loop",
+      "prompt": "执行本体建模时发现提币金额被错误绑定到用户粒度，但实际是单笔提币事件粒度。继续完成分析。",
+      "expected_output": "先停止当前阶段，定位粒度错误，只修本体当前阶段并复检；复检通过后才继续后续阶段，并记录问题、修正、复检结果。",
+      "assertions": [
+        "没有带着错误粒度继续分析",
+        "修复只影响当前阶段",
+        "修复后重新验证",
+        "记录问题、修正和复检结果"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-native-missing",
+      "prompt": "任务要求使用 DuckDB read_xlsx 原样读取远程 XLSX。本机没有 DuckDB。继续执行。",
+      "expected_output": "不能直接停止，也不能换 pandas/openpyxl。进入 Runtime Gate，寻找能原样执行同一 DuckDB SQL 的等价运行时；验证契约不变后继续。",
+      "assertions": [
+        "本机无 DuckDB 不等于任务立即失败",
+        "尝试同一引擎的等价运行时",
+        "不改变 read_xlsx、数据源和 SQL 语义",
+        "不使用 pandas 或 openpyxl"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-wasm-cors",
+      "prompt": "本地 DuckDB 不可用。DuckDB-Wasm 可启动，但目标远程 XLSX 被 CORS 阻止。请修复。",
+      "expected_output": "判定当前 Wasm 运行时不兼容，继续寻找其他可原样执行的 DuckDB 运行时；不得把远程 URL 改成本地文件。",
+      "assertions": [
+        "识别 CORS 是运行时能力问题",
+        "不把 DuckDB-Wasm 当成无条件兜底",
+        "不改变远程数据源",
+        "兼容运行时耗尽后才停止"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-contract-hard-boundary",
+      "prompt": "用户明确要求只能使用给定 DuckDB read_xlsx SQL，且禁止改写。当前环境执行失败，但 Google Sheets API 可以直接读取。",
+      "expected_output": "拒绝用 Google Sheets API 代替指定读取方式；只允许更换能原样执行该 SQL 的 DuckDB 运行时。",
+      "assertions": [
+        "执行位置可以变化",
+        "执行契约不得变化",
+        "Google Sheets API 不被当作等价替代",
+        "没有兼容 DuckDB 运行时才标记阻塞"
+      ],
+      "files": []
+    },
+    {
+      "id": "rule-atomic-relabel-rejection",
+      "prompt": "本体中已经有“法币交易状态”，值域包含 completed。现在把“法币已完成”加入本体识别规则库，识别标准为 status=completed。检查是否合法。",
+      "expected_output": "拒绝加入规则库。该候选只是单个状态原子的重新命名，没有形成新的业务组合语义。状态原子仍保留在本体原子知识库。",
+      "assertions": [
+        "明确拒绝单原子改名进入规则库",
+        "没有删除合法的状态原子",
+        "没有生成新的 SQL 或指标"
+      ],
+      "files": []
+    },
+    {
+      "id": "rule-semantic-strengthening-rejection",
+      "prompt": "本体原子只能确认 status=completed。规则定义写成“资金已最终结算完成且不可撤销”。执行 Validator。",
+      "expected_output": "Validator 拒绝该定义，因为它把记录状态升级成了数据未证明的最终结算和不可撤销事实。修正只能保留“当前记录状态为 completed”。",
+      "assertions": [
+        "识别出语义升级",
+        "拒绝最终结算和不可撤销结论",
+        "修正后语义不超过原子证据"
+      ],
+      "files": []
+    },
+    {
+      "id": "rule-valid-composition-not-overrejected",
+      "prompt": "本体中有“法币交易”“法币交易方向”“法币交易状态”。候选规则：方向=deposit 且状态=completed 的法币交易。检查是否属于本体识别规则。",
+      "expected_output": "允许。该规则由事件对象、方向和状态组合形成新的稳定业务模式，但规则定义必须限定为“方向为 deposit 且当前记录状态为 completed 的法币交易”，不得扩大成最终结算。",
+      "assertions": [
+        "没有因为出现 completed 就错误拒绝合法组合",
+        "确认规则形成新的组合语义",
+        "规则定义没有语义升级"
+      ],
+      "files": []
+    },
+    {
+      "id": "metric-neutral-base",
+      "prompt": "本体已完成。交易有 status、direction、channel。请建立第一层基础指标。",
+      "expected_output": "优先建立中性的交易记录数、同单位金额/数量、交易用户数等基础指标。status、direction、channel 默认作为维度或过滤条件，不无必要固化进基础指标。",
+      "assertions": [
+        "基础指标没有默认绑定 completed",
+        "status 和 direction 保留为维度或过滤条件",
+        "没有机械生成 TopN 或图表"
+      ],
+      "files": []
+    },
+    {
+      "id": "metric-signal-not-prerequisite",
+      "prompt": "想建立“单主体金额占同范围总金额的比例”，但目前还没有任何 Signal。是否允许建立？",
+      "expected_output": "如果主体、单位、粒度、时间范围和分母都明确，且该指标有稳定业务意义和复用价值，可以作为派生指标建立。Signal 只决定真实结果是否值得继续解释，不是指标建立前提。",
+      "assertions": [
+        "没有把 Signal 当作指标前置条件",
+        "要求明确主体、单位、粒度、时间和分母",
+        "没有提前宣称存在集中异常"
+      ],
+      "files": []
+    },
+    {
+      "id": "metric-base-derived-layering",
+      "prompt": "把“交易记录数”“净完成交易量”“状态占比”“交易用户数”放进指标库。检查层级。",
+      "expected_output": "交易记录数和交易用户数属于基础指标；净完成交易量和状态占比属于派生指标，并必须追溯到基础指标及合法过滤条件。",
+      "assertions": [
+        "区分基础指标与派生指标",
+        "派生指标可追溯",
+        "没有把所有指标平铺成同一级"
+      ],
+      "files": []
+    },
+    {
+      "id": "metric-time-semantics",
+      "prompt": "交易按 created_at 归属月份，同时筛选 status=completed。指标名写成“本月完成交易数”。检查是否合法。",
+      "expected_output": "拒绝该名称。created_at 只能证明交易在本月创建，而 status=completed 是当前记录状态。应改为“本月创建且当前状态为 completed 的交易记录数”或其他不超出证据的名称。",
+      "assertions": [
+        "识别时间语义漂移",
+        "没有把 created_at 当成完成时间",
+        "修正后的名称与口径一致"
+      ],
+      "files": []
+    },
+    {
+      "id": "question-parameter-closure",
+      "prompt": "候选问题：各法币是净流入还是净流出？请判断它是否已经是可执行原子问题。",
+      "expected_output": "不能直接进入 SQL。必须闭合时间范围、状态范围，并明确具体币种或说明对每个币种独立执行；不同币种金额不得合并。",
+      "assertions": [
+        "识别出参数未闭合",
+        "要求明确时间和状态范围",
+        "没有跨币种合并金额",
+        "未闭合前保持为候选问题方向"
+      ],
+      "files": []
+    },
+    {
+      "id": "question-direct-decision-link",
+      "prompt": "问题：比较 Fiat 和 Crypto 的状态占比，以决定后续分析应该筛选哪些 status。检查问题价值。",
+      "expected_output": "拒绝当前决策链。状态占比本身不能决定应该筛选哪些 status，除非另有明确业务规则。不得把表面比较包装成有决策价值的问题。",
+      "assertions": [
+        "识别出伪决策链",
+        "没有根据状态占比自行发明过滤规则",
+        "问题结果与后续判断缺少直接逻辑关系时拒绝"
+      ],
+      "files": []
+    },
+    {
+      "id": "question-vague-threshold",
+      "prompt": "原子问题：资金是否主要由少数用户贡献？当前没有任何集中度阈值。请执行 Validator。",
+      "expected_output": "拒绝直接作为判断问题，因为“主要”和“少数”没有标准。改为定量问题，例如 Top1、Top3、Top5 的同单位金额占比是多少；不得自行发明阈值。",
+      "assertions": [
+        "识别模糊判断词",
+        "没有发明集中度阈值",
+        "改为可直接计算的定量问题"
+      ],
+      "files": []
+    },
+    {
+      "id": "question-template-vs-atomic",
+      "prompt": "问题模板：在同一单位、同一状态和同一时间范围内，主体资金占比是多少？判断是否可以直接进入 SQL。",
+      "expected_output": "不能。必须明确具体 Rail、币种或资产、状态范围、时间范围和主体粒度。该内容当前只是问题模板，不是闭合的原子问题。",
+      "assertions": [
+        "区分问题模板与原子问题",
+        "指出缺失的关键参数",
+        "未闭合前不进入 SQL"
+      ],
+      "files": []
+    },
+    {
+      "id": "question-valid-atomic",
+      "prompt": "问题：在当前允许数据的全部 created_at 范围内，currency=EUR 且 status=completed 的法币交易，deposit 金额减 withdrawal 金额是多少？净值正、负、零分别定义为净流入、净流出、平衡。检查是否合法。",
+      "expected_output": "通过。主体、指标、币种、状态、时间范围、比较对象和判断映射均闭合，可通过一次明确查询回答。",
+      "assertions": [
+        "确认参数闭合",
+        "确认一次查询可回答",
+        "确认结果与判断存在直接映射",
+        "没有额外扩展业务结论"
+      ],
+      "files": []
+    },
+    {
+      "id": "eval-isolation-no-fixture-leak",
+      "prompt": "Skill 的 Eval 中有一道测试题使用 currency=EUR、status=completed。现在对一个真实工作簿进入原子问题阶段，模型直接选择同一 EUR 问题。检查是否合法。",
+      "expected_output": "不能因为 Eval 使用 EUR 就把它带入真实分析。必须回到当前真实任务的原子问题阶段，仅基于真实数据、本体、指标和问题价值重新生成。只有 EUR 参数能被真实任务独立推出时才可使用。",
+      "assertions": [
+        "识别 Eval 污染",
+        "回退到受影响阶段重新生成",
+        "不把 expected_output 当真实分析依据"
+      ],
+      "files": []
+    },
+    {
+      "id": "repair-requires-real-stage-rerun",
+      "prompt": "阶段 6 因 Validator 缺陷被修复，新增 Eval 通过。是否可以直接进入阶段 7 执行该 Eval 中的合法问题？",
+      "expected_output": "不可以。必须先用当前真实任务重新执行并验收阶段 6，得到真实原子问题，再进入阶段 7。",
+      "assertions": [
+        "Skill 修复后重新执行受影响真实阶段",
+        "Eval 通过不等于真实阶段通过",
+        "不直接执行 Eval 测试题"
+      ],
+      "files": []
+    },
+    {
+      "id": "sql-enum-else-safety",
+      "prompt": "SQL 用 CASE WHEN direction='deposit' THEN amount ELSE -amount END 计算净流量。当前样本只有 deposit 和 withdrawal。检查是否安全。",
+      "expected_output": "不够安全。样本只有两个值不能证明业务域永久只有两个值。应显式写 deposit、withdrawal，未知值返回 NULL 或单独计数。",
+      "assertions": [
+        "识别 ELSE 误分类风险",
+        "显式列出已知枚举值",
+        "未知值不被归入 withdrawal"
+      ],
+      "files": []
+    },
+    {
+      "id": "sql-enum-explicit-valid",
+      "prompt": "SQL 用 CASE WHEN direction='deposit' THEN amount WHEN direction='withdrawal' THEN -amount ELSE NULL END，并单独统计未知 direction。检查是否合法。",
+      "expected_output": "通过。已知业务类别显式列出，未知值不会被误归类，并保留数据质量检查能力。",
+      "assertions": [
+        "确认显式枚举分支合法",
+        "确认未知值不会污染净额",
+        "允许单独统计未知值"
+      ],
+      "files": []
+    },
+    {
+      "id": "signal-internal-comparison-valid",
+      "prompt": "真实执行结果：同一 BTC 范围内 Deposit=0.081 BTC，Withdrawal=0.020 BTC，Net=+0.061 BTC。没有历史基线。判断是否可以形成 Signal。",
+      "expected_output": "可以形成局部结构 Signal，因为问题内部已有合法的 Deposit vs Withdrawal 比较。Signal 只能描述当前样本的方向不对称，不能叫异常、激增或长期趋势。",
+      "assertions": [
+        "没有机械要求历史基线",
+        "允许内部比较形成 Signal",
+        "Signal 表述不超过当前样本"
+      ],
+      "files": []
+    },
+    {
+      "id": "signal-small-sample-not-auto-reject",
+      "prompt": "真实结果只有4条记录，但其中存在明确的 Deposit 与 Withdrawal 数量差异。是否因为样本小直接否决 Signal？",
+      "expected_output": "不能自动否决。小样本限制稳健性和外推范围，但当前4条记录中的结构仍然可以被描述。后续竞争解释和稳健性阶段再处理样本限制。",
+      "assertions": [
+        "小样本不是自动否决条件",
+        "限制外推范围",
+        "不把局部结构扩大为总体规律"
+      ],
+      "files": []
+    },
+    {
+      "id": "signal-information-gain-required",
+      "prompt": "某 Result 真实执行且非零，但没有任何合法本体关系可以继续提出会改变判断的问题。是否应升级为 Signal？",
+      "expected_output": "不应继续作为高价值 Signal 展开。非零结果本身不够；Signal 必须带来信息增量，并存在至少一个合法且可能改变判断的下一问题，否则停止分支。",
+      "assertions": [
+        "非零不等于 Signal",
+        "要求信息增量",
+        "无合法下一问题时停止"
+      ],
+      "files": []
+    },
+    {
+      "id": "signal-vague-language-rejection",
+      "prompt": "真实结果是 Deposit 0.081 BTC、Withdrawal 0.020 BTC。没有正式阈值。模型写“BTC 出现明显异常流入”。执行 Validator。",
+      "expected_output": "拒绝该表述。没有“明显”“异常”的标准。应改为定量结构，例如当前样本中 Deposit 高于 Withdrawal，Net=+0.061 BTC。",
+      "assertions": [
+        "拒绝无标准的异常和明显",
+        "保留定量事实",
+        "不增加因果或风险结论"
+      ],
+      "files": []
+    },
+    {
+      "id": "local-combination-constant-dimension",
+      "prompt": "当前 Signal 是 BTC completed 交易结构。所有命中记录 network 都等于 BITCOIN。本体中加密交易|通过|区块链网络。是否激活 network？",
+      "expected_output": "不激活。关系合法，但 network 在当前 Signal 范围内为常量，不会产生信息增量。应标记为合法但当前淘汰/暂缓，而不是因为本体不可达。",
+      "assertions": [
+        "没有把本体可达等同于值得展开",
+        "识别常量维度无信息增量",
+        "没有执行无价值切片"
+      ],
+      "files": []
+    },
+    {
+      "id": "local-combination-three-state",
+      "prompt": "当前 Signal 可沿本体到用户、创建时间、关联链上地址；另一个字段没有任何已登记关系。给出候选状态。",
+      "expected_output": "无关系字段=非法；用户若可改变主体驱动判断=合法并激活；创建时间若暂非最高优先级=合法但暂缓；关联链上地址若方向角色未知=合法但暂缓。",
+      "assertions": [
+        "明确区分三态",
+        "没有把解释能力弱误判成非法",
+        "只有最高信息价值候选被激活"
+      ],
+      "files": []
+    },
+    {
+      "id": "local-combination-cross-object-contract",
+      "prompt": "激活用户维度。users.uid 是 VARCHAR，crypto_transactions.uid 是 DOUBLE；已验证交易 UID 都是整数且能完整匹配。阶段 9 应输出什么？",
+      "expected_output": "除激活用户外，还必须携带关系执行合同：用户|发起|加密交易、join key=uid、两侧类型、已验证 canonical UID 规范化方式、匹配完整性和限制。不能只写“按用户分析”。",
+      "assertions": [
+        "携带 join key",
+        "记录实际类型差异",
+        "复用已验证规范化方式",
+        "关系合法与 SQL 执行约束分开"
+      ],
+      "files": []
+    },
+    {
+      "id": "local-combination-semantic-weak-defer",
+      "prompt": "本体已登记加密交易|关联|关联链上地址，但当前不知道 address 在 deposit/withdrawal 中是 source 还是 destination。是否允许进入当前局部分析？",
+      "expected_output": "关系本身合法，但解释语义不足，应标记为“合法但暂缓”。不得说关系非法，也不得把地址解释成来源或去向。",
+      "assertions": [
+        "关系合法性与解释能力分开",
+        "未知地址方向不被猜测",
+        "状态为合法但暂缓"
+      ],
+      "files": []
+    },
+    {
+      "id": "evidence-scope-raw-visible-not-verified",
+      "prompt": "原始数据中当前 Signal 的所有 network 看起来都是 BITCOIN，但当前分析链从未执行过 network 子集验证。阶段9能否直接把 network 判为常量并淘汰？",
+      "expected_output": "不能。真实存在不等于当前链已验证。network 关系合法，但变化性当前待验证，应标记为合法但暂缓，不能用未验证事实淘汰。",
+      "assertions": [
+        "区分数据真实与当前证据链验证",
+        "未验证常量事实不得用于淘汰",
+        "阶段9不执行新SQL时保持待验证"
+      ],
+      "files": []
+    },
+    {
+      "id": "evidence-scope-invalidated-prior-run",
+      "prompt": "旧轮次曾验证 users.uid 与 crypto_transactions.uid 完整匹配，但后来上游阶段回退并重新执行。当前阶段能否直接写“已验证完整匹配”？",
+      "expected_output": "不能。受影响的旧轮验证结果失效。当前链只能标记 join 执行状态为待验证，重新验证后才能升级为已验证。",
+      "assertions": [
+        "旧轮结果不直接继承",
+        "上游回退使受影响验证失效",
+        "执行状态标记为待验证"
+      ],
+      "files": []
+    },
+    {
+      "id": "multihop-reachability-no-causality",
+      "prompt": "本体已有 用户|发起|加密交易 和 用户|发起|法币交易。能否沿 加密交易←用户→法币交易 推断某笔加密入金资助某笔法币出金？",
+      "expected_output": "不能。多跳路径只证明两类交易可通过同一用户关联。资金来源、兑换和因果关系没有登记，必须保持未证实。",
+      "assertions": [
+        "允许多跳可达",
+        "不把可达性升级为资金来源",
+        "不生成未登记直接关系或因果关系"
+      ],
+      "files": []
+    },
+    {
+      "id": "cross-object-execution-status",
+      "prompt": "阶段9激活用户维度，已知本体关系成立，但当前链还没验证 VARCHAR uid 与 DOUBLE uid 的规范化和匹配完整性。关系执行合同应怎么写？",
+      "expected_output": "本体关系可激活，但执行状态必须写“待验证”；记录 join key=uid、两侧实际类型，并要求在执行前验证 canonical 规范化和匹配完整性。不得写成已验证。",
+      "assertions": [
+        "本体合法与执行验证分开",
+        "执行状态为待验证",
+        "记录 join key 和两侧类型",
+        "不继承旧轮验证"
+      ],
+      "files": []
+    },
+    {
+      "id": "complex-question-requires-real-validation",
+      "prompt": "阶段10已经形成“按用户拆解 BTC 净流入”的复杂问题。下一步是否可以直接提出竞争解释？",
+      "expected_output": "不可以。必须先进入复杂问题真实验证：完成关系前置检查、执行实际 SQL、取得真实 Result 和结果边界，再决定是否进入竞争解释。",
+      "assertions": [
+        "复杂问题之后先真实验证",
+        "没有 Result 不进入竞争解释",
+        "阶段边界明确"
+      ],
+      "files": []
+    },
+    {
+      "id": "complex-validation-join-precheck",
+      "prompt": "复杂问题需要 join users 与 crypto_transactions，但 join 执行状态是待验证。应先做什么？",
+      "expected_output": "先验证 join key 规范化、NULL/非法值、orphan、基数和放大风险。通过后才执行复杂问题 SQL；失败则停止分支。",
+      "assertions": [
+        "关系验证先于业务 SQL",
+        "检查 orphan 和基数",
+        "失败不强行执行"
+      ],
+      "files": []
+    },
+    {
+      "id": "complex-validation-no-new-dimensions",
+      "prompt": "阶段9只激活用户。复杂问题 SQL 为了更深入顺手加入 country、KYC、network 分组。是否合法？",
+      "expected_output": "不合法。复杂问题真实验证只能实现已形成的问题合同。未在阶段9激活的维度不能在 SQL 中临时增加。",
+      "assertions": [
+        "禁止 SQL 临时扩维",
+        "问题合同约束 SQL",
+        "未激活维度不进入"
+      ],
+      "files": []
+    },
+    {
+      "id": "complex-validation-no-info-gain-stop",
+      "prompt": "复杂问题 SQL 成功执行，但结果没有改变当前 Signal 的解释范围，也没有产生新的待解释结构。是否继续竞争解释？",
+      "expected_output": "停止该分支。真实执行成功不等于必须继续；没有信息增量时不得机械进入竞争解释。",
+      "assertions": [
+        "执行成功不等于继续",
+        "要求信息增量",
+        "无增量时停止"
+      ],
+      "files": []
+    },
+    {
+      "id": "competition-stage-no-robustness-execution",
+      "prompt": "复杂问题真实验证通过。现在进入竞争解释阶段。是否应该立即执行 leave-one-out、分母检查和极端值 SQL？",
+      "expected_output": "不应该。竞争解释阶段只提出能推翻或收缩当前解释的假设，并写明区分证据。具体稳健性 SQL 留到下一阶段。",
+      "assertions": [
+        "竞争解释与稳健性验证分开",
+        "本阶段不执行稳健性SQL",
+        "只保留可证伪的竞争解释"
+      ],
+      "files": []
+    },
+    {
+      "id": "robustness-minimum-necessary-checks",
+      "prompt": "当前只有两个竞争解释：单笔交易驱动、净额分母效应。稳健性验证是否要同时检查时区、JOIN、单位、异常值、所有用户属性？",
+      "expected_output": "不要机械全查。只执行能够区分当前两个竞争解释的最小必要检查；已经被前序证据排除的问题不重复验证。",
+      "assertions": [
+        "最小必要验证",
+        "不机械全量检查",
+        "不重复已排除解释"
+      ],
+      "files": []
+    },
+    {
+      "id": "skill-core-progressive-disclosure",
+      "prompt": "一个规则只在 Signal 阶段需要，且包含较长示例。应该把完整示例放进 SKILL.md 吗？",
+      "expected_output": "不应。SKILL.md 只保留核心动作和约束，阶段细节与长示例放入直接链接的 reference，并在需要该阶段时读取。",
+      "assertions": [
+        "保持SKILL入口精简",
+        "使用progressive disclosure",
+        "细节下沉到reference"
+      ],
+      "files": []
+    },
+    {
+      "id": "skill-language-imperative-concise",
+      "prompt": "规则可以写成三段背景解释，也可以写成一句明确动作。当前 Skill 应选择哪种？",
+      "expected_output": "优先一句明确、可执行的动作。删除模型已知的背景、比喻和重复解释；只有会改变执行行为的信息才保留。",
+      "assertions": [
+        "短句",
+        "动作优先",
+        "删除无执行价值说明"
+      ],
+      "files": []
+    },
+    {
+      "id": "competition-current-interpretation-not-alternative",
+      "prompt": "当前解释是“两个用户分别贡献 +0.030 BTC”。竞争解释阶段把“用户层结构成立”列为 H1。是否正确？",
+      "expected_output": "不正确。当前解释应单独写明，不能作为竞争假设。竞争解释必须提出不同且可能推翻或收缩当前解释的替代解释。",
+      "assertions": [
+        "当前解释与竞争解释分开",
+        "不把主解释编号为竞争假设",
+        "替代解释必须有推翻能力"
+      ],
+      "files": []
+    },
+    {
+      "id": "competition-limitations-not-hypotheses",
+      "prompt": "只有4条记录，所以把“小样本偶然”列为竞争解释。是否正确？",
+      "expected_output": "通常不正确。小样本首先是稳健性限制或结果边界，不是独立竞争解释。除非它被具体化为可被数据区分的替代生成机制，否则放到稳健性验证。",
+      "assertions": [
+        "限制与竞争解释分开",
+        "小样本进入稳健性",
+        "不把限制伪装成假设"
+      ],
+      "files": []
+    },
+    {
+      "id": "dashboard-decision-value-not-sufficient",
+      "prompt": "只有一次性4条BTC交易的有效 Finding，并能改进分析口径。用户没有要求 Dashboard。应当创建图表吗？",
+      "expected_output": "不自动创建。Decision Value 是必要条件，不足以证明展示必要性。当前样本仅支持一次性报告。",
+      "assertions": [
+        "拒绝无必要的 Dashboard",
+        "不把一次性样本包装成持续指标"
+      ],
+      "files": []
+    },
+    {
+      "id": "dashboard-legitimate-recurring-use",
+      "prompt": "已有真实验证的多期关键指标，业务负责人每周按统一口径调整调度动作，且需要观察变化。Dashboard Gate 如何处理？",
+      "expected_output": "决策场景、复用需求、稳定口径与展示增量满足后，可以进入 Dashboard 设计。只保留必要指标。",
+      "assertions": [
+        "不仅有Decision Value",
+        "还验证持续/复用价值和口径"
+      ],
+      "files": []
+    },
+    {
+      "id": "batch-authorization-stage-discipline",
+      "prompt": "用户明确说完成阶段16及全新数据集盲测，发现问题自动修复并重新测试，不用逐次确认。执行纪律是什么？",
+      "expected_output": "在这次明确授权范围内逐阶段执行、自检、修复并复测，无需逐阶段等待确认；不得越出用户授权范围。",
+      "assertions": [
+        "认可批量授权",
+        "仍逐阶段保留验收记录"
+      ],
+      "files": []
+    },
+    {
+      "id": "multigrain-join-measure-fanout",
+      "prompt": "真实数据：企业年度记录每年11家企业，国家年度 GNP 每年仅1行。把两表按 year 连接，再 SUM(GNP)。此查询 SQL 能运行，是否可以直接把结果作为宏观 GNP 合计？",
+      "expected_output": "不可以。年度 GNP 在企业年度明细上重复了11次。应先按各指标原生粒度计算，再连接；回算 Join 前后汇总并保留原始口径。",
+      "assertions": [
+        "指出 Join 放大 11 倍",
+        "拒绝直接使用错误汇总",
+        "按原生粒度分别聚合并校验"
+      ],
+      "files": []
+    },
+    {
+      "id": "multigrain-time-coverage",
+      "prompt": "企业数据覆盖1935–1954，宏观数据覆盖1947–1962。两个数据集按 year 连接后，能否认为覆盖1935–1962的完整时间段？",
+      "expected_output": "不能。内连接交集只包含1947–1954。必须记录两个数据源的原始时间覆盖、交集、被排除的时间段及分析边界。",
+      "assertions": [
+        "识别年份交集1947–1954",
+        "避免扩大全样本解释",
+        "显式记录时间覆盖"
+      ],
+      "files": []
+    },
+    {
+      "id": "multigrain-aggregate-ecological-fallacy",
+      "prompt": "1950年前后，11家企业年度投资总额与美国GNP的相邻年度变动同向。是否可以推断11家企业每家的投资也同向，或者GNP增长导致企业投资增长？",
+      "expected_output": "不能。从总体同向无法推出每家企业同向；年份相关不等于因果。应验证企业层异质性，并记录未登记因果关系。",
+      "assertions": [
+        "拒绝总体推断到每个企业",
+        "拒绝将同向变化写成因果",
+        "建议检验原子主体差异"
+      ],
+      "files": []
+    },
+    {
+      "id": "blocked-source-still-deliver-report",
+      "prompt": "用户要求完整 SQL 报告，指定 URL 的 DuckDB 读取因 DNS 失败。应直接停止回复还是交付什么？",
+      "expected_output": "交付阻塞版正式报告，包括原始 DNS 错误、源检查状态、未执行步骤、SQL 和恢复条件；不得生成 Finding。",
+      "assertions": [
+        "失败仍生成可审计报告",
+        "无SQL结果不得生成Finding"
+      ],
+      "files": []
+    },
+    {
+      "id": "url-bytes-staging-not-new-source",
+      "prompt": "只锁定五个 GitHub CSV URL 和 DuckDB，未规定 read_csv 必须直接读 URL。网络允许时能否先下载同一 URL 的原始字节暂存本地，再用 DuckDB？",
+      "expected_output": "可以作为传输暂存，严格限定同一 URL 和字节完整性、SHA-256，不能改用其他镜像和别的数据；仍须用 DuckDB 真实执行。",
+      "assertions": [
+        "来源不变",
+        "DuckDB执行",
+        "字节与哈希验证"
+      ],
+      "files": []
+    },
+    {
+      "id": "fixed-remote-function-no-staging",
+      "prompt": "用户明确指定 read_xlsx 原始 URL 和 SQL 不可改，环境不能联网。可以改成本地文件吗？",
+      "expected_output": "不能。应寻找保持原 SQL 的兼容运行时；没有则输出阻塞报告。",
+      "assertions": [
+        "不改变固定SQL",
+        "不得假装成功"
+      ],
+      "files": []
+    },
+    {
+      "id": "source-metadata-vs-bytes",
+      "prompt": "GitHub 只读连接返回 CSV 的 Blob SHA 和 records，但 DuckDB 无法拿到 CSV 字节。能否生成完整经营 Finding？",
+      "expected_output": "不能。元数据和外部文件检查不等于容器成功取到字节，也不等于 DuckDB Result。",
+      "assertions": [
+        "证据层级分离",
+        "不生成未经SQL验证结论"
+      ],
+      "files": []
+    },
+    {
+      "id": "no-false-completion-after-report",
+      "prompt": "一个失败报告成功生成，但没有任何业务SQL执行。是否可以标记 Skill 完整分析通过？",
+      "expected_output": "不能。报告交付完成与业务分析完成必须分别标记。",
+      "assertions": [
+        "区分报告交付和分析完成"
+      ],
+      "files": []
+    },
+    {
+      "id": "blocked-source-must-deliver-artifact",
+      "prompt": "用户要求完整 SQL 审计报告，给定源 URL 在运行时 DNS 失败。请执行收尾。",
+      "expected_output": "停止业务推论，但生成阻塞审计报告，包含原错误、逐源状态、未执行项目、复跑命令和恢复条件。不得把报告交付等同分析完成。",
+      "assertions": [
+        "交付阻塞报告文件",
+        "包含真实错误和复跑方式",
+        "不生成业务 Result 或 Finding"
+      ],
+      "files": []
+    },
+    {
+      "id": "source-byte-gate-not-metadata",
+      "prompt": "GitHub 返回 CSV Blob SHA 和路径，但本地 DuckDB 容器无法访问该 URL。是否可以据此宣称数据已读取？",
+      "expected_output": "不可以。Blob SHA 仅证明远端身份，必须取得完整同源字节并核验本地大小和 SHA-256，再由 DuckDB 解析。",
+      "assertions": [
+        "不把远端元数据当实际读取",
+        "完整本地字节必需",
+        "不得换源"
+      ],
+      "files": []
+    },
+    {
+      "id": "reusable-runtime-no-olist-hardcoding",
+      "prompt": "用户换成另一组 CSV URL。通用 Skill 的 source gate 和分析 runner 是否可以强制要求 Olist 文件名？",
+      "expected_output": "不可以。根据本轮数据契约动态读取文件清单；与具体数据集绑定的测试执行器只能进入单独测试用例，不得作为通用默认。",
+      "assertions": [
+        "源清单可变",
+        "不硬编码 Olist 名称",
+        "测试夹具与通用 Skill 隔离"
+      ],
+      "files": []
+    }
+  ]
+}

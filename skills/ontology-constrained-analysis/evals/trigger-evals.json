@@ -1,0 +1,42 @@
+[
+  {
+    "query": "基于这个真实数据库做完整业务分析，但先建立业务本体，不要从字段统计开始。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要把原子知识、业务关系和规则先建出来，再限制 AI 后续能问什么问题。",
+    "should_trigger": true
+  },
+  {
+    "query": "分析这个工作簿，要求所有复杂问题必须从真实 Signal 和合法业务关系逐步产生。",
+    "should_trigger": true
+  },
+  {
+    "query": "建立一个本体约束的数据分析流程，最后再决定哪些 Finding 进入 Dashboard。",
+    "should_trigger": true
+  },
+  {
+    "query": "检查这个风控分析里哪些原子能组合，SQL 能 join 不代表业务关系成立。",
+    "should_trigger": true
+  },
+  {
+    "query": "先定义指标口径，再给我画一个销售趋势图，不需要业务本体。",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我写一条 SQL，把两个表按 user_id join 后统计总金额。",
+    "should_trigger": false
+  },
+  {
+    "query": "解释 ontology 在知识图谱里的基本概念，不需要分析数据。",
+    "should_trigger": false
+  },
+  {
+    "query": "优化这个 Dashboard 的配色和响应式布局。",
+    "should_trigger": false
+  },
+  {
+    "query": "检查这段 Lisp 代码为什么括号不匹配。",
+    "should_trigger": false
+  }
+]
