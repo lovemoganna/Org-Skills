@@ -6,7 +6,6 @@ import json
 ROOT = Path(__file__).resolve().parents[1]
 report = ROOT / "artifacts" / "verified-d22-report.html"
 record = ROOT / "tests" / "verified-d23-render-qa.json"
-sha_path = ROOT / "tests" / "d10-fiat-direction-status.sql"
 
 
 def git_blob_sha(data: bytes) -> str:
@@ -19,7 +18,7 @@ def check(data: bytes, qa: dict) -> None:
     assert hashlib.sha256(data).hexdigest() == qa["artifact_sha256"], "STALE_RENDER_QA"
     assert git_blob_sha(data) == qa["artifact_git_blob_sha"], "STALE_HTML_BLOB"
     assert qa["remote_render_run"] > 0 and qa["remote_render_artifact_id"] > 0
-    assert qa["static_content_regression"] .startswith("PASS")
+    assert qa["static_content_regression"].startswith("PASS")
     assert qa["desktop"]["full_page_overflow"] == "PASS"
     assert qa["mobile"]["full_page_overflow"] == "PASS"
     assert qa["desktop"]["audit_accordions"] == "2/2 PASS"
