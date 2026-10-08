@@ -58,7 +58,7 @@ def check(chain, prior=None):
         import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
-            if early and re.search(r"\\b(?:JOIN|GROUP\\s+BY|SUM\\s*\\(|AVG\\s*\\(|CASE\\s+WHEN|UNION(?:\\s+ALL)?)\\b", statement, re.I):
+            if early and re.search(r"\b(?:JOIN|GROUP\s+BY|SUM\s*\(|AVG\s*\(|CASE\s+WHEN|UNION(?:\s+ALL)?)\b", statement, re.I):
                 errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + ident)
     # Keep these statuses independent: a report build is not a passed Gate 3.
     if not chain.get("queries"):
