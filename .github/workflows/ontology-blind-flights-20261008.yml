@@ -68,6 +68,19 @@ jobs:
           run('counts','SELECT (SELECT COUNT(*) FROM flights) AS flights, (SELECT COUNT(*) FROM weather) AS weather, (SELECT COUNT(*) FROM planes) AS planes')
           for name in ['flights','weather','planes']:
               run('schema_'+name, 'DESCRIBE SELECT * FROM '+name)
+          gate=json.loads(pathlib.Path('tests/ontology-constrained-analysis/blind-flights-gate1.json').read_text(encoding='utf-8'))
+          atoms=gate['atomic_knowledge']
+          rules=gate['recognition_rules']
+          if len(atoms)!=len({x['id'] for x in atoms}) or not atoms or not rules:
+              raise RuntimeError('GATE1_INVALID_ATOMS_OR_RULES')
+          if any(not all(x.get(k) for k in ['l1','l2','l3','name','subject','grain','source','time']) for x in atoms):
+              raise RuntimeError('GATE1_INCOMPLETE_ATOM_FIELDS')
+          if any(not all(x.get(k) for k in ['l1','l2','l3','recognition','lisp','definition','state']) for x in rules):
+              raise RuntimeError('GATE1_INCOMPLETE_RULE_FIELDS')
+          if not gate['relations'] or any(s.count('|')!=2 for s in gate['relations']):
+              raise RuntimeError('GATE1_RELATION_TRIPLES_INVALID')
+          out['gate1']={'status':'STRUCTURE_PASS_SEMANTIC_AUDIT_SEPARATE','atoms':len(atoms),'rules':len(rules),'relations':len(gate['relations'])}
+          run('sample_month_scope','SELECT year,month,COUNT(*) AS flights FROM flights GROUP BY 1,2 ORDER BY 1,2')
           run('native_semantics','SELECT MIN(year) AS min_year, MAX(year) AS max_year, COUNT(*) FILTER (WHERE dep_delay IS NOT NULL) AS delays_known, COUNT(*) FILTER (WHERE dep_delay IS NULL) AS delays_missing, COUNT(*) FILTER (WHERE hour IS NOT NULL) AS scheduled_hour_known FROM flights')
           flight_cols={r['column_name'] for r in out['results']['schema_flights']}
           weather_cols={r['column_name'] for r in out['results']['schema_weather']}
@@ -76,14 +89,20 @@ jobs:
           missing=sorted(required-flight_cols)
           if missing:
               raise RuntimeError('FLIGHT_REQUIRED_FIELDS_ABSENT:'+','.join(missing))
-          weather_keys={'origin','year','month','day','hour'}
+          weather_keys={'airport','year','month','day','hour'}
           if not weather_keys.issubset(weather_cols):
               out['checks']['weather_relation_status']='BLOCKED_MISSING_KEYS'
               out['checks']['weather_missing_keys']=sorted(weather_keys-weather_cols)
           else:
               weather_duplicates=run('weather_key_uniqueness',
-                  'SELECT COUNT(*) AS duplicated_keys FROM (SELECT origin,year,month,day,hour FROM weather GROUP BY 1,2,3,4,5 HAVING COUNT(*)>1)')[0]['duplicated_keys']
-              out['checks']['weather_relation_status']='READY' if weather_duplicates==0 else 'BLOCKED_JOIN_FANOUT'
+                  'SELECT COUNT(*) AS duplicated_keys FROM (SELECT airport,year,month,day,hour FROM weather GROUP BY 1,2,3,4,5 HAVING COUNT(*)>1)')[0]['duplicated_keys']
+              run('weather_station_codes','SELECT airport AS station_code,COUNT(*) AS readings FROM weather GROUP BY 1 ORDER BY 1')
+              run('flight_origin_codes','SELECT origin AS origin_code,COUNT(*) AS flights FROM flights GROUP BY 1 ORDER BY 1')
+              if weather_duplicates:
+                  out['checks']['weather_relation_status']='BLOCKED_JOIN_FANOUT'
+              else:
+                  out['checks']['weather_relation_status']='KEYS_UNIQUE_TIME_SEMANTICS_PENDING'
+                  out['checks']['weather_time_semantics']='flights.hour is scheduled local hour; weather.hour observation timezone unverified: cross-table business join deferred'
           if 'tailnum' in flight_cols and 'tailnum' in plane_cols:
               plane_duplicates=run('plane_key_uniqueness',
                   'SELECT COUNT(*) AS duplicated_tailnums FROM (SELECT tailnum FROM planes WHERE tailnum IS NOT NULL GROUP BY 1 HAVING COUNT(*)>1)')[0]['duplicated_tailnums']
@@ -135,11 +154,24 @@ jobs:
                ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_share_pct,
                ROUND(AVG(dep_delay),2) AS mean_delay_minutes
                FROM limited GROUP BY 1 ORDER BY 1""")
+          run('origin_carrier_standardized',"""WITH strata AS(
+              SELECT origin,carrier,
+              COUNT(*) FILTER (WHERE period='06-11') AS early_n,
+              COUNT(*) FILTER (WHERE period='18-23') AS evening_n,
+              COUNT(*) FILTER (WHERE period='06-11' AND dep_delay>0)::DOUBLE/NULLIF(COUNT(*) FILTER (WHERE period='06-11'),0) AS early_rate,
+              COUNT(*) FILTER (WHERE period='18-23' AND dep_delay>0)::DOUBLE/NULLIF(COUNT(*) FILTER (WHERE period='18-23'),0) AS evening_rate
+              FROM period_flights GROUP BY 1,2)
+              SELECT COUNT(*) AS comparable_strata,
+              SUM(early_n+evening_n) AS flights_in_comparable_strata,
+              ROUND(100.0*SUM((early_n+evening_n)*(evening_rate-early_rate))/SUM(early_n+evening_n),2) AS weighted_evening_minus_morning_pp,
+              COUNT(*) FILTER (WHERE evening_rate>early_rate) AS evening_higher_strata,
+              COUNT(*) FILTER (WHERE evening_rate<early_rate) AS morning_higher_strata
+              FROM strata WHERE early_n>0 AND evening_n>0""")
           path=output/'blind-analysis-results.json'
           path.write_text(json.dumps(out,ensure_ascii=False,indent=2,default=str))
           (output/'blind-analysis-sql.sql').write_text('\n\n'.join('-- '+k+'\n'+v.rstrip(';')+';' for k,v in out['sql'].items()))
           printable={'duckdb':out['duckdb'],'sources':[{'url':s['url'],'bytes':s['bytes'],'sha256':s['sha256'],'length_verified':s['length_verified']} for s in manifest],
-          'checks':out['checks'],'results':{k:v for k,v in out['results'].items() if not k.startswith('schema_') and k!='airport_month'}}
+          'checks':out['checks'],'gate1':out['gate1'],'results':{k:v for k,v in out['results'].items() if not k.startswith('schema_') and k!='airport_month'}}
           print('BLIND_ANALYSIS_JSON='+json.dumps(printable,ensure_ascii=False,default=str))
           if missing:
               raise SystemExit('FLIGHT_SCHEMA_BLOCKED')
