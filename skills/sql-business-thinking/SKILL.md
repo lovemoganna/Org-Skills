@@ -29,7 +29,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 ## 3. 运行时、结果与真实性
 
-1. **Runtime Placement Gate：**优先可用且符合契约的 Native DuckDB；HTML/Browser 可尝试本地 DuckDB-Wasm，再尝试现有、已授权的远程 Wasm runner。每个 placement 实测后才判失败。用户锁定 Native 或 SQL 原文且兼容执行不可用时标 `BLOCKED_ENV`，不得以 VFS 替换冒充成功。不得无声切换引擎。
+1. **Runtime Placement Gate：**先检查当前环境的 Native DuckDB；本地缺失或网络受限时，继续核验仓库现有、已授权且能保留原始 SQL 的远程 Native runner。HTML/Browser 任务可再检查本地 DuckDB-Wasm 和现有、已授权的远程 Wasm runner。逐个记录环境、触发权限、实际 run ID、SQL 与数据版本、Gate 覆盖和失败证据；仅 runner 已存在不算本轮执行。远程 Native D02/D03 通过只证明对应阶段，不得冒充 D04–D23 自主分析或最终 E2E。任何远程写入或发送均须符合第 2 节权限契约。全部合法且兼容的执行位置均不可用时才标 `BLOCKED_ENV`。用户锁定 Native 或 SQL 原文时，不得以 VFS 替换冒充成功，不得无声切换引擎。
 2. **数据质量：**读取授权表后检查粒度、键唯一性、孤儿、状态、金额、时间和 JOIN 基数，具体按 `references/dataset-planning.md` 与 `tests/mandatory-gates.json`。必需 Gate 未运行不得写 PASS。**Downstream Gate Propagation Gate：**失败或阻塞只抑制受影响的下游分析，不抑制无关内容；证据可以保留，KPI/结论不得以“仅供参考”绕过。
 3. **SQL Alias Safety Gate：**显式别名写 `AS`，规避 DuckDB 关键字冲突。按合理换行和缩进展示 SQL；Parser Error 先检查 SQL，不归咎数据。
 4. **Result Scalar Normalization Gate：**所有 DuckDB Result 进入分析/ReportSpec/渲染前统一处理 bigint、DECIMAL、Date、Arrow/TypedArray、单元素视图和嵌套对象。非法标量形态标 `RESULT_SHAPE_INVALID`；Renderer 不猜值。
