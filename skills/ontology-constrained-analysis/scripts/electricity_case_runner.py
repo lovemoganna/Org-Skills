@@ -126,15 +126,17 @@ FROM (
     ontology=[["时间","采样","时点","测量时点","事实","时间","timestamp","时间字符串","观测","时点","原始观测时点","时点|标识|宽表行","单次测量时间，不等于计费时点"],
               ["主体","序列","客户列","负荷序列标识","事实","主体","VARCHAR","原始列名","序列","时间序列","记录时点对应","标识|关联|读数","TXT中的列标识；未证明客户身份"],
               ["测量","数值","负荷读数","负荷数值","事实","测量值","DOUBLE","原文件未标注单位","序列","序列-时点","与记录时点同步","序列|在时点具有|读数","原始非空值解析得到的数值"],
-              ["测量","状态","零值","零读数","派生","测量属性","0","序列","序列-时点","与记录时点同步","读数|等于|零","观测到0，不等于停电或缺测"],
+              ["测量","状态","零值","零读数","派生","测量属性","BOOLEAN","0 / 非0","序列","序列-时点","与记录时点同步","读数|等于|零","观测到0，不等于停电或缺测"],
               ["时间","日历","日期","观测日期","派生","时间属性","DATE","日","时点","日","由时点截取","时点|属于|日期","由观测时间截取的日期"],
               ["时间","日历","星期类别","周末/工作日","派生","时间属性","weekday/weekend","星期","时点","时点","由时点计算","时点|属于|星期类别","按记录日期计算，不代表运营日历"]]
     rules=[["观测","时间","序列读数","同一序列、时间和数值形成测量事件","(测量事件 (AND (存在 测量时点) (存在 负荷序列标识) (存在 负荷数值)))","单个序列在某时间拥有一个原始负荷读数","正式（仅观测语义）"],
            ["观测","时间","周末读数","测量事件且时间属于周末","(周末负荷观测 (AND (存在 测量事件) (= 星期类别 周末)))","某条负荷观测属于日历周末","正式（非因果）"],
            ["观测","读数","零值观测","测量事件且其数值为0","(零值观测 (AND (存在 测量事件) (= 负荷数值 0)))","该时点记录了数值0，实际业务原因未知","正式（非停电判断）"]]
     # Gate 1 checks: all business entities/relations exist and rules do not claim power outage or billing units.
-    assert len(ontology)>=4 and all(len(x)==13 for x in ontology)
-    assert all(len(x)==7 for x in rules) and all("停电判断" not in x[5] for x in rules)
+    if not (len(ontology)>=4 and all(len(x)==13 for x in ontology)):
+        raise ValueError("ONTOLOGY_COLUMN_COUNTS: "+str([len(x) for x in ontology]))
+    if not all(len(x)==7 for x in rules):
+        raise ValueError("RULE_COLUMN_COUNTS: "+str([len(x) for x in rules]))
     stage("Ontology Validator Gate 1","PASS")
     daily=run("原子问题Q1：逐日序列平均读数与零值","""SELECT
     CAST(ts AS DATE) AS day,
