@@ -42,6 +42,7 @@ async function sizeCheck(width, height, label){
       details:[...document.querySelectorAll('details')].map(x=>x.open),
       scripts:document.querySelectorAll('script').length,
       sheet:!!document.querySelector('main.shell'),
+      visibleScrollHints:[...document.querySelectorAll('.scroll-hint')].filter(e=>getComputedStyle(e).display!=='none').length,
       glyphDistinct:(()=>{
         const c=document.createElement('canvas');c.width=72;c.height=64;
         const ctx=c.getContext('2d');ctx.font='32px "Noto Sans CJK SC", sans-serif';
@@ -64,6 +65,7 @@ async function sizeCheck(width, height, label){
     && (width>760 || metrics.tables.every(t=>t.scroll>t.client+1)));
   mark('no_async_scripts_'+label,metrics.scripts===0&&metrics.details.every(x=>!x));
   mark('cjk_glyph_rendering_'+label,metrics.glyphDistinct);
+  mark('scroll_hints_'+label, width<=760 ? metrics.visibleScrollHints===2 : metrics.visibleScrollHints===0);
   await page.screenshot({path:join(outDir,label+'.png'),fullPage:true});
   await page.addScriptTag({content:axeSource});
   const axe=await page.evaluate(async()=>await window.axe.run(document,{
