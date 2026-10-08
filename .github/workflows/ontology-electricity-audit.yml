@@ -1,0 +1,62 @@
+name: Ontology Electricity DuckDB Audit
+on:
+  push:
+    branches:
+      - analysis/electricity-load-20261008
+    paths:
+      - .github/workflows/ontology-electricity-audit.yml
+      - skills/ontology-constrained-analysis/scripts/electricity_case_runner.py
+permissions:
+  contents: write
+jobs:
+  electricity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout controlled test branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install native DuckDB
+        run: python -m pip install --disable-pip-version-check duckdb==1.4.2
+      - name: Fetch exact TXT and execute real DuckDB report
+        shell: bash
+        run: |
+          set +e
+          python skills/ontology-constrained-analysis/scripts/electricity_case_runner.py
+          status=$?
+          echo "analysis_exit_code=$status" >> "$GITHUB_ENV"
+          exit 0
+      - name: Commit audit output to branch
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "ontology-analysis-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d reports/electricity-20261008 ]; then
+            find reports/electricity-20261008 -maxdepth 1 -type f ! -name 'LD2011_2014.txt' -print0 | xargs -0 -r git add -f --
+            if ! git diff --cached --quiet; then
+              git commit -m "results: record actual single-source DuckDB electricity audit"
+              git push origin HEAD:analysis/electricity-load-20261008
+            fi
+          fi
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: electricity-duckdb-audit
+          path: |
+            reports/electricity-20261008/*.html
+            reports/electricity-20261008/*.md
+            reports/electricity-20261008/*.json
+          if-no-files-found: warn
+      - name: Enforce execution status
+        if: always()
+        shell: bash
+        run: |
+          test "${analysis_exit_code}" = "0"
