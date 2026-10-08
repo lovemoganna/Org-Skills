@@ -153,6 +153,32 @@ await db.registerFileBuffer('source_original.txt', bytes);
 3. 任何失败只说明该传输路线不可用；继续检查可用的同引擎执行环境，例如已授权 GitHub Actions Runner。不得把搜索网页、截断内容、API 元数据或文件大小推测当作 DuckDB Result。
 4. `source_gate_receipt.json` 同时保留原 URL、实际获取端点、字节数、SHA-256、Git Blob SHA、请求时间与真实错误。仅在完整性通过后才解析格式和执行 SQL。
 
+## 同源源文件实际恢复顺序
+
+1. 原 URL：使用 `scripts/source_gate.py`，默认三次重试；检查 HTTP 完整长度或用户固定哈希。断点续传必须校验 ETag、Content-Range 与完整长度。缺失长度和哈希不能判为下载成功。
+2. 同一 GitHub 文件：若 `raw.githubusercontent.com` 失败，用 `--prefer-github-blob` 直接走 GitHub 回退。先从 Contents 元数据取得同一 owner/repo/ref/path 对应的 Git Blob SHA 与字节数，再尝试 Git Blobs 原始字节接口，失败后尝试对应的 `github.com/{owner}/{repo}/raw/{ref}/{path}`。仅接受实际落盘、长度一致、Git Blob SHA 校验通过的字节。GitHub 文件网页与元数据不是文件内容。
+3. 大文件：API Git Blobs 存在文件大小限制；API 失败不能说明文件不存在。改试同一仓库的文件原始下载端点，流式落盘并核验 Git Blob SHA；不下载一个截断的网页预览代替数据。若 Contents 元数据也无法取得，标记路径校验未完成，不得宣称通过。
+4. 运行环境：本机缺 DuckDB 时，检查当前获授权、能真实运行 DuckDB 的等价环境。GitHub 连接器读取原文不意味着字节已进入本地或浏览器运行时。任何等价环境都要重新实测文件路径、扩展、格式读取及 SQL。
+5. 文件已就绪才进入格式、记录、粒度、单位核验。数据门禁失败时写出三份阻塞回执，记录各传输端点和错误、已验证范围、明确的重跑入口；不得生成 SQL Result 或 Finding。
+
+清单示例（仅传输约束，不预设数据结构）：
+
+```json
+{
+  "files": [{
+    "name": "LD2011_2014.txt",
+    "url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt"
+  }]
+}
+```
+
+```bash
+python scripts/source_gate.py --manifest manifest.json --out artifacts/source
+python scripts/source_gate.py --manifest manifest.json --out artifacts/source --prefer-github-blob
+```
+
+`--prefer-github-blob` 是同源传输回退，不代表绕过 Git Blob SHA 校验；上述示例 URL 不是测试答案或数据分析模板。
+
 ## 禁止降级
 
 用户指定 DuckDB `read_xlsx` 时，未经用户明确允许，不得改成：
