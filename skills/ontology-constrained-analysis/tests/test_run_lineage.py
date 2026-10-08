@@ -46,6 +46,30 @@ class SequenceRegression(unittest.TestCase):
             "net-amount":{"sql":"SELECT SUM(amount) FROM orders"}}}
         self.assertTrue(any("PRIOR_ANALYSIS_BEFORE_GATE1" in e for e in check(d,prior)))
 
+    def test_late_generated_log_cannot_hide_early_query(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=5)).isoformat()
+        after = (datetime.fromisoformat(d["stages"][0]["at"]) + timedelta(seconds=5)).isoformat()
+        prior = {"generated_at": after, "queries": {
+            "hidden-analysis": {"timestamp": before, "sql": "SELECT SUM(amount) FROM orders"}
+        }}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:hidden-analysis", check(d, prior))
+
+    def test_late_log_with_unstamped_analysis_is_not_proven_safe(self):
+        d = fixture()
+        after = (datetime.fromisoformat(d["stages"][0]["at"]) + timedelta(seconds=5)).isoformat()
+        prior = {"generated_at": after, "queries": {
+            "unknown-execution-time": {"sql": "SELECT COUNT(*) FROM a JOIN b USING (uid)"}
+        }}
+        self.assertIn("PRIOR_ANALYSIS_TIME_UNVERIFIED:unknown-execution-time", check(d, prior))
+
+    def test_prior_business_query_with_invalid_timestamp_fails_closed(self):
+        d = fixture()
+        prior = {"generated_at": datetime.now(timezone.utc).isoformat(),
+                 "queries": {"invalid": {"timestamp": "2026-01-01",
+                                         "sql": "SELECT SUM(amount) FROM transactions"}}}
+        self.assertIn("PRIOR_SQL_TIMESTAMP_INVALID:invalid", check(d, prior))
+
     def test_multi_table_simple_counts_before_gate_allowed(self):
         d = fixture()
         before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()

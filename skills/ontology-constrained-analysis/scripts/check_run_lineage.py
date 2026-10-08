@@ -49,17 +49,34 @@ def check(chain, prior=None):
             errors.append("SQL_RESULT_NOT_PRESENT:" + str(q.get("id", "")))
     if prior is not None:
         try:
-            early = when(prior.get("generated_at")) < approved_at
+            recorded_at = when(prior.get("generated_at"))
         except ValueError:
-            early = True
+            recorded_at = None
             errors.append("PRIOR_QUERY_TIMESTAMP_UNVERIFIED")
-        # Metadata/schema-only probes are acceptable. Business aggregation,
-        # JOINs, net flow and other actual analytical SQL are not Gate-0 probes.
+        # Per-query execution time takes precedence over log generation time.
+        # A log written after Gate 1 cannot certify when its SQL actually ran.
         import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
-            if early and re.search(r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)", statement, re.I):
-                errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + ident)
+            analytical = re.search(
+                r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)",
+                statement, re.I)
+            if not analytical:
+                continue
+            executed_at = None
+            if isinstance(q, dict) and q.get("timestamp") is not None:
+                try:
+                    executed_at = when(q["timestamp"])
+                except ValueError:
+                    errors.append("PRIOR_SQL_TIMESTAMP_INVALID:" + str(ident))
+                    continue
+            if executed_at is not None:
+                if executed_at < approved_at:
+                    errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + str(ident))
+            elif recorded_at is not None and recorded_at < approved_at:
+                errors.append("PRIOR_ANALYSIS_BEFORE_GATE1:" + str(ident))
+            else:
+                errors.append("PRIOR_ANALYSIS_TIME_UNVERIFIED:" + str(ident))
     # A numeric narrative must be reconstructed from THIS run's SQL Result.
     # Templates/bindings are an audit contract, not expected test answers.
     import re

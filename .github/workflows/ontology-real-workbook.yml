@@ -110,6 +110,18 @@ jobs:
                  SUM(CASE WHEN asset IS NULL THEN 1 ELSE 0 END)
           FROM exchange_rates;
 
+          .once users-schema.csv
+          DESCRIBE users;
+          .once fiat_transactions-schema.csv
+          DESCRIBE fiat_transactions;
+          .once crypto_transactions-schema.csv
+          DESCRIBE crypto_transactions;
+          .once exchange_rates-schema.csv
+          DESCRIBE exchange_rates;
+
+          .shell python skills/ontology-constrained-analysis/scripts/live_workbook_gate1.py
+          .read gate1-decision.sql
+
           .once ontology-instrument-status.csv
           SELECT 'fiat' AS rail, CAST(currency AS VARCHAR) AS instrument,
                  CAST(direction AS VARCHAR) AS direction,
@@ -124,6 +136,8 @@ jobs:
           FROM crypto_transactions
           GROUP BY asset, direction, status
           ORDER BY rail, instrument, direction, status;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-instrument-status
 
           .once ontology-uid-integrity.csv
           WITH tx AS (
@@ -140,6 +154,8 @@ jobs:
           LEFT JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
           GROUP BY tx.rail
           ORDER BY tx.rail;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-uid-integrity
 
           .once ontology-account-snapshot.csv
           WITH tx AS (
@@ -159,6 +175,8 @@ jobs:
           GROUP BY users.account_status, tx.rail, tx.tx_status
           ORDER BY account_status, rail, tx_status;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-account-snapshot
+
           .once ontology-status-timestamps.csv
           SELECT 'fiat' AS rail, CAST(status AS VARCHAR) AS status,
                  COUNT(*) AS record_count,
@@ -175,6 +193,8 @@ jobs:
           FROM crypto_transactions
           GROUP BY status
           ORDER BY rail, status;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-status-timestamps
 
           .once ontology-rate-temporality.csv
           WITH tx AS (
@@ -206,6 +226,8 @@ jobs:
           LEFT JOIN rate_summary USING (asset)
           ORDER BY asset;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-rate-temporality
+
           .once ontology-cross-rail.csv
           WITH fiat AS (
             SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS fiat_records
@@ -225,6 +247,8 @@ jobs:
           LEFT JOIN fiat ON fiat.uid_key = TRY_CAST(users.uid AS BIGINT)
           LEFT JOIN crypto ON crypto.uid_key = TRY_CAST(users.uid AS BIGINT)
           ORDER BY uid_key;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-cross-rail
 
           .once ontology-usdt-driver.csv
           WITH per_user AS (
@@ -252,9 +276,12 @@ jobs:
           FROM per_user
           ORDER BY ABS(sample_net_usdt) DESC, uid_key;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-usdt-driver
+
+
           SQL
 
-          ./duckdb < ontology-materialize.sql
+          ./duckdb -bail < ontology-materialize.sql
 
       - name: Reject original mixed-category ontology relation using live DuckDB exports
         shell: bash
@@ -307,7 +334,7 @@ jobs:
 
           sql_text = pathlib.Path("ontology-materialize.sql").read_text()
           evidence["sql_sha256"] = hashlib.sha256(sql_text.encode()).hexdigest()
-          evidence["test_scope"] = "original URL -> read_xlsx -> materialized tables -> rows; does not validate ontology/Finding/browser"
+          evidence["test_scope"] = "same-session fixed read_xlsx -> current-source semantic Gate 1 -> smoke analytical SQL, not full Gate 2-4 Finding proof"
           assert sql_text.count("INSTALL httpfs;") == 1
           assert sql_text.count("LOAD httpfs;") == 1
           assert sql_text.count("INSTALL excel;") == 1
@@ -318,6 +345,16 @@ jobs:
               assert sql_text.count("CREATE TEMP TABLE " + sheet + " AS") == 1
               assert sql_text.count("SELECT * FROM " + sheet + ";") == 1
           evidence["materialization_verified_from_sql"] = True
+          gate = json.loads(pathlib.Path("gate1-receipt.json").read_text(encoding="utf-8"))
+          evidence["gate1_source_contract"] = gate["status"]
+          assert gate["status"] == "PASS_STRUCTURE_AND_NARROW_SEMANTICS", gate["errors"]
+          assert sql_text.index(".shell python skills/ontology-constrained-analysis/scripts/live_workbook_gate1.py") > sql_text.index("CREATE TEMP TABLE exchange_rates AS")
+          assert ".read gate1-decision.sql" in sql_text
+          assert sql_text.index(".read gate1-decision.sql") < sql_text.index(".once ontology-instrument-status.csv"), "BUSINESS_SQL_BEFORE_GATE1"
+          decision = pathlib.Path("gate1-decision.sql").read_text(encoding="utf-8")
+          assert "GATE1_APPROVED" in decision, decision
+          evidence["gate1_semantic_review"] = gate["semantic_review"]
+          assert gate["semantic_review"]["status"] == "PASS"
           analysis_names = [
               "ontology-source-profile",
               "ontology-instrument-status",
@@ -332,13 +369,26 @@ jobs:
           for name in analysis_names:
               file = pathlib.Path(name + ".csv")
               assert file.exists() and file.stat().st_size > 0, f"missing SQL result: {name}"
-              with file.open(newline="", encoding="utf-8") as f:
-                  data = list(csv.reader(f))
+              with file.open(newline="", encoding="utf-8") as fh:
+                  data = list(csv.reader(fh))
               assert data and data[0], f"missing SQL result schema: {name}"
               evidence["analysis_query_receipts"][name] = {
                   "rows": len(data) - 1,
                   "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
               }
+
+          receipts_file = pathlib.Path("ontology-query-receipts.jsonl")
+          assert receipts_file.is_file(), "NO_SQL_EXECUTION_RECEIPTS"
+          receipts = [json.loads(line) for line in receipts_file.read_text(encoding="utf-8").splitlines()]
+          assert [x["id"] for x in receipts] == analysis_names[1:], "QUERY_EXECUTION_ORDER_MISMATCH"
+          from datetime import datetime
+          gate_at = datetime.fromisoformat(gate["timestamp"])
+          for receipt in receipts:
+              assert datetime.fromisoformat(receipt["completed_at"]) >= gate_at, "SQL_RESULT_BEFORE_GATE1"
+              expected = evidence["analysis_query_receipts"][receipt["id"]]
+              assert receipt["result_sha256"] == expected["sha256"], "RESULT_CHANGED_AFTER_RECEIPT"
+              assert receipt["rows"] == expected["rows"], "RESULT_ROW_COUNT_MISMATCH"
+          evidence["query_execution_receipts"] = receipts
 
           assert sql_text.count("header = true") == 4
 
@@ -361,6 +411,12 @@ jobs:
           print(json.dumps(evidence, ensure_ascii=False, indent=2))
           PY
 
+      - name: Build gated business report and validate factual lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python skills/ontology-constrained-analysis/scripts/real_workbook_report.py
+
       - name: Upload evidence
         uses: actions/upload-artifact@v4
         with:
@@ -373,9 +429,18 @@ jobs:
             crypto_transactions.csv
             exchange_rates.csv
             ontology-*.csv
+            *-schema.csv
+            ontology-gate1.json
+            gate1-receipt.json
+            gate1-decision.sql
+            ontology-query-receipts.jsonl
+            ontology-analysis.html
+            ontology-run-chain.json
+            ontology-run-acceptance.json
           if-no-files-found: error
 
   sql-browser:
+    needs: ontology-native-data-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -391,8 +456,15 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify actual HTTP Origin and system Clipboard API
         run: node skills/ontology-constrained-analysis/tests/test_sql_browser.cjs
+      - name: Download the same-run real analytical HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: ontology-real-workbook
+      - name: Verify real report on desktop and mobile HTTP Origin
+        run: node skills/ontology-constrained-analysis/tests/test_real_report_browser.cjs
 
   wasm-vfs:
+    needs: ontology-native-data-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
