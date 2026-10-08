@@ -150,5 +150,56 @@ class GateOneSourceContract(unittest.TestCase):
         self.assertTrue(any("LEGACY_SOURCE_LABEL" in e for e in validate(value, self.schemas)))
 
 
+
+
+class LiveWorkbookSemanticGate(unittest.TestCase):
+    """Independent source-only fixtures; no business answers or expected amounts."""
+
+    def fixture_dir(self, orphan=False):
+        from live_workbook_gate1 import REQUIRED
+        folder = tempfile.TemporaryDirectory()
+        root = Path(folder.name)
+        fields = {tab: list(columns) for tab, columns in REQUIRED.items()}
+        rows = {
+            "users": [{"uid": "123"}],
+            "fiat_transactions": [{"fiat_order_id": "f-1", "uid": "123.0",
+                                   "direction": "deposit", "status": "completed",
+                                   "currency": "EUR", "amount": "1.0"}],
+            "crypto_transactions": [{"crypto_order_id": "c-1",
+                                     "uid": "999.0" if orphan else "123.0",
+                                     "direction": "withdrawal", "status": "pending",
+                                     "asset": "BTC", "amount": "0.1"}],
+            "exchange_rates": [{"asset": "BTC", "effective_date": "2026-01-01",
+                                "rate_to_usdt": "1"}],
+        }
+        for tab in fields:
+            with (root / (tab + "-schema.csv")).open("w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f); writer.writerow(["column_name", "column_type"])
+                writer.writerows((col, "VARCHAR") for col in fields[tab])
+            with (root / (tab + ".csv")).open("w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=fields[tab])
+                writer.writeheader();writer.writerows(rows[tab])
+        return folder, root
+
+    def test_live_gate_accepts_safe_numeric_uid_representation(self):
+        from live_workbook_gate1 import verify
+        folder, root = self.fixture_dir()
+        try:
+            model, errors, samples, boundary = verify(root)
+            self.assertEqual([], errors)
+            self.assertEqual(1, samples["fiat_transactions"]["matched_user_uids"])
+            self.assertEqual(10, len(model["ontology_atoms"]))
+        finally:
+            folder.cleanup()
+
+    def test_live_gate_rejects_cross_table_orphan(self):
+        from live_workbook_gate1 import verify
+        folder, root = self.fixture_dir(orphan=True)
+        try:
+            _model, errors, _samples, _boundary = verify(root)
+            self.assertIn("UNMATCHED_USER_UID:crypto_transactions", errors)
+        finally:
+            folder.cleanup()
+
 if __name__ == "__main__":
     unittest.main()
