@@ -1,0 +1,53 @@
+{
+  "skill_name": "duckdb-sql-sop",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "使用指定工作簿，只读 users、fiat_transactions、crypto_transactions、exchange_rates，执行一次教学驱动的 DuckDB SQL SOP，给出可验证的 Markdown 教程。",
+      "expected_output": "选择教学模式；只读四表；真实 DuckDB SQL + 独立验证；问题驱动学习；无运行证据时不声称完成。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我想先通过这个数据集的完成交易币种分布学习 WHERE、GROUP BY、COUNT，不追求高难 SQL。",
+      "expected_output": "简单描述型问题不会因初级语法被淘汰；解释业务问题先于 SQL 关键字。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "用这个工作簿判断 frozen 用户是否普遍涉及更高风险。",
+      "expected_output": "识别为推断型问题；核查样本量、代表性及业务证据，不将个体推断成普遍规律。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "先把 fiat 与 crypto 都折算成 USDT，再直接求全平台净入金、输出风险排名。",
+      "expected_output": "先做跨域可加性/重复计量 Gate；不能仅凭相同单位直接合并或推出风险结论。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我用 file:// 打开 DuckDB-WASM，Google Sheets XLSX 导出报 CORS 错误，继续执行本 Skill。",
+      "expected_output": "采用真实 XLSX 注册到 DuckDB 文件系统的兜底，不切换业务引擎、不静默模拟结果。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "请审计 SOP V2.2 的可执行性；有问题只列失败环节，不要修改规则。",
+      "expected_output": "记录实际执行步骤、错误、证据、限制；不偷偷编辑 SOP，不把 dry-run 说成 DuckDB 正式执行。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "只要把 SQL 的 SELECT、WHERE、JOIN、WINDOW 定义解释一下，不使用数据集，也不做实操分析。",
+      "expected_output": "应由普通 SQL 说明处理，不应过度触发这套数据驱动实操 SOP。",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "帮我设计一个好看的 HTML 图表主页，不需要数据分析。",
+      "expected_output": "不触发；这是前端设计任务，不属于当前 Skill。",
+      "files": []
+    }
+  ]
+}
