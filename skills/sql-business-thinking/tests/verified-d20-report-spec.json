@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "source": "exchange_funds_flow_dataset",
+    "delivery_scope": "report-only",
+    "source_run_id": 37725587099,
+    "source_sql_sha256": "93530dba3c5e19e0d33964e0e14f1d36180a1c66d1f62e2f492cbe5c59d30b50",
+    "data_revision": "561287b5d150e3c11735562b0a4f3d670b9e5b8ccecb818d1a26bcfb720b3335",
+    "gate_state": "PASS",
+    "result_ref": "D11-R1",
+    "derived_checks": [
+      "D17/F2 denominator sensitivity derived from D11 aggregate"
+    ]
+  },
+  "delivery_mode": "report",
+  "question": "在指定历史法币交易记录中，入金与出金的 completed 状态占比能否支持方向表现排名？",
+  "answers": {
+    "primary": "不能仅凭一个分母下的 completed 占比给两个方向的业务表现或风险排序；辅助终态分母下方向排序发生翻转。",
+    "operational_action": "当前证据不足，不提出具体运营处置。"
+  },
+  "answer_blocks": [
+    {
+      "id": "report-status-breakdown",
+      "title": "法币交易状态构成",
+      "result_refs": [
+        "D11-R1"
+      ],
+      "gate_state": "PASS",
+      "source": "D17/F1",
+      "rows": [
+        {
+          "direction": "deposit",
+          "total": 12,
+          "completed": 10,
+          "ongoing": 2,
+          "terminal_noncompleted": 0,
+          "unknown": 0,
+          "completed_share": 0.8333333333333334
+        },
+        {
+          "direction": "withdrawal",
+          "total": 13,
+          "completed": 11,
+          "ongoing": 0,
+          "terminal_noncompleted": 2,
+          "unknown": 0,
+          "completed_share": 0.8461538461538461
+        }
+      ]
+    },
+    {
+      "id": "report-denominator-sensitivity",
+      "title": "分母口径敏感性",
+      "result_refs": [
+        "D11-R1"
+      ],
+      "gate_state": "PASS",
+      "source": "D17/F2",
+      "is_derived_from_existing_result": true,
+      "original_denominator": "所有交易记录",
+      "alternate_denominator": "仅 completed / failed / cancelled 的终态记录",
+      "rows": [
+        {
+          "direction": "deposit",
+          "original": 0.8333333333333334,
+          "alternate": 1
+        },
+        {
+          "direction": "withdrawal",
+          "original": 0.8461538461538461,
+          "alternate": 0.8461538461538461
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "report-decision",
+      "title": "方向排名依赖分母定义",
+      "source": "D18-METRIC-CAUTION",
+      "result_refs": [
+        "D11-R1"
+      ],
+      "gate_state": "PASS",
+      "scope": "25 条历史法币订单记录",
+      "judgment": "在全部记录与仅终态记录两种分母下，方向排序翻转。不能使用单一 completed 占比给业务风险或运营优先级排名。"
+    }
+  ],
+  "quality_issues": [],
+  "limitations": [
+    "样本总量仅 25 条；属于历史状态快照，不代表当前订单状态。",
+    "failed 与 cancelled 不代表同一种业务原因；pending 与 processing 不等于现时仍在处理。",
+    "D11 未返回逐笔 UID、失败原因、状态流转日志或损失信息。",
+    "终态分母是辅助敏感性口径，不代替全量分母；敏感性结果由同一 D11 聚合派生，未执行新 SQL。",
+    "未提供运营动作阈值，不能从比例或状态数直接推出处置建议。"
+  ],
+  "decision_log": [
+    {
+      "source": "D18",
+      "decision": "保留分母敏感性警告，拒绝根据单一完成状态占比对方向排名。"
+    }
+  ],
+  "learning_replay": [],
+  "next_question": {
+    "status": "unresolved",
+    "question": "两条出金终态非 completed 记录是否来自同一 uid？",
+    "note": "D15 诊断尚未执行，不能作为发现。"
+  },
+  "skill_evaluation": {
+    "current_stage": "D20",
+    "status": "pending_independent_validation"
+  },
+  "appendix": {
+    "source_sql": "skills/sql-business-thinking/tests/d10-fiat-direction-status.sql",
+    "upstream": [
+      "D11",
+      "D12",
+      "D17",
+      "D18"
+    ],
+    "no_dashboard": true
+  }
+}
