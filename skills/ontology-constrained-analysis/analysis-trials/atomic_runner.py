@@ -14,13 +14,13 @@ FROM crypto_transactions
 WHERE asset='USDT' AND status='completed'
   AND direction IN ('deposit','withdrawal')
 GROUP BY direction ORDER BY direction""",
-"Q02-status-clock":"""WITH both AS (
+"Q02-status-clock":"""WITH all_rails AS (
  SELECT 'fiat' AS rail,status,completed_at FROM fiat_transactions
  UNION ALL SELECT 'crypto' AS rail,status,completed_at FROM crypto_transactions
 )
 SELECT rail,status,COUNT(*) AS records,
  SUM(CASE WHEN completed_at IS NOT NULL THEN 1 ELSE 0 END) AS has_completed_at
-FROM both GROUP BY rail,status ORDER BY rail,status""",
+FROM all_rails GROUP BY rail,status ORDER BY rail,status""",
 "Q03-rate-coverage":"""WITH tx AS (
  SELECT currency AS asset,CAST(created_at AS DATE) AS recorded_day FROM fiat_transactions
  UNION ALL SELECT asset,CAST(created_at AS DATE) FROM crypto_transactions
