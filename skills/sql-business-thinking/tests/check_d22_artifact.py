@@ -14,7 +14,7 @@ SQL_PATH = ROOT / "tests" / "d10-fiat-direction-status.sql"
 
 def git_blob_sha(raw: str) -> str:
     b = raw.encode("utf-8")
-    return hashlib.sha1(b"blob " + str(len(b)).encode() + b"\\0" + b).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(b)).encode() + b"\0" + b).hexdigest()
 
 
 def verify(html: str, spec: dict, plan: dict, raw_spec: str, sql: str) -> None:
@@ -64,7 +64,7 @@ def verify(html: str, spec: dict, plan: dict, raw_spec: str, sql: str) -> None:
     lines = re.findall(r'<tr>.*?</tr>', status_table, re.S)[1:]
     assert len(lines) == 2
     for source, line in zip(statuses, lines):
-        digits = [int(x) for x in re.findall(r'<td class="num">(\\d+)</td>', line)]
+        digits = [int(x) for x in re.findall(r'<td class="num">(\d+)</td>', line)]
         assert digits == [source["total"], source["completed"], source["ongoing"],
                           source["terminal_noncompleted"], source["unknown"]], "CHANGED_COUNTS"
 
