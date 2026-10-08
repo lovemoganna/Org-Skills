@@ -162,7 +162,7 @@ def main():
         "relation_category_boundary": boundary,
         "semantic_review": {
             "status": "PASS" if not errors else "BLOCKED",
-            "evidence": ["human-reviewed neutral ontology definition",
+            "evidence": ["predeclared neutral ontology definition checked against current source semantics",
                          "current DESCRIBE CSVs",
                          "UID numeric normalization and observed foreign-key coverage",
                          "real value domains of transaction direction and status",
