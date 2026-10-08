@@ -30,7 +30,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 ## 3. 运行时、结果与真实性
 
 1. **Runtime Placement Gate：**优先可用且符合契约的 Native DuckDB；HTML/Browser 可尝试本地 DuckDB-Wasm，再尝试现有、已授权的远程 Wasm runner。每个 placement 实测后才判失败。用户锁定 Native 或 SQL 原文且兼容执行不可用时标 `BLOCKED_ENV`，不得以 VFS 替换冒充成功。不得无声切换引擎。
-2. **数据质量：**读取授权表后检查粒度、键唯一性、孤儿、状态、金额、时间和 JOIN 基数，具体按 `references/dataset-planning.md` 与 `tests/mandatory-gates.json`。必需 Gate 未运行不得写 PASS。失败或阻塞只抑制受影响的下游分析，不抑制无关内容；证据可以保留，KPI/结论不得以“仅供参考”绕过。
+2. **数据质量：**读取授权表后检查粒度、键唯一性、孤儿、状态、金额、时间和 JOIN 基数，具体按 `references/dataset-planning.md` 与 `tests/mandatory-gates.json`。必需 Gate 未运行不得写 PASS。**Downstream Gate Propagation Gate：**失败或阻塞只抑制受影响的下游分析，不抑制无关内容；证据可以保留，KPI/结论不得以“仅供参考”绕过。
 3. **SQL Alias Safety Gate：**显式别名写 `AS`，规避 DuckDB 关键字冲突。按合理换行和缩进展示 SQL；Parser Error 先检查 SQL，不归咎数据。
 4. **Result Scalar Normalization Gate：**所有 DuckDB Result 进入分析/ReportSpec/渲染前统一处理 bigint、DECIMAL、Date、Arrow/TypedArray、单元素视图和嵌套对象。非法标量形态标 `RESULT_SHAPE_INVALID`；Renderer 不猜值。
 5. **Logical Data Revision Gate：**按授权表固定顺序、主键/行顺序、字段顺序与归一化值计算逻辑 SHA256；另记原始来源、传输字节 SHA 和数据读取位置，不用 XLSX/ZIP bytes SHA 冒充逻辑数据版本。
@@ -49,13 +49,13 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 ## 5. Direct / Autopilot：从数据发现问题
 
 1. **D02–D06：**读取允许的数据，完成结构与质量检查；陌生多表先还原业务语义，再建立两张表：本体原子知识库、本体识别规则库。本体规则只表示真实业务模式，不写 GROUP BY、SUM、JOIN 或指标公式。
-2. **D07–D09：**从合法本体提炼少量有判断价值的指标，删除重复、低价值和机械组合。候选问题必须有 Trigger、Consequence、Answerability、Priority；不同答案不会改变判断的问题淘汰。可以没有合格问题，不强凑。
+2. **D07–D09：**从合法本体提炼少量有判断价值的指标，删除重复、低价值和机械组合。问题质量阶段的候选问题必须有 Trigger、Consequence、Answerability、Priority；不同答案不会改变判断的问题淘汰。可以没有合格问题，不强凑。
 3. **D10–D12：**先设计唯一当前 SQL，再在合法 DuckDB runtime 实际执行并解释 Result；SQL 不能从预写 checklist 推进。每次结果都更新问题边界，或明确为什么停止。
-4. **D13–D16：**对有价值的分析信号，仅沿本体允许的关系展开；建立可反驳的竞争解释和最小诊断。**没有证据时不得强设主解释或原因**；将假设保留为 unresolved。主要发现至少检查 What、Where、Why、Alternative、Test、Robustness、So What；无法验证的项明确说明。
+4. **D13–D16：**对有价值的分析信号，仅沿本体允许的关系展开；建立可反驳的竞争解释和最小诊断。**没有证据时不得强设主解释或原因**；将假设保留为 unresolved。分析深度阶段的主要发现至少检查 What、Where、Why、Alternative、Test、Robustness、So What；无法验证的项明确说明。
 5. **D17–D18：**仅把可由实际 Result 复算的事实晋级为已验证发现；区分历史状态与实时状态、方向与完成、状态占比与成功率、口径敏感性与稳定规律。没有运营动作证据时，允许决策结果为“尚不能决定”。
 6. **循环规则：**有新价值问题回到 D08→D09→D10→D11→D12；无新增判断价值即停。阶段只消费已验证上游，不得将旧结果、测试夹具或模拟样例升级成实际发现。
 
-用户没有请求人物会话时，不强行生成 Star/Lucy。若明确要求，用户的角色名、能力、职责和知识边界优先于默认角色（Role Binding Gate）；没有定义时才使用 Star/Lucy。要求代码在对话中生成时，遵守 `references/dialogue-rendering.md` 的代码增量、唯一可执行 SQL、Result 相邻、知识顺序和最终追溯规则；不得用历史答案倒灌。
+用户没有请求人物会话时，不强行生成 Star/Lucy。若明确要求，用户的角色名、能力、职责和知识边界优先于默认角色（Role Contract Gate / Role Binding Gate）；没有定义时才使用 Star/Lucy。要求代码在对话中生成时，遵守 `references/dialogue-rendering.md` 的代码增量、唯一可执行 SQL、Result Dependency Gate、知识顺序和最终追溯规则；不得用历史答案倒灌。
 
 ## 6. 报告、看板与 HTML
 
@@ -65,7 +65,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 **Default HTML Delivery Contract：**未指定文件名时输出实体 `/mnt/data/sql_business_thinking_report.html` 并提供可访问的 sandbox 链接；单 HTML 包含可读的报告结果和必要代码，不能只交源码或声称已生成。外部 CDN/异步资源须经过最终环境验证；离线时仍应能阅读已验证结果。
 
-QA 检查实际 DOM、桌面/移动端几何尺寸、交互、表格可读性、中文字体、异步 readiness、证据溯源和当前 Artifact SHA。异步页面必须明确 READY 标志；加载完成事件或固定 sleep 不代表准备完毕。本地浏览器不通时，只有在已获远程发送授权后才使用仓库现有远程 Render QA；最终证据必须绑定当前 HTML bytes 和 runner revision。详细入口与限制见 `references/report-rendering.md`。没有真实 Rendered QA 时标 BLOCKED，不能用静态源码检查替代。
+QA 检查实际 DOM、桌面/移动端几何尺寸、交互、表格可读性、中文字体、异步 readiness、证据溯源和当前 Artifact SHA。**Async Render Readiness Gate：**异步页面必须明确 READY 标志；加载完成事件或固定 sleep 不代表准备完毕。本地浏览器不通时，只有在已获远程发送授权后才使用仓库现有远程 Render QA；最终证据必须绑定当前 HTML bytes 和 runner revision。详细入口与限制见 `references/report-rendering.md`。没有真实 Rendered QA 时标 BLOCKED，不能用静态源码检查替代。
 
 **Reverse Skill Audit Gate：**成品审计区分数据/分析/报告/Skill/环境/测试缺陷。先复现根因，优先改现有规则，删除无效与重复内容；可泛化缺陷形成回归测试。只有获授权修改仓库时才回写和提交。每次修改记录变更范围、前后规模、失败用例和复测证据，禁止用补丁层叠隐藏冲突。
 
