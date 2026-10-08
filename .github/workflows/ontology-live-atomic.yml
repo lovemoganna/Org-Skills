@@ -1,0 +1,32 @@
+name: Ontology Live Atomic Post-Gate Questions
+on:
+  push:
+    branches: ['test/ontology-exact-source-20261008']
+    paths: ['.github/workflows/ontology-live-atomic.yml','skills/ontology-constrained-analysis/analysis-trials/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  atomic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install duckdb==1.4.2
+      - uses: actions/download-artifact@v4
+        with:
+          name: exact-source-evidence
+          run-id: 37793839441
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: evidence/
+      - name: Run independent read-only DuckDB SQL on shared database
+        run: python skills/ontology-constrained-analysis/analysis-trials/atomic_runner.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ontology-atomic-results
+          path: atomic/
+          if-no-files-found: warn
