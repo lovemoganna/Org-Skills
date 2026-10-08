@@ -24,6 +24,27 @@ const mime={'.html':'text/html; charset=utf-8','.mjs':'application/javascript','
   result=await page.evaluate('window.__ontologyProbe');
   fs.writeFileSync('wasm-runtime-receipt.json',JSON.stringify(result,null,2)+'\n');
   console.log(JSON.stringify(result,null,2));
+  // Each capability must have its own verdict; success in one cannot mask failure in another.
+  const range=result.remote_fetch?.range;
+  if(result.remote_fetch?.range_capability==='PARTIAL_CONTENT_CONFIRMED' &&
+     !(range?.status===206 && range?.bytes===32 && /^bytes 0-31\/\d+$/.test(range.content_range||''))) {
+    throw new Error('RANGE_FALSE_PASS');
+  }
+  if(!['PARTIAL_CONTENT_CONFIRMED','NOT_CONFIRMED'].includes(result.remote_fetch?.range_capability)) {
+    throw new Error('RANGE_PROBE_NOT_CLASSIFIED');
+  }
+  if(!['PASS','BLOCKED'].includes(result.fixed_url_sql?.status)){
+    throw new Error('FIXED_REMOTE_SQL_UNVERIFIED_OR_INCONSISTENT');
+  }
+  if(result.fixed_url_sql.status==='PASS' &&
+     String(result.fixed_url_sql.row_count)!==String(result.sheets?.users?.row_count)) {
+    throw new Error('FIXED_REMOTE_SQL_ROW_COUNT_MISMATCH');
+  }
+  console.log('CAPABILITY_VERDICTS',JSON.stringify({
+    exact_remote_sql:result.fixed_url_sql.status,
+    range:result.remote_fetch.range_capability,
+    vfs:result.status
+  }));
   if(result.status!=='VFS_READ_XLSX_PASS')process.exitCode=1;
  }finally{
   if(browser)await browser.close();
