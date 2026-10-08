@@ -1,0 +1,10 @@
+{
+  "source_url": "https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt",
+  "status": "BYTES_VERIFIED",
+  "http_status": 200,
+  "content_length": "30363176",
+  "content_type": "text/plain; charset=utf-8",
+  "bytes": 30363176,
+  "sha256": "c765fe5543010d52f0c0622e424b9923e3851580c5ecf61c7ed6c99be2be155a",
+  "local_path": "reports/electricity-20261008/LD2011_2014.txt"
+}
