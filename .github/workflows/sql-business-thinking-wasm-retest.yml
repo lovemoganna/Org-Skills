@@ -522,3 +522,42 @@ jobs:
           name: sql-business-thinking-wasm-quality
           path: discovery.json
           if-no-files-found: error
+
+  rendered_qa:
+    name: D23 Report Rendered QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout artifact and evidence
+        uses: actions/checkout@v4
+
+      - name: Verify D22 immutable evidence and HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          python skills/sql-business-thinking/tests/check_d22_artifact.py
+
+      - name: Prepare browser accessibility checker
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null
+          npm install --no-save puppeteer-core axe-core >/dev/null
+          export CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          node -p "'Chrome: ' + process.env.CHROME"
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+
+      - name: D23 rendered QA desktop mobile 320px audit keyboard and accessibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          node skills/sql-business-thinking/tests/d23_rendered_qa.mjs
+
+      - name: Upload D23 QA report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-business-thinking-d23-rendered-qa
+          path: d23-evidence/
+          if-no-files-found: warn
