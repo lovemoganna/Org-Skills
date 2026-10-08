@@ -117,6 +117,33 @@ DuckDB-Wasm 中 `INSTALL` 可能是 no-op；这属于运行时实现差异，不
 
 如果当前版本的扩展或 `read_xlsx` 存在平台问题，判定该运行时不兼容，继续检查其他 DuckDB 运行时。
 
+## 浏览器 Origin / CORS / 虚拟文件门禁
+
+仅在用户最终运行环境进行的检查，才能标记“已实测”。记录实际网页 URL 与 Origin。单文件 `file://` 打开时，Origin 可能为 `null`；不可把服务器端请求或第三方抓取的成功当成浏览器 CORS 验收。没有可操控的最终浏览器时，标记“未实测”，禁止写“浏览器可运行”。
+
+远程数据读取依次检查：
+
+1. 最终浏览器能否下载指定 URL 的完整原始字节：真实 GET/HEAD 状态、重定向、`Access-Control-Allow-Origin` 对实际 Origin 是否有效，读取内容的实际字节数和 SHA-256；按实际读取方式验证 Range / `Accept-Ranges` / `Content-Range`，不能从 HTTP 状态推断完整性。
+2. DuckDB-WASM 是否可加载、内存是否足够、需要的扩展与读取函数是否可用；随后用真实同源字节执行最小读取 SQL。
+3. 原生 DuckDB 与 DuckDB-WASM 需要分别验收；API / GitHub 连接器读到文件，不等于本机或浏览器 VFS 已收到文件。
+
+若**只锁定源 URL，不锁定读取函数与固定 SQL**，且浏览器从该 URL 取得完整原始字节，则可以：
+
+```js
+const response = await fetch(sourceUrl);
+if (!response.ok) throw new Error(`HTTP ${response.status}`);
+const bytes = new Uint8Array(await response.arrayBuffer());
+await db.registerFileBuffer('source_original.txt', bytes);
+```
+
+上例是实现方式，不是通过证据：需要实际核验源字节、长度、哈希与目标环境。对于远程 XLSX，优先注册完整原始 XLSX 到虚拟文件系统，继续使用 DuckDB 的 `read_xlsx('source_original.xlsx')`，并实测 excel 扩展、格式和函数；禁止替换成 CSV、openpyxl 或模拟数据。对于 TXT，按真实分隔符、编码、值格式选择原生 DuckDB 的文本读取函数，不将 TXT 当 XLSX。
+
+如果用户锁定完整远程 SQL 或精确路径参数，改变路径并不自动等价；除非用户另行明确授权，否则保留原 SQL，记录“不兼容”并检查其他等价 DuckDB 运行时。
+
+## SQL 展示验收
+
+单 HTML 报告须在无需外网 CSS/JS 的情况下可读。所有 SQL 经过同一格式化流程，保留语句层级、换行、缩进。所有 SQL 容器使用同一套语法高亮规则；静态、动态、教程、验证和最终 SQL 不能各用一套。复制动作读取格式化后的 SQL 原文，不能复制 HTML、行号或转义展示字符。若浏览器不可实测，明确标记复制按钮的运行状态，不能宣称通过端到端验收。
+
 ## 禁止降级
 
 用户指定 DuckDB `read_xlsx` 时，未经用户明确允许，不得改成：
