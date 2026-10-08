@@ -32,6 +32,19 @@ assert.ok(!/(<script[^>]+src=|<link[^>]+href=["']https?:\/\/)/i.test(report), 'e
       assert.equal(await page.locator('.sql-shell .sql-keyword').count() > 0, true);
       assert.equal(await page.locator('details').count(), 7);
       const before = await page.evaluate(() => document.documentElement.scrollWidth);
+      if (before > width+2) {
+        const overflowers = await page.evaluate(() =>
+          [...document.querySelectorAll('body *')].filter(e => {
+            const rect = e.getBoundingClientRect();
+            return rect.right > innerWidth + 3 && rect.width > 0;
+          }).slice(0, 25).map(e => ({
+            tag:e.tagName, cls:e.className, width:Math.round(e.getBoundingClientRect().width),
+            right:Math.round(e.getBoundingClientRect().right),
+            overflow:getComputedStyle(e).overflowX,
+            text:(e.textContent || '').trim().slice(0,50)
+          })));
+        console.error('HORIZONTAL_OVERFLOW_ELEMENTS',JSON.stringify(overflowers));
+      }
       assert.ok(before <= width+2, 'mobile/desktop horizontal document overflow: '+before+' > '+width);
       await page.locator('details').first().locator('summary').click();
       const beforeCopy = await page.locator('details').first().locator('.sql-toolbar button').textContent();
