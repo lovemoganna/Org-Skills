@@ -426,7 +426,7 @@ subprocess.run([sys.executable, str(ROOT / "tests" / "check_d23_evidence.py")], 
 # D23 acceptance record must stay tied to exact HTML bytes.
 d23_info = json.loads((ROOT / "tests" / "verified-d23-render-qa.json").read_text(encoding="utf-8"))
 d23_bytes = (ROOT / "artifacts" / "verified-d22-report.html").read_bytes()
-d23_blob = hashlib.sha1(b"blob " + str(len(d23_bytes)).encode() + b"\\0" + d23_bytes).hexdigest()
+d23_blob = hashlib.sha1(b"blob " + str(len(d23_bytes)).encode() + b"\0" + d23_bytes).hexdigest()
 assert d23_info["artifact_git_blob_sha"] == d23_blob, "STALE_D23_ARTIFACT_PROVENANCE"
 assert d23_info["status"] == "PASS" and d23_info["remote_render_run"], "D23_ACCEPTANCE_NOT_VERIFIED"
 assert set(d23_info["screenshots"]) == {
