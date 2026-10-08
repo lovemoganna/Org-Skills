@@ -161,14 +161,14 @@ Top N 按 active population 自适应，覆盖全体样本的 Top N 不进核心
 
 ## 6. 图表
 
-图表不再使用“问题类型 → 默认图型”的硬映射。先读取 `visualization-rendering.md`，按以下流程选型：
+图表不按字段名套固定图型。D21 读取 `visualization-rendering.md`，只基于 D20 已确认内容选型：
 
 ```text
 Presentation Question
 → Data Shape
-→ 至少 3 个合理候选（不足 3 个则比较全部）
-→ Semantic Fit / Unit Honesty / Label Capacity / Reading Speed / Narrative Value / Implementation Reliability
-→ Selected Chart
+→ 最简单的准确表达
+→ 有真实取舍时比较合理方案
+→ VisualizationPlan
 ```
 
 强制规则：
@@ -178,7 +178,7 @@ Presentation Question
 - 连续金额、余额、价格等不得为了视觉风格任意拆成点 / 格 / tick；
 - 两个图表达同一结论时，只保留更诚实、更快读的一张；
 - 标题默认写结论，不写图型名；结论尚未确定的诊断图才使用问题式标题；
-- 重要图的 ReportSpec 必须保存候选与淘汰理由，但选型过程不进入正文；
+- D21 只在 VisualizationPlan 中记录必要选型理由；有真实取舍时才记录候选，不回写 D20 ReportSpec；
 - 被 Gate 阻断的分析不参与图型候选竞争，直接进入 `SUPPRESSED_BY_GATE`。
 
 具体协议见 `visualization-rendering.md`。
@@ -273,7 +273,7 @@ Hybrid 不创建第三套混合 Schema。分别保留一个 ReportSpec 和一个
 
 两者共享已确认事实，但字段、职责和可见内容保持独立。
 
-Renderer 只读，不重新分析。
+D20 Spec 只读。D21 单独生成 VisualizationPlan，Renderer 读取两者，不重新分析。
 
 ## 11. DuckDB-Wasm Runtime Contract
 
