@@ -60,6 +60,12 @@ DuckDB 不得替换。只锁定 URL 时，可暂存该 URL 的完整原始字节
 
 本地运行时无网络或 DuckDB 时，检查用户已授权且可执行的 GitHub Actions 原生 DuckDB Runner；仅以真实 SQL、Result 和执行回执确认成功。详细契约见 `references/runtime.md`。
 
+## 大文件与同源下载执行顺序
+
+源文件读取失败时，不得停留在“GitHub 页面存在”或“连接器已读取”的状态。先实际下载原 URL；失败后定位同一 GitHub owner/repo/ref/path，依次尝试 Git Blob 原始字节接口与 GitHub 文件原始下载地址。记录每次真实请求和错误。校验字节数、Git Blob SHA-1 和 SHA-256，完整原始字节必须进入 DuckDB 运行环境；否则只能生成阻塞审计报告。GitHub API 的文件大小限制、分片和内存限制必须主动核对。
+
+用户要求一次性运行时，逐 Gate 自动继续到已验证 Finding 与报告，不在阶段成功后等待“继续”；只在缺少同源完整字节或等价 DuckDB 时停止，输出真实阻塞证据。禁止只交状态说明。
+
 ## 执行纪律
 
 每次只处理一个阶段：
