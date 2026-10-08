@@ -1,0 +1,130 @@
+name: Ontology Blind Flight Evidence
+on:
+  push:
+    branches:
+      - test/ontology-blind-flights-20261008
+    paths:
+      - .github/workflows/ontology-blind-flights-20261008.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  blind-source-and-sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install fixed native DuckDB version
+        run: python -m pip install duckdb==1.4.2
+      - name: Download exact original CSV sources and record HTTP evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p blind-data blind-evidence
+          BASE="https://web.stanford.edu/class/datasci112/data/nycflights13"
+          for file in flights11.csv weather.csv planes.csv; do
+            curl -fSL --retry 2 --connect-timeout 15 --max-time 90 -D "blind-evidence/${file}.headers" "$BASE/$file" -o "blind-data/$file"
+            test -s "blind-data/$file"
+          done
+      - name: Execute blind schema, relation, signal and robustness queries
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv, hashlib, json, pathlib, duckdb
+          root=pathlib.Path('blind-data')
+          output=pathlib.Path('blind-evidence')
+          base='https://web.stanford.edu/class/datasci112/data/nycflights13'
+          manifest=[]
+          for name in ['flights11.csv','weather.csv','planes.csv']:
+              path=root/name
+              raw=path.read_bytes()
+              headers=(output/(name+'.headers')).read_text()
+              blocks=[b for b in headers.replace('\r','').split('\n\n') if 'HTTP/' in b]
+              final=blocks[-1].lower() if blocks else ''
+              lengths=[int(line.split(':',1)[1].strip()) for line in final.splitlines() if line.startswith('content-length:')]
+              length=lengths[-1] if lengths else None
+              if not raw or (length is not None and len(raw)!=length):
+                  raise RuntimeError('SOURCE_INCOMPLETE: '+name)
+              with path.open(newline='',encoding='utf-8-sig') as stream:
+                  header=next(csv.reader(stream))
+              if not header or any(not h for h in header):
+                  raise RuntimeError('CSV_HEADER_INVALID: '+name)
+              manifest.append({'url':base+'/'+name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'http_content_length':length,'length_verified':length==len(raw) if length is not None else False,'columns':header})
+          (output/'source-receipt.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False))
+          con=duckdb.connect(':memory:')
+          out={'duckdb':con.sql('SELECT version()').fetchone()[0],'sources':manifest,'checks':{},'results':{},'sql':{}}
+          def run(name,sql):
+              out['sql'][name]=sql
+              rel=con.execute(sql)
+              columns=[d[0] for d in rel.description]
+              vals=[dict(zip(columns,row)) for row in rel.fetchall()]
+              out['results'][name]=vals
+              return vals
+          for name,table in [('flights11.csv','flights'),('weather.csv','weather'),('planes.csv','planes')]:
+              con.execute("CREATE TEMP TABLE "+table+" AS SELECT * FROM read_csv_auto('blind-data/"+name+"', HEADER=TRUE, SAMPLE_SIZE=-1)")
+          run('counts','SELECT (SELECT COUNT(*) FROM flights) AS flights, (SELECT COUNT(*) FROM weather) AS weather, (SELECT COUNT(*) FROM planes) AS planes')
+          for name in ['flights','weather','planes']:
+              run('schema_'+name, 'DESCRIBE SELECT * FROM '+name)
+          run('native_semantics','SELECT MIN(year) AS min_year, MAX(year) AS max_year, COUNT(*) FILTER (WHERE dep_delay IS NOT NULL) AS delays_known, COUNT(*) FILTER (WHERE dep_delay IS NULL) AS delays_missing, COUNT(*) FILTER (WHERE hour IS NOT NULL) AS scheduled_hour_known FROM flights')
+          dup_weather=run('weather_key_uniqueness','SELECT COUNT(*) AS duplicated_keys FROM (SELECT origin, year, month, day, hour FROM weather GROUP BY 1,2,3,4,5 HAVING COUNT(*) > 1)')[0]['duplicated_keys']
+          dup_planes=run('plane_key_uniqueness','SELECT COUNT(*) AS duplicated_tailnums FROM (SELECT tailnum FROM planes WHERE tailnum IS NOT NULL GROUP BY 1 HAVING COUNT(*) > 1)')[0]['duplicated_tailnums']
+          out['checks']['weather_relation_valid']=dup_weather==0
+          out['checks']['planes_relation_valid']=dup_planes==0
+          run('flight_plane_coverage', 'SELECT COUNT(*) AS flights, COUNT(p.tailnum) AS matched_plane_rows, COUNT(*) FILTER (WHERE f.tailnum IS NULL) AS no_tailnum FROM flights f LEFT JOIN planes p ON f.tailnum = p.tailnum')
+          if dup_weather != 0:
+              out['checks']['stop_reason']='WEATHER_JOIN_FANOUT'
+          else:
+              run('weather_join_coverage', 'SELECT COUNT(*) AS flights, COUNT(w.origin) AS matched_weather, COUNT(*) FILTER (WHERE w.precip IS NOT NULL) AS precip_known FROM flights f LEFT JOIN weather w ON f.origin=w.origin AND f.year=w.year AND f.month=w.month AND f.day=w.day AND f.hour=w.hour')
+              con.execute("""CREATE TEMP VIEW matched AS SELECT f.origin, f.month, f.dep_delay, f.carrier, f.dest, w.precip
+                FROM flights f JOIN weather w ON f.origin=w.origin AND f.year=w.year AND f.month=w.month AND f.day=w.day AND f.hour=w.hour
+                WHERE f.dep_delay IS NOT NULL AND w.precip IS NOT NULL AND w.precip >= 0""")
+              run('wet_dry','''SELECT CASE WHEN precip > 0 THEN 'wet' ELSE 'dry' END AS condition, COUNT(*) AS flights,
+                     COUNT(*) FILTER (WHERE dep_delay > 0) AS late_count,
+                     ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay > 0)/COUNT(*),2) AS late_pct,
+                     ROUND(AVG(dep_delay),2) AS avg_dep_delay_minutes, ROUND(MEDIAN(dep_delay),2) AS median_dep_delay_minutes
+                     FROM matched GROUP BY 1 ORDER BY 1''')
+              run('airport_month','''SELECT origin, month,
+                   COUNT(*) FILTER (WHERE precip > 0) AS wet_n,
+                   COUNT(*) FILTER (WHERE precip = 0) AS dry_n,
+                   ROUND(100.0*COUNT(*) FILTER (WHERE precip > 0 AND dep_delay > 0)/NULLIF(COUNT(*) FILTER (WHERE precip>0),0),2) AS wet_late_pct,
+                   ROUND(100.0*COUNT(*) FILTER (WHERE precip = 0 AND dep_delay > 0)/NULLIF(COUNT(*) FILTER (WHERE precip=0),0),2) AS dry_late_pct
+                   FROM matched GROUP BY 1,2 ORDER BY 1,2''')
+              run('month_airport_standardized','''WITH strata AS (
+                   SELECT origin, month,
+                   COUNT(*) FILTER (WHERE precip>0) AS wet_n,
+                   COUNT(*) FILTER (WHERE precip=0) AS dry_n,
+                   COUNT(*) FILTER (WHERE precip>0 AND dep_delay>0)::DOUBLE / NULLIF(COUNT(*) FILTER (WHERE precip>0),0) AS wet_rate,
+                   COUNT(*) FILTER (WHERE precip=0 AND dep_delay>0)::DOUBLE / NULLIF(COUNT(*) FILTER (WHERE precip=0),0) AS dry_rate
+                   FROM matched GROUP BY 1,2
+                   )
+                   SELECT COUNT(*) AS comparable_strata,
+                   SUM(wet_n+dry_n) AS flights_in_comparable_strata,
+                   ROUND(100.0*SUM((wet_n+dry_n)*(wet_rate-dry_rate))/SUM(wet_n+dry_n),2) AS pooled_weighted_diff_pp,
+                   COUNT(*) FILTER (WHERE wet_rate>dry_rate) AS strata_wet_higher,
+                   COUNT(*) FILTER (WHERE wet_rate<dry_rate) AS strata_dry_higher
+                   FROM strata WHERE wet_n>0 AND dry_n>0''')
+              run('tail_robustness','''WITH cut AS (SELECT QUANTILE_CONT(dep_delay,0.99) AS high_cut FROM matched),
+                   limited AS (SELECT m.* FROM matched m CROSS JOIN cut WHERE m.dep_delay <= cut.high_cut)
+                   SELECT CASE WHEN precip>0 THEN 'wet' ELSE 'dry' END AS condition,
+                   COUNT(*) AS flights, ROUND(100.0*COUNT(*) FILTER (WHERE dep_delay>0)/COUNT(*),2) AS late_pct,
+                   ROUND(AVG(dep_delay),2) AS mean_minutes
+                   FROM limited GROUP BY 1 ORDER BY 1''')
+          path=output/'blind-analysis-results.json'
+          path.write_text(json.dumps(out,ensure_ascii=False,indent=2,default=str))
+          (output/'blind-analysis-sql.sql').write_text('\n\n'.join('-- '+k+'\n'+v.rstrip(';')+';' for k,v in out['sql'].items()))
+          printable={'duckdb':out['duckdb'],'sources':[{'url':s['url'],'bytes':s['bytes'],'sha256':s['sha256'],'length_verified':s['length_verified']} for s in manifest],
+          'checks':out['checks'],'results':{k:v for k,v in out['results'].items() if not k.startswith('schema_') and k!='airport_month'}}
+          print('BLIND_ANALYSIS_JSON='+json.dumps(printable,ensure_ascii=False,default=str))
+          if not out['checks']['weather_relation_valid'] or not out['checks']['planes_relation_valid']:
+              raise SystemExit('JOIN_CARDINALITY_BLOCKED')
+          PY
+      - name: Upload raw receipts and SQL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ontology-blind-flight-evidence
+          path: blind-evidence/
+          if-no-files-found: warn
