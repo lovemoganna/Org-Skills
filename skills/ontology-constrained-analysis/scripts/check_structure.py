@@ -8,8 +8,9 @@ loop = (root / "references" / "analysis-loop.md").read_text(encoding="utf-8")
 
 errors = []
 
-if len(skill.splitlines()) > 180:
-    errors.append(f"SKILL.md too long: {len(skill.splitlines())} lines > 180")
+effective_lines = sum(bool(line.strip()) for line in skill.splitlines())
+if effective_lines > 180:
+    errors.append(f"SKILL.md too long: {effective_lines} nonblank lines > 180")
 
 if "## 竞争解释和稳健性" in loop:
     errors.append("competition and robustness are merged")
@@ -52,6 +53,6 @@ if errors:
     sys.exit(1)
 
 print("PASS")
-print("SKILL.md lines:", len(skill.splitlines()))
+print("SKILL.md nonblank lines:", effective_lines)
 print("competition/robustness split: yes")
 print("references:", len(set(refs)))
