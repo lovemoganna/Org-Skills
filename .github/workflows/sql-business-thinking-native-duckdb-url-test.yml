@@ -96,7 +96,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import csv, hashlib, json, pathlib, subprocess
+          import csv, hashlib, json, pathlib, re, subprocess
 
           sheets = [
               "users",
@@ -128,6 +128,8 @@ jobs:
           for sheet in sheets:
               assert sql_text.count(f"CREATE TEMP TABLE {sheet} AS") == 1
               assert f"FROM {sheet};" in sql_text, f"export must use materialized table: {sheet}"
+          reads = re.findall(r"FROM read_xlsx\(\s*'([^']+)',\s*sheet\s*=\s*'([^']+)',\s*header\s*=\s*true\s*\)", sql_text)
+          assert reads == [(evidence["source_url"], sheet) for sheet in sheets], "immutable URL/sheet/header contract violated"
 
           for sheet in sheets:
               path = pathlib.Path(f"{sheet}.csv")

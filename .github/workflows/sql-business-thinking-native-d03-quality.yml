@@ -229,7 +229,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import csv, hashlib, json, pathlib, subprocess
+          import csv, hashlib, json, pathlib, re, subprocess
 
           def read_csv(name):
               path = pathlib.Path(name + ".csv")
@@ -287,6 +287,10 @@ jobs:
           assert sql.count("header = true") == 4
           assert sql.count("CREATE TEMP TABLE ") == 4, "quality checks must materialize each sheet once"
           assert "CREATE OR REPLACE TEMP VIEW" not in sql
+          reads = re.findall(r"FROM read_xlsx\(\s*'([^']+)',\s*sheet\s*=\s*'([^']+)',\s*header\s*=\s*true\s*\)", sql)
+          allowed_sheets = ["users", "fiat_transactions", "crypto_transactions", "exchange_rates"]
+          expected_url = "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          assert reads == [(expected_url, sheet) for sheet in allowed_sheets], "immutable URL/sheet/header contract violated"
 
           evidence = {
               "duckdb_version": subprocess.check_output(["./duckdb", "-version"], text=True).strip(),
