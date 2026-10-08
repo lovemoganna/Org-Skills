@@ -1,0 +1,10 @@
+{
+  "report_mode": "offline single HTML",
+  "browser_origin": "file://",
+  "chrome_available": true,
+  "browser_html_rendered": true,
+  "remote_fetch_required": false,
+  "cors_required": false,
+  "duckdb_wasm_used": false,
+  "sql_highlight_and_copy_checked": true
+}
