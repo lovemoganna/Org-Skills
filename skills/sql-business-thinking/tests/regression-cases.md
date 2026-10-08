@@ -1512,3 +1512,20 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 7. 上传桌面、移动端和 320px 截图及机器可读 `results.json`，任何独立子检查失败均不得宣称 D23 PASS。
 
 真实失败：首次 CI 手机端滚动表格未提供键盘访问，axe 判 `scrollable-region-focusable` FAIL；补 tabindex、region label 与 focus 样式后通过。首轮截图中文字呈方框但未被程序识别；修复 CI 中文字体并增加字形可辨检测。视觉复核又发现移动端缺少可见的横向滚动提示，补充提示和可执行断言。
+
+
+## V50：D23 当前 HTML 的真实浏览器验收
+
+待验收 Artifact：`artifacts/verified-d22-report.html`。以 HTML 原始字节 SHA256 `e9f984cea354787815d49e98b83a8bab65fd07eec3c5479a442766ec85a8d31e` 锁定，禁止拿历史截图证明新版本。
+
+证据：
+
+1. D22 代码、结果、表格和 5 项篡改反例：Wasm Retest run `37753246235`，PASS。
+2. 当前原始 HTML 远程浏览器验收：Render QA run `37754379619`，截图与 JSON artifact ID `11539616345`，state=PASS。包含桌面 1440×900、手机 390×844。
+3. DOM 唯一 ID、有效页面锚点、可识别的按钮，桌面/移动端均 PASS。
+4. 两个原生审计折叠区域各执行打开和关闭，桌面/移动端均 PASS。
+5. 手机端两张表的局部横向滚动均可实际操作，各自可滚动 258px；document 无整页横向溢出。
+6. 浏览器 page error、console error、内部设计说明泄露均为零。此 Artifact 为静态 HTML，异步 Readiness 属于不适用；仍在字体就绪与双帧渲染后测量。
+7. 当前交付为 Report-only；Dashboard 核心资格、人物会话、实时 SQL 执行控件等不属于这个页面，不得虚构其验收 PASS。
+
+执行 `python tests/check_d23_evidence.py` 反向验证当前 HTML 字节哈希与远程验收证据一致。HTML 任意实质改动必须使旧 D23 验收失效，重新运行浏览器测试。
