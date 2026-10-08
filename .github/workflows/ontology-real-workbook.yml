@@ -222,6 +222,32 @@ jobs:
           LEFT JOIN crypto ON crypto.uid_key = TRY_CAST(users.uid AS BIGINT)
           ORDER BY uid_key;
 
+          .once ontology-usdt-driver.csv
+          WITH per_user AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key,
+                   SUM(CASE
+                         WHEN direction = 'deposit' THEN CAST(amount AS DOUBLE)
+                         WHEN direction = 'withdrawal' THEN -CAST(amount AS DOUBLE)
+                         ELSE NULL
+                       END) AS sample_net_usdt,
+                   SUM(CASE WHEN direction = 'deposit'
+                            THEN CAST(amount AS DOUBLE) ELSE 0 END) AS deposits_usdt,
+                   SUM(CASE WHEN direction = 'withdrawal'
+                            THEN CAST(amount AS DOUBLE) ELSE 0 END) AS withdrawals_usdt,
+                   COUNT(*) AS record_count
+            FROM crypto_transactions
+            WHERE asset = 'USDT'
+              AND status = 'completed'
+              AND direction IN ('deposit', 'withdrawal')
+            GROUP BY uid_key
+          )
+          SELECT uid_key, sample_net_usdt, deposits_usdt, withdrawals_usdt,
+                 record_count,
+                 SUM(sample_net_usdt) OVER () AS overall_net_usdt,
+                 SUM(sample_net_usdt) OVER () - sample_net_usdt AS net_without_user
+          FROM per_user
+          ORDER BY ABS(sample_net_usdt) DESC, uid_key;
+
           SQL
 
           ./duckdb < ontology-materialize.sql
@@ -272,6 +298,7 @@ jobs:
               "ontology-status-timestamps",
               "ontology-rate-temporality",
               "ontology-cross-rail",
+              "ontology-usdt-driver",
           ]
           evidence["analysis_query_receipts"] = {}
           for name in analysis_names:
