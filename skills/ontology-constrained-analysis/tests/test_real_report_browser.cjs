@@ -33,14 +33,14 @@ assert.ok(!/(<script[^>]+src=|<link[^>]+href=["']https?:\/\/)/i.test(report), 'e
       assert.equal(await page.locator('details').count(), 7);
       const before = await page.evaluate(() => document.documentElement.scrollWidth);
       assert.ok(before <= width+2, 'mobile/desktop horizontal document overflow: '+before+' > '+width);
-      await page.locator('details').first.locator('summary').click();
-      const beforeCopy = await page.locator('details').first.locator('.sql-toolbar button').textContent();
+      await page.locator('details').first().locator('summary').click();
+      const beforeCopy = await page.locator('details').first().locator('.sql-toolbar button').textContent();
       assert.ok(beforeCopy.includes('复制 SQL'));
-      await page.locator('details').first.locator('.sql-toolbar button').click();
+      await page.locator('details').first().locator('.sql-toolbar button').click();
       const copied = await page.evaluate(async () => navigator.clipboard.readText());
       assert.ok(copied.length > 100 && copied.includes('SELECT'));
       assert.ok(!copied.includes('<span') && !copied.includes('sql-keyword'));
-      assert.ok((await page.locator('details').first.locator('.sql-toolbar button').textContent()).includes('已复制'));
+      assert.ok((await page.locator('details').first().locator('.sql-toolbar button').textContent()).includes('已复制'));
       assert.deepEqual(errors, []);
       console.log(JSON.stringify({status:'PASS',viewport:label,origin,
         sqlRendered:7,clipboardBytes:copied.length,documentWidth:before,
