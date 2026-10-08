@@ -38,17 +38,23 @@ async function probe(){
   const commands=['INSTALL httpfs;','LOAD httpfs;','INSTALL excel;','LOAD excel;'];
   for(const sql of commands)await conn.query(sql);
   out.duckdb.initialization=commands;out.duckdb.status='READY';
-  // This probes the literal remote URL, not the VFS alias. Failure does not invalidate
-  // a separately verified same-source VFS read, and VFS success never upgrades this probe.
-  const fixedSql="SELECT COUNT(*) AS row_count FROM read_xlsx('"+remote+"', sheet = 'users', header = true)";
-  out.fixed_url_sql={status:'NOT_TESTED',sql:fixedSql};
+  // Probe each authorized sheet using the literal remote URL, not a VFS alias.
+  // Never upgrade remote SQL success merely because the VFS path succeeds.
+  out.fixed_url_sql={status:'NOT_TESTED',sheets:{}};
   let directConn;
   try{
    directConn=await db.connect();
-   const directRows=rows(await directConn.query(fixedSql));
-   out.fixed_url_sql={status:'PASS',sql:fixedSql,row_count:directRows[0]?.row_count??null};
-  }catch(e){
-   out.fixed_url_sql={status:'BLOCKED',sql:fixedSql,error:String(e)};
+   for(const sheet of allow){
+    const fixedSql="SELECT COUNT(*) AS row_count FROM read_xlsx('"+remote+"', sheet = '"+sheet+"', header = true)";
+    try{
+     const directRows=rows(await directConn.query(fixedSql));
+     out.fixed_url_sql.sheets[sheet]={status:'PASS',sql:fixedSql,row_count:directRows[0]?.row_count??null};
+    }catch(e){
+     out.fixed_url_sql.sheets[sheet]={status:'BLOCKED',sql:fixedSql,error:String(e)};
+    }
+   }
+   out.fixed_url_sql.status=allow.every(sheet=>out.fixed_url_sql.sheets[sheet]?.status==='PASS')
+     ?'PASS':'PARTIAL_OR_BLOCKED';
   }finally{try{await directConn?.close()}catch{}}
 
   const response=await fetch('./source.xlsx');if(!response.ok)throw Error('original source GET HTTP '+response.status);
@@ -62,8 +68,12 @@ async function probe(){
    await conn.query("CREATE TEMP TABLE "+sheet+" AS SELECT * FROM read_xlsx('source.xlsx', sheet = '"+sheet+"', header = true);");
    out.sheets[sheet]={row_count:rows(await conn.query('SELECT COUNT(*) AS row_count FROM '+sheet))[0].row_count};
   }
-  if(out.fixed_url_sql.status==='PASS'&&String(out.fixed_url_sql.row_count)!==String(out.sheets.users.row_count)){
-   out.fixed_url_sql.status='ROW_COUNT_MISMATCH';
+  for(const sheet of allow){
+   const fixed=out.fixed_url_sql.sheets[sheet];
+   if(fixed?.status==='PASS'&&String(fixed.row_count)!==String(out.sheets[sheet].row_count)){
+    fixed.status='ROW_COUNT_MISMATCH';
+    out.fixed_url_sql.status='PARTIAL_OR_BLOCKED';
+   }
   }
   out.status='VFS_READ_XLSX_PASS';await conn.close();await db.terminate();
  }catch(e){out.status='VFS_READ_XLSX_BLOCKED';out.error=String(e);try{await db?.terminate()}catch{}}
