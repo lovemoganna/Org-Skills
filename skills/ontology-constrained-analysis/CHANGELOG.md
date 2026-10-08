@@ -8,6 +8,7 @@
 - 明确禁止所有 SQL（含探索和概览）直接聚合不同单位；给无效 SUM 标注“不可汇总”仍必须删除。
 - 明确批量授权与默认单阶段停止的优先级，并区分最终 Origin 端到端验证与内联 HTML/CI Origin 局部检查。
 - 未改变数据源、引擎、固定 SQL、同源恢复、阻塞交付、真实 SQL、Signal/Finding、四个 Gate 或 Dashboard 的原有硬约束。相关 Eval 文件和执行脚本保持原样。
+- 规模（Git Blob 字节/文本行数）：SKILL.md 9,609 B/179 行 → 6,598 B/89 行；runtime.md 11,150 B/234 行 → 6,711 B/77 行；validator.md 14,593 B/635 行 → 8,501 B/76 行；ontology.md 3,925 B/132 行 → 4,152 B/132 行。上述四文件合计 39,277 B → 25,962 B（-33.9%），1,180 行 → 374 行（-68.3%）。
 
 
 ## v16.2 — Browser fixed-URL SQL verification (2026-10-08)
