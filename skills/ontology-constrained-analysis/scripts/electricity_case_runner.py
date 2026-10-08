@@ -69,6 +69,7 @@ def main():
         rows=rows[:max_rows]
         ev={"name":name,"sql":sql,"columns":names,"rows":[list(r) for r in rows],"truncated":overflow}
         sql_events.append(ev)
+        (OUT/"sql_results.json").write_text(json.dumps(sql_events, ensure_ascii=False, indent=2, default=str),encoding="utf-8")
         return rows
     run("DuckDB原始TXT读取","CREATE TEMP TABLE wide AS\nSELECT *\nFROM read_csv("+qstr(str(DATA))+",\n    delim=';',\n    header=TRUE,\n    all_varchar=TRUE,\n    sample_size=-1\n);")
     fields=[r[1] for r in c.execute("PRAGMA table_info('wide')").fetchall()]
@@ -122,12 +123,12 @@ FROM (
 ) d;""")[0][0]
     stage("DuckDB Grain + Quality Gate","PASS")
     if d["max_value"] is None:raise RuntimeError("NO_VALID_NUMERIC_VALUES")
-    ontology=[["时间","采样","时点","测量时点","事实","时间","timestamp","时间字符串","观测","时点","时点|标识|宽表行","单次测量时间，不等于计费时点"],
-              ["主体","序列","客户列","负荷序列标识","事实","主体","VARCHAR","原始列名","序列","时间序列","标识|关联|读数","TXT中的列标识；未证明客户身份"],
-              ["测量","数值","负荷读数","负荷数值","事实","测量值","DOUBLE","原文件未标注单位","序列","序列-时点","序列|在时点具有|读数","原始非空值解析得到的数值"],
-              ["测量","状态","零值","零读数","派生","测量属性","0","序列","序列-时点","读数|等于|零","观测到0，不等于停电或缺测"],
-              ["时间","日历","日期","观测日期","派生","时间属性","DATE","日","时点","日","时点|属于|日期","由观测时间截取的日期"],
-              ["时间","日历","星期类别","周末/工作日","派生","时间属性","weekday/weekend","星期","时点","时点","时点|属于|星期类别","按记录日期计算，不代表运营日历"]]
+    ontology=[["时间","采样","时点","测量时点","事实","时间","timestamp","时间字符串","观测","时点","原始观测时点","时点|标识|宽表行","单次测量时间，不等于计费时点"],
+              ["主体","序列","客户列","负荷序列标识","事实","主体","VARCHAR","原始列名","序列","时间序列","记录时点对应","标识|关联|读数","TXT中的列标识；未证明客户身份"],
+              ["测量","数值","负荷读数","负荷数值","事实","测量值","DOUBLE","原文件未标注单位","序列","序列-时点","与记录时点同步","序列|在时点具有|读数","原始非空值解析得到的数值"],
+              ["测量","状态","零值","零读数","派生","测量属性","0","序列","序列-时点","与记录时点同步","读数|等于|零","观测到0，不等于停电或缺测"],
+              ["时间","日历","日期","观测日期","派生","时间属性","DATE","日","时点","日","由时点截取","时点|属于|日期","由观测时间截取的日期"],
+              ["时间","日历","星期类别","周末/工作日","派生","时间属性","weekday/weekend","星期","时点","时点","由时点计算","时点|属于|星期类别","按记录日期计算，不代表运营日历"]]
     rules=[["观测","时间","序列读数","同一序列、时间和数值形成测量事件","(测量事件 (AND (存在 测量时点) (存在 负荷序列标识) (存在 负荷数值)))","单个序列在某时间拥有一个原始负荷读数","正式（仅观测语义）"],
            ["观测","时间","周末读数","测量事件且时间属于周末","(周末负荷观测 (AND (存在 测量事件) (= 星期类别 周末)))","某条负荷观测属于日历周末","正式（非因果）"],
            ["观测","读数","零值观测","测量事件且其数值为0","(零值观测 (AND (存在 测量事件) (= 负荷数值 0)))","该时点记录了数值0，实际业务原因未知","正式（非停电判断）"]]
@@ -235,7 +236,7 @@ FROM (
     if int(m[1])>0:
         findings.append({"title":"全零序列存在，合并平均值需单独披露","fact":"全部 "+str(m[0])+" 条序列中，全零序列 "+str(m[1])+" 条；其进入总体均值会改变总体结构。","alternative":"全零可能表示未启用、真实零耗用或导出时填零，现有TXT无法区分。","limit":"不得把全零序列直接判定为数据丢失、停电或客户流失。"})
     # Validate time frequency and duplicates as a separate technical finding if observable.
-    if repeats>0 or (samp and samp[0][0] not in (15,None)):
+    if repeats>0 or (len([r for r in samp if r[0] is not None]) > 1):
         findings.append({"title":"采样完整性需要额外注意","fact":"同时间-序列重复键 "+str(repeats)+"；相邻时间间隔众数 "+str(samp[0][0] if samp else None)+" 分钟。","alternative":"可能存在切片、采样方式变化或源记录断档。","limit":"缺失时间点不能用当前TXT之外的数据擅自补齐。"})
     stage("Complex Verification + Competing Explanations + Robustness Gate 3","PASS")
     render(d,samp,repeats,ontology,rules,signals,findings,weekly,sql_events,True)
