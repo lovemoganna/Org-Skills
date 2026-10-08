@@ -187,9 +187,9 @@ def fetch_one(entry,dest,timeout):
                 result["attempts"]=attempts
                 return result
             if "MISMATCH" in result.get("error", ""):
-                result["status"] = "INTEGRITY_FAILED"
-                result["attempts"] = attempts
-                return result
+                # A corrupt raw transfer may be repaired by fetching the same
+                # pinned Git blob. Never accept either source without hashes.
+                break
             if attempt<2:
                 time.sleep(min(2**attempt,4))
     try:
@@ -200,7 +200,11 @@ def fetch_one(entry,dest,timeout):
     except Exception as exc:
         attempts.append({"transport":"github_same_blob_fallback","status":"FAILED",
                          "error":type(exc).__name__+": "+str(exc)})
-        return {"name":entry["name"],"url":entry["url"],"status":"SOURCE_BYTES_UNAVAILABLE",
+        integrity_failed = any("MISMATCH" in a.get("error", "")
+                               or "GITHUB_REF_CHANGED" in a.get("error", "")
+                               for a in attempts)
+        return {"name":entry["name"],"url":entry["url"],
+                "status":"INTEGRITY_FAILED" if integrity_failed else "SOURCE_BYTES_UNAVAILABLE",
                 "error":" | ".join(a.get("error","") for a in attempts if a.get("error")),
                 "attempts":attempts}
 
