@@ -5,11 +5,13 @@ on:
     branches: [main]
     paths:
       - "skills/**"
+      - "README.md"
       - "plugins/org-museum/**"
       - ".github/workflows/skills-regression.yml"
   pull_request:
     paths:
       - "skills/**"
+      - "README.md"
       - "plugins/org-museum/**"
       - ".github/workflows/skills-regression.yml"
 
