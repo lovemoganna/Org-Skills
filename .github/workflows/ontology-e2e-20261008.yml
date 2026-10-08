@@ -17,7 +17,7 @@ jobs:
         run: |
           python - <<'PY'
           import concurrent.futures, datetime, decimal, hashlib, json, pathlib, traceback
-          import duckdb
+          import duckdb, csv, base64, zlib, subprocess, sys
           src = "https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
           allowed = ("users", "fiat_transactions", "crypto_transactions", "exchange_rates")
           selection = """SELECT *
@@ -26,6 +26,7 @@ jobs:
               sheet = 'users',
               header = true
           );"""
+          selection=selection.replace("\\n          FROM","\\nFROM").replace("\\n              '","\\n    '").replace("\\n              sheet","\\n    sheet").replace("\\n              header","\\n    header").replace("\\n          );","\\n);")
           out={"engine":"DuckDB 1.4.2","source":src,"allowed_sheets":allowed,"phase":"runtime","init":[],"materializations":[],"schemas":{},"raw_rows":{},"checks":[],"queries":[],"execution_mode":"sequential load; concurrent read-only isolated connections"}
           def ser(v):
               if isinstance(v,(datetime.date,datetime.datetime,datetime.time,decimal.Decimal)):return str(v)
@@ -52,6 +53,23 @@ jobs:
                   rows=cur.fetchall()
                   out["raw_rows"][sheet]=[dict(zip(cols,map(ser,row))) for row in rows]
                   out["materializations"].append({"table":sheet,"read_xlsx_calls":1,"count":len(rows),"columns":cols,"query":query,"status":"PASS"})
+              # Gate 1 is verified before any analytical SQL in this corrected CI run.
+              out["phase"]="gate1"
+              mod_path=pathlib.Path("ontology-model-20261008.json")
+              encoded=pathlib.Path("skills/ontology-constrained-analysis/tests/e2e-20261008-ontology.zlib.b64").read_text().strip()
+              mod_path.write_bytes(zlib.decompress(base64.b64decode(encoded)))
+              model=json.loads(mod_path.read_text())
+              schema_args=[]
+              for table in allowed:
+                  file="schema-"+table+".csv"
+                  with open(file,"w",newline="",encoding="utf-8") as stream:
+                      writer=csv.writer(stream);writer.writerow(["column_name"])
+                      for col in out["schemas"][table]:writer.writerow([col])
+                  schema_args.extend(["--schema",table+"="+file])
+              proc=subprocess.run([sys.executable,"skills/ontology-constrained-analysis/scripts/check_ontology_sources.py","--model",str(mod_path)]+schema_args,capture_output=True,text=True)
+              gate_receipt=json.loads(proc.stdout)
+              out["gate1"]={"atom_count":len(model["ontology_atoms"]),"rule_count":len(model["ontology_rules"]),"model_sha256":hashlib.sha256(mod_path.read_bytes()).hexdigest(),"checker":"scripts/check_ontology_sources.py","structural_source_status":gate_receipt["status"],"semantic_review":"separate manual source/meaning review retained in deliverable; not certified by checker","errors":gate_receipt["errors"]}
+              assert proc.returncode==0 and gate_receipt["status"]=="PASS_STRUCTURE_AND_SOURCE_ONLY",proc.stderr+" "+proc.stdout
               con.close()
               out["phase"]="analysis"
               qs=[]
@@ -103,7 +121,7 @@ jobs:
               with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
                   out["queries"]=list(ex.map(execute,qs))
               out["phase"]="done"
-              out["checks"]=[{"name":"four_materializations","pass":len(out["materializations"])==4},{"name":"allowed_tables_only","pass":set(out["schemas"])==set(allowed)},{"name":"init_once","pass":len(out["init"])==4},{"name":"SQL_queries","pass":all(x["status"]=="PASS" for x in out["queries"])}]
+              out["checks"]=[{"name":"four_materializations","pass":len(out["materializations"])==4},{"name":"allowed_tables_only","pass":set(out["schemas"])==set(allowed)},{"name":"init_once","pass":len(out["init"])==4},{"name":"SQL_queries","pass":all(x["status"]=="PASS" for x in out["queries"])},{"name":"ontology_gate1_sources","pass":out["gate1"]["structural_source_status"]=="PASS_STRUCTURE_AND_SOURCE_ONLY"}]
               dump()
               print("ONTOLOGY_E2E_SUMMARY",json.dumps({"version":out["duckdb_version"],"phase":out["phase"],"counts":{x["table"]:x["count"] for x in out["materializations"]},"check_count":len(out["queries"]),"failures":[x["name"] for x in out["queries"] if x["status"]=="FAIL"]},ensure_ascii=False))
           except Exception as e:
