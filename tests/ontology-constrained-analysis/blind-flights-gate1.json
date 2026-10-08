@@ -1,0 +1,205 @@
+{
+  "status": "GATE1_CANDIDATE_FROM_VERIFIED_SCHEMA",
+  "scope": "NYC flights11 Stanford CSV only; data coverage to be verified by SQL; not full 2013 cohort",
+  "semantic_sources": [
+    "https://search.r-project.org/CRAN/refmans/nycflights13/html/flights.html"
+  ],
+  "atomic_knowledge": [
+    {
+      "id": "A01",
+      "l1": "航班",
+      "l2": "业务事件",
+      "l3": "航班记录",
+      "name": "航班",
+      "category": "事件",
+      "type": "flight row",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "记录",
+      "source": "flights",
+      "time": "year/month/day"
+    },
+    {
+      "id": "A02",
+      "l1": "航班",
+      "l2": "计划",
+      "l3": "时段",
+      "name": "计划起飞小时",
+      "category": "属性",
+      "type": "整数",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "小时(0-23)",
+      "source": "flights.hour",
+      "time": "计划起飞"
+    },
+    {
+      "id": "A03",
+      "l1": "航班",
+      "l2": "时间偏差",
+      "l3": "离港延误",
+      "name": "出发延误分钟",
+      "category": "属性",
+      "type": "数值",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "分钟",
+      "source": "flights.dep_delay",
+      "time": "实际-计划；负值提前"
+    },
+    {
+      "id": "A04",
+      "l1": "航班",
+      "l2": "机场",
+      "l3": "出发地",
+      "name": "始发机场编码",
+      "category": "属性",
+      "type": "VARCHAR",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "机场代码",
+      "source": "flights.origin",
+      "time": "计划起飞"
+    },
+    {
+      "id": "A05",
+      "l1": "航班",
+      "l2": "承运",
+      "l3": "公司",
+      "name": "承运人编码",
+      "category": "属性",
+      "type": "VARCHAR",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "承运人代码",
+      "source": "flights.carrier",
+      "time": "航班"
+    },
+    {
+      "id": "A06",
+      "l1": "航班",
+      "l2": "日期",
+      "l3": "起飞日",
+      "name": "航班日期",
+      "category": "属性",
+      "type": "年月日",
+      "subject": "航班",
+      "grain": "单条航班记录",
+      "unit": "日期",
+      "source": "flights.year/month/day",
+      "time": "航班日期"
+    },
+    {
+      "id": "A07",
+      "l1": "航班",
+      "l2": "飞机",
+      "l3": "尾号",
+      "name": "飞机尾号",
+      "category": "属性",
+      "type": "VARCHAR",
+      "subject": "航班/飞机",
+      "grain": "单条航班记录",
+      "unit": "飞机标识",
+      "source": "flights.tailnum/planes.tailnum",
+      "time": "航班"
+    },
+    {
+      "id": "A08",
+      "l1": "天气",
+      "l2": "观测",
+      "l3": "小时观测",
+      "name": "天气观测",
+      "category": "事件",
+      "type": "observation row",
+      "subject": "气象观测",
+      "grain": "机场×日期×小时（待基数验证）",
+      "unit": "记录",
+      "source": "weather",
+      "time": "观测小时"
+    },
+    {
+      "id": "A09",
+      "l1": "天气",
+      "l2": "机场",
+      "l3": "观测点",
+      "name": "天气机场编码",
+      "category": "属性",
+      "type": "VARCHAR",
+      "subject": "气象观测",
+      "grain": "气象观测",
+      "unit": "机场代码（待核实与origin可映射）",
+      "source": "weather.airport",
+      "time": "观测小时"
+    },
+    {
+      "id": "A10",
+      "l1": "天气",
+      "l2": "降水",
+      "l3": "降水量",
+      "name": "小时降水量",
+      "category": "属性",
+      "type": "数值",
+      "subject": "气象观测",
+      "grain": "气象观测",
+      "unit": "来源单位待核实",
+      "source": "weather.precip",
+      "time": "观测小时"
+    }
+  ],
+  "relations": [
+    "航班|具有|计划起飞小时",
+    "航班|具有|出发延误分钟",
+    "航班|始发于|始发机场编码",
+    "航班|由|承运人编码",
+    "航班|发生于|航班日期",
+    "航班|使用|飞机尾号",
+    "天气观测|记录|小时降水量",
+    "天气观测|发生于|天气机场编码"
+  ],
+  "recognition_rules": [
+    {
+      "l1": "航班",
+      "l2": "时段组合",
+      "l3": "上午起飞晚点",
+      "recognition": "计划起飞小时在06-11，且出发延误分钟>0",
+      "lisp": "(航班 (AND (BETWEEN 计划起飞小时 6 11) (> 出发延误分钟 0)))",
+      "definition": "上午计划起飞但实际晚于计划离港的航班",
+      "state": "候选；基于真实结果验证"
+    },
+    {
+      "l1": "航班",
+      "l2": "时段组合",
+      "l3": "晚间起飞晚点",
+      "recognition": "计划起飞小时在18-23，且出发延误分钟>0",
+      "lisp": "(航班 (AND (BETWEEN 计划起飞小时 18 23) (> 出发延误分钟 0)))",
+      "definition": "晚间计划起飞但实际晚于计划离港的航班",
+      "state": "候选；基于真实结果验证"
+    }
+  ],
+  "candidate_cross_table_relations": [
+    {
+      "left": "flights.origin",
+      "right": "weather.airport",
+      "time": [
+        "year",
+        "month",
+        "day",
+        "hour"
+      ],
+      "status": "待验证",
+      "reason": "字段名不同，需检查业务语义、编码值域、唯一性与匹配率"
+    },
+    {
+      "left": "flights.tailnum",
+      "right": "planes.tailnum",
+      "status": "已在前一阶段核对 key 类型及基数",
+      "reason": "不直接推断飞机年份对航班延误的因果"
+    }
+  ],
+  "limits": [
+    "无天然全局航班主键，记录粒度需保持",
+    "样本是 flights11.csv，不得包装成全年结果",
+    "比较为描述性，不能从时段关联推断因果",
+    "天气字段 airport 与航班 origin 只作待验证候选"
+  ]
+}
