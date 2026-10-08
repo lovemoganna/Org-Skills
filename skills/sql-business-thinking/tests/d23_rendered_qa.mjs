@@ -20,7 +20,7 @@ const errors = [];
 page.on('pageerror', e => errors.push('pageerror: '+e.message));
 page.on('request', req => errors.push('network-request: '+req.url()));
 page.on('console', msg => {if(msg.type()==='error') errors.push('console: '+msg.text())});
-const mark=(id,body)=>{assert(body, id);report.checks[id]='PASS';};
+const mark=(id,body)=>{report.checks[id]=body?'PASS':'FAIL';if(!body)report.errors.push('FAILED '+id);};
 async function sizeCheck(width, height, label){
   await page.setViewport({width,height,deviceScaleFactor:1,isMobile:width<=390,hasTouch:width<=390});
   await page.setContent(html,{waitUntil:'load'});
@@ -41,7 +41,18 @@ async function sizeCheck(width, height, label){
       })),
       details:[...document.querySelectorAll('details')].map(x=>x.open),
       scripts:document.querySelectorAll('script').length,
-      sheet:!!document.querySelector('main.shell')
+      sheet:!!document.querySelector('main.shell'),
+      glyphDistinct:(()=>{
+        const c=document.createElement('canvas');c.width=72;c.height=64;
+        const ctx=c.getContext('2d');ctx.font='32px "Noto Sans CJK SC", sans-serif';
+        const draw=char=>{
+          ctx.clearRect(0,0,72,64);ctx.fillText(char,8,45);
+          return new Uint8ClampedArray(ctx.getImageData(0,0,72,64).data);
+        };
+        const x=draw('中'),y=draw('测');
+        let delta=0;for(let i=0;i<x.length;i++)if(x[i]!==y[i])delta++;
+        return delta>50;
+      })()
     };
   });
   mark('ready_'+label,metrics.ready==='complete'&&metrics.sheet&&metrics.h1Text.length>12);
@@ -52,6 +63,7 @@ async function sizeCheck(width, height, label){
     metrics.tables.every(t=>t.scroll>=t.client && t.overflow==='auto')
     && (width>760 || metrics.tables.every(t=>t.scroll>t.client+1)));
   mark('no_async_scripts_'+label,metrics.scripts===0&&metrics.details.every(x=>!x));
+  mark('cjk_glyph_rendering_'+label,metrics.glyphDistinct);
   await page.screenshot({path:join(outDir,label+'.png'),fullPage:true});
   await page.addScriptTag({content:axeSource});
   const axe=await page.evaluate(async()=>await window.axe.run(document,{
