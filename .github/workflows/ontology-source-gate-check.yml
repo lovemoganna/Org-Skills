@@ -27,3 +27,4 @@ jobs:
           python -m py_compile skills/ontology-constrained-analysis/scripts/source_gate.py
           python skills/ontology-constrained-analysis/tests/check_repo.py
           python -m unittest -v skills/ontology-constrained-analysis/tests/test_source_schema_contract.py
+          python -m unittest -v skills/ontology-constrained-analysis/tests/test_run_lineage.py

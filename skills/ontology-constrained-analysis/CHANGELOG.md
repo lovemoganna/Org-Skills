@@ -1,5 +1,16 @@
 # Changelog
 
+## v16.5 — Evidence and execution-gate repair (2026-10-08)
+
+- 纠正 Gate 1 追认漏洞：只有本轮 Schema、类型、样本值、来源等中性勘察可先行；禁止业务聚合、JOIN、Signal 在两张本体表语义验收之前进行。新增独立时间顺序检查及原后置 Gate 1 负例回归。
+- 本体证据来源必须指向当前授权表中的具体字段，不再接受仅写表名；保留真实 DuckDB DESCRIBE 检查和派生来源。
+- 新增显式的关系类别值域必要条件检查（按本轮观测值集合，不内置币种/资产答案）；真实工作簿回归拒绝把混合法币与加密资产符号统一断言为“加密资产”。
+- 对带数值的 Finding 增加 fact_verification 契约：模板及 bindings（变量映射到 query、row、column）必须从本轮 SQL Result 重建 facts；数据变化后不更新正文应报错。禁止报告生成器自写 PASS 代替独立核验。
+- 保留原来源 URL、DuckDB/SQL、四 Gate、Lisp、Signal/Finding、SQL UI/浏览器和阻塞审计能力。未将临时执行脚本、数据库、HTML、截图、日志或 CI 产物提交为 Skill 代码。
+- 资产核对：原 Skill 22 个受控文件、151,408 B；保留全部 22 个已引用或具独立测试作用的资产，无经证实冗余文件可删除。仅增加通用顺序检查脚本、独立回归文件和作用域内 .gitignore（25 文件；最终体积以 Git tree 统计为准）。未擅自清理其他 Skill 的文件；原失败执行产物在外部审计包和历史 GitHub Actions 中保留。
+- 本次回归包括静态完整性、现有 Source Gate、原失败语义/执行顺序、合法反例、原真实四表 read_xlsx 及浏览器回归。CI 结果以本次提交实际运行记录为准；模型行为 Eval 与最终部署 Origin 不因 CI 成功自动通过。
+
+
 ## v16.4 — Canonical Gate 1 source-column regression (2026-10-08)
 
 - 修复历史四表本体测试资产：`来源` 更名为规范列 `证据来源`，逐项保留原始表字段证据值；该数据专用资产保留在原测试分支。

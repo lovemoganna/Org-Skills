@@ -81,6 +81,8 @@ def validate(model, schemas):
                 errors.append(f"ATOM_{n}:INVALID_EVIDENCE:{ref}")
                 continue
             table, sep, column = ref.partition(".")
+            if not sep or not column:
+                errors.append(f"ATOM_{n}:SOURCE_MUST_NAME_FIELD:{ref}")
             if table not in schemas:
                 errors.append(f"ATOM_{n}:FORBIDDEN_OR_UNKNOWN_TABLE:{table}")
             elif sep and column not in schemas[table]:
@@ -103,16 +105,57 @@ def validate(model, schemas):
     return errors
 
 
+
+def validate_relation_domains(model, values, schemas=None):
+    """Verify explicitly claimed category membership with observed value sets.
+
+    Evidence values must be extracted from the CURRENT allowed DuckDB tables.
+    Membership is only a necessary check; it does not prove a business relation.
+    """
+    errors = []
+    registered = {row.get("关系") for row in model.get("ontology_atoms", [])
+                  if isinstance(row, dict)}
+    for i, claim in enumerate(model.get("relation_domain_claims", []), 1):
+        if not isinstance(claim, dict):
+            errors.append(f"DOMAIN_{i}:INVALID_CONTRACT")
+            continue
+        relation = claim.get("relation")
+        source = claim.get("source")
+        category_source = claim.get("category_source")
+        if relation not in registered:
+            errors.append(f"DOMAIN_{i}:UNKNOWN_RELATION")
+        if schemas is not None:
+            for ref in (source, category_source):
+                if not isinstance(ref, str) or ref.count(".") != 1:
+                    errors.append(f"DOMAIN_{i}:INVALID_DOMAIN_FIELD:{ref}")
+                    continue
+                table, column = ref.split(".")
+                if table not in schemas or column not in schemas[table]:
+                    errors.append(f"DOMAIN_{i}:FORBIDDEN_OR_UNKNOWN_DOMAIN_FIELD:{ref}")
+        if not source or not category_source or source not in values or category_source not in values:
+            errors.append(f"DOMAIN_{i}:UNVERIFIED_OBSERVED_VALUES")
+            continue
+        observed = set(str(x) for x in values[source] if x is not None)
+        category = set(str(x) for x in values[category_source] if x is not None)
+        if not observed.issubset(category):
+            errors.append(f"DOMAIN_{i}:RELATION_DOMAIN_MISMATCH:{len(observed-category)}")
+    return errors
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", required=True)
     parser.add_argument("--schema", action="append", required=True,
                         help="Observed DuckDB DESCRIBE CSV in table=path form; repeat")
     parser.add_argument("--receipt")
+    parser.add_argument("--domain-values", help="JSON mapping table.field to current DuckDB observed distinct values")
     args = parser.parse_args()
     try:
         schemas = load_schemas(args.schema)
-        errors = validate(json.loads(Path(args.model).read_text(encoding="utf-8")), schemas)
+        model = json.loads(Path(args.model).read_text(encoding="utf-8"))
+        errors = validate(model, schemas)
+        if model.get("relation_domain_claims"):
+            observed = json.loads(Path(args.domain_values).read_text(encoding="utf-8")) if args.domain_values else {}
+            errors.extend(validate_relation_domains(model, observed, schemas))
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         errors = [f"INPUT_ERROR:{exc}"]
     receipt = {
