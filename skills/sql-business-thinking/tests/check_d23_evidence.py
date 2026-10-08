@@ -9,7 +9,7 @@ record = ROOT / "tests" / "verified-d23-render-qa.json"
 
 
 def git_blob_sha(data: bytes) -> str:
-    prefix = b"blob " + str(len(data)).encode("ascii") + b"\\0"
+    prefix = b"blob " + str(len(data)).encode("ascii") + bytes([0])
     return hashlib.sha1(prefix + data).hexdigest()
 
 
