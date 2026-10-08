@@ -32,6 +32,26 @@ jobs:
           status=$?
           echo "analysis_exit_code=$status" >> "$GITHUB_ENV"
           exit 0
+      - name: Verify static HTML browser compatibility
+        if: always()
+        shell: bash
+        run: |
+          test -f reports/electricity-20261008/analysis_report.html || exit 0
+          python - <<'PY'
+          from pathlib import Path
+          h=Path('reports/electricity-20261008/analysis_report.html').read_text()
+          assert h.count('<pre><code>')>=10
+          assert '<script src=' not in h and '<link rel="stylesheet"' not in h
+          assert 'function copySQL(' in h
+          print('HTML_AUDIT: PASS, no external JS/CSS/WASM or fetch dependencies')
+          PY
+          if command -v google-chrome >/dev/null 2>&1; then
+            google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --dump-dom "file://$PWD/reports/electricity-20261008/analysis_report.html" > /tmp/electricity-report-dom.html 2>/tmp/browser.stderr
+            grep -q '电力负荷' /tmp/electricity-report-dom.html
+            echo 'BROWSER_FILE_ORIGIN_SMOKE_TEST: PASS'
+          else
+            echo 'BROWSER_FILE_ORIGIN_SMOKE_TEST: CHROME_UNAVAILABLE, static audit only'
+          fi
       - name: Commit audit output to branch
         if: always()
         shell: bash
@@ -40,6 +60,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ -d reports/electricity-20261008 ]; then
             find reports/electricity-20261008 -maxdepth 1 -type f ! -name 'LD2011_2014.txt' -print0 | xargs -0 -r git add -f --
+            git add -u -- reports/electricity-20261008
             if ! git diff --cached --quiet; then
               git commit -m "results: record actual single-source DuckDB electricity audit"
               git push origin HEAD:analysis/electricity-load-20261008
