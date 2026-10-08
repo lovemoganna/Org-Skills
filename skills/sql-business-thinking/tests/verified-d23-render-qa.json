@@ -1,0 +1,38 @@
+{
+  "stage": "D23",
+  "status": "PASS",
+  "artifact_path": "skills/sql-business-thinking/artifacts/verified-d22-report.html",
+  "artifact_sha256": "e9f984cea354787815d49e98b83a8bab65fd07eec3c5479a442766ec85a8d31e",
+  "artifact_git_blob_sha": "f26857e64a8e88b8154ce7f3163d26a6d5139318",
+  "remote_render_run": 37754379619,
+  "remote_render_artifact_id": 11539616345,
+  "remote_runner_revision": "8cba6efcf772a6b250bc422813396656b2374e9c",
+  "source_data_run": 37725587099,
+  "source_quality_gates": "9/9 PASS",
+  "static_content_regression_run": 37753246235,
+  "static_content_regression": "PASS; D22 five tamper cases rejected",
+  "desktop": {
+    "viewport": "1440x900",
+    "dom": "PASS",
+    "full_page_overflow": "PASS",
+    "page_errors": "PASS",
+    "audit_accordions": "2/2 PASS",
+    "tables": "2/2 PASS"
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "dom": "PASS",
+    "full_page_overflow": "PASS",
+    "page_errors": "PASS",
+    "audit_accordions": "2/2 PASS",
+    "tables": "2/2 horizontally scrollable (258px range)"
+  },
+  "presentation": "PASS",
+  "async_readiness": "NOT_APPLICABLE; static HTML, waited for fonts and two animation frames",
+  "dialogue_and_dashboard_checks": "NOT_APPLICABLE; report-only deliverable",
+  "screenshots": [
+    "desktop.png",
+    "mobile.png"
+  ],
+  "limitations": "Validates historical Report artifact only. Does not imply operational risk, realtime status or full end-to-end live SQL execution in the HTML."
+}
