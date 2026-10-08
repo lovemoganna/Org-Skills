@@ -1,0 +1,117 @@
+name: Ontology Four Sheet Cold Discovery
+on:
+  push:
+    branches: [run/ontology-four-sheet-20261008]
+    paths:
+      - ".github/workflows/ontology-four-sheet-cold-discovery.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install DuckDB 1.4.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fSL --retry 2 'https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip' -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Cold-discover only four allowed sheets via exact DuckDB read_xlsx
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          cat > discovery.sql <<'SQL'
+          INSTALL httpfs;
+          LOAD httpfs;
+          INSTALL excel;
+          LOAD excel;
+          
+          CREATE TEMP TABLE users AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'users',
+            header = true
+          );
+          
+          .once artifacts/users_schema.csv
+          DESCRIBE SELECT * FROM users;
+          
+          .once artifacts/users_rows.csv
+          SELECT * FROM users;
+          
+          CREATE TEMP TABLE fiat_transactions AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'fiat_transactions',
+            header = true
+          );
+          
+          .once artifacts/fiat_transactions_schema.csv
+          DESCRIBE SELECT * FROM fiat_transactions;
+          
+          .once artifacts/fiat_transactions_rows.csv
+          SELECT * FROM fiat_transactions;
+          
+          CREATE TEMP TABLE crypto_transactions AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'crypto_transactions',
+            header = true
+          );
+          
+          .once artifacts/crypto_transactions_schema.csv
+          DESCRIBE SELECT * FROM crypto_transactions;
+          
+          .once artifacts/crypto_transactions_rows.csv
+          SELECT * FROM crypto_transactions;
+          
+          CREATE TEMP TABLE exchange_rates AS
+          SELECT *
+          FROM read_xlsx(
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+            sheet = 'exchange_rates',
+            header = true
+          );
+          
+          .once artifacts/exchange_rates_schema.csv
+          DESCRIBE SELECT * FROM exchange_rates;
+          
+          .once artifacts/exchange_rates_rows.csv
+          SELECT * FROM exchange_rates;
+          
+          .once artifacts/counts.csv
+          SELECT 'users' AS table_name, COUNT(*) AS record_count FROM users
+          UNION ALL
+          SELECT 'fiat_transactions' AS table_name, COUNT(*) AS record_count FROM fiat_transactions
+          UNION ALL
+          SELECT 'crypto_transactions' AS table_name, COUNT(*) AS record_count FROM crypto_transactions
+          UNION ALL
+          SELECT 'exchange_rates' AS table_name, COUNT(*) AS record_count FROM exchange_rates;
+          
+          .once artifacts/duckdb_version.csv
+          SELECT version() AS duckdb_version;
+          SQL
+          cp discovery.sql artifacts/discovery.sql
+          ./duckdb -bail -csv :memory: < discovery.sql > artifacts/execution-stdout.log 2> artifacts/execution-stderr.log || { cat artifacts/execution-stderr.log; exit 1; }
+          cat artifacts/counts.csv
+          cat artifacts/duckdb_version.csv
+          for table in users fiat_transactions crypto_transactions exchange_rates; do
+            echo "===== $table schema ====="
+            cat "artifacts/${table}_schema.csv"
+          done
+      - name: Preserve evidence even on failure
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ontology-four-sheet-cold-discovery
+          path: artifacts/
+          if-no-files-found: warn
