@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+
+      - name: Reject independent source-contract mutations
+        shell: bash
+        run: python skills/sql-business-thinking/tests/check_native_contract.py
+
       - name: Install DuckDB 1.4.2
         shell: bash
         run: |
