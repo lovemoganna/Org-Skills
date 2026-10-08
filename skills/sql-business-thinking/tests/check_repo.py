@@ -395,5 +395,6 @@ subprocess.run([sys.executable, str(ROOT / "tests" / "check_d13_neighbors.py")],
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d14_explanations.py")], check=True)
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d15_diagnostic.py")], check=True)
 subprocess.run([sys.executable, str(ROOT / "tests" / "check_d16_robustness.py")], check=True)
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_d17_findings.py")], check=True)
 
 print("OK: sql-business-thinking repository integrity")
