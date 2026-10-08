@@ -336,6 +336,69 @@ jobs:
                 }
               }
 
+              // D23 DOM and interaction checks run against the rendered page.
+              const dom = await page.evaluate(() => {
+                const ids = [...document.querySelectorAll('[id]')].map(x => x.id);
+                const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+                const brokenAnchors = [...document.querySelectorAll('a[href^="#"]')]
+                  .map(a => a.getAttribute('href').slice(1))
+                  .filter(id => id && !document.getElementById(id));
+                const controlsMissingLabel = [...document.querySelectorAll('button')]
+                  .filter(b => !((b.innerText || '').trim() || b.getAttribute('aria-label')));
+                return {
+                  duplicates,
+                  brokenAnchors,
+                  controlsMissingLabel: controlsMissingLabel.length,
+                  detailsCount: document.querySelectorAll('details').length,
+                  tablesCount: document.querySelectorAll('table').length
+                };
+              });
+              if (metrics.h1Count !== 1 || dom.duplicates.length ||
+                  dom.brokenAnchors.length || dom.controlsMissingLabel) {
+                fail('dom_integrity_' + target.name, {h1: metrics.h1Count, ...dom});
+              } else pass('dom_integrity_' + target.name, dom);
+
+              const accordion = [];
+              const details = page.locator('details');
+              for (let i = 0; i < await details.count(); i++) {
+                const section = details.nth(i);
+                const before = await section.evaluate(el => el.open);
+                await section.locator('summary').click();
+                const after = await section.evaluate(el => el.open);
+                await section.locator('summary').click();
+                const restored = await section.evaluate(el => el.open);
+                accordion.push({before, after, restored});
+              }
+              if (accordion.some(x => x.before === x.after || x.before !== x.restored)) {
+                fail('accordion_interaction_' + target.name, accordion);
+              } else pass('accordion_interaction_' + target.name, accordion);
+
+              const scrollContainers = await page.evaluate(() => {
+                return [...document.querySelectorAll('table')].map(table => {
+                  const viewport = document.documentElement.clientWidth;
+                  let wrapper = table.parentElement;
+                  while (wrapper && wrapper !== document.body) {
+                    if (/(auto|scroll)/.test(getComputedStyle(wrapper).overflowX)) break;
+                    wrapper = wrapper.parentElement;
+                  }
+                  const tableWidth = table.getBoundingClientRect().width;
+                  if (!wrapper || wrapper === document.body) {
+                    return { tableWidth, viewport, required: tableWidth > viewport + 1, pass: tableWidth <= viewport + 1 };
+                  }
+                  const before = wrapper.scrollLeft;
+                  const max = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
+                  wrapper.scrollLeft = max;
+                  const actual = wrapper.scrollLeft;
+                  wrapper.scrollLeft = before;
+                  return {tableWidth, viewport, max, actual,
+                    required: tableWidth > viewport + 1,
+                    pass: tableWidth <= viewport + 1 || (max > 1 && actual > before)};
+                });
+              });
+              if (scrollContainers.some(x => !x.pass)) {
+                fail('table_scroll_' + target.name, scrollContainers);
+              } else pass('table_scroll_' + target.name, scrollContainers);
+
               await page.screenshot({
                 path: 'render-output/' + target.name + '.png',
                 fullPage: true
