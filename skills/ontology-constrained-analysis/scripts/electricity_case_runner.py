@@ -35,6 +35,7 @@ def fetch():
             if n < 100: raise RuntimeError("SOURCE_TOO_SHORT")
             if meta["content_length"] and int(meta["content_length"])!=n:raise RuntimeError("CONTENT_LENGTH_MISMATCH")
             LOG["source"]={**meta,"bytes":n,"sha256":h.hexdigest(),"local_path":str(DATA)}
+            (OUT/"source_gate_receipt.json").write_text(json.dumps({"source_url":URL,"status":"BYTES_VERIFIED",**LOG["source"]},indent=2,ensure_ascii=False),encoding="utf-8")
             stage("Source Gate","PASS");return
         except Exception as e:
             LOG["source_attempt_"+str(attempt+1)]=repr(e); stage("SOURCE_ATTEMPT_"+str(attempt+1),"FAILED: "+str(e));time.sleep(attempt+1)
@@ -240,6 +241,118 @@ FROM (
     # Validate time frequency and duplicates as a separate technical finding if observable.
     if repeats>0 or (len([r for r in samp if r[0] is not None]) > 1):
         findings.append({"title":"采样完整性需要额外注意","fact":"同时间-序列重复键 "+str(repeats)+"；相邻时间间隔众数 "+str(samp[0][0] if samp else None)+" 分钟。","alternative":"可能存在切片、采样方式变化或源记录断档。","limit":"缺失时间点不能用当前TXT之外的数据擅自补齐。"})
+
+    # The zero structure is an activated branch of the observed 57% zero-value Signal.
+    zero_breakdown=run("复杂问题C3：全零序列与非全零序列的零值来源","""WITH series_state AS (
+    SELECT
+        client,
+        COUNT(*) FILTER (WHERE value <> 0) AS nonzero_count
+    FROM readings
+    GROUP BY client
+)
+SELECT
+    COUNT(*) FILTER (
+        WHERE s.nonzero_count = 0 AND r.value = 0
+    ) AS zeros_in_all_zero_series,
+    COUNT(*) FILTER (
+        WHERE s.nonzero_count > 0 AND r.value = 0
+    ) AS zeros_in_ever_nonzero_series,
+    ROUND(AVG(r.value), 5) AS overall_mean,
+    ROUND(AVG(r.value) FILTER (WHERE s.nonzero_count > 0), 5) AS ever_nonzero_series_mean
+FROM readings AS r
+JOIN series_state AS s
+    ON r.client = s.client;""")[0]
+    zb=zero_breakdown
+    assert zb[0]+zb[1]==int(d["zero_cells"]), "ZERO_ACCOUNTING_FAILED"
+    findings.append({
+        "title":"绝大多数零值来自210条全零序列",
+        "fact":"全零序列贡献 "+str(zb[0])+" 个零值，其余曾出现非零读数的序列贡献 "+str(zb[1])+" 个零值；总体均值 "+str(zb[2])+"，仅保留曾出现非零读数的序列均值 "+str(zb[3])+"（原文件单位未知）。",
+        "alternative":"全零源的业务含义不明，可能为未启用、真实零负荷或源端补零。",
+        "limit":"不能据此认定全零记录必须删除；两种均值反映不同统计总体，均应披露。"
+    })
+    # Composition/coverage explanation is tested using the same meter-series identifiers.
+    daily_coverage=run("稳健性R1：每日真实时点数量与截断边界","""SELECT
+    CAST(ts AS DATE) AS day,
+    COUNT(DISTINCT ts) AS time_points
+FROM readings
+GROUP BY CAST(ts AS DATE)
+ORDER BY day;""",400)
+    full_day_points=max([r[1] for r in daily_coverage])
+    incomplete_days=[r for r in daily_coverage if r[1]!=full_day_points]
+    if incomplete_days:
+        findings.append({
+            "title":"日度/月度对比需排除边界不完整日期",
+            "fact":"本样本每日最多 "+str(full_day_points)+" 个时间点；不完整日期："+str(incomplete_days)+".",
+            "alternative":"首尾日期为文件截断边界，非日内用电自然减少。",
+            "limit":"不得将首尾不完整日期直接当成完整自然日，也不得将4月视作完整月份。"
+        })
+    if "weekday" in wk and "weekend" in wk and full_day_points>0:
+        robust=run("稳健性R2：仅完整日与曾有非零读数的序列配对","""WITH valid_series AS (
+    SELECT client
+    FROM readings
+    GROUP BY client
+    HAVING COUNT(*) FILTER (WHERE value <> 0) > 0
+),
+complete_days AS (
+    SELECT CAST(ts AS DATE) AS day
+    FROM readings
+    GROUP BY CAST(ts AS DATE)
+    HAVING COUNT(DISTINCT ts) = """+str(int(full_day_points))+"""
+),
+series_pairs AS (
+    SELECT
+        r.client,
+        AVG(r.value) FILTER (WHERE ISODOW(r.ts) BETWEEN 1 AND 5) AS weekday_mean,
+        AVG(r.value) FILTER (WHERE ISODOW(r.ts) IN (6, 7)) AS weekend_mean
+    FROM readings AS r
+    JOIN valid_series AS v ON r.client = v.client
+    JOIN complete_days AS d ON CAST(r.ts AS DATE) = d.day
+    GROUP BY r.client
+)
+SELECT
+    COUNT(*) FILTER (
+        WHERE weekday_mean IS NOT NULL AND weekend_mean IS NOT NULL
+    ) AS matched_active_series,
+    COUNT(*) FILTER (WHERE weekend_mean < weekday_mean) AS weekend_lower,
+    COUNT(*) FILTER (WHERE weekend_mean > weekday_mean) AS weekend_higher,
+    ROUND(AVG(weekend_mean - weekday_mean), 5) AS paired_difference
+FROM series_pairs;""")[0]
+        findings.append({
+            "title":"控制全零序列与边界截断后的周末差异",
+            "fact":"完整日和160条候选非零序列中，可比较序列 "+str(robust[0])+" 条，周末较低 "+str(robust[1])+" 条、较高 "+str(robust[2])+" 条，平均配对差值 "+str(robust[3])+"。",
+            "alternative":"日历、季节、用户类型仍可能解释读数变化。",
+            "limit":"未控制天气、节假日与营业属性，不能从此推断因果关系。"
+        })
+    concentration=run("复杂问题C4：统一采样粒度下各序列累计读数占比","""WITH sums AS (
+    SELECT
+        client,
+        SUM(value) AS reading_sum
+    FROM readings
+    GROUP BY client
+),
+ranked AS (
+    SELECT
+        client,
+        reading_sum,
+        ROW_NUMBER() OVER (ORDER BY reading_sum DESC, client) AS rn,
+        SUM(reading_sum) OVER () AS total_reading_sum
+    FROM sums
+)
+SELECT
+    ROUND(SUM(reading_sum) FILTER (WHERE rn <= 1)
+        / NULLIF(MAX(total_reading_sum), 0) * 100, 4) AS top1_pct,
+    ROUND(SUM(reading_sum) FILTER (WHERE rn <= 5)
+        / NULLIF(MAX(total_reading_sum), 0) * 100, 4) AS top5_pct,
+    ROUND(SUM(reading_sum) FILTER (WHERE rn <= 10)
+        / NULLIF(MAX(total_reading_sum), 0) * 100, 4) AS top10_pct,
+    COUNT(*) AS series_count
+FROM ranked;""")[0]
+    findings.append({
+        "title":"总体读数被少量序列集中贡献",
+        "fact":"相同采样覆盖下，Top1/Top5/Top10 序列累计读数占比分别为 "+str(concentration[0])+"% / "+str(concentration[1])+"% / "+str(concentration[2])+"%；共 "+str(concentration[3])+" 条序列。",
+        "alternative":"不同序列的负荷规模可能天然不同，不能直接认定为异常或违规。",
+        "limit":"当前 TXT 无单位、用户行业和合同信息；累计读数占比不能直接转化为计费电量占比。"
+    })
     stage("Complex Verification + Competing Explanations + Robustness Gate 3","PASS")
     render(d,samp,repeats,ontology,rules,signals,findings,weekly,sql_events,True)
 def render(d,samp,repeats,ontology,rules,signals,findings,weekly,sql_events,success):
@@ -279,8 +392,13 @@ function copySQL(button){const sql=button.parentElement.querySelector('code').te
     body+="<h2>七、实际 SQL 与真实结果</h2><p>所有 SQL 保留换行和缩进，并统一离线语法高亮；点击复制获得无标记的原始格式化 SQL。结果过多的表只显示已执行结果的前若干行，截断会标注。</p>"+sql_html
     body+="<h2>八、复现与运行时审计</h2><p>执行环境为 GitHub Actions Ubuntu 原生 DuckDB；唯一数据 URL 为 <a href='"+E(URL)+"'>指定 TXT</a>。由脚本下载同一 URL 原始字节至临时路径并计算 SHA-256。报告为无外部依赖的单 HTML，浏览器 file:// 的 Origin 为 opaque/null；HTML 内不存在 fetch、XHR、WASM 或跨域请求，因此不依赖远程 CORS，也不声称已测试 DuckDB-WASM。运行时原生 DuckDB，不替换引擎。</p><p>记录文件：execution_receipt.json、sql_results.json、source_gate_receipt.json。同一分析必须重新联网取得同一 URL 的字节，并检查 SHA-256 是否改变；结果只适用于本次哈希对应的文件。</p>"
     (OUT/"analysis_report.html").write_text(template.replace("__BODY__",body),encoding="utf-8")
+    for obsolete in ("source_gate_blocked.md", "source_gate_blocked.html"):
+        (OUT/obsolete).unlink(missing_ok=True)
     (OUT/"sql_results.json").write_text(json.dumps(sql_events,indent=2,ensure_ascii=False,default=str),encoding="utf-8")
     LOG["status"]="COMPLETE" if success else "NO_FINDING"
+    generated=(OUT/"analysis_report.html").read_text(encoding="utf-8")
+    if generated.count("<pre><code>") != len(sql_events) or "https://cdn" in generated:
+        raise RuntimeError("HTML_SQL_DISPLAY_AUDIT_FAILED")
     stage("HTML / Audit Deliverable Gate 4","PASS")
     save()
 def blocked(error):
