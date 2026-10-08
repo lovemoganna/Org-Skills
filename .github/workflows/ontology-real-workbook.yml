@@ -84,6 +84,144 @@ jobs:
 
           .once exchange_rates.csv
           SELECT * FROM exchange_rates;
+
+          .once ontology-source-profile.csv
+          SELECT 'users' AS source, COUNT(*) AS record_count,
+                 COUNT(DISTINCT TRY_CAST(uid AS BIGINT)) AS distinct_keys,
+                 SUM(CASE WHEN TRY_CAST(uid AS BIGINT) IS NULL THEN 1 ELSE 0 END) AS invalid_keys
+          FROM users
+          UNION ALL
+          SELECT 'fiat_transactions', COUNT(*),
+                 COUNT(DISTINCT fiat_order_id),
+                 SUM(CASE WHEN TRY_CAST(uid AS BIGINT) IS NULL THEN 1 ELSE 0 END)
+          FROM fiat_transactions
+          UNION ALL
+          SELECT 'crypto_transactions', COUNT(*),
+                 COUNT(DISTINCT crypto_order_id),
+                 SUM(CASE WHEN TRY_CAST(uid AS BIGINT) IS NULL THEN 1 ELSE 0 END)
+          FROM crypto_transactions
+          UNION ALL
+          SELECT 'exchange_rates', COUNT(*),
+                 COUNT(DISTINCT asset),
+                 SUM(CASE WHEN asset IS NULL THEN 1 ELSE 0 END)
+          FROM exchange_rates;
+
+          .once ontology-instrument-status.csv
+          SELECT 'fiat' AS rail, CAST(currency AS VARCHAR) AS instrument,
+                 CAST(direction AS VARCHAR) AS direction,
+                 CAST(status AS VARCHAR) AS status,
+                 COUNT(*) AS record_count,
+                 SUM(CAST(amount AS DOUBLE)) AS amount_native
+          FROM fiat_transactions
+          GROUP BY currency, direction, status
+          UNION ALL
+          SELECT 'crypto', CAST(asset AS VARCHAR), CAST(direction AS VARCHAR),
+                 CAST(status AS VARCHAR), COUNT(*), SUM(CAST(amount AS DOUBLE))
+          FROM crypto_transactions
+          GROUP BY asset, direction, status
+          ORDER BY rail, instrument, direction, status;
+
+          .once ontology-uid-integrity.csv
+          WITH tx AS (
+            SELECT 'fiat' AS rail, TRY_CAST(uid AS BIGINT) AS uid_key
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'crypto', TRY_CAST(uid AS BIGINT)
+            FROM crypto_transactions
+          )
+          SELECT tx.rail, COUNT(*) AS transaction_records,
+                 SUM(CASE WHEN users.uid IS NULL THEN 1 ELSE 0 END) AS unmatched_records,
+                 COUNT(DISTINCT tx.uid_key) AS distinct_transaction_users
+          FROM tx
+          LEFT JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
+          GROUP BY tx.rail
+          ORDER BY tx.rail;
+
+          .once ontology-account-snapshot.csv
+          WITH tx AS (
+            SELECT 'fiat' AS rail, TRY_CAST(uid AS BIGINT) AS uid_key,
+                   CAST(status AS VARCHAR) AS tx_status
+            FROM fiat_transactions
+            UNION ALL
+            SELECT 'crypto', TRY_CAST(uid AS BIGINT), CAST(status AS VARCHAR)
+            FROM crypto_transactions
+          )
+          SELECT CAST(users.account_status AS VARCHAR) AS account_status,
+                 tx.rail, tx.tx_status,
+                 COUNT(*) AS transaction_records,
+                 COUNT(DISTINCT TRY_CAST(users.uid AS BIGINT)) AS distinct_users
+          FROM tx
+          JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
+          GROUP BY users.account_status, tx.rail, tx.tx_status
+          ORDER BY account_status, rail, tx_status;
+
+          .once ontology-status-timestamps.csv
+          SELECT 'fiat' AS rail, CAST(status AS VARCHAR) AS status,
+                 COUNT(*) AS record_count,
+                 SUM(CASE WHEN completed_at IS NOT NULL AND
+                               CAST(completed_at AS VARCHAR) <> 'NULL'
+                          THEN 1 ELSE 0 END) AS with_completion_timestamp
+          FROM fiat_transactions
+          GROUP BY status
+          UNION ALL
+          SELECT 'crypto', CAST(status AS VARCHAR), COUNT(*),
+                 SUM(CASE WHEN completed_at IS NOT NULL AND
+                               CAST(completed_at AS VARCHAR) <> 'NULL'
+                          THEN 1 ELSE 0 END)
+          FROM crypto_transactions
+          GROUP BY status
+          ORDER BY rail, status;
+
+          .once ontology-rate-temporality.csv
+          WITH tx AS (
+            SELECT CAST(currency AS VARCHAR) AS asset,
+                   TRY_CAST(created_at AS TIMESTAMP) AS created_at
+            FROM fiat_transactions
+            UNION ALL
+            SELECT CAST(asset AS VARCHAR),
+                   TRY_CAST(created_at AS TIMESTAMP)
+            FROM crypto_transactions
+          ),
+          tx_summary AS (
+            SELECT asset, COUNT(*) AS transaction_records,
+                   MIN(created_at) AS first_created,
+                   MAX(created_at) AS last_created
+            FROM tx
+            GROUP BY asset
+          ),
+          rate_summary AS (
+            SELECT asset, COUNT(*) AS rate_records,
+                   MAX(TRY_CAST(effective_date AS DATE)) AS last_rate_date,
+                   COUNT(DISTINCT TRY_CAST(rate_to_usdt AS DOUBLE)) AS distinct_rate_values
+            FROM exchange_rates
+            GROUP BY asset
+          )
+          SELECT tx_summary.*, rate_summary.rate_records, rate_summary.last_rate_date,
+                 rate_summary.distinct_rate_values
+          FROM tx_summary
+          LEFT JOIN rate_summary USING (asset)
+          ORDER BY asset;
+
+          .once ontology-cross-rail.csv
+          WITH fiat AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS fiat_records
+            FROM fiat_transactions
+            GROUP BY uid_key
+          ),
+          crypto AS (
+            SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS crypto_records
+            FROM crypto_transactions
+            GROUP BY uid_key
+          )
+          SELECT TRY_CAST(users.uid AS BIGINT) AS uid_key,
+                 CAST(users.account_status AS VARCHAR) AS account_status,
+                 COALESCE(fiat.fiat_records, 0) AS fiat_records,
+                 COALESCE(crypto.crypto_records, 0) AS crypto_records
+          FROM users
+          LEFT JOIN fiat ON fiat.uid_key = TRY_CAST(users.uid AS BIGINT)
+          LEFT JOIN crypto ON crypto.uid_key = TRY_CAST(users.uid AS BIGINT)
+          ORDER BY uid_key;
+
           SQL
 
           ./duckdb < ontology-materialize.sql
@@ -126,6 +264,27 @@ jobs:
               assert sql_text.count("CREATE TEMP TABLE " + sheet + " AS") == 1
               assert sql_text.count("SELECT * FROM " + sheet + ";") == 1
           evidence["materialization_verified_from_sql"] = True
+          analysis_names = [
+              "ontology-source-profile",
+              "ontology-instrument-status",
+              "ontology-uid-integrity",
+              "ontology-account-snapshot",
+              "ontology-status-timestamps",
+              "ontology-rate-temporality",
+              "ontology-cross-rail",
+          ]
+          evidence["analysis_query_receipts"] = {}
+          for name in analysis_names:
+              file = pathlib.Path(name + ".csv")
+              assert file.exists() and file.stat().st_size > 0, f"missing SQL result: {name}"
+              with file.open(newline="", encoding="utf-8") as f:
+                  data = list(csv.reader(f))
+              assert data and data[0], f"missing SQL result schema: {name}"
+              evidence["analysis_query_receipts"][name] = {
+                  "rows": len(data) - 1,
+                  "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+              }
+
           assert sql_text.count("header = true") == 4
 
           for sheet in sheets:
@@ -158,6 +317,7 @@ jobs:
             fiat_transactions.csv
             crypto_transactions.csv
             exchange_rates.csv
+            ontology-*.csv
           if-no-files-found: error
 
   sql-browser:
