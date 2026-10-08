@@ -26,7 +26,7 @@ jobs:
               sheet = 'users',
               header = true
           );"""
-          selection=selection.replace("\\n          FROM","\\nFROM").replace("\\n              '","\\n    '").replace("\\n              sheet","\\n    sheet").replace("\\n              header","\\n    header").replace("\\n          );","\\n);")
+          selection=selection.replace("\n          FROM","\nFROM").replace("\n              '","\n    '").replace("\n              sheet","\n    sheet").replace("\n              header","\n    header").replace("\n          );","\n);")
           out={"engine":"DuckDB 1.4.2","source":src,"allowed_sheets":allowed,"phase":"runtime","init":[],"materializations":[],"schemas":{},"raw_rows":{},"checks":[],"queries":[],"execution_mode":"sequential load; concurrent read-only isolated connections"}
           def ser(v):
               if isinstance(v,(datetime.date,datetime.datetime,datetime.time,decimal.Decimal)):return str(v)
