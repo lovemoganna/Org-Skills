@@ -159,3 +159,20 @@ jobs:
             crypto_transactions.csv
             exchange_rates.csv
           if-no-files-found: error
+
+  sql-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run SQL formatter and escaping regressions
+        run: node skills/ontology-constrained-analysis/tests/test_sql_ui.cjs
+      - name: Install isolated Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Verify actual HTTP Origin and system Clipboard API
+        run: node skills/ontology-constrained-analysis/tests/test_sql_browser.cjs
