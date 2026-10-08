@@ -124,6 +124,7 @@ jobs:
           test ! -s live-evidence/d02-errors.log
           test ! -s live-evidence/d03-errors.log
           test ! -s live-evidence/full-errors.log
+          cp user_key_uniqueness.csv order_id_uniqueness.csv orphan_uid.csv status_completion.csv amount_fee_validity.csv rate_key_uniqueness.csv rate_coverage.csv join_cardinality_users.csv order_id_date_consistency.csv live-evidence/
       - name: Verify every Gate and independent results, generate report
         run: |
           set -euo pipefail
