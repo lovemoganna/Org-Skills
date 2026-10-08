@@ -28,6 +28,7 @@
 
 ### 知识资产
 - `note-reforge`：已有 Org / Markdown → 保留独有经验与证据 → 补判断、边界、默认建议与检索入口 → 生成长期可用的下一版知识资产。
+- 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
 
 ### 数据分析
 - `ontology-constrained-analysis`：业务语义 → 本体原子与规则 → SQL 验证 → Signal → Finding；源不可用时交付阻塞审计报告。
