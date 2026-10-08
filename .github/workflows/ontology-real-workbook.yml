@@ -363,3 +363,50 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify actual HTTP Origin and system Clipboard API
         run: node skills/ontology-constrained-analysis/tests/test_sql_browser.cjs
+
+  wasm-vfs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Download exact original Google XLSX bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fSL --retry 2 \
+            'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx' \
+            -o source.xlsx
+          python - <<'PY'
+          import hashlib, json, pathlib, zipfile
+          p=pathlib.Path('source.xlsx')
+          assert zipfile.is_zipfile(p), 'source is not XLSX ZIP'
+          print('source original bytes:',p.stat().st_size)
+          receipt={'original_url':'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+                   'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
+          pathlib.Path('source-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
+      - name: Install offline-served DuckDB-WASM browser bundle and Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save @duckdb/duckdb-wasm esbuild playwright
+          npx playwright install --with-deps chromium
+          npx esbuild node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser.mjs \
+            --bundle --platform=browser --format=esm --outfile=duckdb.bundle.mjs
+          cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm .
+          cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js .
+      - name: Check real-Origin CORS, VFS registration, Excel extension and allowed-sheet read_xlsx
+        shell: bash
+        run: node skills/ontology-constrained-analysis/tests/test_wasm_vfs.cjs
+      - name: Upload actual browser runtime receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ontology-wasm-vfs
+          path: |
+            source-receipt.json
+            wasm-runtime-receipt.json
+          if-no-files-found: warn
