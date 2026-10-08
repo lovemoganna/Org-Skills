@@ -1,5 +1,17 @@
 # Changelog
 
+## v16.3 — Audit-led consolidation (2026-10-08)
+
+- 将 SKILL.md 中重复的源恢复、浏览器及 SQL UI 细则合并到已有 `references/runtime.md`；入口仅保留执行契约、四个 Gate、核心拒绝条件与按需读取。
+- 将重复的专项检查压缩为 `references/validator.md` 的 Gate 检查；统一当前证据作用域、阶段复验、模型 Eval 与部署 Origin 的判定。
+- 修复四表审计暴露的 Gate 1 漏洞：真实数据原子必须记录可核验来源；结构通过不等于语义通过。
+- 明确禁止所有 SQL（含探索和概览）直接聚合不同单位；给无效 SUM 标注“不可汇总”仍必须删除。
+- 明确批量授权与默认单阶段停止的优先级，并区分最终 Origin 端到端验证与内联 HTML/CI Origin 局部检查。
+- 将本次复现的移动端 SQL 展开溢出归入原有浏览器响应式验收：代码容器内滚动，不撑宽整页。
+- 未改变数据源、引擎、固定 SQL、同源恢复、阻塞交付、真实 SQL、Signal/Finding、四个 Gate 或 Dashboard 的原有硬约束。相关 Eval 文件和执行脚本保持原样。
+- 规模（Git Blob 字节/文本行数）：SKILL.md 9,609 B/179 行 → 6,598 B/89 行；runtime.md 11,150 B/234 行 → 6,800 B/77 行；validator.md 14,593 B/635 行 → 8,501 B/76 行；ontology.md 3,925 B/132 行 → 4,152 B/132 行。上述四文件合计 39,277 B → 26,051 B（-33.7%），1,180 行 → 374 行（-68.3%）。
+
+
 ## v16.2 — Browser fixed-URL SQL verification (2026-10-08)
 
 - 修复测试覆盖缺口：此前 VFS 的 `read_xlsx('source.xlsx')` PASS 不能证明原始远程 `read_xlsx(URL)` 可执行。浏览器实际用原 URL 对四张授权 Sheet 分别执行 DuckDB-WASM SQL，并逐表与 VFS 行数比较。
