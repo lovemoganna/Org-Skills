@@ -137,6 +137,8 @@ jobs:
           GROUP BY asset, direction, status
           ORDER BY rail, instrument, direction, status;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-instrument-status
+
           .once ontology-uid-integrity.csv
           WITH tx AS (
             SELECT 'fiat' AS rail, TRY_CAST(uid AS BIGINT) AS uid_key
@@ -152,6 +154,8 @@ jobs:
           LEFT JOIN users ON TRY_CAST(users.uid AS BIGINT) = tx.uid_key
           GROUP BY tx.rail
           ORDER BY tx.rail;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-uid-integrity
 
           .once ontology-account-snapshot.csv
           WITH tx AS (
@@ -171,6 +175,8 @@ jobs:
           GROUP BY users.account_status, tx.rail, tx.tx_status
           ORDER BY account_status, rail, tx_status;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-account-snapshot
+
           .once ontology-status-timestamps.csv
           SELECT 'fiat' AS rail, CAST(status AS VARCHAR) AS status,
                  COUNT(*) AS record_count,
@@ -187,6 +193,8 @@ jobs:
           FROM crypto_transactions
           GROUP BY status
           ORDER BY rail, status;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-status-timestamps
 
           .once ontology-rate-temporality.csv
           WITH tx AS (
@@ -218,6 +226,8 @@ jobs:
           LEFT JOIN rate_summary USING (asset)
           ORDER BY asset;
 
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-rate-temporality
+
           .once ontology-cross-rail.csv
           WITH fiat AS (
             SELECT TRY_CAST(uid AS BIGINT) AS uid_key, COUNT(*) AS fiat_records
@@ -237,6 +247,8 @@ jobs:
           LEFT JOIN fiat ON fiat.uid_key = TRY_CAST(users.uid AS BIGINT)
           LEFT JOIN crypto ON crypto.uid_key = TRY_CAST(users.uid AS BIGINT)
           ORDER BY uid_key;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-cross-rail
 
           .once ontology-usdt-driver.csv
           WITH per_user AS (
@@ -263,6 +275,8 @@ jobs:
                  SUM(sample_net_usdt) OVER () - sample_net_usdt AS net_without_user
           FROM per_user
           ORDER BY ABS(sample_net_usdt) DESC, uid_key;
+
+          .shell python skills/ontology-constrained-analysis/scripts/capture_sql_receipt.py ontology-usdt-driver
 
 
           SQL
@@ -363,6 +377,19 @@ jobs:
                   "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
               }
 
+          receipts_file = pathlib.Path("ontology-query-receipts.jsonl")
+          assert receipts_file.is_file(), "NO_SQL_EXECUTION_RECEIPTS"
+          receipts = [json.loads(line) for line in receipts_file.read_text(encoding="utf-8").splitlines()]
+          assert [x["id"] for x in receipts] == analysis_names[1:], "QUERY_EXECUTION_ORDER_MISMATCH"
+          from datetime import datetime
+          gate_at = datetime.fromisoformat(gate["timestamp"])
+          for receipt in receipts:
+              assert datetime.fromisoformat(receipt["completed_at"]) >= gate_at, "SQL_RESULT_BEFORE_GATE1"
+              expected = evidence["analysis_query_receipts"][receipt["id"]]
+              assert receipt["result_sha256"] == expected["sha256"], "RESULT_CHANGED_AFTER_RECEIPT"
+              assert receipt["rows"] == expected["rows"], "RESULT_ROW_COUNT_MISMATCH"
+          evidence["query_execution_receipts"] = receipts
+
           assert sql_text.count("header = true") == 4
 
           for sheet in sheets:
@@ -400,6 +427,7 @@ jobs:
             ontology-gate1.json
             gate1-receipt.json
             gate1-decision.sql
+            ontology-query-receipts.jsonl
           if-no-files-found: error
 
   sql-browser:
