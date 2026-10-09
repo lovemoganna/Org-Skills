@@ -110,5 +110,40 @@ class SequenceRegression(unittest.TestCase):
         d=fixture();d["queries"]=[]
         self.assertIn("NO_ACTUAL_SQL_RESULTS",check(d))
 
+    def test_historical_pregate_business_variants_fail_closed(self):
+        # Independently authored non-USDT input; no expected sample answers.
+        d = fixture()
+        gate_at = datetime.fromisoformat(d["stages"][0]["at"])
+        early = (gate_at - timedelta(seconds=5)).isoformat()
+        business_sql = [
+            "SELECT MAX(amount) FROM invoices",
+            "SELECT MIN(amount) FROM invoices",
+            "SELECT COUNT(*) FROM invoices WHERE state = 'alert'",
+            "SELECT COUNT(*) FROM invoices HAVING COUNT(*) > 3",
+            "SELECT amount * fx_rate AS exposure FROM invoices",
+            "SELECT amount / fx_rate AS normalized FROM invoices",
+            "SELECT MEDIAN(amount) FROM invoices",
+            "SELECT STDDEV(amount) FROM invoices",
+        ]
+        for sql in business_sql:
+            with self.subTest(sql=sql):
+                prior = {"generated_at":early, "queries":{"prior-business":{"sql":sql}}}
+                self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:prior-business",check(d,prior))
+
+    def test_neutral_pre_gate_source_inventory_not_overblocked(self):
+        d = fixture()
+        early = (datetime.fromisoformat(d["stages"][0]["at"])-timedelta(seconds=5)).isoformat()
+        neutral_sql = [
+            "DESCRIBE invoices",
+            "SELECT COUNT(*) FROM invoices",
+            "SELECT COUNT(*) FROM invoices WHERE amount IS NULL",
+            "SELECT COUNT(*) FROM invoices WHERE amount IS NOT NULL",
+            "SELECT * FROM invoices LIMIT 5",
+        ]
+        for sql in neutral_sql:
+            with self.subTest(sql=sql):
+                prior = {"generated_at":early, "queries":{"neutral":{"sql":sql}}}
+                self.assertEqual([],check(d,prior))
+
 if __name__ == "__main__":
     unittest.main()
