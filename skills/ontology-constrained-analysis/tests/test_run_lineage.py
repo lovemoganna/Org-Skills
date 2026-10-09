@@ -124,6 +124,12 @@ class SequenceRegression(unittest.TestCase):
             "SELECT amount / fx_rate AS normalized FROM invoices",
             "SELECT MEDIAN(amount) FROM invoices",
             "SELECT STDDEV(amount) FROM invoices",
+            "SELECT amount - fee AS net FROM invoices",
+            "SELECT amount + fee AS gross FROM invoices",
+            "SELECT QUANTILE_CONT(amount,0.99) FROM invoices",
+            "SELECT uid, amount FROM invoices ORDER BY amount DESC LIMIT 10",
+            "SELECT COUNT(*) FROM invoices UNION ALL SELECT MAX(amount) FROM payments",
+            "SELECT amount FROM invoices WHERE amount > 100 LIMIT 5",
         ]
         for sql in business_sql:
             with self.subTest(sql=sql):
@@ -139,6 +145,10 @@ class SequenceRegression(unittest.TestCase):
             "SELECT COUNT(*) FROM invoices WHERE amount IS NULL",
             "SELECT COUNT(*) FROM invoices WHERE amount IS NOT NULL",
             "SELECT * FROM invoices LIMIT 5",
+            "SELECT uid, amount FROM invoices LIMIT 5",
+            "SELECT DISTINCT direction FROM invoices",
+            "SELECT COUNT(*) FROM invoices UNION ALL SELECT COUNT(*) FROM payments",
+            "SELECT amount FROM invoices WHERE amount IS NULL LIMIT 5",
         ]
         for sql in neutral_sql:
             with self.subTest(sql=sql):
