@@ -59,9 +59,23 @@ def check(chain, prior=None):
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
             analytical = re.search(
-                r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)",
-                statement, re.I)
-            if not analytical:
+                r"\b(?:JOIN\b|GROUP\s+BY\b|HAVING\b|SUM\s*\(|AVG\s*\(|"
+                r"MIN\s*\(|MAX\s*\(|MEDIAN\s*\(|STDDEV\s*\(|"
+                r"COUNT\s*\(\s*DISTINCT\b|CASE\s+WHEN\b|OVER\s*\()", statement, re.I)
+            # Allow null-coverage inventory, but never treat filtered business
+            # counts or derived monetary projections as neutral source checks.
+            where = re.search(
+                r"\bWHERE\b(.*?)(?=\bGROUP\s+BY\b|\bORDER\s+BY\b|\bLIMIT\b|$)",
+                statement, re.I | re.S)
+            condition = where.group(1).strip().rstrip(";").strip() if where else None
+            filtered_business = condition is not None and not re.fullmatch(
+                r'[\w."\x60]+\s+IS\s+(?:NOT\s+)?NULL', condition, re.I)
+            projection = re.search(r"\bSELECT\b(.*?)\bFROM\b", statement, re.I | re.S)
+            expression = re.sub(
+                r"\bCOUNT\s*\(\s*\*\s*\)", "ROW_COUNT",
+                projection.group(1), flags=re.I) if projection else ""
+            arithmetic = re.search(r"\b[\w.]+\s*(?:\*|/)\s*[\w.]+\b", expression, re.I)
+            if not (analytical or filtered_business or arithmetic):
                 continue
             executed_at = None
             if isinstance(q, dict) and q.get("timestamp") is not None:
