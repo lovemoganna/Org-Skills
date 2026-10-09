@@ -110,5 +110,29 @@ class SequenceRegression(unittest.TestCase):
         d=fixture();d["queries"]=[]
         self.assertIn("NO_ACTUAL_SQL_RESULTS",check(d))
 
+
+    def test_counterexample_duplicate_sql_receipt_id_is_not_valid_provenance(self):
+        d = fixture()
+        d["queries"].append(dict(d["queries"][0]))
+        self.assertIn("DUPLICATE_SQL_RECEIPT_ID:original-business-question", check(d))
+
+    def test_counterexample_pre_gate_filtered_count_is_analysis(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=5)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "status-count": {"timestamp": before,
+                             "sql": "SELECT COUNT(*) FROM orders WHERE status = 'completed'"}
+        }}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:status-count", check(d, prior))
+
+    def test_counterexample_neutral_null_count_remains_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=5)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "null-profile": {"timestamp": before,
+                             "sql": "SELECT COUNT(*) FROM orders WHERE uid IS NULL"}
+        }}
+        self.assertEqual([], check(d, prior))
+
 if __name__ == "__main__":
     unittest.main()
