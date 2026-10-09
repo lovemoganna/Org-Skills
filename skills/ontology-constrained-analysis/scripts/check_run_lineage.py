@@ -7,6 +7,7 @@ analytical exploration cannot be laundered into a later Gate 1 PASS.
 import argparse
 from datetime import datetime, timezone
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -91,7 +92,6 @@ def check(chain, prior=None):
             errors.append("PRIOR_QUERY_TIMESTAMP_UNVERIFIED")
         # Per-query execution time takes precedence over log generation time.
         # A log written after Gate 1 cannot certify when its SQL actually ran.
-        import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
             if neutral_source_probe(statement):
@@ -112,7 +112,6 @@ def check(chain, prior=None):
                 errors.append("PRIOR_ANALYSIS_TIME_UNVERIFIED:" + str(ident))
     # A numeric narrative must be reconstructed from THIS run's SQL Result.
     # Templates/bindings are an audit contract, not expected test answers.
-    import re
     by_id = {str(q.get("id")): q for q in chain.get("queries", [])}
     for finding in chain.get("findings", []):
         facts = finding.get("facts", "")
