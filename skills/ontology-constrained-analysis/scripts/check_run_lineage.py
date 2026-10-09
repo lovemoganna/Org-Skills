@@ -18,6 +18,42 @@ def when(value):
         raise ValueError("NAIVE_TIMESTAMP")
     return t.astimezone(timezone.utc)
 
+_IDENTIFIER = r'(?:[\w.]+|"[^"]+"|`[^`]+`)'
+
+def _safe_count_probe(sql):
+    return re.fullmatch(
+        rf'SELECT COUNT\(\*\)(?: AS {_IDENTIFIER})? FROM {_IDENTIFIER}'
+        rf'(?: WHERE {_IDENTIFIER} IS (?:NOT )?NULL)?', sql, re.I) is not None
+
+def neutral_source_probe(sql):
+    """Accept only source/schema/null/value inspection; fail closed on other SQL."""
+    if not isinstance(sql, str):
+        return False
+    statement = ' '.join(sql.strip().rstrip(';').split())
+    if not statement:
+        return False
+    parts = re.split(r'\s+UNION\s+ALL\s+', statement, flags=re.I)
+    if len(parts) > 1:
+        return all(_safe_count_probe(part) for part in parts)
+    if _safe_count_probe(statement):
+        return True
+    if re.fullmatch(rf'(?:DESCRIBE|DESC|SHOW COLUMNS FROM) {_IDENTIFIER}', statement, re.I):
+        return True
+    if statement.upper() in ('SHOW TABLES', 'SHOW ALL TABLES'):
+        return True
+    if re.fullmatch(r'PRAGMA table_info\([\'\"][\w.]+[\'\"]\)', statement, re.I):
+        return True
+    if re.fullmatch(
+        rf'SELECT DISTINCT {_IDENTIFIER} FROM {_IDENTIFIER}(?: LIMIT [1-9][0-9]*)?', statement, re.I
+    ):
+        return True
+    if re.fullmatch(
+        rf'SELECT (?:\*|{_IDENTIFIER}(?:, {_IDENTIFIER})*) FROM {_IDENTIFIER}'
+        rf'(?: WHERE {_IDENTIFIER} IS (?:NOT )?NULL)? LIMIT [1-9][0-9]*', statement, re.I
+    ):
+        return True
+    return False
+
 def check(chain, prior=None):
     errors = []
     stages = chain.get("stages", [])
@@ -58,24 +94,7 @@ def check(chain, prior=None):
         import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
-            analytical = re.search(
-                r"\b(?:JOIN\b|GROUP\s+BY\b|HAVING\b|SUM\s*\(|AVG\s*\(|"
-                r"MIN\s*\(|MAX\s*\(|MEDIAN\s*\(|STDDEV\s*\(|"
-                r"COUNT\s*\(\s*DISTINCT\b|CASE\s+WHEN\b|OVER\s*\()", statement, re.I)
-            # Allow null-coverage inventory, but never treat filtered business
-            # counts or derived monetary projections as neutral source checks.
-            where = re.search(
-                r"\bWHERE\b(.*?)(?=\bGROUP\s+BY\b|\bORDER\s+BY\b|\bLIMIT\b|$)",
-                statement, re.I | re.S)
-            condition = where.group(1).strip().rstrip(";").strip() if where else None
-            filtered_business = condition is not None and not re.fullmatch(
-                r'[\w."\x60]+\s+IS\s+(?:NOT\s+)?NULL', condition, re.I)
-            projection = re.search(r"\bSELECT\b(.*?)\bFROM\b", statement, re.I | re.S)
-            expression = re.sub(
-                r"\bCOUNT\s*\(\s*\*\s*\)", "ROW_COUNT",
-                projection.group(1), flags=re.I) if projection else ""
-            arithmetic = re.search(r"\b[\w.]+\s*(?:\*|/)\s*[\w.]+\b", expression, re.I)
-            if not (analytical or filtered_business or arithmetic):
+            if neutral_source_probe(statement):
                 continue
             executed_at = None
             if isinstance(q, dict) and q.get("timestamp") is not None:
