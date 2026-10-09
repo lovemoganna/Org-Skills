@@ -39,7 +39,15 @@ def check(chain, prior=None):
     review = details.get("semantic_review")
     if not isinstance(review, dict) or review.get("status") != "PASS" or not review.get("evidence"):
         errors.append("GATE1_SEMANTIC_EVIDENCE_MISSING")
+    seen_query_ids = set()
     for q in chain.get("queries", []):
+        ident = q.get("id")
+        if not isinstance(ident, str) or not ident.strip():
+            errors.append("SQL_RECEIPT_ID_MISSING")
+        elif ident in seen_query_ids:
+            errors.append("DUPLICATE_SQL_RECEIPT_ID:" + ident)
+        else:
+            seen_query_ids.add(ident)
         try:
             if when(q.get("timestamp")) < approved_at:
                 errors.append("ANALYSIS_SQL_BEFORE_GATE1:" + str(q.get("id", "")))
@@ -61,7 +69,18 @@ def check(chain, prior=None):
             analytical = re.search(
                 r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)",
                 statement, re.I)
-            if not analytical:
+            # A filtered COUNT is a business query unless it is a simple
+            # pre-Gate null-count profile. Plain table row counts remain neutral.
+            filtered_count = bool(
+                re.search(r"\bCOUNT\s*\([^)]*\)", statement, re.I)
+                and re.search(r"\bWHERE\b", statement, re.I)
+            )
+            null_profile = bool(re.fullmatch(
+                r'\s*SELECT\s+COUNT\s*\(\s*\*\s*\)\s+FROM\s+[\w".]+'
+                r'\s+WHERE\s+[\w".]+\s+IS\s+(?:NOT\s+)?NULL\s*;?\s*',
+                statement, re.I
+            ))
+            if not (analytical or (filtered_count and not null_profile)):
                 continue
             executed_at = None
             if isinstance(q, dict) and q.get("timestamp") is not None:
