@@ -70,9 +70,16 @@ def main():
     parser.add_argument('--model',default=None,help='subject model name (required for --run)')
     parser.add_argument('--judge-model',default=None,help='optional evaluator model; without it results ungraded')
     parser.add_argument('--repeat',type=int,default=1)
+    parser.add_argument('--ids',default='',help='comma-separated case ids; empty means all')
     parser.add_argument('--output',default=None)
     args=parser.parse_args()
     cases=json.loads((BASE/'quality-evals.json').read_text(encoding='utf-8'))['evals']
+    if args.ids:
+        selected=set(args.ids.split(','))
+        unknown=selected-{c['id'] for c in cases}
+        if unknown: raise SystemExit('Unknown case ids: '+', '.join(sorted(unknown)))
+        cases=[c for c in cases if c['id'] in selected]
+    if not cases or args.repeat < 1: raise SystemExit('No cases or repeat < 1')
     plan=make_plan(cases)
     out=Path(args.output) if args.output else ROOT.parent/'behavior-eval-results.json'
     # Preserve independence: sealed expectations only used AFTER the model responds.
@@ -116,5 +123,6 @@ def main():
                       'errors':sum('error' in x for x in results),
                       'judged':sum(x.get('judge',{}).get('passed') in (True,False) for x in results),
                       'recorded_usage':totals,'usd_cost':'NOT_ESTIMATED_NO_VERIFIED_MODEL_PRICING'},ensure_ascii=False))
+    if any('error' in x for x in results): sys.exit(2)
 
 if __name__=='__main__':main()
