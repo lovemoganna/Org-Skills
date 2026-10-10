@@ -5,6 +5,7 @@ on:
     paths:
       - "skills/business-reasoning/**"
       - "skills/analysis-verifier/**"
+      - "skills/business-reasoning/tests/**"
       - "skills/sql-business-thinking/SKILL.md"
       - "skills/sql-business-thinking/legacy/**"
       - "skills/sql-business-thinking/tests/check_dual_split.py"
@@ -58,8 +59,9 @@ jobs:
               assert original.count(instruction)==1
           Path("dual-evidence/original-read.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\n")
           probes=Path("skills/analysis-verifier/tests/q001-verification.sql").read_text()
-          assert "read_xlsx(" not in probes, "only materialized tables allowed in verification"
-          Path("dual-evidence/full.sql").write_text(original+"\n"+probes)
+          q002=Path("skills/analysis-verifier/tests/q002-verification.sql").read_text()
+          assert "read_xlsx(" not in probes+q002, "only materialized tables allowed in verification"
+          Path("dual-evidence/full.sql").write_text(original+"\n"+probes+"\n"+q002)
           PY
           ./duckdb < dual-evidence/full.sql
       - name: Independent feedback receipt
@@ -95,6 +97,27 @@ jobs:
              'minimal_correction':'A should drill into per-asset frequency vs large transactions only when concentration is material and denominator adequate',
              'next_test':'independent unique order-id and completion semantic review'}
           (root/'verification-feedback.json').write_text(json.dumps(result,ensure_ascii=False,indent=2,default=str))
+          q2orders,q2mechanism=[load(x)[0] for x in ('q002-orders','q002-mechanism')]
+          usd=next((x for x in group if x['rail']=='fiat' and x['asset']=='USD'),None)
+          q2issues=[]
+          if usd is None: q2issues.append('USD-group-not-present')
+          else:
+              if int(usd['completed_orders'])!=int(q2mechanism['completed_usd_orders']): q2issues.append('Q001-Q002-order-count-mismatch')
+              if abs(float(usd['native_total'])-float(q2mechanism['native_total']))>0.000001: q2issues.append('Q001-Q002-amount-reconciliation-failed')
+          if int(q2orders['completed_usd_orders'])!=int(q2orders['distinct_order_ids']): q2issues.append('duplicate-or-null-fiat-order-id')
+          if int(q2orders['invalid_amounts']) or int(q2orders['null_uids']): q2issues.append('invalid-amount-or-UID')
+          verdict='REJECTED' if q2issues else 'VERIFIED'
+          q2feedback={'packet_id':'Q002','revision':1,'verdict':verdict,
+              'execution_receipt':{'engine':'Native DuckDB v1.4.2','commit':os.environ.get('GITHUB_SHA'),
+                'source_sql_sha256':(root/'original-read.sha256').read_text().strip()},
+              'validated_facts':q2mechanism,'counterevidence':q2issues,
+              'root_cause':'needs order-level decomposition, not simple ranked-user total',
+              'new_signal':'evidence for USD top-user concentration sensitivity to largest order',
+              'impact_on_decision':'concentration arithmetic is not by itself a finding of risk or account retention',
+              'minimal_correction':'A interpret largest-order sensitivity and close or pursue event-specific root cause',
+              'next_test':'time, direction and transaction-status semantics require separate evidence if pursuing cashflow'}
+          (root/'q002-verification-feedback.json').write_text(json.dumps(q2feedback,ensure_ascii=False,indent=2,default=str))
+          print(json.dumps({'Q001':result['verdict'],'Q002':verdict,'USD':q2mechanism,'issues':q2issues},ensure_ascii=False,default=str))
           print(json.dumps({'verdict':result['verdict'],'source_rows':counts[0],'groups':len(group),'issues':issues,'commit':os.environ.get('GITHUB_SHA')},ensure_ascii=False))
           PY
       - uses: actions/upload-artifact@v4
@@ -103,6 +126,9 @@ jobs:
           name: dual-skill-real-four-sheet-evidence
           path: |
             dual-evidence/verification-feedback.json
+            dual-evidence/q002-verification-feedback.json
+            dual-evidence/q002-orders.json
+            dual-evidence/q002-mechanism.json
             dual-evidence/status.json
             dual-evidence/quality.json
             dual-evidence/rates.json
