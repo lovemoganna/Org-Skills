@@ -1592,3 +1592,23 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 5. 真实 SQL 对本例全部授权记录运行，不限定固定 UID/金额/观察答案；反证检查事件时间顺序和状态，而不是仅靠同 UID、同金额、时间邻近定性。
 
 执行：`python skills/sql-business-thinking/tests/check_investigation_trace.py`；运行 SQL 及业务语义复核须另外执行。独立结构测试 PASS **不能**宣称新数据集全自动深度分析 E2E 通过。
+
+## V55：MECE 五段执行与旧 23 阶段完整保留
+
+### 正例：正常 Autopilot 用五段，而非 23 张通过卡
+输入：授权四表、要求一口气生成 SQL 分析报告。执行输出只包括 M1 数据可信、M2 业务与选题、M3 证据调查、M4 发现与决策、M5 交付与验收的汇总；九项质量 Gate、SQL/Result 哈希和实际浏览器 QA 的底层证据必须仍然存在。调试时可以精确定位 D01–D23。五段对旧阶段的归属必须无重叠、无遗漏，不得额外增加五套测试。
+
+### 反例：一口气运行误进入 23 卡 Debug 清单
+未显式请求逐阶段调试，却逐一生成 D01–D23 执行纪要，或为了填满阶段编造问题和固定 SQL。期望拒绝：一口气属于执行连续性，不自动触发 Debug 模式；只对真实阻塞展开责任阶段。
+
+### 反例：M3 预写清单替代结果驱动分析
+SQL2 在 SQL1 运行前已被预排，无新 Result 来源；即使 SQL 与 HTML 技术测试全 PASS，也必须拒绝调查深度 PASS。真实后续问题必须回到 D08/D09 质量判断，再进入当前 SQL 设计与执行。
+
+### 反例：合并时掩盖 Gate 阻塞
+若 M1 九项 Gate 任一适用检查 FAIL/BLOCKED，M3/M4 不能写整体 PASS 或产生受影响结论。五段只是汇总视图，不能篡改既有下游依赖和历史追溯。
+
+### 边界：没有高价值问题与 Dashboard-only
+M2 无合格问题时允许停止，不强造 SQL 或风险判断。Dashboard-only 可 D07→D19→D20–D23，不强制完成调查诊断；报告只有描述性事实时保持 DESCRIPTIVE_ONLY / NO_DECISION_GRADE_FINDING，不强行升级。
+
+### 验收方法
+执行既有 `tests/check_repo.py`、`tests/check_investigation_trace.py` 及独立案例；重点验证 MECE 归属覆盖全部 23 个旧阶段、主入口保留五段、正常模式不触发 Debug、动态问题来源和已有 Gate/渲染回归不丢失。静态契约检查通过不等于真实 Autopilot 自主分析 E2E。

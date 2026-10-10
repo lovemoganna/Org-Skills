@@ -480,4 +480,23 @@ strict_url_workflow = (REPO_ROOT / ".github/workflows/sqlbt-strict-url-acceptanc
 for token in ("DuckDB 1.4.2", "check_native_contract.py", "read_xlsx", "source_csv_sha256", "render-qa.json", "playwright"):
     assert token in strict_url_workflow, f"strict URL acceptance missing: {token}"
 
+# MECE is a runtime orchestration layer, not five new gates or replacement of Dxx diagnostics.
+phase_rows = re.findall(r"^\| (M[1-5]) [^|]*\| D(\d{2})–D(\d{2}) \|", debug_stages, re.M)
+assert len(phase_rows) == 5 and {x[0] for x in phase_rows} == {f"M{i}" for i in range(1,6)}, "MECE five-phase routing incomplete"
+owners = {}
+for phase, first, last in phase_rows:
+    lo, hi = int(first), int(last)
+    assert lo <= hi, "MECE phase range invalid"
+    for num in range(lo,hi+1):
+        assert num not in owners, f"MECE overlapping stage D{num:02d}"
+        owners[num] = phase
+assert sorted(owners) == list(range(1,24)), "MECE orphan or duplicate Dxx stage"
+assert "## 5. Direct / Autopilot：MECE 五段主流程" in skill, "five-phase primary route absent"
+assert "正常模式只执行五段主流程" in skill, "normal route still forces 23 stage cards"
+assert "一口气/顺序完成分析" in skill and "一口气完成普通分析" in skill, "one-shot incorrectly triggers debug"
+assert "M3 得到新 Result 后" in debug_stages and "D08/D09" in debug_stages, "result-driven reentry missing"
+assert "Dashboard-only" in debug_stages and "D07→D19→D20–D23" in debug_stages, "dashboard bypass lost"
+assert "tests/check_investigation_trace.py" in skill, "dynamic evidence gate removed"
+assert "## V55：MECE 五段执行与旧 23 阶段完整保留" in regression, "MECE regression case missing"
+
 print("OK: sql-business-thinking repository integrity")
