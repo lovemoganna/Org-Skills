@@ -479,3 +479,12 @@
 | 修改的四个文件（主入口、debug、check_repo、regression-cases；不含本台账） | 94464 字符 | 82973 字符 | -12.2% |
 
 验证边界：主文件 66 项文字契约断言及关键名称可静态核对，不代表当前版本的真实 DuckDB、全链路和浏览器 QA 均通过。CI 结果须另外记录当前提交与运行证据；旧 runner 的 PASS 不得复用。
+
+
+## V54：结果驱动调查深度门禁（2026-10-10）
+
+| 根因 | 最小修复 | 验收与保留边界 |
+|---|---|---|
+| D01–D23 每阶段文本 PASS、SQL 对账与页面检查均成功，但报告只重述 TopN/占比，未充分检验有价值的主体-时间行为组合 | 深度 Autopilot 新增 Discovery Breadth、Result-Driven Investigation、Temporal Relationship、Hypothesis Discrimination 与 Investigation Depth Gate；不改变 Learn、Direct 与 Dashboard 普通行为 | 历史报告 Stage Trace 应被拒绝。新正例、10 种负例与描述性降级检查通过；机器 trace 不等于实际模型自主发现能力 |
+| 预置 SQL 清单代替问题递进，竞争解释没有实测区分 | D12 新 Result 必须绑定 D08 后续问题/停止；调查型主发现须有 H1/H2、鉴别和稳健性证据，否则降级 | 不能使用上一轮 Result、模拟数据或静态字段补充本轮结论；历史回归保留 |
+| 邻近时间、同 UID、同额容易过度解释成真实资金闭环 | 检查事件顺序、状态、时区及余额、对手方和结算证据缺口 | 同额往返只作候选行为，原因和风险定性继续 unresolved |
