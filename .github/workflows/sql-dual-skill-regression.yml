@@ -47,19 +47,19 @@ jobs:
           from pathlib import Path
           import hashlib,re
           src=Path(".github/workflows/sql-business-thinking-native-duckdb-url-test.yml").read_text()
-          m=re.search(r"cat > d02\\.sql <<'SQL'\\n([\\s\\S]*?)\\n\\s+SQL\\b",src)
+          m=re.search(r"cat > d02\.sql <<'SQL'\n([\s\S]*?)\n\s+SQL\b",src)
           assert m, "cannot recover preserved original source SQL"
-          original="\\n".join(line[10:] if line.startswith("          ") else line for line in m.group(1).splitlines())+"\\n"
+          original="\n".join(line[10:] if line.startswith("          ") else line for line in m.group(1).splitlines())+"\n"
           url="https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
           assert original.count("read_xlsx(")==4 and original.count("'"+url+"'")==4
           for sheet in ("users","fiat_transactions","crypto_transactions","exchange_rates"):
               assert original.count("sheet = '"+sheet+"'")==1
           for instruction in ("INSTALL httpfs;","LOAD httpfs;","INSTALL excel;","LOAD excel;"):
               assert original.count(instruction)==1
-          Path("dual-evidence/original-read.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\\n")
+          Path("dual-evidence/original-read.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\n")
           probes=Path("skills/analysis-verifier/tests/q001-verification.sql").read_text()
           assert "read_xlsx(" not in probes, "only materialized tables allowed in verification"
-          Path("dual-evidence/full.sql").write_text(original+"\\n"+probes)
+          Path("dual-evidence/full.sql").write_text(original+"\n"+probes)
           PY
           ./duckdb < dual-evidence/full.sql
       - name: Independent feedback receipt
@@ -75,8 +75,11 @@ jobs:
           assert set(byrail)=={'fiat','crypto'}
           assert sum(int(x['rows']) for x in stat if x['rail']=='fiat')==counts[0]['fiat_rows']
           assert sum(int(x['rows']) for x in stat if x['rail']=='crypto')==counts[0]['crypto_rows']
-          assert sum(int(x['completed_orders']) for x in group)==sum(int(x['completed_rows'])-int(x['invalid_amounts']) for x in quality) or True
           issues=[]
+          check_total=sum(int(x['completed_orders']) for x in group)
+          completed_total=sum(int(x['completed_rows']) for x in quality)
+          if check_total!=completed_total:
+              issues.append('completed-rows-dropped-during-grouping')
           if any(int(q['invalid_amounts']) or int(q['missing_assets']) or int(q['missing_uids']) for q in quality):
               issues.append('missing-or-invalid-key-or-amount')
           for row in group:
