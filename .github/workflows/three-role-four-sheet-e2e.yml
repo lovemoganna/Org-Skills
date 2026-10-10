@@ -1,0 +1,122 @@
+name: Three Role Four Sheet E2E
+on:
+  push:
+    branches: [main, test/three-role-four-sheet-20261011]
+    paths:
+      - ".github/workflows/three-role-four-sheet-e2e.yml"
+      - "skills/business-owner/tests/four-sheet-brief.md"
+      - "skills/business-reasoning/tests/four-sheet-flow-packet.md"
+      - "skills/analysis-verifier/tests/three-role-four-sheet-flow.sql"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  three-role:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Role contracts and source immutability
+        run: |
+          python3 skills/business-owner/tests/check_repo.py
+          python3 skills/sql-business-thinking/tests/check_dual_split.py
+          python3 skills/sql-business-thinking/tests/check_native_contract.py
+      - name: Install pinned DuckDB
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Materialize original four sheets once; run new independent queries
+        run: |
+          set -euo pipefail
+          mkdir -p three-role-evidence
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,hashlib
+          src=Path(".github/workflows/sql-business-thinking-native-duckdb-url-test.yml").read_text()
+          m=re.search(r"cat > d02\.sql <<'SQL'\n([\s\S]*?)\n\s+SQL\b",src)
+          assert m,"cannot locate original SQL"
+          original="\n".join(line[10:] if line.startswith("          ") else line for line in m.group(1).splitlines())+"\n"
+          url="https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          assert original.count("read_xlsx(")==4 and original.count("'"+url+"'")==4
+          for sheet in ("users","fiat_transactions","crypto_transactions","exchange_rates"):
+              assert original.count("sheet = '"+sheet+"'")==1
+          for s in ("INSTALL httpfs;","LOAD httpfs;","INSTALL excel;","LOAD excel;"):
+              assert original.count(s)==1
+          sql=Path("skills/analysis-verifier/tests/three-role-four-sheet-flow.sql").read_text()
+          assert "read_xlsx(" not in sql
+          Path("three-role-evidence/source.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\n")
+          Path("three-role-evidence/full.sql").write_text(original+"\n"+sql)
+          PY
+          ./duckdb < three-role-evidence/full.sql
+      - name: B independent reconciliation and Owner review
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from decimal import Decimal
+          import json,os
+          root=Path("three-role-evidence")
+          def get(n):
+           p=root/(n+".json")
+           assert p.is_file() and p.stat().st_size>2, str(p)
+           r=json.loads(p.read_text())
+           assert isinstance(r,list)
+           return r
+          cov=get("coverage"); states=get("states"); quality=get("quality"); flow=get("flow")
+          recon=get("reconcile"); conc=get("concentration"); ur=get("user_rate_quality")[0]
+          D=lambda x:Decimal(str(x))
+          K=lambda r:(r["rail"],r["asset"])
+          assert {r["rail"] for r in cov}=={"fiat","crypto"}
+          assert sum(int(r["source_rows"]) for r in cov)==50
+          assert sum(int(r["n"]) for r in quality)==50
+          assert set(map(K,flow))==set(map(K,recon))==set(map(K,conc))
+          assert sum(int(r["all_orders"]) for r in flow)==50
+          for rail in ["fiat","crypto"]:
+           assert sum(int(s["n"]) for s in states if s["rail"]==rail)==next(int(r["source_rows"]) for r in cov if r["rail"]==rail)
+          rmap={K(r):r for r in recon}; cmap={K(r):r for r in conc}
+          for f in flow:
+           r=rmap[K(f)];c=cmap[K(f)]
+           assert int(f["in_orders"])==int(r["independent_in_orders"])
+           assert int(f["out_orders"])==int(r["independent_out_orders"])
+           assert D(f["amount_in"])==D(r["independent_in"])
+           assert D(f["amount_out"])==D(r["independent_out"])
+           assert D(f["net_in"])==D(f["amount_in"])-D(f["amount_out"])
+           assert D(f["amount_out"])==D(c["sum_out"])
+          errors=[]
+          if any(int(q["unique_orders"])!=int(q["n"]) or int(q["null_keys"]) or int(q["invalid_amounts"]) for q in quality):errors.append("transaction-key-or-amount-invalid")
+          if any(int(c["bad_created"]) or int(c["completed_without_time"]) or int(c["time_reversal"]) for c in cov):errors.append("event-time-data-quality")
+          if int(ur["users_rows"])!=int(ur["unique_users"]) or int(ur["orphan_tx"]):errors.append("user-key-or-orphan")
+          if any(s["direction"] not in ("deposit","withdrawal") for s in states):errors.append("unknown-direction")
+          comp=sum(int(s["n"]) for s in states if s["state"]=="completed")
+          assert comp==sum(int(f["in_orders"])+int(f["out_orders"]) for f in flow)
+          negative=[f for f in flow if D(f["net_in"])<0]
+          unfinished=[f for f in flow if int(f["noncomplete_out_orders"])>0]
+          res={"packet_id":"A-FLOW-001","revision":1,"verdict":"UNRESOLVED" if errors else "VERIFIED",
+          "execution_receipt":{"engine":"Native DuckDB 1.4.2","commit":os.environ.get("GITHUB_SHA"),
+          "source_sql_sha256":(root/"source.sha256").read_text().strip()},
+          "validated_facts":{"flow":flow,"coverage":cov,"direction_status":states,"quality":quality},
+          "counterevidence":errors,"new_signal":{"negative_rail_assets":len(negative),"noncompleted_withdrawal_rail_assets":len(unfinished)},
+          "impact_on_decision":"Historical completed-status net flow, not real-time liquidity risk",
+          "minimal_correction":"Need live wallet, queue and historical baseline for incident claims"}
+          owner={"brief_id":"B-FLOW-001","decision_review":"NOT_DECISION_READY",
+          "offline_descriptive_status":res["verdict"],"main_gap":"Real-time event/queue, external wallet confirmation and available liquidity",
+          "decision":"Do not escalate incident or interpret historical sample as current fund flight"}
+          (root/"verification-feedback.json").write_text(json.dumps(res,ensure_ascii=False,indent=2,default=str))
+          (root/"owner-decision-review.json").write_text(json.dumps(owner,ensure_ascii=False,indent=2))
+          print(json.dumps({"source_rows":{r["rail"]:r["source_rows"] for r in cov},
+          "total_completed":comp,"negative_groups":len(negative),"noncomplete_out_groups":len(unfinished),
+          "data_quality":errors,"owner_decision":"NOT_DECISION_READY","independent_reconciliation":"PASS",
+          "flow_rows":flow,"time_coverage":cov},ensure_ascii=False,default=str))
+          
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: three-role-four-sheet-evidence
+          path: |
+            three-role-evidence/*.json
+            three-role-evidence/source.sha256
+          if-no-files-found: warn
