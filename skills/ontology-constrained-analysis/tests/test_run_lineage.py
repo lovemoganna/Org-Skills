@@ -147,5 +147,28 @@ class SequenceRegression(unittest.TestCase):
         self.assertEqual([], check(d, prior))
 
 
+
+    def test_independent_pre_gate_aggregate_variants_fail_closed(self):
+        statements = (
+            "SELECT MIN(amount) FROM orders",
+            "SELECT COUNT(*) FILTER (WHERE status = 'completed') FROM orders",
+            "SELECT COUNT(*) FROM orders WHERE amount IS NULL AND status = 'completed'",
+        )
+        for i, statement in enumerate(statements):
+            with self.subTest(statement=statement):
+                d = fixture()
+                before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": before, "queries": {
+                    "independent-" + str(i): {"sql": statement}}}
+                self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:independent-" + str(i), check(d, prior))
+
+    def test_neutral_row_count_alias_remains_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "counts": {"sql": "SELECT COUNT(*) AS n FROM orders"}}}
+        self.assertEqual([], check(d, prior))
+
+
 if __name__ == "__main__":
     unittest.main()
