@@ -1575,3 +1575,20 @@ D21 正式输出：`tests/verified-d21-visualization-plan.json`，只引用 D20 
 最小修复：为嵌套 Grid/Flex 直接内容子项设置 `min-width: 0`，让表格的滚动容器实际收缩。表格仍保留自身最小宽度与可读列，不截断文本，也不通过扩大页面宽度绕过问题。
 
 验收：桌面 1440px、手机 390px、窄屏 320px 均实际渲染。当表格宽度超过 wrapper 时，`scrollWidth > clientWidth` 且可以水平滚动；同时页面本身无横向外溢。最终状态必须绑定当前 HTML SHA256 与真实浏览器证据。负例不得因为 Body 被裁切、源码存在 wrapper 或历史截图通过而晋级 PASS。
+
+
+## V54：深度报告技术检查全绿但遗漏可检验行为模式
+
+**原失败：**2026-10-10 的四表报告 SQL、9/9 数据 Gate、HTML 浏览器技术检查通过，但主要结果仍是金额 Top2 77.30%、剔极值后 52.78% 和用户重叠 8/9。其 D01–D23 的 Stage Trace 只有每阶段一句 PASS，无法证明实际 Result 触发后续问题；罗列“竞争解释”却缺可区分的执行证据。
+
+**原失败独立复现（真实 DuckDB）：**在授权 fiat_transactions 全样本中，不按 UID 预筛，找出相同 UID、币种、渠道、原生金额的 completed 入金方向订单与其后出金方向订单，对比 created_at/completed_at 的真实先后。观察窗口作为本例探索参数而非风险阈值。历史样本里 UID `438750921` 有 Pix/BRL 2,500 同额方向往返，创建时间相隔 30 分钟、入金状态完成到出金创建相隔 28 分钟。附近 TRON/USDT 入金记录不证明资金来源；没有余额/实际结算/地址归属时，闭环、洗钱或欺诈结论必须 unresolved。上述 UID、金额及分钟值仅为这份历史复现证据，**不得硬编码进未来候选生成器或预期答案**。
+
+**回归验收：**
+
+1. 只有 Dxx PASS 说明或静态 SQL 清单的旧 Stage Trace 必须被拒绝，不能冒充动态 Frontier。
+2. 正例应保留新问题的两个判断分支、实际 SQL/Result 与 run/Skill/data revision、Result 后推进下一问、H1/H2、已执行的鉴别/稳健性 Result；机器检验是结构检查，不证明业务风险。
+3. 无 parent 的预写清单、触发之前执行的下一问、两种答案改变不了判断、未执行诊断、丢反例、陈旧数据、虚构发现引用、单一竞争解释、只有排名却标深度 PASS，均拒绝。
+4. 数据能力不足时，可输出 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，不强造异常。
+5. 真实 SQL 对本例全部授权记录运行，不限定固定 UID/金额/观察答案；反证检查事件时间顺序和状态，而不是仅靠同 UID、同金额、时间邻近定性。
+
+执行：`python skills/sql-business-thinking/tests/check_investigation_trace.py`；运行 SQL 及业务语义复核须另外执行。独立结构测试 PASS **不能**宣称新数据集全自动深度分析 E2E 通过。
