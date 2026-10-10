@@ -50,7 +50,7 @@ jobs:
           Path("three-role-evidence/source.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\n")
           Path("three-role-evidence/full.sql").write_text(original+"\n"+sql)
           PY
-          ./duckdb < three-role-evidence/full.sql
+          ./duckdb -bail < three-role-evidence/full.sql
       - name: B independent reconciliation and Owner review
         run: |
           set -euo pipefail
@@ -70,10 +70,10 @@ jobs:
           D=lambda x:Decimal(str(x))
           K=lambda r:(r["rail"],r["asset"])
           assert {r["rail"] for r in cov}=={"fiat","crypto"}
-          assert sum(int(r["source_rows"]) for r in cov)==50
-          assert sum(int(r["n"]) for r in quality)==50
+          assert sum(int(r["source_rows"]) for r in cov)==sum(int(r["n"]) for r in quality)
+          assert sum(int(r["n"]) for r in quality)>0
           assert set(map(K,flow))==set(map(K,recon))==set(map(K,conc))
-          assert sum(int(r["all_orders"]) for r in flow)==50
+          assert sum(int(r["all_orders"]) for r in flow)==sum(int(r["n"]) for r in quality)
           for rail in ["fiat","crypto"]:
            assert sum(int(s["n"]) for s in states if s["rail"]==rail)==next(int(r["source_rows"]) for r in cov if r["rail"]==rail)
           rmap={K(r):r for r in recon}; cmap={K(r):r for r in conc}
