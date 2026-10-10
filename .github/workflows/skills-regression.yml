@@ -50,6 +50,9 @@ jobs:
       - name: Validate Org Museum skills-only distributable
         run: python plugins/org-museum/tests/check_distribution.py
 
+      - name: Validate portable Org Museum 1.2.2 archive and required metadata
+        run: python plugins/org-museum/tests/check_portable_distribution.py
+
       - name: Run independent Native SQL contract mutation tests
         shell: bash
         run: |
