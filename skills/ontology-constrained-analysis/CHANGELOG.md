@@ -1,5 +1,13 @@
 # Changelog
 
+## v16.8 — Browser-first runtime recovery (2026-10-10)
+
+- 针对本地 DuckDB/DNS 不可用即报告阻塞的问题，明确原生 DuckDB、官方 Web Shell、独立 WASM、其他获授权 DuckDB/CI 的可执行候选检查与有证据的失败回退；不把 Web Shell 和同 Origin WASM 错当作两条独立 CORS 修复路径。
+- 固定 SELECT * 的四表单次读取以真实 Result/Arrow 在同一 DuckDB 实例物化；只有未锁定原查询形态时可用 CTAS，禁止 COUNT 探测后重复源读取。
+- 当前没有浏览器操控能力时交付可执行入口并标 EXTERNAL_EXECUTION_REQUIRED；成功标准仍是同引擎、原 SQL、真实 Result 和四个 Gate，不以页面、下载或历史运行代替。
+- 增补 Web Shell 成功、缺浏览器控制、重复读取、同源 CORS 负例 Eval；这些是行为验收资产，不等于已完成线上浏览器 E2E。
+
+
 ## v16.7 — Pre-Gate 1 SQL classifier hardening (2026-10-10)
 
 - 冻结 main `123b4a53`，在隔离 PR #64 对原先未覆盖的 `MAX`、条件 `COUNT` 和 `COUNT(DISTINCT)` 写法取得 3 个真实 FAIL；修复后 20 条执行链回归通过。
