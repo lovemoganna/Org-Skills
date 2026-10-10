@@ -30,7 +30,8 @@ jobs:
           if [ -z "${OPENAI_API_KEY:-}" ]; then
             echo '{"status":"BLOCKED_NO_MODEL_CREDENTIAL","model_calls":0,"paired_quality":"NOT_RUN","actual_skill_activation":"NOT_RUN","full_tool_using_task":"NOT_RUN","reason":"OPENAI_API_KEY not configured in this GitHub Actions job"}' > ontology-model-eval/receipt.json
             cat ontology-model-eval/receipt.json
-            exit 0
+            # A credential blocker is not a successful model validation.
+            exit 2
           fi
           python -m pip install --disable-pip-version-check 'openai>=1.100,<4'
           # Exactly six selected test cases, two variants and one independent
