@@ -46,14 +46,21 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 询问级别：0 静默修语法；1 做了说明；2 可逆假设附依据和把握并确认；3 业务定义/粒度等由用户决定（Learn 不代答，Direct 给不超过三个选项）；4 冲突、越权或不可答时暂停。用户明确授权 Autopilot 自主分析时，只采用可追溯、可回退的三级假设并明示，四级仍阻塞。详细分级规则见 `references/protocol.md`。
 
-## 5. Direct / Autopilot：从数据发现问题
+## 5. Direct / Autopilot：MECE 五段主流程
 
-1. **D02–D06：**读取允许的数据，完成结构与质量检查；陌生多表先还原业务语义，再建立两张表：本体原子知识库、本体识别规则库。本体规则只表示真实业务模式，不写 GROUP BY、SUM、JOIN 或指标公式。
-2. **D07–D09：**从合法本体提炼少量有判断价值的指标，删除重复、低价值和机械组合。问题质量阶段的候选问题必须有 Trigger、Consequence、Answerability、Priority；不同答案不会改变判断的问题淘汰。可以没有合格问题，不强凑。
-3. **D10–D12：**先设计唯一当前 SQL，再在合法 DuckDB runtime 实际执行并解释 Result；SQL 不能从预写 checklist 推进。每次结果都更新问题边界，或明确为什么停止。**Result-Driven Investigation Gate：**深度 Autopilot 必须记录每轮问题、不同答案的不同判断、实际 Result 与新的下一问来源；不得以预写 SQL 清单冒充动态问题。
-4. **D13–D16：**对有价值的分析信号，仅沿本体允许的关系展开；建立可反驳的竞争解释和最小诊断。**没有证据时不得强设主解释或原因**；将假设保留为 unresolved。分析深度阶段的主要发现至少检查 What、Where、Why、Alternative、Test、Robustness、So What；无法验证的项明确说明。**Investigation Depth Gate：**在数据支持主体、事件和时间关系时，不能只靠 TopN/比例宣称完成深度调查；应检验合法的行为序列及反例。调查性主要发现必须有可反驳的竞争解释、实际执行的区分测试和稳健性检查；否则降级为描述性或 unresolved。
-5. **D17–D18：**仅把可由实际 Result 复算的事实晋级为已验证发现；区分历史状态与实时状态、方向与完成、状态占比与成功率、口径敏感性与稳定规律。没有运营动作证据时，允许决策结果为“尚不能决定”。SQL、数据 Gate 和浏览器 PASS 不能替代调查深度 PASS；纯排名/占比标为 `DESCRIPTIVE_ONLY`，无法证明可行动判断时标 `NO_DECISION_GRADE_FINDING`，不强凑风险原因。
-6. **循环规则：**有新价值问题回到 D08→D09→D10→D11→D12；无新增判断价值即停。阶段只消费已验证上游，不得将旧结果、测试夹具或模拟样例升级成实际发现。调查报告需保留结构化 `question → SQL Result → frontier update → next question/stop` 证据；`tests/check_investigation_trace.py` 仅验证证据结构，不能代替 DuckDB 执行或业务判断。
+**正常模式只执行五段主流程，不逐项填写 D01–D23 的阶段卡。** 23 个 Dxx 是 Debug 的责任定位编号；必要的 SQL、质量 Gate、版本与最终产物证据仍必须实际执行。每段只负责一种产物，不用增设同义审核阶段。
+
+| 主段 | 唯一职责 | 既有子阶段 | 完成判据 |
+|---|---|---|---|
+| **M1 数据可信** | 锁定授权、运行时、读取与质量 | D01–D03 | 输入契约及适用质量 Gate 可核验；阻塞约束下游 |
+| **M2 业务与选题** | 还原业务对象/关系；建立两张本体表；筛出有判断价值的问题 | D04–D09 | 当前问题有合法关系、反向结果分支和优先理由；可为空 |
+| **M3 证据调查** | 当前 SQL → 真实 Result → 分析信号 → 竞争解释、诊断与稳健性 | D10–D16 | 实际 Result 改变/确认判断；新问题从本轮证据产生 |
+| **M4 发现与决策** | 限定已证实发现、可行动判断；按需审核看板资格 | D17–D19 | 结论可溯源，不足则明确 descriptive / unresolved / no decision；D19 仅看板适用 |
+| **M5 交付与验收** | 内容规范、可视化、实体产物、浏览器 QA | D20–D23 | 产物与本轮 SQL/Result/版本绑定；质量与渲染门禁都通过 |
+
+**唯一分析循环：**M2 选择当前问题 → M3 设计并执行一条当前 SQL → 检查 Result 是否改变问题边界。有新增价值时，仅返回 M2 的 D08/D09 重新评估下一问，之后再执行 M3；没有新证据价值、不能回答或触及权限/质量阻塞时停止。不得按固定查询清单凑轮数或反复重建本体。保留 `question → SQL Result → frontier update → next question/stop` 的简要证据；`tests/check_investigation_trace.py` 只校验证据结构，不代替业务验证。
+
+**调查深度：**仅在数据含合法主体、事件和时间关系时，检验必要的行为序列、竞争解释、反证及稳健性。**Result-Driven Investigation Gate** 要求下一问可追溯至本轮新 Result；**Investigation Depth Gate** 禁止仅凭 TopN/比例宣称深度 PASS。没有充分证据时如实降级为 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，而不是为了过关强造风险原因。Report 依据 M4 的 D18；Dashboard 可在 M2 的 D07 后跳至 D19 资格判断，不强制完成深度调查；Hybrid 各按原条件验收。
 
 用户没有请求人物会话时，不强行生成 Star/Lucy。若明确要求，用户的角色名、能力、职责和知识边界优先于默认角色（Role Contract Gate / Role Binding Gate）；没有定义时才使用 Star/Lucy。要求代码在对话中生成时，遵守 `references/dialogue-rendering.md` 的代码增量、唯一可执行 SQL、Result Dependency Gate、知识顺序和最终追溯规则；不得用历史答案倒灌。
 
