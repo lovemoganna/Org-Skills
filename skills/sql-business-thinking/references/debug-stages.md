@@ -557,3 +557,18 @@ D12 后按证据选择：
 最终可以采用**单个 Skill 内部分段、多个独立 Skill、子模块**、状态文件或其他形式。当前保持未确定。
 
 现有 `debug-stages.md` 只是协议存放位置，不代表最终模块边界。
+
+
+## 12. 调查深度专属验收（不改原阶段依赖）
+
+仅在用户要求深度调查或深度分析 Report/Autopilot 时启用，不强制扩展 Learn、简单 Direct 或 Dashboard：
+
+- D08/D09：每个当前问题记录真实触发依据与两种答案分别改变的判断；无差别的 TopN、机械切片、集合重叠须淘汰，允许空集。
+- D10/D11：当前问题通过 D09 后才设计并执行 SQL；绑定 question_id、实际 SQL/Result SHA、run/Skill/data revision；预置 Gate SQL 不作为动态分析证据。
+- D12：记录实际 Result 如何改变判断及下一问/停机原因；D01–D23 每阶段一句 PASS 不能代替逐次结果驱动的 Frontier。
+- D13：合法主体、事件时间、方向等关系具备时，应评估与当前问题有关的行为顺序或重复模式，保留采纳/淘汰依据；不得仅凭 TopN 停止调查，也不得硬造异常。
+- D14–D16：调查型主发现要求 H1/H2 各自可观察预测与反证，至少一个真实执行的区分测试与一次负控/稳健性 Result。未执行或不具鉴别力时标 unresolved。
+- D17/D18：描述性事实可晋级为已验证描述，但不能当调查深度 PASS。不能据同 UID、同额、邻近时间宣称资金闭环、真实结算、洗钱、欺诈或应采取限制动作。
+- D20/D23：报告主发现应有具体事件/主体、合法行为关系、实测诊断与反例、业务限制和可执行调查下一步；无高价值发现则明确 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，不伪造结论。结构化 trace 校验必须与实际 SQL 的证据链相符，机器检查通过不等于业务真值和完整 E2E 通过。
+
+最小 trace 契约：`meta(run,skill,data)`、`questions(id,trigger,parent?,branches)`、`results(id,question,run,skill,data,sql_sha,result_sha,status)`、`updates(source,observed,change,next?)`、`findings(id,kind,evidence,claim,limits,alternatives?,diagnostic?,robustness?,decision_change?)`、`report(findings,depth)`。用 `tests/check_investigation_trace.py <trace.json>` 检查结构。其他格式可先无损映射到此结构；测试夹具或旧 run 不得冒充本轮真实调查。
