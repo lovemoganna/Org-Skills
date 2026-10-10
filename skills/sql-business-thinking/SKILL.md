@@ -58,7 +58,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 | **M4 发现与决策** | 限定已证实发现、可行动判断；按需审核看板资格 | D17–D19 | 结论可溯源，不足则明确 descriptive / unresolved / no decision；D19 仅看板适用 |
 | **M5 交付与验收** | 内容规范、可视化、实体产物、浏览器 QA | D20–D23 | 产物与本轮 SQL/Result/版本绑定；质量与渲染门禁都通过 |
 
-**唯一分析循环：**M2 选择当前问题 → M3 设计并执行一条当前 SQL → 检查 Result 是否改变问题边界。有新增价值时，仅返回 M2 的 D08/D09 重新评估下一问，之后再执行 M3；没有新证据价值、不能回答或触及权限/质量阻塞时停止。不得按固定查询清单凑轮数或反复重建本体。保留 `question → SQL Result → frontier update → next question/stop` 的简要证据；`tests/check_investigation_trace.py` 只校验证据结构，不代替业务验证。
+**唯一分析循环：**M2 的问题质量阶段（D08/D09）选择当前问题 → M3 设计并执行一条当前 SQL → 检查 Result 是否改变问题边界。有新增价值时，仅返回 M2 的 D08/D09 重新评估下一问，之后再执行 M3；没有新证据价值、不能回答或触及权限/质量阻塞时停止。不得按固定查询清单凑轮数或反复重建本体。保留 `question → SQL Result → frontier update → next question/stop` 的简要证据；`tests/check_investigation_trace.py` 只校验证据结构，不代替业务验证。
 
 **调查深度：**仅在数据含合法主体、事件和时间关系时，检验必要的行为序列、竞争解释、反证及稳健性。**Result-Driven Investigation Gate** 要求下一问可追溯至本轮新 Result；**Investigation Depth Gate** 禁止仅凭 TopN/比例宣称深度 PASS。没有充分证据时如实降级为 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，而不是为了过关强造风险原因。Report 依据 M4 的 D18；Dashboard 可在 M2 的 D07 后跳至 D19 资格判断，不强制完成深度调查；Hybrid 各按原条件验收。
 
