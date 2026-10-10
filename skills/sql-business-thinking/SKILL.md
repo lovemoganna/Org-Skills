@@ -13,7 +13,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 | **Learn（默认）** | 引导用户明确目的、结果、粒度、表、条件和关系；用户练习的 SQL 不直接代写。 | `references/protocol.md` |
 | **Direct** | 用户明确要最终 SQL 或直接结果；自主完成推导，交付 SQL、口径和执行证据。 | 遇陌生数据集读取 `references/dataset-planning.md` |
 | **Dataset-to-Report Autopilot** | 用户提供数据集、授权表范围并要求完整分析/报告；目标可选。自行勘察并形成问题，不要求外挂字段、JOIN、SQL、图型或报告骨架。 | `references/dataset-planning.md`、`references/ontology-analysis.md` |
-| **Debug** | 用户指定调试、单阶段、重跑或从阶段继续时执行阶段协议；明确要求“一口气/顺序执行全部”时连续执行实际需要的阶段。 | `references/debug-stages.md` |
+| **Debug** | 用户明确要求调试、单阶段重跑或从阶段继续时展开 Dxx 卡片；单纯要求“一口气/顺序完成分析”仍使用五段主流程。 | `references/debug-stages.md` |
 
 用户明确要求仅确认当前阶段时，不提前分析；之后明确授权完整连续执行时，以最新指令为准。普通 Direct/Autopilot 不逐阶段索取确认。先确定 SQL 方言；已有运行环境或 SQL 可识别时不重复询问。
 
@@ -78,7 +78,7 @@ QA 检查实际 DOM、桌面/移动端几何尺寸、交互、表格可读性、
 
 ## 7. Debug、状态与完成标准
 
-单阶段 Debug 按 `references/debug-stages.md` 的阶段、依赖、状态、回退和锁定规则执行。用户**明确要求一口气完成**时，从 D01 连续经过真实需要的阶段，并保留 D08–D17 的分析循环；每阶段按真实证据验收，不必逐次请求已预授权的确认。发生阻塞时先尝试合法的环境/路径修复；不得跨越阻塞、编造 PASS 或以单条固定 SQL 代替自主分析。
+单阶段 Debug 按 `references/debug-stages.md` 的阶段、依赖、状态、回退和锁定规则执行。用户**明确要求一口气完成**普通分析时，走五段主流程，只在有实际失败时展开对应 Dxx；明确要求完整 Debug 压测时，可展开全套适用阶段并保留 D08–D17 的分析循环。任何模式均按真实证据验收，不逐次请求已预授权确认。遇到阻塞先尝试合法修复；禁止跨越阻塞、编造 PASS 或以固定 SQL 清单冒充自主分析。
 
 输出严格区分 **PASS / FAIL / BLOCKED / 未执行**，并报告最早阻塞阶段、错误、已通过证据与恢复条件。完整 E2E 仅在当前 Skill、当前数据、当前 runner、所有适用阶段、真实 SQL 与最终成品 QA 全部通过后成立；旧 run、旧报告、部分测试通过都不算。
 
