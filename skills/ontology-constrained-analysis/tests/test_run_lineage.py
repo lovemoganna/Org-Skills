@@ -110,5 +110,42 @@ class SequenceRegression(unittest.TestCase):
         d=fixture();d["queries"]=[]
         self.assertIn("NO_ACTUAL_SQL_RESULTS",check(d))
 
+
+    def test_pre_gate_max_aggregate_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "hidden-max": {"sql": "SELECT MAX(amount) AS peak FROM orders"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:hidden-max", check(d, prior))
+
+    def test_pre_gate_filtered_count_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "status-count": {"sql": "SELECT COUNT(*) FROM orders WHERE status = 'completed'"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:status-count", check(d, prior))
+
+    def test_pre_gate_distinct_count_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "distinct-uid": {"sql": "SELECT COUNT(DISTINCT uid) FROM orders"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:distinct-uid", check(d, prior))
+
+    def test_pre_gate_null_profile_must_remain_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "null-check": {"sql": "SELECT COUNT(*) FROM orders WHERE amount IS NULL"}}}
+        self.assertEqual([], check(d, prior))
+
+    def test_post_gate_business_aggregate_is_allowed(self):
+        d = fixture()
+        after = (datetime.fromisoformat(d["stages"][0]["at"]) + timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": after, "queries": {
+            "approved-max": {"timestamp": after, "sql": "SELECT MAX(amount) FROM orders"}}}
+        self.assertEqual([], check(d, prior))
+
+
 if __name__ == "__main__":
     unittest.main()
