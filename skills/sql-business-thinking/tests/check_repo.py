@@ -481,7 +481,7 @@ for token in ("DuckDB 1.4.2", "check_native_contract.py", "read_xlsx", "source_c
     assert token in strict_url_workflow, f"strict URL acceptance missing: {token}"
 
 # MECE is a runtime orchestration layer, not five new gates or replacement of Dxx diagnostics.
-phase_rows = re.findall(r"^\\| (M[1-5]) [^|]*\\| D(\\d{2})–D(\\d{2}) \\|", debug_stages, re.M)
+phase_rows = re.findall(r"^\| (M[1-5]) [^|]*\| D(\d{2})–D(\d{2}) \|", debug_stages, re.M)
 assert len(phase_rows) == 5 and {x[0] for x in phase_rows} == {f"M{i}" for i in range(1,6)}, "MECE five-phase routing incomplete"
 owners = {}
 for phase, first, last in phase_rows:
