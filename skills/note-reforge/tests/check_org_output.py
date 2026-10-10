@@ -14,7 +14,7 @@ def fields(text):
 
 
 def blocks(text):
-    pattern = r'(?ims)^#\+begin_src\b[^\n]*\n.*?^#\+end_src[^\n]*
+    pattern = r'(?ims)^#\+begin_src\b[^\n]*\n.*?^#\+end_src[^\n]*$'
     return re.findall(pattern, text)
 
 
