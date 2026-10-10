@@ -50,10 +50,10 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 1. **D02–D06：**读取允许的数据，完成结构与质量检查；陌生多表先还原业务语义，再建立两张表：本体原子知识库、本体识别规则库。本体规则只表示真实业务模式，不写 GROUP BY、SUM、JOIN 或指标公式。
 2. **D07–D09：**从合法本体提炼少量有判断价值的指标，删除重复、低价值和机械组合。问题质量阶段的候选问题必须有 Trigger、Consequence、Answerability、Priority；不同答案不会改变判断的问题淘汰。可以没有合格问题，不强凑。
-3. **D10–D12：**先设计唯一当前 SQL，再在合法 DuckDB runtime 实际执行并解释 Result；SQL 不能从预写 checklist 推进。每次结果都更新问题边界，或明确为什么停止。
-4. **D13–D16：**对有价值的分析信号，仅沿本体允许的关系展开；建立可反驳的竞争解释和最小诊断。**没有证据时不得强设主解释或原因**；将假设保留为 unresolved。分析深度阶段的主要发现至少检查 What、Where、Why、Alternative、Test、Robustness、So What；无法验证的项明确说明。
-5. **D17–D18：**仅把可由实际 Result 复算的事实晋级为已验证发现；区分历史状态与实时状态、方向与完成、状态占比与成功率、口径敏感性与稳定规律。没有运营动作证据时，允许决策结果为“尚不能决定”。
-6. **循环规则：**有新价值问题回到 D08→D09→D10→D11→D12；无新增判断价值即停。阶段只消费已验证上游，不得将旧结果、测试夹具或模拟样例升级成实际发现。
+3. **D10–D12：**先设计唯一当前 SQL，再在合法 DuckDB runtime 实际执行并解释 Result；SQL 不能从预写 checklist 推进。每次结果都更新问题边界，或明确为什么停止。**Result-Driven Investigation Gate：**深度 Autopilot 必须记录每轮问题、不同答案的不同判断、实际 Result 与新的下一问来源；不得以预写 SQL 清单冒充动态问题。
+4. **D13–D16：**对有价值的分析信号，仅沿本体允许的关系展开；建立可反驳的竞争解释和最小诊断。**没有证据时不得强设主解释或原因**；将假设保留为 unresolved。分析深度阶段的主要发现至少检查 What、Where、Why、Alternative、Test、Robustness、So What；无法验证的项明确说明。**Investigation Depth Gate：**在数据支持主体、事件和时间关系时，不能只靠 TopN/比例宣称完成深度调查；应检验合法的行为序列及反例。调查性主要发现必须有可反驳的竞争解释、实际执行的区分测试和稳健性检查；否则降级为描述性或 unresolved。
+5. **D17–D18：**仅把可由实际 Result 复算的事实晋级为已验证发现；区分历史状态与实时状态、方向与完成、状态占比与成功率、口径敏感性与稳定规律。没有运营动作证据时，允许决策结果为“尚不能决定”。SQL、数据 Gate 和浏览器 PASS 不能替代调查深度 PASS；纯排名/占比标为 `DESCRIPTIVE_ONLY`，无法证明可行动判断时标 `NO_DECISION_GRADE_FINDING`，不强凑风险原因。
+6. **循环规则：**有新价值问题回到 D08→D09→D10→D11→D12；无新增判断价值即停。阶段只消费已验证上游，不得将旧结果、测试夹具或模拟样例升级成实际发现。调查报告需保留结构化 `question → SQL Result → frontier update → next question/stop` 证据；`tests/check_investigation_trace.py` 仅验证证据结构，不能代替 DuckDB 执行或业务判断。
 
 用户没有请求人物会话时，不强行生成 Star/Lucy。若明确要求，用户的角色名、能力、职责和知识边界优先于默认角色（Role Contract Gate / Role Binding Gate）；没有定义时才使用 Star/Lucy。要求代码在对话中生成时，遵守 `references/dialogue-rendering.md` 的代码增量、唯一可执行 SQL、Result Dependency Gate、知识顺序和最终追溯规则；不得用历史答案倒灌。
 
@@ -61,7 +61,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 交付类型以用户已确认要求为准：**Report 用 D18，Dashboard 用 D19（可从 D07 直接评估），Hybrid 分别取两者**。不得把深度诊断默认塞进看板；看板只保留可持续监控且变化后值得关注的指标。
 
-固定顺序：**D20 交付规范 → D21 可视化计划 → D22 Renderer → D23 Rendered QA → Artifact Regression Loop**。D20 不改口径/重新分析；D21 独立选择图型、单位、布局，简单图不强制比较候选；D22 不新增数据或结论。任何展示都受上游质量 Gate 约束。正文回答主问题，证据可下沉但不得藏掉答案；删去重复图、无信息台词、设计过程解释和无效操作入口。Dialogue-Driven Report 按认知顺序保留会话、SQL、Result，不提前泄露最终 KPI。
+固定顺序：**D20 交付规范 → D21 可视化计划 → D22 Renderer → D23 Rendered QA → Artifact Regression Loop**。D20 不改口径/重新分析；D21 独立选择图型、单位、布局，简单图不强制比较候选；D22 不新增数据或结论。任何展示都受上游质量 Gate 约束。正文回答主问题，证据可下沉但不得藏掉答案；深度报告的主要发现须交代具体主体/事件、合法行为关系、竞争解释、真实诊断、反例和可执行调查下一步；只有排行榜、宏观比例及通用建议不能标深度 PASS。删去重复图、无信息台词、设计过程解释和无效操作入口。Dialogue-Driven Report 按认知顺序保留会话、SQL、Result，不提前泄露最终 KPI。
 
 **Default HTML Delivery Contract：**未指定文件名时输出实体 `/mnt/data/sql_business_thinking_report.html` 并提供可访问的 sandbox 链接；单 HTML 包含可读的报告结果和必要代码，不能只交源码或声称已生成。外部 CDN/异步资源须经过最终环境验证；离线时仍应能阅读已验证结果。
 
