@@ -37,6 +37,9 @@ Counterexamples, each expected to exit 1:
 - Modify or drop original `#+begin_src` contents.
 - Change original `#+WIKI_ID`, `#+INGEST_ID` or other non-title header.
 - Reuse the source file path as the output path.
+- Change an uppercase `#+BEGIN_SRC` / `#+END_SRC` code block (Org syntax is case-insensitive).
+
+Counterexample expected to pass (exit 0): a plain Org note without publication identity fields can produce a `.next.org` in the same indexed folder; the isolation gate should not overreject it.
 
 Unknown indexed root: the structural check can still run without `--indexed-root`, but **isolation is not verified**. This script is not a model-output quality judge.
 
