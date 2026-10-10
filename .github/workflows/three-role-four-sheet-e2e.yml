@@ -67,6 +67,7 @@ jobs:
            return r
           cov=get("coverage"); states=get("states"); quality=get("quality"); flow=get("flow")
           recon=get("reconcile"); conc=get("concentration"); ur=get("user_rate_quality")[0]
+noncomplete=get("noncomplete_out_by_status")
           D=lambda x:Decimal(str(x))
           K=lambda r:(r["rail"],r["asset"])
           assert {r["rail"] for r in cov}=={"fiat","crypto"}
@@ -94,12 +95,18 @@ jobs:
           assert comp==sum(int(f["in_orders"])+int(f["out_orders"]) for f in flow)
           negative=[f for f in flow if D(f["net_in"])<0]
           unfinished=[f for f in flow if int(f["noncomplete_out_orders"])>0]
+          for group in flow:
+           actual=sum(int(x["orders"]) for x in noncomplete if K(x)==K(group))
+           assert actual==int(group["noncomplete_out_orders"]),K(group)
+          live_states={"pending","processing","confirming"}
+          active_noncomplete=[x for x in noncomplete if x["state"] in live_states]
+          terminal_noncomplete=[x for x in noncomplete if x["state"] not in live_states]
           res={"packet_id":"A-FLOW-001","revision":1,"verdict":"UNRESOLVED" if errors else "VERIFIED",
           "execution_receipt":{"engine":"Native DuckDB 1.4.2","commit":os.environ.get("GITHUB_SHA"),
           "source_sql_sha256":(root/"source.sha256").read_text().strip()},
           "validated_facts":{"flow":flow,"coverage":cov,"direction_status":states,"quality":quality},
           "counterevidence":errors,"new_signal":{"negative_rail_assets":len(negative),"noncompleted_withdrawal_rail_assets":len(unfinished)},
-          "impact_on_decision":"Historical completed-status net flow, not real-time liquidity risk",
+          "impact_on_decision":"Noncompleted does not mean backlog; pending/processing must be separated from failed/cancelled",
           "minimal_correction":"Need live wallet, queue and historical baseline for incident claims"}
           owner={"brief_id":"B-FLOW-001","decision_review":"NOT_DECISION_READY",
           "offline_descriptive_status":res["verdict"],"main_gap":"Real-time event/queue, external wallet confirmation and available liquidity",
@@ -108,6 +115,8 @@ jobs:
           (root/"owner-decision-review.json").write_text(json.dumps(owner,ensure_ascii=False,indent=2))
           print(json.dumps({"source_rows":{r["rail"]:r["source_rows"] for r in cov},
           "total_completed":comp,"negative_groups":len(negative),"noncomplete_out_groups":len(unfinished),
+          "noncomplete_state_rows":noncomplete,"active_noncomplete_orders":sum(int(x["orders"]) for x in active_noncomplete),
+          "terminal_noncomplete_orders":sum(int(x["orders"]) for x in terminal_noncomplete),
           "data_quality":errors,"owner_decision":"NOT_DECISION_READY","independent_reconciliation":"PASS",
           "flow_rows":flow,"time_coverage":cov},ensure_ascii=False,default=str))
           

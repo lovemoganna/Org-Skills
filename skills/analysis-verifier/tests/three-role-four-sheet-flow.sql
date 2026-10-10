@@ -89,3 +89,15 @@ SELECT (SELECT COUNT(*) FROM u) AS users_rows,(SELECT COUNT(DISTINCT uid) FROM u
  (SELECT COUNT(*) FROM t LEFT JOIN u USING(uid) WHERE u.uid IS NULL) AS orphan_tx,
  (SELECT COUNT(*) FROM exchange_rates) AS rate_rows,
  (SELECT COUNT(DISTINCT effective_date) FROM exchange_rates) AS rate_dates;
+
+.once three-role-evidence/noncomplete_out_by_status.json
+WITH t AS (
+ SELECT 'fiat' AS rail,CAST(currency AS VARCHAR) AS asset,CAST(status AS VARCHAR) AS state,
+        TRY_CAST(amount AS DECIMAL(38,8)) AS amount
+ FROM fiat_transactions WHERE direction='withdrawal' AND status<>'completed'
+ UNION ALL
+ SELECT 'crypto',CAST(asset AS VARCHAR),CAST(status AS VARCHAR),TRY_CAST(amount AS DECIMAL(38,8))
+ FROM crypto_transactions WHERE direction='withdrawal' AND status<>'completed'
+)
+SELECT rail,asset,state,COUNT(*) AS orders,SUM(amount) AS amount_native
+FROM t GROUP BY rail,asset,state ORDER BY rail,asset,state;
