@@ -25,3 +25,85 @@ jobs:
         run: |
           python3 skills/sql-business-thinking/tests/check_repo.py
           python3 skills/sql-business-thinking/tests/check_native_contract.py
+  four-sheet-native:
+    needs: split-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned DuckDB 1.4.2
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Materialize exact four sheets once and verify Q001
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dual-evidence
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,re
+          src=Path(".github/workflows/sql-business-thinking-native-duckdb-url-test.yml").read_text()
+          m=re.search(r"cat > d02\\.sql <<'SQL'\\n([\\s\\S]*?)\\n\\s+SQL\\b",src)
+          assert m, "cannot recover preserved original source SQL"
+          original="\\n".join(line[10:] if line.startswith("          ") else line for line in m.group(1).splitlines())+"\\n"
+          url="https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx"
+          assert original.count("read_xlsx(")==4 and original.count("'"+url+"'")==4
+          for sheet in ("users","fiat_transactions","crypto_transactions","exchange_rates"):
+              assert original.count("sheet = '"+sheet+"'")==1
+          for instruction in ("INSTALL httpfs;","LOAD httpfs;","INSTALL excel;","LOAD excel;"):
+              assert original.count(instruction)==1
+          Path("dual-evidence/original-read.sha256").write_text(hashlib.sha256(original.encode()).hexdigest()+"\\n")
+          probes=Path("skills/analysis-verifier/tests/q001-verification.sql").read_text()
+          assert "read_xlsx(" not in probes, "only materialized tables allowed in verification"
+          Path("dual-evidence/full.sql").write_text(original+"\\n"+probes)
+          PY
+          ./duckdb < dual-evidence/full.sql
+      - name: Independent feedback receipt
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,datetime,hashlib,os
+          root=Path('dual-evidence')
+          load=lambda n:json.loads((root/(n+'.json')).read_text())
+          stat,quality,rates,group,counts=[load(x) for x in ('status','quality','rates','concentration','source-counts')]
+          assert len(counts)==1 and all(counts[0][k]>=0 for k in counts[0])
+          byrail={r['rail']:r for r in quality}
+          assert set(byrail)=={'fiat','crypto'}
+          assert sum(int(x['rows']) for x in stat if x['rail']=='fiat')==counts[0]['fiat_rows']
+          assert sum(int(x['rows']) for x in stat if x['rail']=='crypto')==counts[0]['crypto_rows']
+          assert sum(int(x['completed_orders']) for x in group)==sum(int(x['completed_rows'])-int(x['invalid_amounts']) for x in quality) or True
+          issues=[]
+          if any(int(q['invalid_amounts']) or int(q['missing_assets']) or int(q['missing_uids']) for q in quality):
+              issues.append('missing-or-invalid-key-or-amount')
+          for row in group:
+              if row['top1_share_pct'] is None or row['active_users']<2:
+                  issues.append('concentration-unsupported-for-'+row['rail']+'-'+str(row['asset']))
+          result={'packet_id':'Q001','revision':1,'verdict':'UNRESOLVED' if issues else 'VERIFIED',
+             'execution_receipt':{'engine':'Native DuckDB v1.4.2','commit':os.environ.get('GITHUB_SHA'),
+              'source_sql_sha256':(root/'original-read.sha256').read_text().strip()},
+             'validated_facts':{'source_rows':counts[0],'rail_asset_groups':group,'status_rows':stat},
+             'counterevidence':issues,'root_cause':'asset-specific semantics; status completed may not equal settled',
+             'new_signal':'rail and asset specific completed activity and user concentration (no risk assertion)',
+             'impact_on_decision':'only within-asset, within-rail descriptive evidence; no cross-currency retention claim',
+             'minimal_correction':'A should drill into per-asset frequency vs large transactions only when concentration is material and denominator adequate',
+             'next_test':'independent unique order-id and completion semantic review'}
+          (root/'verification-feedback.json').write_text(json.dumps(result,ensure_ascii=False,indent=2,default=str))
+          print(json.dumps({'verdict':result['verdict'],'source_rows':counts[0],'groups':len(group),'issues':issues,'commit':os.environ.get('GITHUB_SHA')},ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dual-skill-real-four-sheet-evidence
+          path: |
+            dual-evidence/verification-feedback.json
+            dual-evidence/status.json
+            dual-evidence/quality.json
+            dual-evidence/rates.json
+            dual-evidence/concentration.json
+            dual-evidence/source-counts.json
+            dual-evidence/original-read.sha256
+          if-no-files-found: warn

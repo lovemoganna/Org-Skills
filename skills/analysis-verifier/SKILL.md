@@ -39,5 +39,8 @@ minimal_correction: "对 A 最小可执行修改指令"
 next_test: "最小额外证据或 NONE"
 ```
 
+## 反馈是唯一出口
+反馈必须绑定本轮实际执行的 packet_id 和 revision，写明证据、失败原因、最小修正及新信号；反馈给分析端后停止。验证端不能直接生成下一轮分析议题。
+
 ## 停止与排除
 每个 Packet 只裁决当前 revision，交回 A；不擅自合成下一轮业务问题，不替 A 写 Final Finding，不生成报告 UI，不维护原 D01–D23 或 HTML 验收门禁。遇到无法验证的项输出 BLOCKED/UNRESOLVED，绝不自报 PASS。
