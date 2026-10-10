@@ -1,0 +1,22 @@
+name: Business Owner Scenario Regression
+on:
+  push:
+    branches: [main, feature/business-owner-decision-framing-20261011]
+    paths:
+      - "skills/business-owner/**"
+      - "skills/business-reasoning/SKILL.md"
+      - "skills/analysis-verifier/SKILL.md"
+      - ".github/workflows/business-owner-regression.yml"
+      - "README.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Business scenario and role regression
+        run: python3 skills/business-owner/tests/check_repo.py
+      - name: Preserve A/B split constraints
+        run: python3 skills/sql-business-thinking/tests/check_dual_split.py

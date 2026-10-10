@@ -12,6 +12,7 @@
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
 | 读取公开 X/Twitter 帖文并核验正文 | `x-link-reader` | skills/x-link-reader/SKILL.md |
+| 从突发经营事件或业务目标提炼值得决策的分析任务 | `business-owner` | skills/business-owner/SKILL.md |
 | 面对陌生数据集，从业务问题推导数据逻辑与 SQL | `sql-business-thinking` | skills/sql-business-thinking/ |
 | 将模糊要求炼成分类、判定、操作、能力、质量等可执行标准，并完成 Loop 质检 | `standards-engineering-loop` | skills/standards-engineering-loop/SKILL.md |
 | 从真实多表数据建立本体、独立验证 SQL 与 Finding | `ontology-constrained-analysis` | skills/ontology-constrained-analysis/SKILL.md |
@@ -48,8 +49,11 @@
 - 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
 
 ### 数据分析
+- `business-owner`：事件或经营目标 → 业务影响假设 → 单一决策任务 → 证据要求 → Decision Review；与 `business-reasoning` / `analysis-verifier` 形成业务价值闭环。
 - `ontology-constrained-analysis`：业务语义 → 本体原子与规则 → SQL 验证 → Signal → Finding；源不可用时交付阻塞审计报告。
-- `business-reasoning`：业务目的 → 拆问题 → 结果表 → 表/字段/条件 → 候选 SQL（只分析）。\n- `analysis-verifier`：独立检查语义、SQL、真实 Result 与反例，输出 Verification Feedback（只验证）。\n- `sql-business-thinking`：仅兼容路由；旧版完整规则归档在 `skills/sql-business-thinking/legacy/SKILL.md`。
+- `business-reasoning`：业务目的 → 拆问题 → 结果表 → 表/字段/条件 → 候选 SQL（只分析）。
+- `analysis-verifier`：独立检查语义、SQL、真实 Result 与反例，输出 Verification Feedback（只验证）。
+- `sql-business-thinking`：仅兼容路由；旧版完整规则归档在 `skills/sql-business-thinking/legacy/SKILL.md`。
 - `standards-engineering-loop`：要求还原 → 领域与本体映射 → 原子标准 / Lisp 规则 → 测试 / 依据 → Baseline → Loop 0–9 → 发布判断。
 
 ### 数据产品
@@ -64,6 +68,7 @@
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
 | `x-link-reader` | 公开 X/Twitter 内容只读获取与来源核验 | `skills/x-link-reader/SKILL.md` | Network E2E pending |
+| `business-owner` | 从真实业务事件/经营目标制定决策挑战并验收分析价值 | `skills/business-owner/SKILL.md` | Active; decision framing |
 | `business-reasoning` | 复现业务负责人 SQL 思维：从目的和结果表反推业务问题与候选 SQL | `skills/business-reasoning/SKILL.md` | Active; reasoning only |
 | `analysis-verifier` | 独立检验业务语义、SQL 和真实结果，反馈反例并驱动下一轮分析 | `skills/analysis-verifier/SKILL.md` | Active; verification only |
 | `sql-business-thinking` | 旧入口兼容路由（执行逻辑已一拆二） | `skills/sql-business-thinking/SKILL.md` | Compatibility only |
