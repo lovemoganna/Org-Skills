@@ -453,6 +453,15 @@ assert set(d23_info["screenshots"]) == {
 }, "D23_SCREENSHOT_NAMES_STALE"
 
 
+# Investigation-grade quality is a separate acceptance gate from technical SQL/HTML success.
+for token in ("Result-Driven Investigation Gate", "Investigation Depth Gate", "DESCRIPTIVE_ONLY"):
+    assert token in skill, f"missing investigation gate: {token}"
+ontology = (ROOT / "references" / "ontology-analysis.md").read_text(encoding="utf-8")
+for token in ("Discovery Breadth Gate", "Temporal Relationship Gate", "Hypothesis Discrimination Gate"):
+    assert token in ontology, f"missing investigation contract: {token}"
+assert "深度报告技术检查全绿但遗漏可检验行为模式" in regression, "historical shallow report regression missing"
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_investigation_trace.py")], check=True)
+
 # Regression: cleanup must preserve both execution paths and strict runtime fidelity.
 for token in ["完整连续执行请求", "单阶段请求", "从指定阶段继续", "不能机械走一次 D01 至 D23"]:
     assert token in debug_stages, f"debug mode scope regression: {token}"
