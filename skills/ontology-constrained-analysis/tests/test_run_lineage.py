@@ -170,5 +170,37 @@ class SequenceRegression(unittest.TestCase):
         self.assertEqual([], check(d, prior))
 
 
+
+    def test_comment_obfuscated_pre_gate_aggregates_rejected(self):
+        statements = (
+            "SELECT SUM/* review */(amount) FROM orders",
+            "SELECT AVG -- review\n(amount) FROM orders",
+            "SELECT COUNT/* review */(DISTINCT uid) FROM orders",
+            "SELECT COUNT/* review */(*) FILTER (WHERE status = 'completed') FROM orders",
+        )
+        for index, sql in enumerate(statements):
+            with self.subTest(sql=sql):
+                case = fixture()
+                early = (datetime.fromisoformat(case["stages"][0]["at"]) -
+                         timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": early, "queries": {
+                    "comment-" + str(index): {"sql": sql}}}
+                self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:comment-" + str(index),
+                              check(case, prior))
+
+    def test_comments_in_neutral_count_probes_remain_allowed(self):
+        statements = (
+            "SELECT COUNT /* review */ (*) FROM orders",
+            "SELECT COUNT -- review\n(*) FROM orders WHERE amount IS NULL",
+            "SELECT COUNT(*) AS n FROM orders /* neutral */",
+        )
+        for sql in statements:
+            with self.subTest(sql=sql):
+                case = fixture()
+                early = (datetime.fromisoformat(case["stages"][0]["at"]) -
+                         timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": early, "queries": {"neutral": {"sql": sql}}}
+                self.assertEqual([], check(case, prior))
+
 if __name__ == "__main__":
     unittest.main()

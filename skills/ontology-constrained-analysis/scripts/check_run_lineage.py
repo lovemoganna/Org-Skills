@@ -26,6 +26,12 @@ def _is_pre_gate_business_sql(statement):
     This is a narrow guard, not a general SQL parser or semantic validator.
     """
     import re
+    # Comments can separate SQL function names from '('; keep quoted strings intact.
+    statement = re.sub(
+        r"""'(?:''|[^'])*'|"(?:\"\"|[^"])*"|/\*[\s\S]*?\*/|--[^\r\n]*""",
+        lambda match: match.group(0) if match.group(0).startswith(("'", '"')) else " ",
+        statement,
+    )
     if re.search(
         r"\b(?:JOIN\b|GROUP\s+BY\b|HAVING\b|QUALIFY\b|CASE\s+WHEN\b|"
         r"(?:SUM|AVG|MIN|MAX|MEDIAN|STDDEV(?:_POP|_SAMP)?|VAR_POP|VAR_SAMP|"
