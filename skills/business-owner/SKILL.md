@@ -61,7 +61,7 @@ A (`business-reasoning`) 负责选择具体问题、设计结果表、推导候�
 
 ## 与另外两个 Skill 的职责
 `business-owner` 发布 Business Brief → `business-reasoning` 设计一个能改变判断的 Analysis Packet → `analysis-verifier` 提供独立 Verification Feedback → A 整合已证实发现 → Owner 做 Decision Review。
-- **小循环 A↔B** 只由新增证据触发；**大循环 Owner↔A** 只在业务问题/决策价值有实质变化时触发。无固定轮数。
+- **小循环 A↔B** 只由新增证据触发；**大循环 Owner↔A** 只在业务问题/决策价值有实质变化时触发。无固定轮数；没有新增事实、证据或决策价值时，不得为了凑轮数继续讨论。
 - Owner 不重演 A 的“哪个表、取什么、什么条件”；不写 SQL、不读表、不做金额计算、不生成 Report/Dashboard。
 - 有即时行动风险但证据不足：明确最安全的升级对象/需要的数据，不用虚构结论填补。
 
