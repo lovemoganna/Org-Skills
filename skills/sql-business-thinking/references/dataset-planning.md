@@ -79,7 +79,7 @@ BLOCKED        应检查，但当前授权数据或运行环境无法完成
 
 ## 3. 勘察与体检 SQL
 
-以下仅在用户未给更严格读取契约时作为 DuckDB 示例。用户已验证并声明“不得改写”的读取方式必须原样优先。
+以下 XLSX 示例仅在用户未给更严格读取契约时使用。用户已验证并声明“不得改写”的读取方式必须原样优先。
 
 ```sql
 CREATE OR REPLACE TABLE {t} AS
@@ -88,6 +88,16 @@ SELECT * FROM read_xlsx('{url_or_path}', sheet = '{sheet}', header = true);
 SELECT COUNT(*) AS n FROM {t};
 SUMMARIZE {t};
 SELECT * FROM {t} LIMIT 5;
+```
+
+**CSV 输入分支（仅限用户未锁定读取 SQL）：**在已授权的 DuckDB 执行位置对原始 CSV URL 使用 `read_csv_auto`；若支持 `read_blob`，在解析前记录实际字节数与原始 SHA256。必须从当前 CSV 实际推断字段、类型和有效行数，不得借用 XLSX 示例、Pandas 结果、历史样本或预设字段当作读取证据。原始字节指纹不等于排序归一化后的逻辑数据版本，需分别记录。指定 URL 失败时如实报告，不得更换仓库、文件或数据来源。
+
+```sql
+-- 仅当来源为 CSV 且未锁定其他读取语句时使用
+SELECT octet_length(content) AS source_bytes, sha256(content) AS transport_sha256
+FROM read_blob('{csv_url}');
+SELECT * FROM read_csv_auto('{csv_url}') LIMIT 5;
+SELECT COUNT(*) AS valid_rows FROM read_csv_auto('{csv_url}');
 ```
 
 ### 3.1 主键、孤儿、状态、时间
