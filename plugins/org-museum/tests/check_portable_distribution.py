@@ -50,3 +50,24 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+
+# Separate-name install diagnostic: distinguish same-name conflict from package format errors.
+def validate_distinct_name():
+    path = ROOT / 'releases' / 'org-museum-skills-v1.0.0.zip'
+    with zipfile.ZipFile(path) as archive:
+        assert archive.testzip() is None, 'alternate ZIP CRC failed'
+        names = archive.namelist()
+        assert len(names) == 14 and all(n.startswith('org-museum-skills/') for n in names)
+        manifest = json.loads(archive.read('org-museum-skills/plugin.json'))
+        assert manifest.get('name') == 'org-museum-skills'
+        assert manifest.get('version') == '1.0.0'
+        info = manifest['extensions']['com.openai']['interface']
+        assert info['displayName'] == 'Org Museum Skills'
+        assert all(info.get(x) for x in ('shortDescription', 'longDescription', 'developerName'))
+        for name in SKILLS:
+            archive.read('org-museum-skills/skills/' + name + '/SKILL.md')
+    print('PASS: standalone alternate identity, four skills, and metadata')
+
+
+validate_distinct_name()
