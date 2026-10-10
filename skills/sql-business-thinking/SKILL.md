@@ -60,7 +60,7 @@ description: 将业务问题转为可验证的 SQL 与结论。适用于 SQL 教
 
 **唯一分析循环：**M2 的问题质量阶段（D08/D09）选择当前问题 → M3 设计并执行一条当前 SQL → 检查 Result 是否改变问题边界。有新增价值时，仅返回 M2 的 D08/D09 重新评估下一问，之后再执行 M3；没有新证据价值、不能回答或触及权限/质量阻塞时停止。不得按固定查询清单凑轮数或反复重建本体。保留 `question → SQL Result → frontier update → next question/stop` 的简要证据；`tests/check_investigation_trace.py` 只校验证据结构，不代替业务验证。
 
-**调查深度：**仅在数据含合法主体、事件和时间关系时，检验必要的行为序列、竞争解释、反证及稳健性。**Result-Driven Investigation Gate** 要求下一问可追溯至本轮新 Result；**Investigation Depth Gate** 禁止仅凭 TopN/比例宣称深度 PASS。没有充分证据时如实降级为 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，而不是为了过关强造风险原因。Report 依据 M4 的 D18；Dashboard 可在 M2 的 D07 后跳至 D19 资格判断，不强制完成深度调查；Hybrid 各按原条件验收。
+**分析深度阶段（调查深度）：**仅在数据含合法主体、事件和时间关系时，检验必要的行为序列、竞争解释、反证及稳健性。**Result-Driven Investigation Gate** 要求下一问可追溯至本轮新 Result；**Investigation Depth Gate** 禁止仅凭 TopN/比例宣称深度 PASS。没有充分证据时如实降级为 `DESCRIPTIVE_ONLY` 或 `NO_DECISION_GRADE_FINDING`，而不是为了过关强造风险原因。Report 依据 M4 的 D18；Dashboard 可在 M2 的 D07 后跳至 D19 资格判断，不强制完成深度调查；Hybrid 各按原条件验收。
 
 用户没有请求人物会话时，不强行生成 Star/Lucy。若明确要求，用户的角色名、能力、职责和知识边界优先于默认角色（Role Contract Gate / Role Binding Gate）；没有定义时才使用 Star/Lucy。要求代码在对话中生成时，遵守 `references/dialogue-rendering.md` 的代码增量、唯一可执行 SQL、Result Dependency Gate、知识顺序和最终追溯规则；不得用历史答案倒灌。
 
