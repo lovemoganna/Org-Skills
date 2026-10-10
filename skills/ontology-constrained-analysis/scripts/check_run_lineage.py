@@ -18,6 +18,36 @@ def when(value):
         raise ValueError("NAIVE_TIMESTAMP")
     return t.astimezone(timezone.utc)
 
+def _is_pre_gate_business_sql(statement):
+    """Conservatively distinguish a neutral row/null-count probe from analysis.
+
+    Pre-Gate 1 may inspect schemas, examples and nulls; aggregates, grouped
+    analysis and filtered business counts belong after ontology approval.
+    This is a narrow guard, not a general SQL parser or semantic validator.
+    """
+    import re
+    if re.search(
+        r"\b(?:JOIN\b|GROUP\s+BY\b|HAVING\b|QUALIFY\b|CASE\s+WHEN\b|"
+        r"(?:SUM|AVG|MIN|MAX|MEDIAN|STDDEV(?:_POP|_SAMP)?|VAR_POP|VAR_SAMP|"
+        r"APPROX_COUNT_DISTINCT)\s*\()",
+        statement, re.I,
+    ):
+        return True
+    if not re.search(r"\bCOUNT\s*\(", statement, re.I):
+        return False
+    # Bare table row counts and single-field null counts are Gate 0 probes.
+    # Other COUNT expressions (including DISTINCT, business WHERE and FILTER)
+    # are analyses; the classifier fails closed for unrecognized COUNT forms.
+    table = r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)?"
+    neutral_count = (
+        r"SELECT\s+COUNT\s*\(\s*\*\s*\)\s+"
+        r"(?:AS\s+[A-Za-z_]\w*\s+)?FROM\s+" + table +
+        r"(?:\s+WHERE\s+[A-Za-z_]\w*\s+IS\s+(?:NOT\s+)?NULL)?"
+    )
+    parts = re.split(r"\bUNION\s+ALL\b", statement.strip().rstrip(";"), flags=re.I)
+    return not all(re.fullmatch(neutral_count, part.strip(), re.I) for part in parts)
+
+
 def check(chain, prior=None):
     errors = []
     stages = chain.get("stages", [])
@@ -58,9 +88,7 @@ def check(chain, prior=None):
         import re
         for ident, q in prior.get("queries", {}).items():
             statement = q.get("sql", "") if isinstance(q, dict) else ""
-            analytical = re.search(
-                r"\b(?:JOIN\b|GROUP\s+BY\b|SUM\s*\(|AVG\s*\(|CASE\s+WHEN\b)",
-                statement, re.I)
+            analytical = _is_pre_gate_business_sql(statement)
             if not analytical:
                 continue
             executed_at = None
