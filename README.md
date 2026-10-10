@@ -49,7 +49,7 @@
 
 ### 数据分析
 - `ontology-constrained-analysis`：业务语义 → 本体原子与规则 → SQL 验证 → Signal → Finding；源不可用时交付阻塞审计报告。
-- `sql-business-thinking`：业务问题 → 数据逻辑 → SQL；支持陌生数据集勘察、人物会话推演、HTML 报告与回归闭环。
+- `business-reasoning`：业务目的 → 拆问题 → 结果表 → 表/字段/条件 → 候选 SQL（只分析）。\n- `analysis-verifier`：独立检查语义、SQL、真实 Result 与反例，输出 Verification Feedback（只验证）。\n- `sql-business-thinking`：仅兼容路由；旧版完整规则归档在 `skills/sql-business-thinking/legacy/SKILL.md`。
 - `standards-engineering-loop`：要求还原 → 领域与本体映射 → 原子标准 / Lisp 规则 → 测试 / 依据 → Baseline → Loop 0–9 → 发布判断。
 
 ### 数据产品
@@ -64,7 +64,9 @@
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
 | `x-link-reader` | 公开 X/Twitter 内容只读获取与来源核验 | `skills/x-link-reader/SKILL.md` | Network E2E pending |
-| `sql-business-thinking` | 把业务问题拆成数据逻辑，再翻译成 SQL | `skills/sql-business-thinking/SKILL.md` | Active |
+| `business-reasoning` | 复现业务负责人 SQL 思维：从目的和结果表反推业务问题与候选 SQL | `skills/business-reasoning/SKILL.md` | Active; reasoning only |
+| `analysis-verifier` | 独立检验业务语义、SQL 和真实结果，反馈反例并驱动下一轮分析 | `skills/analysis-verifier/SKILL.md` | Active; verification only |
+| `sql-business-thinking` | 旧入口兼容路由（执行逻辑已一拆二） | `skills/sql-business-thinking/SKILL.md` | Compatibility only |
 | `standards-engineering-loop` | 通用标准规范撰写与 Loop 自迭代优化 SOP V3；覆盖标准、测试、证据与版本闭环 | `skills/standards-engineering-loop/SKILL.md` | Eval pending |
 | `ontology-constrained-analysis` | 本体约束多表分析与真实验证，源不可用时交付审计报告 | `skills/ontology-constrained-analysis/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |

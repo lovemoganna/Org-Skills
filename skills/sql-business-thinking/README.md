@@ -1,53 +1,11 @@
-# sql-business-thinking
+# SQL Business Thinking · 双 Skill 迁移说明
 
-训练路径：
+原多模式执行引擎已拆成：
+- [business-reasoning](../business-reasoning/SKILL.md)：业务推理，输出单个 Analysis Packet。
+- [analysis-verifier](../analysis-verifier/SKILL.md)：独立执行与反证，输出 Verification Feedback。
 
-陌生多表或完整自主分析先执行：业务语义还原 → 本体原子知识库 → 本体识别规则库。简单单题保持快速通道。
+调用：`使用 business-reasoning 分析 <业务需求>，随后用 analysis-verifier 独立验证并反馈，再让 business-reasoning 根据反馈修正。`
 
-```text
-业务语言 → 数据逻辑 → SQL → 验证 → 可复述结论
-```
+当前目录仅保留：兼容入口 `SKILL.md`、旧版归档 `legacy/SKILL.md`、原 `references/`、`tests/`、既有 CI 和严格 XLSX 原始 URL 合同。原复杂报告/HTML/Dxx 不再自动参与两个新 Skill。旧测试用于保护历史回归，不用于冒充新双 Skill 完整 E2E。
 
-## MECE 五段调用
-
-正常 Direct/Autopilot 按 **数据可信（D01–D03）→ 业务与选题（D04–D09）→ 证据调查（D10–D16）→ 发现与决策（D17–D19）→ 交付与验收（D20–D23）** 连续执行。只交付五段汇总及真实证据，不逐项输出 23 张阶段卡。新 Result 只有产生高价值下一问时才重入 D08/D09；不强制轮数。Dashboard-only 可以从 D07 进入 D19，保留原有快捷路径。调试时才按 Dxx 精确定位，所有原质量 Gate、SQL 执行和验收仍须执行，不因阶段合并跳过。
-
-## 入口
-
-- [`SKILL.md`](SKILL.md)：主协议与路由。
-- [`references/dataset-planning.md`](references/dataset-planning.md)：陌生数据集勘察、时间维表、JOIN 基数与分析地图。
-- [`references/ontology-analysis.md`](references/ontology-analysis.md)：本体前置、业务模式、分析信号与局部展开。
-- [`references/debug-stages.md`](references/debug-stages.md)：开发调试用逻辑阶段、状态记录、锁定、回退、重跑和完整回归；阶段边界不代表最终工程拆分方式。
-- [`references/protocol.md`](references/protocol.md)：判级、暂停、账本、代码增长、复盘。
-- [`references/dialogue-rendering.md`](references/dialogue-rendering.md)：人物角色绑定、协作推演与 Code-in-Conversation。
-- [`references/report-rendering.md`](references/report-rendering.md)：ReportSpec、HTML/DuckDB-Wasm 与渲染验收。
-- [`references/regression-loop.md`](references/regression-loop.md)：扫描 → 修正 → 自检 → 再修正闭环。
-- [`references/skill-change-log.md`](references/skill-change-log.md)：已沉淀的缺陷与泛化规则。
-
-## 回归
-
-- [`tests/regression-cases.md`](tests/regression-cases.md)：原失败样本、历史通过样本和新增泛化样本。
-- [`tests/check_repo.py`](tests/check_repo.py)：仓库结构与引用完整性检查。
-
-维护时必须先读取仓库当前版本，再做最小 Diff；不要从聊天附件覆盖仓库 HEAD。
-
-## 测试资产维护
-
-| 分类 | 保留依据 | 维护原则 |
-|---|---|---|
-| 执行必需 | `SKILL.md`、`references/`、`tests/mandatory-gates.json`、远程 Runner | 保留；变动必须验证引用和执行契约。 |
-| 核心回归 | `tests/check_repo.py`、`tests/check_d*.py`、`tests/check_native_contract.py`、`tests/check_delivery_handoff.py`、`tests/d23_rendered_qa.mjs` | 每项验证不同阶段或边界；统一从既有入口执行，禁止因表面重复删检查。 |
-| 历史缺陷证据 | `tests/regression-cases.md`、`tests/audits/`、`tests/verified-*`、`tests/d10-fiat-direction-status.sql`、`artifacts/verified-d22-report.html`、`tests/render-qa-fixture.html` | 保留固定样本、版本与哈希，可复现历史故障。不得以历史 PASS 冒充当前 E2E。 |
-| 临时产物 | CI 生成的 `d02.sql`、`d03.sql`、`holdout.xlsx`、`render-output/`、缓存、截图等 | 不纳入版本控制，见仓库根 `.gitignore`；正式测试证据由 Actions Artifacts 保存。 |
-
-仓库清理基线（2026-10-08）：本 Skill 原有 37 个受控文件，未发现可以证明无用、可安全删除的测试文件。相同的 `check_native_contract.py` 被多个工作流复用，是独立运行保护，不属于重复资产；暂不合并删除。历史审计仅说明当时通过的范围。确认引用关系、独立覆盖及可复现性后才能删除或合并文件。
-
-## 默认 HTML 交付
-
-完整分析报告默认写入 `/mnt/data/sql_business_thinking_report.html`，并在最终回复提供可点击下载链接；用户显式指定其他路径时覆盖默认值。
-
-## 原始 URL 全链路执行验收
-
-仓库工作流 [SQLBT Strict URL E2E Acceptance](../../.github/workflows/sqlbt-strict-url-acceptance.yml) 使用 Native DuckDB 1.4.2，直接重放既有 D02/D03 的原始 Google Sheet URL 和 `read_xlsx` SQL。工作流在本轮数据上执行九项阻塞式质量检查、独立业务 SQL、负控、快照估值稳健性检查，生成实体 HTML，并在真实 HTTP 页面上执行桌面、手机与 320px 窄屏 Chromium QA。结果以带有本轮 Git Commit、运行 ID、SQL 与数据 SHA 的 Actions Artifact 记录。运行失败不能由历史成功记录补位。
-
-**验收边界：**此工作流证明指定回归工作簿的源读取、计算与渲染链路；它使用可检查的测试 SQL，不会独立完成模型自主选题、D04–D18 分析循环或其他工作簿的泛化验证。因此 CI PASS 不能单独宣称完整 Autopilot E2E PASS。完整验收还需当前 Skill 修订下的自主分析、D20–D23 成品证据，以及所有适用 Gate 的记录。任何默认报告中的快照估值不能改称历史真实成交额。
+新回归测试：`python3 skills/sql-business-thinking/tests/check_dual_split.py`。本测试包含合成的 JOIN 放大反例，不代表真实 Google Sheets 数据执行。

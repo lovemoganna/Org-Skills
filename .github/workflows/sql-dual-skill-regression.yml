@@ -1,0 +1,27 @@
+name: Dual SQL Skills Contract Regression
+on:
+  push:
+    branches: [main, refactor/sql-two-skills-20261011]
+    paths:
+      - "skills/business-reasoning/**"
+      - "skills/analysis-verifier/**"
+      - "skills/sql-business-thinking/SKILL.md"
+      - "skills/sql-business-thinking/legacy/**"
+      - "skills/sql-business-thinking/tests/check_dual_split.py"
+      - "skills/sql-business-thinking/tests/check_repo.py"
+      - ".github/workflows/sql-dual-skill-regression.yml"
+      - "README.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  split-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dual boundary and synthetic adversarial case
+        run: python3 skills/sql-business-thinking/tests/check_dual_split.py
+      - name: Preserve historical skill and source read regression
+        run: |
+          python3 skills/sql-business-thinking/tests/check_repo.py
+          python3 skills/sql-business-thinking/tests/check_native_contract.py

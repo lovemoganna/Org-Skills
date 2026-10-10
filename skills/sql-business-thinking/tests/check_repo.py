@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+skill = (ROOT / "legacy" / "SKILL.md").read_text(encoding="utf-8")
 
 assert skill.startswith("---\nname: sql-business-thinking\n"), "invalid skill frontmatter"
 
