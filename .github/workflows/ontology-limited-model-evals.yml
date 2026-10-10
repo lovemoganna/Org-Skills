@@ -1,0 +1,64 @@
+name: Ontology Limited Model Behavior Evals
+
+on:
+  pull_request:
+    paths:
+      - "skills/ontology-constrained-analysis/**"
+      - ".github/workflows/ontology-limited-model-evals.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  model-behavior:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MODEL: gpt-5-mini
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run bounded real model sample or record blocker
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ontology-model-eval
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            echo '{"status":"BLOCKED_NO_MODEL_CREDENTIAL","model_calls":0,"paired_quality":"NOT_RUN","actual_skill_activation":"NOT_RUN","full_tool_using_task":"NOT_RUN","reason":"OPENAI_API_KEY not configured in this GitHub Actions job"}' > ontology-model-eval/receipt.json
+            cat ontology-model-eval/receipt.json
+            exit 0
+          fi
+          python -m pip install --disable-pip-version-check 'openai>=1.100,<4'
+          # Exactly six selected test cases, two variants and one independent
+          # judge call per subject output (maximum 24 API calls).
+          python skills/ontology-constrained-analysis/scripts/run_behavior_evals.py \
+            --run --model "${MODEL}" --judge-model "${MODEL}" --repeat 1 \
+            --ids 'ambiguous-schema,invalid-relation,runtime-contract-hard-boundary,rule-valid-composition-not-overrejected,complex-validation-no-new-dimensions,fixed-remote-function-no-staging' \
+            --output ontology-model-eval/paired-results.json
+          python - <<'PY'
+          import json, pathlib
+          path=pathlib.Path("ontology-model-eval/paired-results.json")
+          data=json.loads(path.read_text(encoding="utf-8"))
+          rows=data["results"]
+          calls=[r.get(t,{}).get("usage",{}) for r in rows for t in ("subject_call","judge_call")]
+          usage={k:sum(x[k] for x in calls if isinstance(x.get(k),int)) for k in ("input_tokens","output_tokens","total_tokens")}
+          output={"status":"EXECUTED_TEXT_ONLY_PROXY","model":data.get("model"),"subject_requests":len(rows),
+                  "graded":sum(isinstance(r.get("judge",{}).get("passed"),bool) for r in rows),
+                  "errors":sum(bool(r.get("error")) for r in rows),
+                  "usage":usage,"actual_skill_activation":"NOT_TESTED",
+                  "tool_using_full_task":"NOT_TESTED",
+                  "note":"A prompt-only Responses API eval cannot prove tool/SQL execution or runtime auto-trigger."}
+          pathlib.Path("ontology-model-eval/receipt.json").write_text(json.dumps(output,indent=2)+"\n")
+          print(json.dumps(output))
+          PY
+      - name: Preserve independent evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ontology-limited-model-evals
+          path: ontology-model-eval/
+          if-no-files-found: error
