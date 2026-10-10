@@ -67,7 +67,7 @@ jobs:
            return r
           cov=get("coverage"); states=get("states"); quality=get("quality"); flow=get("flow")
           recon=get("reconcile"); conc=get("concentration"); ur=get("user_rate_quality")[0]
-noncomplete=get("noncomplete_out_by_status")
+          noncomplete=get("noncomplete_out_by_status")
           D=lambda x:Decimal(str(x))
           K=lambda r:(r["rail"],r["asset"])
           assert {r["rail"] for r in cov}=={"fiat","crypto"}
