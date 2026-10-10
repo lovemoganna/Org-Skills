@@ -44,6 +44,9 @@ jobs:
             python "$check"
           done
 
+      - name: Verify Org Museum plugin package and canonical Skill locks
+        run: python plugins/org-museum/tests/check_package.py
+
       - name: Run independent Native SQL contract mutation tests
         shell: bash
         run: |

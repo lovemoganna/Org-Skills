@@ -14,8 +14,10 @@ description: 收录到知识库、整理并发布笔记：自动整理编程、�
 ## 整理与路由
 
 - 编程、代码、SQL/Shell/Python/Babel：读取本插件 `../org-literate-engineering/SKILL.md`。
-- 普通知识、阅读摘录、灵感与思考：读取 `../note-reforge/SKILL.md` 及适用的形态参考。
-  若材料还不是笔记，先在当前 Chat 内部形成忠实于材料的草稿，再加工。
+- 普通知识、阅读摘录、灵感与思考：先读取 `../note-reforge/SKILL.md` 启动入口，再读取
+  `lovemoganna/Org-Skills` 当前默认分支的 `skills/note-reforge/SKILL.md` 及其形态参考。
+  无法读取最新 canonical 时停止，不得用插件内旧副本代替。若材料还不是笔记，
+  先在当前 Chat 内部形成忠实于材料的草稿，再加工。
 - 混合材料按职责组合规则；独立主题分开，有分工的系列保留边界和回链。
 - 此入口负责统一 Org 格式、存储路径和发布回执，覆盖子 Skill 的默认文件位置、
   `.next` 文件名和回复格式。子 Skill 的内容保真、证据和来源规则保持有效。

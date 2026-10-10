@@ -1,8 +1,8 @@
 {
   "repository": "lovemoganna/Org-Skills",
-  "revision": "296c7a7643a4e4ab2e723fc6d6d7abf2b74c5e42",
+  "revision": "7267177ab3d717f03e769fc85e3145c3d29c9434",
   "skills": {
-    "org-literate-engineering": "594f706cd0d0c434755d08038c8fb8213cbe1027133aaa72d3792cb4c43fa349",
-    "note-reforge": "e2bb75031dd6460d4bc95525c3e9c0aae64f6ba90e2bbf126c512f57849a9b3a"
+    "org-literate-engineering": "e11e3a1525b3d7277bf0974864efd047354f351d",
+    "note-reforge": "116fd4b777fb8cfc91d8678a5e8eeda91920b0b8"
   }
 }

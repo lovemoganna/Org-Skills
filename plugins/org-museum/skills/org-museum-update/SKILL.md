@@ -17,7 +17,9 @@ description: 用户明确要求炼化、重写或更新一个已发布的 Org Mu
    `/actions/runs?head_sha=<HEAD>&event=push`，不用只筛 PR 的快捷工具。
 3. 以准确 path 从 GitHub 读取完整 Org。页面的 Org Mode 视图是过滤正文，不能
    用它覆盖文件头。不存在唯一源绑定、源文件不存在或版本冲突时停止并说明。
-4. 读取 `../note-reforge/SKILL.md` 加工当前单篇。此次要求覆盖其默认 .next 交付，
+4. 通过 `../note-reforge/SKILL.md` 启动入口读取 `lovemoganna/Org-Skills` 当前默认分支的
+   `skills/note-reforge/SKILL.md` 加工当前单篇。canonical 读取失败即停止，不回退到内置旧版。
+   此次要求覆盖其默认 .next 交付，
    更新准确的原路径。保留 wiki_id、所有原元数据及其写法（TITLE 可改文字）、
    链接目标、锚点、已有标题和代码；不动其他系列文件，不添加无依据内容。
 5. 有执行工具时，用发布器 `tools/museum_update.py` 的 resolve/update/status
