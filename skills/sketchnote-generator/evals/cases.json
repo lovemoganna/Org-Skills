@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "cases": [
+    {
+      "id": "P01",
+      "input": "手绘图：把以下系统设计文章制作成中文知识笔记，正文见附件。",
+      "expect_trigger": true,
+      "expect": "产生静态 Sketchnote 图片；信息结构随主题变化，保留技术关系。"
+    },
+    {
+      "id": "P02",
+      "input": "用 sketchnote-generator 把泰国 SEC 对 VCEX 的监管案例画成中文手绘图。链接：https://www.sec.or.th/EN/Pages/News_Detail.aspx?SECID=13408",
+      "expect_trigger": true,
+      "expect": "先核验来源，区分投诉、定罪和未来访问阻断；图中保留主体、时间及限制条件。"
+    },
+    {
+      "id": "P03",
+      "input": "照这张手绘笔记的样式，帮我把下面的 Python 循环教程做成图。",
+      "expect_trigger": true,
+      "expect": "采用参考视觉语言，不硬套 AML 模块；语法信息准确。"
+    },
+    {
+      "id": "B01",
+      "input": "画成手绘图。",
+      "expect_trigger": true,
+      "expect": "缺少主题或源材料时只询问必需输入，不虚构案例。"
+    },
+    {
+      "id": "B02",
+      "input": "把这个网页制成图，但当前没有图像工具和 SVG 渲染环境。",
+      "expect_trigger": true,
+      "expect": "如实说明无法生成图片；不把文字提示当作图像交付。"
+    },
+    {
+      "id": "N01",
+      "input": "只用文字总结这份 AML 调查报告，不要图片。",
+      "expect_trigger": false,
+      "expect": "尊重用户明确要求的纯文本结果，不触发图片生成。"
+    },
+    {
+      "id": "N02",
+      "input": "为当前 DuckDB 仪表盘实现可编辑、可联动的 Chart.js 图表。",
+      "expect_trigger": false,
+      "expect": "不替换可编辑数据图表或交互功能。"
+    }
+  ],
+  "run_status": "not_run_in_claude",
+  "note": "这些是评测资产和预期，不是实际测试结果；需要在支持图片工具的环境执行并人工核对生成图。"
+}

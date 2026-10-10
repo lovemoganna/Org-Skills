@@ -6,6 +6,7 @@
 
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
+| 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
 | 读取公开 X/Twitter 帖文并核验正文 | `x-link-reader` | skills/x-link-reader/SKILL.md |
@@ -22,6 +23,11 @@
 - 固定调用：`用 bprd-plus 根据以下材料写 BRD：<材料>`
 - 自检：`用 bprd-plus 自检这份 BRD`
 - 定向修改：`用 bprd-plus 按下面的反馈修改 BRD：<反馈>`
+
+## 视觉知识图解
+
+- `sketchnote-generator`：材料核验 → 动态知识模块 → 复古笔记本式 Sketchnote → 图片生成 → 视觉与事实检查。需要实际可用的图像生成工具；纯 Claude 环境不能凭 Skill 生成插画。
+- 固定调用：`手绘图：<文章 / 案例 / 链接>`。
 
 ## Skill 能力地图
 
@@ -53,6 +59,7 @@
 | `ontology-constrained-analysis` | 本体约束多表分析与真实验证，源不可用时交付审计报告 | `skills/ontology-constrained-analysis/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |
 | `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
+| `sketchnote-generator` | 把真实材料制成复古手绘中文知识信息图，需具备图片工具 | `skills/sketchnote-generator/SKILL.md` | Packaged; image E2E pending |
 
 ## 目录约定
 
