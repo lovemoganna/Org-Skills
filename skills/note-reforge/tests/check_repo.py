@@ -111,15 +111,32 @@ with tempfile.TemporaryDirectory() as tmp:
     tampered.write_text(good.read_text(encoding="utf-8").replace("print(1)", "print(2)"), encoding="utf-8")
     changed_id = drafts / "changed-id.org"
     changed_id.write_text(good.read_text(encoding="utf-8").replace("WIKI_ID: demo", "WIKI_ID: other"), encoding="utf-8")
-    for destination, expected in [
-        (good, 0),
-        (same_index, 1),
-        (tampered, 1),
-        (changed_id, 1),
-        (source_path, 1),
+    # Uppercase source blocks must not evade exact-code preservation.
+    uppercase_src = indexed / "uppercase.org"
+    uppercase_src.write_text(
+        "#+TITLE: Uppercase\n\n* Demo\n"
+        "#+BEGIN_SRC python\nprint(1)\n#+END_SRC\n", encoding="utf-8"
+    )
+    uppercase_changed = drafts / "uppercase.next.org"
+    uppercase_changed.write_text(
+        uppercase_src.read_text(encoding="utf-8").replace("print(1)", "print(2)"),
+        encoding="utf-8"
+    )
+    no_identity_src = indexed / "plain.org"
+    no_identity_src.write_text("#+TITLE: Plain\n\n* Text\nOriginal.\n", encoding="utf-8")
+    no_identity_next = indexed / "plain.next.org"
+    no_identity_next.write_text("#+TITLE: Better\n\n* Text\nOriginal.\n", encoding="utf-8")
+    for source, destination, expected in [
+        (source_path, good, 0),
+        (source_path, same_index, 1),
+        (source_path, tampered, 1),
+        (source_path, changed_id, 1),
+        (source_path, source_path, 1),
+        (uppercase_src, uppercase_changed, 1),
+        (no_identity_src, no_identity_next, 0),
     ]:
         check = subprocess.run(
-            [sys.executable, str(checker), str(source_path), str(destination),
+            [sys.executable, str(checker), str(source), str(destination),
              "--indexed-root", str(indexed)],
             capture_output=True, text=True, check=False,
         )
@@ -128,4 +145,4 @@ with tempfile.TemporaryDirectory() as tmp:
             destination, check.stdout, check.stderr
         )
 
-print("note-reforge contracts + 5 Org draft identity checks: OK")
+print("note-reforge contracts + 7 Org draft identity checks: OK")
