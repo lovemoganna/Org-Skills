@@ -185,4 +185,37 @@ with tempfile.TemporaryDirectory() as tmp:
     assert outcome.returncode == 0 and "疑似过程叙述 1 处" in outcome.stdout
 print("note-reforge finished-result perspective regression: OK")
 
+
+# Numbered-question rendering: real failure and independent counterexamples.
+from importlib.util import spec_from_file_location, module_from_spec
+layout_spec = spec_from_file_location("question_layout", SKILL_ROOT / "tests" / "check_numbering_layout.py")
+layout_mod = module_from_spec(layout_spec)
+assert layout_spec and layout_spec.loader
+layout_spec.loader.exec_module(layout_mod)
+layout_fixture = (SKILL_ROOT / "tests" / "regression" / "numbering-visual-hierarchy.md").read_text(encoding="utf-8")
+assert "编号与层级（先判断语义，再选择样式）" in canonical
+assert "编号排版反查" in canonical and "原始编号与显示编号分离" in canonical
+assert "Q18-1" in layout_fixture and "语义有序列表" in layout_fixture
+bad_quote = "> **Q18-1**：问题一\n> **Q18-2**：问题二\n> **Q18-3**：问题三\n"
+good_list = "1. 问题一\n2. 问题二\n3. 问题三\n\nQ18-1—Q18-3 为原始题号。\n"
+general_bad = "> **Q42-1**：问题一\n> **Q42-2**：问题二\n"
+assert layout_mod.issues(bad_quote) == [(1, 3)]
+assert layout_mod.issues(general_bad) == [(1, 2)]
+assert layout_mod.issues(good_list) == []
+assert layout_mod.issues("> **Q18-1**：文献原话\n") == []
+assert layout_mod.issues("~~~markdown\n" + bad_quote + "~~~\n") == []
+# Source identifiers in normal prose and bullet lists must never be deleted automatically.
+assert layout_mod.issues("保留 Q18-1 与 Q18-2 的引用映射。\n") == []
+with tempfile.TemporaryDirectory() as work:
+    tmp_md = Path(work) / "questions.md"
+    command = [sys.executable, str(SKILL_ROOT / "tests" / "check_numbering_layout.py"), str(tmp_md)]
+    for content, expected in ((bad_quote, 1), (good_list, 0)):
+        tmp_md.write_text(content, encoding="utf-8")
+        tested = subprocess.run(command, capture_output=True, text=True)
+        assert tested.returncode == expected, (tested.stdout, tested.stderr)
+    tmp_md.write_text(bad_quote, encoding="utf-8")
+    advisory = subprocess.run(command + ["--advisory"], capture_output=True, text=True)
+    assert advisory.returncode == 0 and "疑似编号排版问题：1 处" in advisory.stdout
+print("note-reforge numbered-question visual hierarchy regression: OK")
+
 print("note-reforge contracts + 7 Org draft identity checks: OK")
