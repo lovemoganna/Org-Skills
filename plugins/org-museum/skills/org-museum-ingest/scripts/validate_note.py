@@ -101,6 +101,16 @@ def metadata(text: str):
 def prose(text):
     return re.sub(r"(?ims)^\s*#\+begin_(src|example)\b[^\n]*\n.*?^\s*#\+end_\1\s*$", "", text)
 
+def check_unprotected_template_placeholders(text: str, label: str) -> None:
+    """Reject prompt variables that Emacs Org may try to expand as undefined macros.
+
+    Literal template content must be inside a source or example block.
+    Lowercase built-in Org macros are left untouched.
+    """
+    if re.search(r"\{\{\{[A-Z][A-Za-z0-9_]*\}\}\}", prose(text)):
+        raise Invalid(f"org: unprotected template placeholder outside src/example block in {label}")
+
+
 def validate(root: Path):
     root = root.resolve()
     records, seen = [], set()
@@ -120,6 +130,7 @@ def validate(root: Path):
         text = path.read_text(encoding="utf-8-sig")
         privacy(text, relative)
         meta = metadata(text)
+        check_unprotected_template_placeholders(text, relative)
         for key in ("TITLE", "WIKI_ID", "CATEGORY", "DATE", "FILETAGS", "SOURCE", "INGEST_ID"):
             if not meta.get(key):
                 raise Invalid(f"org: missing {key} in {relative}")
