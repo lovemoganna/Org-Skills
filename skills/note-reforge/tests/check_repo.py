@@ -145,4 +145,44 @@ with tempfile.TemporaryDirectory() as tmp:
             destination, check.stdout, check.stderr
         )
 
+
+# Finished-result perspective regression: actual failure + counterexamples.
+from importlib.util import module_from_spec, spec_from_file_location
+spec = spec_from_file_location("result_voice", SKILL_ROOT / "tests" / "check_result_voice.py")
+module = module_from_spec(spec)
+assert spec and spec.loader
+spec.loader.exec_module(module)
+fixture = (SKILL_ROOT / "tests" / "regression" / "result-first-no-process-leak.md").read_text(encoding="utf-8")
+assert "原文提出五个观察维度" in fixture and "个人学习配置表应记录五项实际表现" in fixture
+assert "成品视角（内部分析不得外溢）" in canonical and "成品视角反查" in canonical
+bad = [
+    "原文提出五个观察维度：能量节奏、刺激偏好等。",
+    "原文一方面要求按原方法执行，另一方面强调灵活调整。",
+    "需要区分两个判断。原文说 A。",
+    "本次炼化保留了八个探索问题。",
+]
+good = [
+    "个人学习配置表应记录五项实际表现：能量节奏、刺激偏好、社交偏好、启动难易和注意稳定性。",
+    "测试阶段先固定方法；获得可比较的结果后再调整。",
+    "“两周足够试出大部分方法”是作者的实践建议，缺少复现条件。",
+    "## 证据边界\n原文建议两周为一轮，尚无实测证据。",
+    "~~~text\n原文提出五个观察维度\n~~~",
+    "> 原文提出五个观察维度（逐字引文）。",
+]
+for text_case in bad:
+    assert module.candidates(text_case), ("false negative", text_case)
+for text_case in good:
+    assert not module.candidates(text_case), ("false positive", text_case)
+with tempfile.TemporaryDirectory() as tmp:
+    md = Path(tmp) / "note.md"
+    cmd = [sys.executable, str(SKILL_ROOT / "tests" / "check_result_voice.py"), str(md)]
+    for content, expected in [(bad[0], 1), (good[0], 0), (good[3], 0)]:
+        md.write_text(content, encoding="utf-8")
+        outcome = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        assert outcome.returncode == expected, (outcome.stdout, outcome.stderr)
+    md.write_text(bad[0], encoding="utf-8")
+    outcome = subprocess.run(cmd + ["--advisory"], capture_output=True, text=True, check=False)
+    assert outcome.returncode == 0 and "疑似过程叙述 1 处" in outcome.stdout
+print("note-reforge finished-result perspective regression: OK")
+
 print("note-reforge contracts + 7 Org draft identity checks: OK")
