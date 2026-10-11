@@ -1,0 +1,44 @@
+{
+  "case_name": "2026-10-11非代码知识文章重测的历史审查",
+  "scope": {
+    "task_capabilities": [
+      "非代码知识文章炼化"
+    ],
+    "skill_capabilities": [
+      "非代码知识文章炼化",
+      "已有文章增量改善",
+      "结构保真"
+    ],
+    "evidence": "note-reforge 721bb87b / skills/note-reforge/SKILL.md；文章 org-notes 17a8edbb；不含可执行代码的知识文章"
+  },
+  "execution": {
+    "performed": true,
+    "receipt": "历史本地真实生成；源Git blob 2afcd9ab1d88f7607e06f39a5ec13256c833c888；draft sha256 c680b2016f97915893a0b11e47adfe984ece5e9714873f8e116655fcbc03a513；运行记录仅本地保留，不代表今天重跑"
+  },
+  "structure": {
+    "status": "通过",
+    "evidence": "前次实际 Org 结构检查退出0；源原文全保留并新增 712 字符；没验证真实发布扫描目录"
+  },
+  "content": {
+    "fidelity": {
+      "status": "通过",
+      "evidence": "前次原文/草稿逐段比对：原正文、Org身份、双语未删除"
+    },
+    "grounding": {
+      "status": "通过",
+      "evidence": "新增〔补〕排障入口五类均对应原文已出现职责；明确非经过验证的根因"
+    },
+    "task_value": {
+      "status": "待核验",
+      "evidence": "仅添加一段症状→调查入口；相较原文实际价值未获独立阅读者检验"
+    },
+    "usability": {
+      "status": "待核验",
+      "evidence": "本地生成可读取，但三个月后实际使用效果未测量"
+    }
+  },
+  "review": {
+    "independent": false,
+    "evidence": "同一助手生产与内容初审；未进行独立用户/模型评估"
+  }
+}

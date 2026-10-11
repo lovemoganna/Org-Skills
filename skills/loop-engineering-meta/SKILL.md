@@ -171,6 +171,25 @@ stop_conditions:
 
 Reject or repair false premises before execution.
 
+### 5.2a Skill / Prompt 调试专用：任务适配审查（执行前强制）
+
+只有目标为**调试、维护或验收 Skill / Prompt** 时启用；这是通用测试门禁，不是业务执行 Skill。
+
+1. **先读取真实被测版本**的职责、适用/不适用情形、输入输出、依赖及用户本次目标；不得依据名称、旧摘要或上一轮猜测指定测试材料。
+2. 逐用例声明「任务需要哪些能力 → 被测对象明确提供哪些能力 → 原文/规则中的对应依据」。把**使用者意图**与文件表面特征分开：文章出现几行代码，不代表用户要求运行代码；要求可执行教程，则必须匹配可执行化能力。
+3. **适配**才进入执行；**不适配**先修正测试案例、分流到实际负责的 Skill，标为「测试设计无效」，**不得把测试设计错误记为被测 Skill 失败**；**无法确定**则先补充范围证据，不能猜测或自报通过。
+4. 多 Skill 编排时逐阶段核对各角色职责及交接契约；某一阶段不适配应定位该阶段的测试/路由问题，不牵连无关 Skill。
+
+### 5.2b Skill / Prompt 调试专用：内容质量独立验收
+
+测试能否运行、文件头/格式/语法是否合规属于**结构与执行质量**；是否解决目标问题属于**内容与效果质量**。两种评价**分开记录、不得相互替代**。
+
+- 最少审查：①原始事实/输入契约是否保真；②重要判断、结论、实测声明是否有可追溯证据；③相比基线是否产生实际任务价值而不是仅改写/扩写；④成果在目标使用场景是否可用。按领域适配可观察的具体检查，不要求所有任务增加文字。
+- 每项记录「通过 / 失败 / 待核验」及一条可复查证据；主张通过却无证据的一律按**证据不足**处理。源码校验通过**不能**证明文章内容正确、调研结论可信或使用价值提升。
+- 真实内容验收优先使用独立任务复现、来源反查、反例、目标用户审阅或独立评价器；**同一执行者的自评不能冒充独立质量合格证明**。可验证部分先报告，主观价值未确认时标「有条件通过」，不能宣称整体合格。
+- 对高质量原稿，**无实质增量时保留原状**是合格的维护决策。修复前后须比较实际收益与维护成本；不为了产出差异强行修改。
+- 可用 `scripts/evaluate_case.py` 汇总范围/结构/内容的证据状态与中文裁决。该脚本**只检验判定契约**，不会自动判定事实真假；领域内容仍须来源核验、实际运行或独立评审。
+
 ### 5.3 BASELINE
 
 Run or inspect the current method before improving it when a baseline exists.
@@ -357,6 +376,8 @@ A critical gate failure blocks promotion.
 
 Pass when:
 
+- when testing a Skill/Prompt, the test task fits the **verified target responsibility**; out-of-scope cases are rerouted or marked test-design invalid before blaming the target;
+
 - the goal is coherent;
 - false premises are corrected;
 - acceptance criteria are observable;
@@ -384,6 +405,8 @@ Pass when:
 ### G3 — Result Acceptance
 
 Pass when:
+
+- for Skill/Prompt tests, **structural/execution acceptance and semantic/use-value acceptance are separate** with traceable evidence; an unchecked content verdict cannot be promoted by a passing lint or syntax test;
 
 - all hard constraints are satisfied;
 - the actual objective is met;
@@ -610,6 +633,8 @@ For normal use, return this compact report:
 - Residual risks:
 - Stop reason:
 ```
+
+When the target is Skill/Prompt maintenance, state test fitness separately from target quality, state content-quality evidence and its review independence, and render decision labels in Chinese (e.g., 测试设计无效 / 有条件通过 / 测试失败 / 测试通过 / 证据不足). Do not label a Skill defective because the evaluator chose an out-of-scope case.
 
 For simple tasks, collapse the report to the primary result plus one concise QA note. Do not expose private chain-of-thought. Report observable reasoning, evidence, decisions, and test results.
 
