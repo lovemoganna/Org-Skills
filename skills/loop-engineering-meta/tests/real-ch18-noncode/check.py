@@ -23,6 +23,8 @@ assert "来源章节没有提供该数值的测量出处" in draft
 assert "不支持把所谓固定学习风格" in draft
 assert "https://doi.org/10.1111/j.1539-6053.2009.01038.x" in draft
 assert "CC BY-NC-SA 4.0" in draft
+assert "`+`（生效）、`?`（不适用）、`±`（不确定）" in draft
+assert "=+=" not in draft and "=?=" not in draft and "=±=" not in draft
 assert "illustrations/45_五大特质雷达图.svg" in draft
 assert "cards/card_方法实验卡.svg" in draft
 assert len(re.findall(r"(?m)^# ",draft))==1
