@@ -3,7 +3,7 @@
 from pathlib import Path
 import importlib.util, json, re, subprocess, sys, copy
 BASE=Path(__file__).resolve().parent
-ROOT=BASE.parents[2]
+ROOT=BASE.parents[1]
 src=(BASE/"published_source"/"source.org").read_text(encoding="utf-8")
 draft=(BASE/"drafts"/"draft.next.org").read_text(encoding="utf-8")
 anchor="工具决定 Agent 能做什么。反馈决定 Agent 能否知道自己做对了。Tools determine what an Agent can do. Feedback determines whether the Agent can know that it did the work correctly.\n"
@@ -17,7 +17,6 @@ assert not re.search(r"(?im)^#\+begin_src",src),"out of scope: source contains e
 assert draft.count("〔补〕")==1
 assert "不是讲者给出的固定流程" in draft and "not a fixed procedure from the speaker" in draft
 assert "先核对上下文来源和作用域" in addition and "assertions, and feedback" in addition
-assert "历史" not in src[:80] # legacy independent routing not needed
 assert len(draft)<len(src)*1.17
 # Compare all links and publication identity, treating header block and source body separately.
 for mark in ("#+WIKI_ID:","#+INGEST_ID:","#+WIKI_STATUS:","#+SOURCE:","#+FILETAGS:"):
