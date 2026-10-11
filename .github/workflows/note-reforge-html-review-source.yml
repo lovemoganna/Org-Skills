@@ -1,0 +1,23 @@
+name: Capture six heldout knowledge sources
+on:
+  push:
+    branches: [test/note-reforge-html-review-20261011]
+    paths:
+      - '.github/workflows/note-reforge-html-review-source.yml'
+      - 'tests/note-reforge-html-review/**'
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture six exact GitHub source blobs
+        run: python3 tests/note-reforge-html-review/fetch_sources.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: heldout-six-verified-articles
+          path: |
+            tests/note-reforge-html-review/sources.json
+            tests/note-reforge-html-review/manifest.json
+          retention-days: 7

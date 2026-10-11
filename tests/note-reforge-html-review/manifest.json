@@ -1,0 +1,56 @@
+[
+  {
+    "id": "K01",
+    "group": "知识与方法",
+    "repo": "lovemoganna/Prompts",
+    "path": "Major/6.提示迭代.md",
+    "ref": "0fdfdde53854523a9bd8704a1ac2c2c785702072",
+    "sha": "2df131e3a2ff9a8ceebd6c095848c417d5d33c3c",
+    "topic": "提示工程迭代"
+  },
+  {
+    "id": "K02",
+    "group": "知识与方法",
+    "repo": "lovemoganna/Prompts",
+    "path": "Original/Work/Project/1-本质.md",
+    "ref": "0fdfdde53854523a9bd8704a1ac2c2c785702072",
+    "sha": "426d4eb7598fefc82bb261f70c638fc5874c4b18",
+    "topic": "项目管理基础"
+  },
+  {
+    "id": "R01",
+    "group": "研究与资料",
+    "repo": "lovemoganna/org-notes",
+    "path": "notes/knowledge/skill-debugging/b0f76f51-5884-54b7-9ccc-2d43a989d1a3.org",
+    "ref": "17a8edbbd038c8d96e6277057b52ddf62d221892",
+    "sha": "ef4cc63edf45240019c37eafcd760e80054bf10b",
+    "topic": "Skill 调试与精简"
+  },
+  {
+    "id": "R02",
+    "group": "研究与资料",
+    "repo": "lovemoganna/org-notes",
+    "path": "notes/knowledge/prompt-library/3a926e76-9dd6-44bc-aad1-11bdabcf4b9e.org",
+    "ref": "17a8edbbd038c8d96e6277057b52ddf62d221892",
+    "sha": "a596bda8dfd51f538454a3e25391440e7da36f22",
+    "topic": "Prompt 索引与证据"
+  },
+  {
+    "id": "P01",
+    "group": "项目与实践",
+    "repo": "lovemoganna/Prompts",
+    "path": "Original/Work/Project/4-关键.md",
+    "ref": "0fdfdde53854523a9bd8704a1ac2c2c785702072",
+    "sha": "413b2a784c0726a36f9c0087848174d335ed0c26",
+    "topic": "项目相关方管理"
+  },
+  {
+    "id": "P02",
+    "group": "项目与实践",
+    "repo": "lovemoganna/Prompts",
+    "path": "Original/Work/Project/6-角色统筹.md",
+    "ref": "0fdfdde53854523a9bd8704a1ac2c2c785702072",
+    "sha": "0e618d046090641f2f2ac3790ce3660c61de552b",
+    "topic": "角色统筹与冲突"
+  }
+]
