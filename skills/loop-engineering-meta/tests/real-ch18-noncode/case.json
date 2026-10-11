@@ -1,0 +1,44 @@
+{
+  "case_name": "第18章高难度非代码知识重组与冲突证据",
+  "scope": {
+    "task_capabilities": [
+      "非代码知识文章炼化"
+    ],
+    "skill_capabilities": [
+      "非代码知识文章炼化",
+      "已有文章增量改善",
+      "结构保真"
+    ],
+    "evidence": "note-reforge 主分支 SKILL.md；公开原文无代码，第18章是独立知识章节"
+  },
+  "execution": {
+    "performed": true,
+    "receipt": "本分支记录 source.md、draft.next.md 和 CI 的真实校验退出状态；不会把它当成模型独立语义审查"
+  },
+  "structure": {
+    "status": "通过",
+    "evidence": "源文件完整保留，测试精确校验8个原探索问题、图卡路径、关键方法与数字、版权授权"
+  },
+  "content": {
+    "fidelity": {
+      "status": "通过",
+      "evidence": "三种方法、五个观察维度、原文数量/假设、8个探索问题、2条图卡引用都有对应信息"
+    },
+    "grounding": {
+      "status": "通过",
+      "evidence": "原文两周与理科错误率强断言明确标成未经出处核实，学习风格证据参考 Pashler综述与Dunlosky综述"
+    },
+    "task_value": {
+      "status": "待核验",
+      "evidence": "重组为按故障选择方法→记录→调整→复盘、辨析真正冲突；尚无独立用户任务表现对照"
+    },
+    "usability": {
+      "status": "待核验",
+      "evidence": "新稿为结构化Markdown，并有具体选择与退出规则；未来任务完成速度没有验证"
+    }
+  },
+  "review": {
+    "independent": false,
+    "evidence": "同一模型生成及内容反向审查；CI验证客观约束不能代替语义盲审"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "original_commit": "3e8fe46dd5047a023abd93fdb9b071393d4baeb3",
+  "source_blob_sha": "6a751e3f1699fe7d7d9145acb9c6846e8de3c374",
+  "chapter_start": 92324,
+  "chapter_end": 96788,
+  "input_length": 4464,
+  "output_length": 3802,
+  "input_type": "公开、非代码 Markdown 知识章节",
+  "user_task": "note-reforge 重组、冲突辨析、证据限定",
+  "project_repo": "lovemoganna/Org-Skills",
+  "draft_license": "CC BY-NC-SA 4.0",
+  "source_license": "CC BY-NC-SA 4.0"
+}

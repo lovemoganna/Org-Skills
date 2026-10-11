@@ -1,0 +1,24 @@
+name: Loop Reforge Complex Noncode Chapter
+on:
+  push:
+    branches: [test/loop-note-reforge-complex-noncode-20261011]
+    paths:
+      - "skills/loop-engineering-meta/tests/real-ch18-noncode/**"
+      - ".github/workflows/loop-note-reforge-complex-noncode.yml"
+permissions:
+  contents: read
+jobs:
+  verified-retest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 skills/loop-engineering-meta/tests/real-ch18-noncode/check.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loop-note-reforge-complex-noncode
+          path: |
+            skills/loop-engineering-meta/tests/real-ch18-noncode/metadata.json
+            skills/loop-engineering-meta/tests/real-ch18-noncode/source.md
+            skills/loop-engineering-meta/tests/real-ch18-noncode/draft.next.md
+            skills/loop-engineering-meta/tests/real-ch18-noncode/case.json
+          retention-days: 7
