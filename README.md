@@ -49,7 +49,8 @@
 - 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
 
 ### 数据分析
-- `business-owner`：事件或经营目标 → 业务影响假设 → 单一决策任务 → 证据要求 → Decision Review；与 `business-reasoning` / `analysis-verifier` 形成业务价值闭环。
+- **四阶段（Carmen）**：`business-owner` S1 下达任务 → `business-reasoning` S2 基础梳理（先结果表、行粒度）→ `analysis-verifier` S3 基础校验 → `business-reasoning` S4 形成分析（B 独立验证 Finding），**老板只看最终分析报告**。规范：`skills/business-owner/references/four-stage-review.md`。
+- `business-owner`：事件或经营目标 → 业务影响假设 → 单一决策任务 → 证据要求 → 最终报告 Decision Review；与 `business-reasoning` / `analysis-verifier` 形成业务价值闭环。
 - `ontology-constrained-analysis`：业务语义 → 本体原子与规则 → SQL 验证 → Signal → Finding；源不可用时交付阻塞审计报告。
 - `business-reasoning`：业务目的 → 拆问题 → 结果表 → 表/字段/条件 → 候选 SQL（只分析）。
 - `analysis-verifier`：独立检查语义、SQL、真实 Result 与反例，输出 Verification Feedback（只验证）。

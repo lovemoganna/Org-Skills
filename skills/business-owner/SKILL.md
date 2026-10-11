@@ -43,7 +43,7 @@ acceptance_criteria: "什么结果可作为决策依据；不能决策时怎样�
 ```
 
 ## 复核：Decision Review
-A (`business-reasoning`) 负责选择具体问题、设计结果表、推导候选 SQL；B (`analysis-verifier`) 独立验证。老板只消费 A 的分析综合和 B 的当前证据回执，按以下次序审核：
+A (`business-reasoning`) 负责选择具体问题、设计结果表、推导候选 SQL；B (`analysis-verifier`) 独立验证。老板只消费 S4 经 A 整理成稿、B 附独立证据回执的管理层分析报告，按以下次序审核：
 - **Correct question?** 是否在回答真正需要作出的决策，而不是堆成交量/排名/图表？
 - **Evidence?** 已区分申请/处理中/成功、资金方向、内部划转与外部流出？金额/币种/时间范围/基线明确且被 B 验证？
 - **Alternative?** 是否排除排队积压、技术释放、价格波动、少数机构调仓、正常市场周期等竞争解释（根据事件适用）？
@@ -59,8 +59,16 @@ A (`business-reasoning`) 负责选择具体问题、设计结果表、推导候�
 - **流动性/用户信任的结论**需要额外内部资金库存、待处理负债、通道可用性、时间一致的价格、正常历史基线、客户分层或实际服务恢复状态；没有就保持 UNKNOWN。
 - **异常阈值与处置**要有真实业务负责人授权；不得因大额、排队或高净流出自动判恶意、停止正常用户提币或声称资不抵债。
 
+## 四阶段与管理层阅读规则
+正式使用 `references/four-stage-review.md`：**S1 下达任务 → S2 基础梳理 → S3 基础校验 → S4 形成分析**。三个角色承担四阶段，不增设“老板审 SQL”环节。
+
+- S1 本 Skill 只交付 `TaskBrief`；不做数据调查，也不审核 A/B 过程。
+- **老板在 S4 完成后只收到 `DecisionReport`**（经 B 独立验证的业务分析报告），不接收或逐轮打分 `ResultSpec / QAReceipt / Analysis Packet`。
+- 在 S4 才执行现有 Decision Review；报告正文应先写经营结论、证据、影响、处置建议，再把 SQL/质量检查作为可追溯附录。
+- 没有经过 S3 的真实基础校验，或 S4 的主要发现没有独立验证，不允许标管理层报告为“已确认”。
+
 ## 与另外两个 Skill 的职责
-`business-owner` 发布 Business Brief → `business-reasoning` 设计一个能改变判断的 Analysis Packet → `analysis-verifier` 提供独立 Verification Feedback → A 整合已证实发现 → Owner 做 Decision Review。
+`business-owner` S1 下任务 → `business-reasoning` S2 画结果表和数据来源 → `analysis-verifier` S3 基础校验 → `business-reasoning` S4 形成分析且 `analysis-verifier` 逐条反证 → Owner 只读 S4 管理报告做 Decision Review。
 - **小循环 A↔B** 只由新增证据触发；**大循环 Owner↔A** 只在业务问题/决策价值有实质变化时触发。无固定轮数；没有新增事实、证据或决策价值时，不得为了凑轮数继续讨论。
 - Owner 不重演 A 的“哪个表、取什么、什么条件”；不写 SQL、不读表、不做金额计算、不生成 Report/Dashboard。
 - 有即时行动风险但证据不足：明确最安全的升级对象/需要的数据，不用虚构结论填补。

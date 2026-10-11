@@ -16,6 +16,26 @@ description: 对 business-reasoning 的 Analysis Packet 独立复核语义、数
 - 若当前运行位置失败，可尝试已有且获授权的**等价 DuckDB 运行时**。不曾实际执行就不得称为 PASS；缺能力返回 BLOCKED 与恢复条件。
 - 每轮运行记录数据源、SQL、数据/结果版本、运行时间、执行环境、错误或结果；历史 Result 只能标历史参考，不能冒充本轮新证据。
 
+## 两种不同的验证任务，绝不混淆
+参照 `../business-owner/references/four-stage-review.md`，同一验证师承担**两个不同工作节点**，但只在各自阶段交付对应产物：
+- **S3 基础校验**（输入 S2 的 `ResultSpec + SourceMap`）：真实检查表的行粒度、列和类型、候选键/外键、JOIN 基数、NULL/重复、币种单位、交易方向、时间/状态、指标计算先决条件。只输出 `QAReceipt` 和受约束的可分析范围，结论 `PASS / PARTIAL / BLOCKED`；**不写 Finding，不解释经营风险**。
+- **S4 结论独立验证**（输入 A 提出的具体 `Finding` 与 SQL）：逐条验证实测值、竞争解释、稳健性、计算及语义，输出原 `Verification Feedback` / `FindingVerdict`。**S3 PASS 绝不意味着 S4 Finding 已验证**。验证完成反馈给 A，由 A 撰写管理报告，老板不需要审 SQL。
+
+### S3 QAReceipt（只记录基础证据）
+```yaml
+task_id: B001
+source_identity: exact_authorized_source
+source_revision: actual_or_unknown
+engine_and_execution: actual_runtime_and_SQL_receipt
+schema_and_grain: source_tables_fields_rows_and_keys
+field_values_and_units: status_direction_asset_time_amount_semantics
+data_quality_checks: keys_null_orphan_join_time_units_and_reconciliation
+validated_metric_scope: metrics_which_can_be_calculated_without_invented_semantics
+blockers: unresolved_dependencies
+verdict: PASS | PARTIAL | BLOCKED
+```
+依赖型 FAIL/BLOCKED 必须拦住相关 S4 分析。S3 `PARTIAL` 可让已通过的独立数据范围继续，但不可把未测部分写成通过。
+
 ## 每轮验证程序
 1. **输入检查**：Packet 与 Data Contract 一致，未越权、无未知值被当事实、问题结果能够改变一个明确判断。
 2. **业务语义**：区分输出列与过滤条件；核对主体、样本、粒度、状态/生命周期、金额计量单位、汇率时间意义和指标范围。入金-出金通常是净流量，不直接代表账户余额/留存。

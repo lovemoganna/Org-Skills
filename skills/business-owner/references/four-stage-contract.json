@@ -1,0 +1,85 @@
+{
+  "version": "2026-10-11",
+  "workflow": "carmen-four-stage-review",
+  "roles": [
+    "business-owner",
+    "business-reasoning",
+    "analysis-verifier"
+  ],
+  "stages": [
+    {
+      "id": "S1",
+      "name": "下达任务",
+      "owner": "business-owner",
+      "artifacts": [
+        "TaskBrief"
+      ],
+      "reviewer": "business_owner",
+      "produces_findings": false,
+      "requires": []
+    },
+    {
+      "id": "S2",
+      "name": "基础梳理",
+      "owner": "business-reasoning",
+      "artifacts": [
+        "ResultSpec",
+        "SourceMap"
+      ],
+      "reviewer": "analyst_peer",
+      "produces_findings": false,
+      "requires": [
+        "TaskBrief"
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "基础校验",
+      "owner": "analysis-verifier",
+      "artifacts": [
+        "QAReceipt"
+      ],
+      "reviewer": "independent_verifier",
+      "produces_findings": false,
+      "requires": [
+        "TaskBrief",
+        "ResultSpec",
+        "SourceMap"
+      ],
+      "gate": [
+        "PASS",
+        "PARTIAL",
+        "BLOCKED"
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "形成分析",
+      "owner": "business-reasoning",
+      "verifier": "analysis-verifier",
+      "artifacts": [
+        "DecisionReport"
+      ],
+      "reviewer": "business_owner",
+      "produces_findings": true,
+      "requires": [
+        "TaskBrief",
+        "ResultSpec",
+        "SourceMap",
+        "QAReceipt"
+      ]
+    }
+  ],
+  "review_rule": {
+    "owner_receives_only": "DecisionReport",
+    "owner_does_not_review": [
+      "ResultSpec",
+      "SourceMap",
+      "QAReceipt"
+    ],
+    "stage3_pass_does_not_imply_finding_pass": true,
+    "phase4_findings_require_independent_verdict": true,
+    "partial_restricts_scope": true,
+    "blocked_disallows_claims": true
+  }
+}
