@@ -3,7 +3,7 @@
 
 只验证“测试适配性 + 结构/内容独立验收”的记录是否自洽。
 不读取外网，不自动判断事实真假，也不声称同一模型自评等于独立评审。
-用法: python scripts/evaluate_case.py path/to/case.json
+用法: python scripts/evaluate_case.py path/to/case.json [--advisory]\n默认退出状态：0=已验收通过，1=明确失败，2=不适配/未完成/条件通过；--advisory 仅出报告。
 """
 from __future__ import annotations
 
@@ -60,6 +60,7 @@ def judge(case: dict) -> dict:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("case", type=Path)
+    p.add_argument("--advisory", action="store_true", help="仅记录裁决，不作为自动化发布门禁")
     args = p.parse_args()
     try:
         result = judge(json.loads(args.case.read_text(encoding="utf-8")))
@@ -67,7 +68,9 @@ def main() -> int:
         print(json.dumps({"判定": "测试准备不足", "原因": str(exc)}, ensure_ascii=False))
         return 2
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0
+    if args.advisory or result["判定"] == "测试通过":
+        return 0
+    return 1 if result["判定"] == "测试失败" else 2
 
 
 if __name__ == "__main__":

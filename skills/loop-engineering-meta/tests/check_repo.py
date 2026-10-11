@@ -6,6 +6,9 @@ from copy import deepcopy
 import json
 from pathlib import Path
 from importlib.util import module_from_spec, spec_from_file_location
+import subprocess
+import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
@@ -75,4 +78,20 @@ check("职责不确定", unknown_fit, "适配性待确认", "未评价")
 no_source = deepcopy(separate)
 no_source["scope"]["evidence"] = ""
 check("缺职责来源", no_source, "测试准备不足", "未评价")
+# 校验自动化调用中的真实退出状态，避免“输出失败但 CI 仍成功”。
+with tempfile.TemporaryDirectory() as d:
+    path = Path(d) / "case.json"
+    for label, data, code in (
+        ("历史有条件通过不可以自动发布", historical, 2),
+        ("故意伪造结论必须拦截", fabricated, 1),
+        ("模拟独立完整合格可以执行", separate, 0),
+    ):
+        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/evaluate_case.py"), str(path)], capture_output=True, text=True)
+        assert result.returncode == code, (label, result.returncode, result.stdout, result.stderr)
+        checks.append((label, "退出状态=" + str(code)))
+    path.write_text(json.dumps(historical, ensure_ascii=False), encoding="utf-8")
+    advised = subprocess.run([sys.executable, str(ROOT / "scripts/evaluate_case.py"), str(path), "--advisory"], capture_output=True, text=True)
+    assert advised.returncode == 0 and "有条件通过" in advised.stdout
+    checks.append(("不阻断的审计模式", "退出状态=0"))
 print(json.dumps({"结论": "回归通过", "案例数": len(checks), "检查": checks}, ensure_ascii=False, indent=2))
