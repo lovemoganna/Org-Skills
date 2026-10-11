@@ -4,7 +4,7 @@
   "chapter_start": 92324,
   "chapter_end": 96788,
   "input_length": 4460,
-  "output_length": 3802,
+  "output_length": 3826,
   "input_type": "公开、非代码 Markdown 知识章节",
   "user_task": "note-reforge 重组、冲突辨析、证据限定",
   "project_repo": "lovemoganna/Org-Skills",
