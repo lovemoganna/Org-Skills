@@ -218,4 +218,54 @@ with tempfile.TemporaryDirectory() as work:
     assert advisory.returncode == 0 and "疑似编号排版问题：1 处" in advisory.stdout
 print("note-reforge numbered-question visual hierarchy regression: OK")
 
+
+# Title/subtitle editorial-navigation regression; suggestions are not fact grades.
+from importlib.util import spec_from_file_location, module_from_spec
+heading_spec = spec_from_file_location("heading_readability", SKILL_ROOT / "tests" / "check_heading_readability.py")
+heading_mod = module_from_spec(heading_spec)
+assert heading_spec and heading_spec.loader
+heading_spec.loader.exec_module(heading_mod)
+heading_fixture = (SKILL_ROOT / "tests" / "regression" / "concise-navigable-headings.md").read_text(encoding="utf-8")
+assert "标题与各级小标题：导航优先" in canonical and "标题目录反查" in canonical
+assert "学习方法不适合我时，怎样验证、调整和保留？" in heading_fixture
+assert "学习方法的选择与迭代" in heading_fixture
+old_heading_set = """# 学习方法不适合我时，怎样验证、调整和保留？
+## 遇到什么问题，先做什么
+## 一次小实验：先证实效果，再决定保留
+## 个人特征是观察变量，不是固定身份〔补〕
+## 定期复盘：不要把年度检查当成唯一退出点
+## 证据边界
+## 八个自查问题
+## 来源、许可与插图
+"""
+new_heading_set = """# 学习方法的选择与迭代
+## 方法选择
+## 方法实验
+## 学习特征
+## 定期复盘
+## 证据边界
+## 自查问题
+## 来源与附图
+"""
+assert len(heading_mod.issues(old_heading_set)) >= 3
+assert heading_mod.issues(new_heading_set) == []
+assert heading_mod.issues("## 其他\n")[0][2] == "过于空泛"
+assert heading_mod.issues("## 研究背景\n## 研究背景\n")[-1][2] == "同文重复，导航难区分"
+assert heading_mod.issues("## 制裁名单筛查\n## 事故复盘\n") == []
+assert heading_mod.issues("#+TITLE: 学习方法的选择与迭代\n* 方法选择\n** 证据边界\n",".org") == []
+assert heading_mod.issues("~~~markdown\n# 学习方法不适合我时，怎样验证、调整和保留？\n~~~\n") == []
+# Official names and necessary qualifications may be long: only report a review candidate.
+assert heading_mod.issues("## The official name of a lengthy academic paper: its subtitle and precise scope\n")
+with tempfile.TemporaryDirectory() as d:
+    doc = Path(d) / "headings.md"
+    command = [sys.executable, str(SKILL_ROOT / "tests" / "check_heading_readability.py"), str(doc)]
+    for body, expected in ((old_heading_set,1),(new_heading_set,0)):
+        doc.write_text(body, encoding="utf-8")
+        result = subprocess.run(command + ["--strict"],capture_output=True,text=True)
+        assert result.returncode == expected, (result.stdout,result.stderr)
+    doc.write_text(old_heading_set, encoding="utf-8")
+    advisory = subprocess.run(command,capture_output=True,text=True)
+    assert advisory.returncode == 0 and "标题审稿候选：" in advisory.stdout
+print("note-reforge heading/editorial navigation regression: OK")
+
 print("note-reforge contracts + 7 Org draft identity checks: OK")
