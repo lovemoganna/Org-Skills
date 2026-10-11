@@ -1,0 +1,23 @@
+name: Loop Noncode Index Retest
+on:
+  push:
+    branches: [test/loop-note-reforge-knowledge-index-20261011]
+    paths:
+      - ".github/workflows/loop-note-reforge-index-retest.yml"
+      - "skills/loop-engineering-meta/tests/actual-noncode-index/**"
+permissions:
+  contents: read
+jobs:
+  retest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 skills/loop-engineering-meta/tests/actual-noncode-index/check.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: note-reforge-second-noncode-sample
+          path: |
+            skills/loop-engineering-meta/tests/actual-noncode-index/source.org
+            skills/loop-engineering-meta/tests/actual-noncode-index/draft.next.org
+            skills/loop-engineering-meta/tests/actual-noncode-index/case.json
+          retention-days: 7

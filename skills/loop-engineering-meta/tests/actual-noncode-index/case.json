@@ -1,0 +1,44 @@
+{
+  "case_name": "第二种非代码文章：Skill使用索引，增加版本漂移判断",
+  "scope": {
+    "task_capabilities": [
+      "非代码知识文章炼化"
+    ],
+    "skill_capabilities": [
+      "非代码知识文章炼化",
+      "已有文章增量改善",
+      "结构保真"
+    ],
+    "evidence": "note-reforge SKILL.md；输入为真实Org知识索引，不含可执行代码块"
+  },
+  "execution": {
+    "performed": true,
+    "receipt": "来源 org-notes 固定提交 17a8edbbd038c8d96e6277057b52ddf62d221892，GitHub 测试分支原文、生成草稿、执行日志"
+  },
+  "structure": {
+    "status": "通过",
+    "evidence": "对照全部表格行、Org 元数据、原始链接与文内标题，独立目录结构校验"
+  },
+  "content": {
+    "fidelity": {
+      "status": "通过",
+      "evidence": "原文全量字节保留，新段落可单独移除还原"
+    },
+    "grounding": {
+      "status": "通过",
+      "evidence": "原文明示历史11项筛选时间范围、main动态链接和真实提交；新增规则仅为条件判断并使用〔补〕"
+    },
+    "task_value": {
+      "status": "待核验",
+      "evidence": "将未加载与版本变化两种情形分流，是可以检查的新增排查分界；尚无独立用户实测"
+    },
+    "usability": {
+      "status": "待核验",
+      "evidence": "草稿可阅读且短于原稿5%的增加成本；是否让读者少走弯路未实测"
+    }
+  },
+  "review": {
+    "independent": false,
+    "evidence": "内容生成和主观判定在同一会话内，自动结构检查不能代替独立内容审阅"
+  }
+}
