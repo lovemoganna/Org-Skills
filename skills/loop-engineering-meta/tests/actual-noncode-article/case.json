@@ -1,0 +1,44 @@
+{
+  "case_name": "新样本：Claude Code 工程化真实非代码文章炼化",
+  "scope": {
+    "task_capabilities": [
+      "非代码知识文章炼化"
+    ],
+    "skill_capabilities": [
+      "非代码知识文章炼化",
+      "已有文章增量改善",
+      "结构保真"
+    ],
+    "evidence": "skills/note-reforge/SKILL.md 对知识笔记/文章重写的职责；原始文章 Git SHA 17a8edbbd038c8d96e6277057b52ddf62d221892，无 Org 可执行源代码块"
+  },
+  "execution": {
+    "performed": true,
+    "receipt": "独立测试分支冻结源文并真实生成新 Org 草稿；见相对文件 source.org / draft.next.org；CI 执行源文逐字校验、Org 样式校验及异常回归"
+  },
+  "structure": {
+    "status": "通过",
+    "evidence": "原文件头、全量旧正文、文件路径和文内技术标识字面保留；结构检查和发布草稿隔离目录回归需通过"
+  },
+  "content": {
+    "fidelity": {
+      "status": "通过",
+      "evidence": "新版本完全包含原文，删除一个新增章节即可字节级还原；原始材料数据和事实均不丢失"
+    },
+    "grounding": {
+      "status": "通过",
+      "evidence": "新增诊断分界基于原文上下文、工具、反馈、权限、并发工作区章节，新增知识标记〔补〕；未宣称讲者官方流程"
+    },
+    "task_value": {
+      "status": "待核验",
+      "evidence": "新增症状→首查环节→证据的可用分界；是否明显提升原本优秀文章的使用效果尚无独立读者实测"
+    },
+    "usability": {
+      "status": "待核验",
+      "evidence": "Org 草稿是可审阅产物；用户未来检索速度与真实使用获益暂无观察记录"
+    }
+  },
+  "review": {
+    "independent": false,
+    "evidence": "同一会话生成草稿、提出内容解释；CI 仅验证客观结构和规则状态，不是独立语义评委"
+  }
+}

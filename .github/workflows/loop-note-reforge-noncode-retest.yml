@@ -1,0 +1,25 @@
+name: Noncode Note Reforge Real Article Retest
+on:
+  push:
+    branches: [test/loop-note-reforge-noncode-20261011]
+    paths:
+      - ".github/workflows/loop-note-reforge-noncode-retest.yml"
+      - "skills/loop-engineering-meta/tests/actual-noncode-article/**"
+permissions:
+  contents: read
+jobs:
+  verify-real-article:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source, draft, independent structural rules, and failure cases
+        run: python3 skills/loop-engineering-meta/tests/actual-noncode-article/check_actual.py
+      - name: Upload executed source and result for audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: noncode-note-reforge-test-evidence
+          path: |
+            skills/loop-engineering-meta/tests/actual-noncode-article/published_source/source.org
+            skills/loop-engineering-meta/tests/actual-noncode-article/drafts/draft.next.org
+            skills/loop-engineering-meta/tests/actual-noncode-article/case.json
+          retention-days: 7
