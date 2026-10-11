@@ -25,7 +25,7 @@ assert "https://doi.org/10.1111/j.1539-6053.2009.01038.x" in draft
 assert "CC BY-NC-SA 4.0" in draft
 assert "illustrations/45_五大特质雷达图.svg" in draft
 assert "cards/card_方法实验卡.svg" in draft
-assert draft.count("# ")==1
+assert len(re.findall(r"(?m)^# ",draft))==1
 case=json.loads((base/"case.json").read_text(encoding="utf-8"))
 import tempfile
 def evaluate(doc):
