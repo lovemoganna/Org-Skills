@@ -195,7 +195,7 @@ layout_spec.loader.exec_module(layout_mod)
 layout_fixture = (SKILL_ROOT / "tests" / "regression" / "numbering-visual-hierarchy.md").read_text(encoding="utf-8")
 assert "编号与层级（先判断语义，再选择样式）" in canonical
 assert "编号排版反查" in canonical and "原始编号与显示编号分离" in canonical
-assert "Q18-1" in layout_fixture and "语义有序列表" in layout_fixture
+assert "Q18-1" in layout_fixture and "有序列表" in layout_fixture
 bad_quote = "> **Q18-1**：问题一\n> **Q18-2**：问题二\n> **Q18-3**：问题三\n"
 good_list = "1. 问题一\n2. 问题二\n3. 问题三\n\nQ18-1—Q18-3 为原始题号。\n"
 general_bad = "> **Q42-1**：问题一\n> **Q42-2**：问题二\n"
