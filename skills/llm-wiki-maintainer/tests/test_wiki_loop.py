@@ -57,7 +57,9 @@ class WikiLoopTests(unittest.TestCase):
 
     def test_exact_evidence_noop(self):
         self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
-        self.assertEqual(self.states([self.entry()])["items"][0]["state"], "NOOP_ALREADY_INDEXED")
+        p = self.states([self.entry()])
+        self.assertEqual(p["items"][0]["state"], "NOOP_ALREADY_INDEXED")
+        self.assertEqual(p["gate"], "NOOP")
 
     def test_same_snapshot_new_locator_requires_review(self):
         self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
@@ -126,6 +128,13 @@ class WikiLoopTests(unittest.TestCase):
     def test_literal_code_link_ignored(self):
         self.write_page(MAIN, body="* Example\n#+begin_src text\n[[wiki:not-real][sample]]\n#+end_src\n")
         self.assertEqual(m.inventory(self.repo)[1], [])
+
+    def test_empty_repository_cannot_pass(self):
+        self.page.unlink()
+        self.second.unlink()
+        pages, errors = m.inventory(self.repo)
+        self.assertEqual(pages, {})
+        self.assertIn("no Org source pages", errors)
 
     def test_invalid_urls_blocked(self):
         for url in ["http://docs.python.org/", "https://example.com/test",
