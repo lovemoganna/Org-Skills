@@ -10,6 +10,7 @@
 | 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
+| 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
 | 读取公开 X/Twitter 帖文并核验正文 | `x-link-reader` | skills/x-link-reader/SKILL.md |
 | 从突发经营事件或业务目标提炼值得决策的分析任务 | `business-owner` | skills/business-owner/SKILL.md |
@@ -44,6 +45,8 @@
 - `org-literate-engineering`：编程材料 → 逆向与参数化 → 最小 Org/Babel 结构 → 真实执行 → Eval / Repair / Regression → 干净的文学编程产物。
 
 ### 知识资产
+- `llm-wiki-maintainer`：对已有 Org Wiki 执行增量摄入、索引优先问答、证据冲突处理、跨页关系维护及健康检查；复用已有内容炼化和发布机制。
+- 固定调用：`用 llm-wiki-maintainer 维护知识库：<来源 / 主题>`；只读问答：`用 llm-wiki-maintainer 回答：<问题>`。
 - `note-reforge`：已有 Org / Markdown → 保留独有经验与证据 → 补判断、边界、默认建议与检索入口 → 生成长期可用的下一版知识资产。
 - `x-link-reader`：公开 X URL → 多源读取 → 完整性/来源核验 → `note-reforge` 源材料。
 - 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
@@ -67,6 +70,7 @@
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
+| `llm-wiki-maintainer` | 证据驱动的持续 Org Wiki 维护、问答与质检 | `skills/llm-wiki-maintainer/SKILL.md` | Packaged; live E2E pending |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
 | `x-link-reader` | 公开 X/Twitter 内容只读获取与来源核验 | `skills/x-link-reader/SKILL.md` | Network E2E pending |
 | `business-owner` | 从真实业务事件/经营目标制定决策挑战并验收分析价值 | `skills/business-owner/SKILL.md` | Active; decision framing |
