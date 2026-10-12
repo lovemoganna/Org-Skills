@@ -1,6 +1,6 @@
 # HTML Design Lab · V6.0 Candidate
 
-**将 Markdown / Org Mode / DocumentSpec JSON 生成可离线阅读的单文件 HTML。** 内置 30 种视觉风格、30 套构图，支持主题切换、章节目录、JSON 导入导出、代码块、表格、复制及输入提供的批注。生成网页不依赖 CDN。
+**将 Markdown / Org Mode / DocumentSpec JSON 生成可离线阅读的单文件 HTML。** 内置 30 种视觉风格、30 套构图，支持主题切换、章节目录、JSON 导入导出、代码块、表格、复制及输入提供的批注。代码块内置 SQL / Python / JavaScript / Shell / JSON 离线语法高亮，保留原文及复制；正式输出不包含旧版兼容性自检面板。生成网页不依赖 CDN。
 
 ## 立即使用
 
