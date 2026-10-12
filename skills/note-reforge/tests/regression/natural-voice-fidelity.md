@@ -8,7 +8,7 @@ Hold source text and output shape fixed. Compare the previous canonical Skill wi
 
 ### Case A: expert technical prose with empty rhetoric
 Source: 「在持续演变的技术格局中，我们通过读取日志与比对提交记录，揭示了错误发生的核心原因。」
-Expected editorial choice: 「比对日志与提交记录后，定位到错误原因。」
+Expected editorial choice: 「读取日志并比对提交记录后，定位到错误原因。」
 Keep: logs + commit records; reported diagnosis. Remove: decorative scene-setting and unsupported importance claims.
 Failure: inventing the particular root cause or claiming a test passed.
 
