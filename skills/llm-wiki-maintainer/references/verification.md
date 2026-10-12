@@ -96,3 +96,14 @@ G6 回归：执行以下场景，任何安全/保真失败阻断提交。
 - 本轮重审 CFTC 2023-03-27 指控、Binance 官方回应和后续 CFTC 命令，以及 SEC 一手争议材料。未找到证据充分、同对象同一窗口同口径、可以严格表达为 P / 非 P 的一手来源对。监管指控与被指控方否认，或者存在控制与存在绕过，不能自动计作严格矛盾的已证实事实。
 - 已添加 `live_t17_gate` 的四项前置回归：缺失来源拒收、未独立核实来源拒收、同一来源拒收、Binance 非互斥场景拒收。测试中 URL/locator 字段是模拟来源元数据，`verified_directly` 是调用者申报值；函数本身**无法读取 URL，不能把 CANDIDATE 判为 T17 PASS**。
 - 本次 T17 的真实判定仍是 **NOT_VERIFIED**；未向公开 Wiki 增加制造的矛盾。之后需要具有原文精确定位、来源真实性、时间/定义/量词一致性的真实证据对，及独立复核结果。预检通过仅表示可以进入人工/独立验证，不表示事实真实性。
+
+## Git E2E 与真实站点发布门禁回执（2026-10-12）
+
+- 失败基线：此前 `skills/llm-wiki-maintainer/tests/check_conflict_contract.py` 只有 17 项结构化合成断言；T02/T10 缺少真实 Git 仓库竞争写入，索引和日志缺乏发布前全库门禁。上述合成逻辑保留，不伪称曾完成真实写入。
+- 修复产物（公开仓库）：`lovemoganna/org-notes/tools/check_wiki_integrity.py`（只读全库源码审计）；`tools/test_wiki_integrity.py`（仅临时目录内 Git bare remote + 两个 writer，重复摄入与真实非快进拒绝）；`.github/workflows/publish.yml` 在发布前先跑测试和全库审计，失败不能进入 Build/Deploy。原 Org Museum publisher 未替换。
+- Git Commit：`ec99b271a6cc46ba9b55f078ec83b76810f8d0b9`。GitHub Actions：https://github.com/lovemoganna/org-notes/actions/runs/38254107223 ，Build 和 Deploy 都是 success；`Run Wiki disposable Git and negative regressions`、`Verify Wiki source integrity`、`Build without running note code`、`Verify live published content` 均 success。Deploy 实际 `MUSEUM-PUBLISHED-RECEIPT` 的 sourceCommit 与提交 SHA 一致，22 个发布页。
+- 确定性实测：T01/T02/T14 单次写入、相同事件第二次无工作区差异及无新增 commit；T10 两个独立本地 Git writer 真实竞争，远端先行写入保留、陈旧 writer push 被 non-fast-forward 拒绝；T06 查询读取不写；T07 断链、T08 重复 WIKI_ID、T12 文件链接、T18 含 fragment 的未经验证 Wiki 形式，以及 ID 错配、索引缺项、重复日志事件、缺 SOURCE 均能拒绝。测试内容只在临时目录，没有提交模拟资料。
+- 真实 `org-notes` 发布前只读扫描回执：22 个 published 源页、54 条 Wiki 引用、22 条文件链接、21 条索引链接和 3 个维护事件；与真实 Publisher 生成的 HTML 和线上源 Commit 回执均核对通过。
+- 独立远端负向边界：曾以陈旧 expected_sha 对主分支发出不改变目标 SHA 的条件更新请求，接口返回非特定 GraphQL 错误，随后 HEAD 未改变。**不能从这一错误单独认定 GitHub 远端 lease 拒绝机制已通过**；真正通过的竞争实测是临时 bare Git remote 的 non-fast-forward 拒绝。
+- 尚未完成：T17 可信同期严格 P/非 P 一手来源对，T05 外部来源不可读全链路，T09 实际隐私泄漏故障注入，T11 真正撤回声明的来源更新；本轮不补造结果。这些需要原始资料或独立授权测试，不影响已验证的确定性门禁范围。
+- Loop 结论：G0/G1/G3/G4/G5 的确定性来源与发布边界实测通过，G2 的事实语义和 T17 未独立通过。结论仅为 **发布与 Git 故障控制闭环通过；证据语义仍有剩余风险**。
