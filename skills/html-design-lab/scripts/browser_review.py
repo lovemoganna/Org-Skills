@@ -58,7 +58,9 @@ def run(htmlfile, out):
               const data=JSON.parse(JSON.stringify(window.DocumentEngine.getCurrent()));
               data.chapters[0].blocks.push({type:'code',language:lang,code:source});
               window.DocumentEngine.load(data,false);
-              const codes=[...document.querySelectorAll('#document-content .document-code code')];
+              const firstChapter=document.getElementById('chapter-'+data.chapters[0].id);
+              if(!firstChapter) throw Error('First chapter not rendered');
+              const codes=[...firstChapter.querySelectorAll('.document-code code')];
               const code=codes[codes.length-1];
               const kw=code.querySelector('.tok-keyword');
               const style=kw ? getComputedStyle(kw).color : '';
