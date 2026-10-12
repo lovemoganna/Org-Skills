@@ -1,0 +1,33 @@
+{
+  "name": "html-design-lab",
+  "version": "6.0-rc",
+  "publication_status": "reviewed-candidate",
+  "source": "GitHub branch feat/html-design-lab-v6-rc",
+  "repository_files_git_blob_sha1": {
+    "assets/v55-renderer.html": "ad33edfbb118cfef90f777f122a485e1e9ddfdb1",
+    "scripts/generate.py": "2a91680f6b51d35327024b5256046ec830c389a0",
+    "scripts/browser_review.py": "e3d1ee1f0ae189a85c89ae75ae5401269944f128",
+    "tests/test_generator.py": "7c3b8f2dd0ab3d429fbd819311012984fcc59ef8"
+  },
+  "baseline_renderer_sha256": "c5f50e18d4e8639864d3ca6f52e6b9a1e873c1ba551cba393aeed4b05c557c22",
+  "validation": {
+    "workflow": "html-design-lab regression",
+    "passing_run": 38245186555,
+    "source_commit": "bea0de9183bacf386bad3da3b28006e935d12c22",
+    "result": "success",
+    "deterministic_unit_tests": "11/11",
+    "generated_outputs": [
+      "poem.json -> HTML",
+      "tutorial.org -> HTML",
+      "tutorial.md -> HTML",
+      "real-loop-review.md -> HTML"
+    ],
+    "chromium_smoke": "4/4 generated HTML cases",
+    "note": "Evidence is limited to CI execution on the indicated source commit; later metadata-only commits require a new check."
+  },
+  "limitations": [
+    "file:// direct-open not verified on this CI runner",
+    "Firefox and Safari not tested by this workflow",
+    "human visual blind review not performed"
+  ]
+}
