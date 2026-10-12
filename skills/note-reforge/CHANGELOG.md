@@ -1,3 +1,5 @@
+# CHANGELOG
+
 ## 2026-10-12 — natural voice editorial safeguard
 
 Problem:
@@ -10,8 +12,6 @@ Patch:
 
 Release boundary:
 - Structural checks and CI establish contract compatibility, not independently scored A/B prose improvement. Real semantic replay and independent review remain separate gates.
-
-# CHANGELOG
 
 ## 2026-10-05 — controlled-language finishing pass
 
