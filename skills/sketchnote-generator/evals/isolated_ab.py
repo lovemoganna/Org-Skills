@@ -73,6 +73,23 @@ def generate(payload, key):
     return obj.get("id"), image, calls[0].get("revised_prompt")
 
 
+def validate_record_pairs(rows):
+    """Fail closed if paired model requests cannot be compared."""
+    expected = {(case, variant) for case in CASES for variant in ("old", "candidate")}
+    if len(rows) != len(expected) or {(r.get("case"), r.get("variant")) for r in rows} != expected:
+        raise RuntimeError("Expected six unique old/candidate records")
+    response_ids = [r.get("response_id") for r in rows]
+    if any(not isinstance(v, str) or not v.strip() for v in response_ids) or len(set(response_ids)) != 6:
+        raise RuntimeError("Missing or duplicated response IDs")
+    for case in CASES:
+        old, new = [next(r for r in rows if r["case"] == case and r["variant"] == v) for v in ("old", "candidate")]
+        for field in ("input_sha256", "model", "image_model"):
+            if not old.get(field) or old[field] != new.get(field):
+                raise RuntimeError(f"{case}: paired {field} differs")
+        if not old.get("instructions_sha256") or not new.get("instructions_sha256") or old["instructions_sha256"] == new["instructions_sha256"]:
+            raise RuntimeError(f"{case}: old/new Skill instruction hashes missing or identical")
+
+
 def self_test():
     base = make_tasks(b"SOURCE\n", b"OLD\n", b"NEW\n", "test-model", "test-image-model")
     assert len(base) == 6
@@ -100,7 +117,21 @@ def self_test():
             pass
     finally:
         urllib.request.urlopen = original
-    print("SELF-TEST PASS: 6 independently prepared requests; identical paired inputs; non-image refused; no conversation-state linkage")
+    synthetic = []
+    for index, t in enumerate(base):
+        p = t["payload"]
+        synthetic.append({"case": t["case"], "variant": t["variant"], "response_id": f"resp_{index}", "input_sha256": sha256(p["input"].encode()), "instructions_sha256": sha256(p["instructions"].encode()), "model": p["model"], "image_model": p["tools"][0]["model"]})
+    validate_record_pairs(synthetic)
+    for bad_field in ("response_id", "input_sha256", "model", "image_model", "instructions_sha256"):
+        altered = [dict(x) for x in synthetic]
+        altered[1][bad_field] = altered[0][bad_field] if bad_field in ("response_id", "instructions_sha256") else "corrupt"
+        try:
+            validate_record_pairs(altered)
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError(f"Tampered {bad_field} was incorrectly accepted")
+    print("SELF-TEST PASS: 6 requests, paired equality, unique IDs, 5 corruption controls, non-image refusal")
 
 
 def main():
@@ -117,13 +148,28 @@ def main():
     if args.command == "verify":
         d = Path(args.out)
         rows = json.loads((d / "manifest.json").read_text(encoding="utf-8"))
-        if len(rows) != 6 or {(r["case"], r["variant"]) for r in rows} != {(c, v) for c in CASES for v in ("old", "candidate")}:
-            raise RuntimeError("Expected 6 unique old/candidate result records")
+        validate_record_pairs(rows)
+        provenance = json.loads((d / "provenance.json").read_text(encoding="utf-8"))
+        if provenance.get("baseline_ref") != BASE_SHA or provenance.get("result") != "REAL_RUN_COMPLETE_QUALITY_NOT_GRADED" or not provenance.get("candidate_ref"):
+            raise RuntimeError("Missing or inconsistent run provenance")
+        source = fixture_bytes()
+        old_skill = git_read(BASE_SHA, SKILL_PATH)
+        new_skill = git_read(provenance["candidate_ref"], SKILL_PATH)
+        if provenance.get("fixture_sha256") != sha256(source) or provenance.get("baseline_skill_sha256") != sha256(old_skill) or provenance.get("candidate_skill_sha256") != sha256(new_skill):
+            raise RuntimeError("Source or Skill version differs from recorded provenance")
+        expected = make_tasks(source, old_skill, new_skill, rows[0]["model"], rows[0]["image_model"])
+        expected_by_pair = {(t["case"], t["variant"]): t["payload"] for t in expected}
         for row in rows:
-            raw = (d / row["file"]).read_bytes()
-            if not raw.startswith(PNG_MAGIC) or sha256(raw) != row["sha256"] or not row.get("response_id"):
-                raise RuntimeError("Image integrity/provenance verification failed: " + row["file"])
-        print("6 REAL IMAGE FILES VERIFIED; QUALITY REVIEW PENDING; NOT A PASS")
+            payload = expected_by_pair[(row["case"], row["variant"])]
+            if row.get("input_sha256") != sha256(payload["input"].encode()) or row.get("instructions_sha256") != sha256(payload["instructions"].encode()) or row.get("model") != payload["model"] or row.get("image_model") != payload["tools"][0]["model"]:
+                raise RuntimeError("Recorded request differs from pinned old/candidate input")
+            expected_name = f"{row['case']}__{row['variant']}.png"
+            if row.get("file") != expected_name or row.get("review") != "pending":
+                raise RuntimeError("Unexpected image filename or review status")
+            image = (d / expected_name).read_bytes()
+            if not image.startswith(PNG_MAGIC) or sha256(image) != row.get("sha256"):
+                raise RuntimeError("Image integrity verification failed: " + expected_name)
+        print("6 PAIRED IMAGE FILES AND PINNED REQUESTS VERIFIED; QUALITY REVIEW PENDING; NOT A PASS")
         return
     src = fixture_bytes()
     old = git_read(BASE_SHA, SKILL_PATH)
