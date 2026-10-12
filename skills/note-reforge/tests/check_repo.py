@@ -36,6 +36,9 @@ controlled_language_regression = (
     SKILL_ROOT / "tests" / "regression" / "expert-blog-controlled-language.md"
 ).read_text(encoding="utf-8")
 shapes = (SKILL_ROOT / "references" / "shapes.md").read_text(encoding="utf-8")
+natural_voice_regression = (
+    SKILL_ROOT / "tests" / "regression" / "natural-voice-fidelity.md"
+).read_text(encoding="utf-8")
 
 CALL = "用 note-reforge 炼成下一版：<文件 / 目录>"
 CANONICAL = "skills/note-reforge/SKILL.md"
@@ -69,6 +72,12 @@ assert "Agent Environment Engineering" in expert_blog_regression
 assert "2–3 weeks to about 2–3 days" in expert_blog_regression
 assert "Expert-blog style is opt-in" in routing_regression
 assert "do not add English" in routing_regression
+assert "**自然表达审稿。**" in canonical
+assert "不使用固定禁词表" in canonical and "不强制第一人称" in canonical
+assert "不改变事实、证据等级、因果关系或适用边界" in canonical
+assert "### Case B: AML uncertainty" in natural_voice_regression
+assert "### Case C: original source" in natural_voice_regression
+assert "### Case D: already concise" in natural_voice_regression
 assert "**表达层收口。**" in canonical
 assert "一词一义" in canonical and "一句一事" in canonical and "主语明确" in canonical
 assert "no fixed Chinese character or English word limit" in controlled_language_regression
