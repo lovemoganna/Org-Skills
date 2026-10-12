@@ -70,7 +70,7 @@ def run(htmlfile, out):
             report['cases'].append({'check':f'{lang} code fidelity, inert tags, offline token highlight',
                 'pass':verify['text']==source and verify['keywords']>0 and verify['noMarkup'] and
                        verify['notExecuted'] and verify['computedColor']!=verify['rawColor'],
-                'data':{k:v for k,v in verify.items() if k!='text'}})
+                'data':{**{k:v for k,v in verify.items() if k!='text'}, 'source_length':len(source), 'actual_length':len(verify['text']), 'text_equal':verify['text']==source, 'first_diff':next((i for i,(a,b) in enumerate(zip(source,verify['text'])) if a!=b),-1), 'actual_excerpt':verify['text'][:170]}})
 
         report['cases'].append({'check':'no JavaScript runtime errors','pass':len(report['errors'])==0,'errors':report['errors']})
         b.close()
