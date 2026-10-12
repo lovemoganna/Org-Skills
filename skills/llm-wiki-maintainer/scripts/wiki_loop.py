@@ -68,7 +68,7 @@ class Page:
     path: str
     title: str
     source_urls: frozenset[str]
-    evidence_records: frozenset[tuple[str, str]]
+    evidence_records: frozenset[tuple[str, str, str]]
     links: frozenset[str]
 
 def inventory(root: Path) -> tuple[dict[str, Page], list[str]]:
@@ -113,9 +113,9 @@ def inventory(root: Path) -> tuple[dict[str, Page], list[str]]:
             except Invalid:
                 pass
         records = set()
-        for hashval, url in re.findall(r"^#\+EVIDENCE_RECORD:\s*([0-9a-f]{64})\s+(https://\S+)\s*$", visible, re.M | re.I):
+        for hashval, url, locator in re.findall(r"^#\+EVIDENCE_RECORD:\s*([0-9a-f]{64})[ \t]+(https://\S+)[ \t]+(.+?)\s*$", visible, re.M | re.I):
             try:
-                records.add((hashval.lower(), canonical_url(url)))
+                records.add((hashval.lower(), canonical_url(url), locator.strip()))
             except Invalid:
                 errors.append(f"{rel}: invalid evidence record URL")
         result[wiki_id] = Page(wiki_id, rel, fields["TITLE"], frozenset(urls),
@@ -179,7 +179,7 @@ def make_plan(root: Path, evidence_dir: Path, manifest: list[dict]) -> dict:
             data = snapshot(evidence_dir, entry.get("snapshot_file"), digest)
             if not data:
                 raise Invalid("empty source snapshot")
-            identity = json.dumps([url, digest, target, entry.get("revision", "")],
+            identity = json.dumps([url, digest, target, entry.get("revision", ""), loc.strip()],
                                   ensure_ascii=False, separators=(",", ":"))
             event = hashlib.sha256(identity.encode()).hexdigest()[:24]
             row.update({"event_key": event, "url": url, "target_wiki_id": target,
@@ -189,9 +189,9 @@ def make_plan(root: Path, evidence_dir: Path, manifest: list[dict]) -> dict:
             else:
                 events.add(event)
                 matched = [page for page in pages.values() if url in page.source_urls]
-                if any((digest, url) in page.evidence_records for page in matched):
+                if any((digest, url, loc.strip()) in page.evidence_records for page in matched):
                     row.update({"state": "NOOP_ALREADY_INDEXED",
-                                "reason": "source URL and frozen evidence digest already recorded"})
+                                "reason": "source URL, digest and exact locator already recorded"})
                 elif matched:
                     row.update({"state": "REVIEW_EXISTING_SOURCE",
                                 "reason": "URL already cited; compare claims and snapshot before modifying",
