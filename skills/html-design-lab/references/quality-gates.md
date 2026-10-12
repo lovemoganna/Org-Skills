@@ -10,7 +10,7 @@
 | G5 Regression | Poem, SQL tutorial, real report; mobile and desktop; positive and negative cases | stop release for blocking regression |
 | G6 Maintainability | One renderer owner, one generation entry point, no duplicated document-specific UI logic | weigh change against cost |
 
-Browser smoke: zero uncaught JS errors, 30 style registrations and clickable switching, correct document title and chapter navigation, responsive `documentElement.scrollWidth <= innerWidth`, no vanished core blocks, and critical controls (copy, notes, JSON export, modal close) functional. At least one malformed/hostile input is rejected or safely encoded.
+Browser smoke: zero uncaught JS errors, 30 style registrations and clickable switching, correct document title and chapter navigation, responsive `documentElement.scrollWidth <= innerWidth`, no vanished core blocks, and critical controls (copy, notes, JSON export, modal close) functional. Generated HTML must not contain the V4.5 compatibility self-test DOM/CSS/JS or development markers. SQL/Python/JS/Shell blocks must display offline syntax token colors without changing `code.textContent`, executing tags, or losing copy fidelity. At least one malformed/hostile input is rejected or safely encoded.
 
 Do not equate screenshot difference, automated pass count, or self-evaluation with independent award-level visual review. Chrome/Firefox/Safari and `file://` require actual boundary evidence. Use PASS only for verified scope; CONDITIONAL PASS for delivered working files with bounded compatibility or visual review gaps.
 
