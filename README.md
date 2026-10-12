@@ -8,6 +8,7 @@
 |---|---|---|
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
 | 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
+| 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
@@ -69,6 +70,7 @@
 |---|---|---|---|
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
+| `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
 | `llm-wiki-maintainer` | 证据驱动的持续 Org Wiki 维护、问答与质检 | `skills/llm-wiki-maintainer/SKILL.md` | Audit/plan CI + live 21-page audit passed; real-source T17 pending |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
