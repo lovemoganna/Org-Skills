@@ -93,6 +93,22 @@
       "expected": "可编辑 Chart.js 不得替换成静态图",
       "kind": "negative",
       "execution_status": "not_run_in_isolated_target_model"
+    },
+    {
+      "id": "S11",
+      "style_mode": "classic",
+      "layout_mode": "auto",
+      "expected": "显式 auto 在经典风中也必须按事实自动选语义结构，不硬套默认双栏",
+      "kind": "boundary",
+      "execution_status": "not_run_in_isolated_target_model"
+    },
+    {
+      "id": "S12",
+      "style_mode": "classic",
+      "layout_mode": "invalid-layout",
+      "expected": "说明可用布局并请求必要选择，不静默降级",
+      "kind": "boundary",
+      "execution_status": "not_run_in_isolated_target_model"
     }
   ],
   "legacy_cases": "evals/cases.json (unchanged)"
