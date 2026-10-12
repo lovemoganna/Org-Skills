@@ -230,20 +230,23 @@ def render(doc,style,template):
     template=template.replace("localStorageSafeSet('guanshi-visual-style',id)",f"localStorageSafeSet('document-style-{doc['id']}',id)")
     template=template.replace("storage.get('guanshi-theme')",f"storage.get('document-theme-{doc['id']}')")
     template=template.replace("storage.set('guanshi-theme',theme)",f"storage.set('document-theme-{doc['id']}',theme)")
-    template=template.replace('一纸观心 · ','内容实验室 · ')
+    template=template.replace('一纸观心 · ','专题阅读 · ')
+    template=template.replace('观世有感原文及今译','当前文档正文')
+    template=template.replace('观世有感 / FIN.','阅读结束')
+    template=template.replace('内容实验室 · ','专题阅读 · ')
     template=template.replace('READ · REFLECT · REMEMBER','READ · EXPLORE · CREATE')
-    template=template.replace('<strong>一纸观心</strong>','<strong>内容实验室</strong>')
-    template=template.replace("'一纸观心 · '+next.title","'内容实验室 · '+next.title")
+    template=template.replace('<strong>一纸观心</strong>','<strong>专题阅读</strong>')
+    template=template.replace("'一纸观心 · '+next.title","'专题阅读 · '+next.title")
     template=template.replace("version:'V4.5'","version:'V6-generated'")
-    template=template.replace('<title>30 风格内容实验室 · V5.5 发布候选版</title>','<title>'+html.escape(doc['title'])+' · 30 风格实验室</title>')
-    template=template.replace('V5.5 设计风格实验室：30 种风格、30 套独立构图，支持文言文、教程、报告与本地 JSON 文档。','30 风格内容实验室生成页：'+html.escape(doc['title'],quote=True)[:90])
+    template=template.replace('<title>30 风格内容实验室 · V5.5 发布候选版</title>','<title>'+html.escape(doc['title'])+'</title>')
+    template=template.replace('V5.5 设计风格实验室：30 种风格、30 套独立构图，支持文言文、教程、报告与本地 JSON 文档。','独立专题阅读页：'+html.escape(doc['title'],quote=True)[:90])
     wrapping='''<style id="v6-prose-wrapping">
 .document-list li, .document-callout p, .reader-main .chapter p, .reader-main .chapter h2, .reader-main .chapter h3 { overflow-wrap:anywhere; }
 .document-table-wrap, .document-code { max-width:100%; }
 </style>
 '''
     template=replace_once(template,'</head>',wrapping+'</head>')
-    template=template.replace('V5.5 发布候选版','V6 独立文档')
+    template=template.replace('V5.5 发布候选版','')
     return template
 
 def main(argv=None):
