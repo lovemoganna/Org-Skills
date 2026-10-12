@@ -69,6 +69,14 @@ assert "Agent Environment Engineering" in expert_blog_regression
 assert "2–3 weeks to about 2–3 days" in expert_blog_regression
 assert "Expert-blog style is opt-in" in routing_regression
 assert "do not add English" in routing_regression
+natural_voice_regression = (
+    SKILL_ROOT / "tests" / "regression" / "natural-voice-preservation.md"
+).read_text(encoding="utf-8")
+assert "**自然表达审稿。**" in canonical
+for rule in ("机械排比", "模糊权威归因", "不使用固定禁词表", "不强制第一人称", "引用、原始提示词、代码"):
+    assert rule in canonical, ("natural-voice contract missing", rule)
+for case in ("技术博客", "高质量原文", "AML 调查", "Org 教程", "受保护的逐字引文", "非绝对禁词", "事实反查"):
+    assert case in natural_voice_regression, ("natural-voice regression missing", case)
 assert "**表达层收口。**" in canonical
 assert "一词一义" in canonical and "一句一事" in canonical and "主语明确" in canonical
 assert "no fixed Chinese character or English word limit" in controlled_language_regression
