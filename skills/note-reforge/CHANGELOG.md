@@ -1,3 +1,16 @@
+## 2026-10-12 — natural voice editorial safeguard
+
+Problem:
+- Existing controlled-language rules already protect fact fidelity and author voice, but did not explicitly ask the final editor to check for hollow promotional language, vague authority claims and mechanical parallelism.
+
+Patch:
+- Added one scoped natural-editorial check after the expression-layer pass, with no forbidden-word list, default first-person injection, or extra full rewrite cycle.
+- Added a regression fixture covering technical prose, AML uncertainty, protected quotations/code, well-written originals, and Org publishing identity.
+- Added contract assertions to the existing note-reforge regression runner.
+
+Release boundary:
+- Structural checks and CI establish contract compatibility, not independently scored A/B prose improvement. Real semantic replay and independent review remain separate gates.
+
 # CHANGELOG
 
 ## 2026-10-05 — controlled-language finishing pass
