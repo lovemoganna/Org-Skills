@@ -120,6 +120,8 @@ def inventory(root: Path) -> tuple[dict[str, Page], list[str]]:
                 errors.append(f"{rel}: invalid evidence record URL")
         result[wiki_id] = Page(wiki_id, rel, fields["TITLE"], frozenset(urls),
                                frozenset(records), links)
+    if not result:
+        errors.append("no Org source pages")
     for page in result.values():
         for target in page.links:
             if target not in result:
@@ -205,7 +207,11 @@ def make_plan(root: Path, evidence_dir: Path, manifest: list[dict]) -> dict:
         except (Invalid, OSError, TypeError, ValueError) as exc:
             row["reason"] = str(exc)
         results.append(row)
-    return {"gate": "REVIEW_REQUIRED", "head": git_head(root), "pages": len(pages),
+    states = {item["state"] for item in results}
+    gate = ("BLOCKED_SOURCE" if "BLOCKED" in states else
+            "NOOP" if not states or states <= {"NOOP_DUPLICATE_INPUT", "NOOP_ALREADY_INDEXED"} else
+            "REVIEW_REQUIRED")
+    return {"gate": gate, "head": git_head(root), "pages": len(pages),
             "items": results, "writes_performed": 0}
 
 def main(argv: list[str] | None = None) -> int:
@@ -230,7 +236,7 @@ def main(argv: list[str] | None = None) -> int:
             manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
             output = make_plan(args.repo.resolve(), args.evidence_dir, manifest)
         print(json.dumps(output, ensure_ascii=False, sort_keys=True, indent=2))
-        return 0 if output["gate"] in {"PASS", "REVIEW_REQUIRED"} and not any(
+        return 0 if output["gate"] in {"PASS", "REVIEW_REQUIRED", "NOOP"} and not any(
             row["state"] == "BLOCKED" for row in output.get("items", [])) else 2
     except (Invalid, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"gate": "FAIL", "error": str(exc)},
