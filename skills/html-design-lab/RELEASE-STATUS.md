@@ -1,17 +1,25 @@
-# V6.0 RC 发布状态：未完成
+# V6.0 RC 发布状态：候选版已具备执行能力
 
-本分支仅用于审查，不能合并，也不能标为正式版。
+## 真实仓库状态
 
-已核对提交的 `SKILL.md`、`README.md` 和 `assets/v55-renderer.html` 的原始 Git Blob SHA。已提供三种从生成页提取的 DocumentSpec 用例。
+- 分支：`feat/html-design-lab-v6-rc`，PR [#73](https://github.com/lovemoganna/Org-Skills/pull/73)。
+- 核心文件：`SKILL.md`、`scripts/generate.py`、`scripts/browser_review.py`、`tests/test_generator.py`、`references/`、`assets/v55-renderer.html` 和原始输入样例均已进入该分支。
+- 独立 CI：`html-design-lab regression` [首次成功运行](https://github.com/lovemoganna/Org-Skills/actions/runs/38245186555)。
+- 单元测试：11/11，通过。诗歌、Org 教程、Markdown 教程、真实 V5.5 质量报告由远端 checkout 后的生成器重新生成。
+- Chromium 冒烟回归：四份输出全部通过，包含文档标题、章节数、30 种点击切换、页面溢出、外部依赖、JS 运行错误。
+- GitHub 原有 Skills Regression：通过。
 
-## 阻塞项
+## 仍未验证
 
-- `scripts/generate.py` 和 `scripts/browser_review.py` 尚未写入 GitHub。
-- `tests/test_generator.py`、完整 `references/` 与原始输入样例尚未写入 GitHub。
-- 本地归档中运行的 11/11 单测不能代替远端 checkout 后重新执行。
+1. 在 Windows/macOS 上直接通过 `file://` 打开生成 HTML。
+2. Firefox 与正式 Safari 的功能及排版；Chromium `page.set_content()` 不能替代此证据。
+3. 真人盲测与完整 WCAG 2.2 AA 审计。
 
-本轮遵循 `loop-engineering-meta` 的 G3/G5 门禁：不得因为本地成功或只有规范文件，就宣称远端 Skill 可运行。
+## Loop 裁决
 
-## 下一步
+- G0/G1/G2/G4/G5：在已覆盖的输入、安全和 CI 范围内通过。
+- G3：**有条件通过**（终端离线打开与浏览器矩阵缺边界证据）。
+- G6：一个生成器入口、一个冻结渲染模板、参考契约及单元/浏览器检查均有明确代码归属。
+- 这属于可复用的候选 Skill，不应描述成已全面完成跨浏览器正式验收。
 
-将本地 V6.0 RC 归档中缺失的原文件提交至分支；核对 SHA-256；从分支独立重新生成诗歌、Markdown/Org 教程和真实报告，运行单测及浏览器回归；通过后才考虑合并至 main。
+下一步：检查当前 PR 最终提交对应的 CI 结果，条件满足后标记 Ready 并按已授权范围合并。

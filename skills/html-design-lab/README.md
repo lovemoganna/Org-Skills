@@ -1,10 +1,10 @@
 # HTML Design Lab · V6.0 Candidate
 
-**将 Markdown / Org Mode / DocumentSpec JSON 生成离线可用的单文件 HTML。** 内置 30 种视觉风格和 30 套构图，支持主题切换、章节目录、JSON 导入导出、复制、代码展示、数据表格及已提供的注释。无需网页服务器或 CDN。
+**将 Markdown / Org Mode / DocumentSpec JSON 生成可离线阅读的单文件 HTML。** 内置 30 种视觉风格、30 套构图，支持主题切换、章节目录、JSON 导入导出、代码块、表格、复制及输入提供的批注。生成网页不依赖 CDN。
 
 ## 立即使用
 
-在本目录运行：
+在 `skills/html-design-lab/` 目录执行：
 
 ```sh
 python3 scripts/generate.py --input examples/poem.document.json --output poem.html
@@ -13,30 +13,34 @@ python3 scripts/generate.py --input examples/tutorial.org --kind tutorial --outp
 python3 scripts/generate.py --input examples/real-loop-review.md --kind report --output report.html --style saas
 ```
 
-然后用浏览器打开生成的 HTML。初始风格可通过 `--style` 设定，打开网页后仍能自由切换 30 种风格。
+打开生成的 HTML 即可阅读，支持在页面内切换 30 种风格。指定 `--style` 只改变初始风格，不锁定选择。
 
-生成器只依赖 Python 标准库。自动浏览器 QA 可选依赖 Playwright 和 Chromium，未安装时可以运行纯单元测试。
+生成器依赖 Python 3.10+ 标准库。浏览器 QA 另需 Playwright 和 Chromium；GitHub Actions 工作流包含自动安装步骤。
 
 ```sh
 python3 -m unittest discover -s tests -v
 python3 scripts/browser_review.py --html poem.html --out poem-smoke.json
 ```
 
-## 输入限制
+## 输入边界
 
-Markdown/Org 是明确子集解析器，不是全规格编译器。需要高保真排版、人工今译或关联批注时请传入 `DocumentSpec` JSON；需要执行 Org Babel、复杂嵌入资源或数学公式时不能直接声明支持。详细规则在 `references/document-contract.md`，最新 30 风格 ID 在 `references/styles.md`。
+Markdown/Org 只支持明确子集，**不支持执行 Org Babel/SQL**。严格保留字词、对照今译或特定注释，请使用 DocumentSpec JSON；不认识的内容不能默默删除。详见 `references/document-contract.md`、`references/styles.md`。
 
-## 质量边界
+## 发布及测试边界
 
-V6.0 是具备实际生成、校验和测试能力的**候选 Skill**，并非已安装到任何 GitHub 仓库或插件的版本。Chromium `page.set_content()` 的通过不能替代 Chrome / Firefox / Safari 的 `file://` 实机兼容性认证。内置 SQL 仅展示/复制，**不执行 SQL**。
+源码已经提交到 `lovemoganna/Org-Skills` 的候选分支，详见 [PR #73](https://github.com/lovemoganna/Org-Skills/pull/73)。是否在其他 Agent 运行时自动加载，取决于该环境是否读取并安装了这个 Skill；GitHub 合并本身不等于插件安装。
 
-## 文件职责
+当前独立仓库回归使用 GitHub Actions 上的 Chromium `page.set_content()`。这验证已覆盖的生成与交互，不证明本地 `file://`、Firefox、正式 Safari 或完整无障碍审计全部通过。风控样例均为明示的虚构演示内容。
 
-- `SKILL.md`：Agent 执行契约
-- `assets/v55-renderer.html`：冻结的 30 风格渲染基线
-- `scripts/generate.py`：唯一 HTML 生成入口
-- `scripts/browser_review.py`：浏览器边界冒烟测试
-- `references/`：内容协议、风格目录、Loop 质量门禁
-- `tests/`：结构、反例、安全、保真测试
-- `examples/`：源文档实例和演示输入
-- `output/`：独立生成的验证样例及其证据
+## 目录说明
+
+- `SKILL.md`：Skill 触发条件、约束与执行流程
+- `assets/v55-renderer.html`：冻结的 30 风格内联渲染器
+- `scripts/generate.py`：唯一生成入口
+- `scripts/browser_review.py`：Chromium QA
+- `references/`：输入规范、风格索引与 Loop 验收契约
+- `tests/`：纯 Python 单元测试
+- `examples/`：可复查的输入样例
+- `.github/workflows/html-design-lab-regression.yml`：仓库 CI 生成与浏览器回归
+
+仓库不提交大量生成样例 HTML；CI 生成临时文件并归档 JSON 验收记录。
