@@ -62,3 +62,11 @@ G6 回归：执行以下场景，任何安全/保真失败阻断提交。
 - 首次 Wiki 更新 Commit `f0cf9fb782887088790c17e7cfec92a2695fc9a1`，Actions Run `38245466841`：结构校验成功，HTML 构建失败，报错 `build: unresolved link from pages/collected/programming/sql-business-thinking/b31e6f82-9a47-4c05-8d2b-71f6a93e5c20.html`。因此首次提交不能宣称已发布。
 - 初因：两条新增 `wiki:WIKI_ID#skill-routing-2026-10-12` 使用了未在当前导出器验证过的跨页链接形式。源级存在性验证只核对 WIKI_ID，未发现实际 HTML 链接失效。
 - 修复 Commit `a94a64513c18c18397184b57cd87df1dcb68fd94`：仅在两篇引用方笔记中删去 `#fragment`，保留 Wiki 目标 ID、原文及其他引用。需要再次核对 Actions 构建、部署与发布回执；不得以补丁已提交推断通过。
+
+## 发布修复回归通过（2026-10-12）
+- 修复提交：`a94a64513c18c18397184b57cd87df1dcb68fd94`；修复前构建失败提交：`f0cf9fb782887088790c17e7cfec92a2695fc9a1`。
+- GitHub Actions Run：`38245753459`。实际 Build=success、Deploy=success、Verify live published content=success；部署日志含 `MUSEUM-PUBLISHED-RECEIPT`，sourceCommit 精确等于 `a94a645...`。
+- 五个受影响 ID 出现在回执，状态均为 published；整个站点回执共 18 条 Org 来源记录。
+- HEAD 与修改前 Commit 的独立读回检查通过：三篇历史正文和原 ID 保留，索引 link set 未变化，日志事件键唯一，两处跨页 URL 不再使用未经验证的 #fragment；一篇无关 CLI 文档的 Git blob SHA 完全一致。
+- 幂等判定：重复输入时能够识别同一事件和已有更新，无必要新改动。未实际执行第二次写入，不能声称完成并发写入冲突演练。
+- 本轮剩余风险：尚无真实“同一时点同条件互斥的一手来源”对抗样例；Git 并发冲突注入、完整 T01–T18 自动回归未执行。判定：本轮真实来源版本漂移维护与发布闭环通过，Skill 整体有条件通过。
