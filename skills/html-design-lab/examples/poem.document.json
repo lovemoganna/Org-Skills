@@ -1,0 +1,203 @@
+{
+  "id": "poem",
+  "kind": "poem",
+  "title": "观世有感",
+  "kicker": "文言小品 · 人生观照",
+  "lead": "于纷扰中，守一寸清明。",
+  "description": "从朝露与功名，读到山水与本心。八段短文，四重观照。读其文，也读它留给当下的一点启发。",
+  "ending": "心有山海，何惧风霜。",
+  "chapters": [
+    {
+      "id": "1",
+      "title": "浮生",
+      "subtitle": "识短暂 · 识得失",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "天地苍茫，岁月无疆。",
+            {
+              "text": "人生百年，不过朝露",
+              "annotationId": "dew"
+            },
+            "；功名万里，终归尘霜。"
+          ],
+          "translation": "天地辽阔，岁月漫长。人生纵有百年，也短暂如晨露；再显赫的功名，终究会归于尘土。",
+          "featured": false
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            "世人逐利，奔走四方。得之则喜，失之则伤。身困于物，心役于欲，",
+            {
+              "text": "虽拥千金，未必安康",
+              "annotationId": "wealth"
+            },
+            "。"
+          ],
+          "translation": "人们为利益四处奔走，得与失牵动着悲喜。若身心受财物与欲望驱使，即使富有，也未必安宁康健。",
+          "featured": false
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "山水",
+      "subtitle": "观万物 · 知其常",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "余尝观山，",
+            {
+              "text": "山不争高而自峻",
+              "annotationId": "mountain"
+            },
+            "；观水，",
+            {
+              "text": "水不争先而自长",
+              "annotationId": "water"
+            },
+            "。草木无言，四时有序；日月不语，万古有常。"
+          ],
+          "translation": "我曾观山：山不与谁比高，自有巍峨；又观水：水不争一时之先，依旧绵延流长。草木无言、四季有序，日月不语、运行有常。",
+          "featured": false
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "修己",
+      "subtitle": "不争胜 · 但求进",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "故知大智不炫，大勇不扬。",
+            {
+              "text": "处困厄而不屈",
+              "annotationId": "adversity"
+            },
+            "，居显达而不狂。",
+            {
+              "text": "得势不欺人",
+              "annotationId": "power"
+            },
+            "，失意不自伤。"
+          ],
+          "translation": "真正的智慧不靠炫耀，真正的勇敢无需张扬。处于困境不屈服，显达时不骄狂；有势时不欺人，失意时不伤害自己。",
+          "featured": false
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            "世事如棋，",
+            {
+              "text": "落子无悔",
+              "annotationId": "chess"
+            },
+            "；人生如逆旅，行远自有光。"
+          ],
+          "translation": "世事如同棋局，落子后便承担自己的选择；人生像一段艰难的旅途，继续向前，自能遇见光亮。",
+          "featured": true
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            "夫真正之强者，非胜天下之人，",
+            {
+              "text": "乃胜昨日之己",
+              "annotationId": "self"
+            },
+            "；真正之富者，非坐拥天下之财，",
+            {
+              "text": "乃心有所守，行有所往",
+              "annotationId": "direction"
+            },
+            "。"
+          ],
+          "translation": "真正的强大，不是胜过所有人，而是超越昨日的自己；真正的富足，不在于拥有全部财富，而在于心有坚守、行动有方向。",
+          "featured": false
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "title": "守心",
+      "subtitle": "阅沧桑 · 不失志",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "是故，",
+            {
+              "text": "知世故而不逐流",
+              "annotationId": "current"
+            },
+            "，历沧桑而不失志。"
+          ],
+          "translation": "因此，即使懂得世事复杂，也不盲从潮流；即使经历许多艰难，依然不丢失自己的志向。",
+          "featured": false
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            {
+              "text": "心有山海，何惧风霜",
+              "annotationId": "sea"
+            },
+            "。"
+          ],
+          "translation": "心中有辽阔天地与坚定志向，就有勇气面对路途中的艰难。",
+          "featured": true
+        }
+      ]
+    }
+  ],
+  "annotations": {
+    "dew": {
+      "text": "人生百年，不过朝露",
+      "gloss": "百年人生，仍短暂如清晨露水。提醒自己看清时间的有限。"
+    },
+    "wealth": {
+      "text": "虽拥千金，未必安康",
+      "gloss": "财富的丰厚，不等于身心的安稳。得失之外，仍须照看自身。"
+    },
+    "mountain": {
+      "text": "山不争高而自峻",
+      "gloss": "山不与外物争高，却自有其峻拔。价值不必全靠比较证明。"
+    },
+    "water": {
+      "text": "水不争先而自长",
+      "gloss": "水不急于争先，却能绵延流长。长久的前行，未必来自一时的领先。"
+    },
+    "adversity": {
+      "text": "处困厄而不屈",
+      "gloss": "身处困境，仍保有骨气与行动的力量。"
+    },
+    "power": {
+      "text": "得势不欺人",
+      "gloss": "身居优势，也不以势压人。这是对自身行为的约束。"
+    },
+    "chess": {
+      "text": "落子无悔",
+      "gloss": "选择既定，便承担结果并继续向前，而非陷入无尽追悔。"
+    },
+    "self": {
+      "text": "乃胜昨日之己",
+      "gloss": "真正的强大，不以压过别人为尺度，而看能否超越过去的自己。"
+    },
+    "direction": {
+      "text": "乃心有所守，行有所往",
+      "gloss": "富足之意不止于财富：内心有坚守，行动有方向。"
+    },
+    "current": {
+      "text": "知世故而不逐流",
+      "gloss": "理解世情的复杂，却不因此失去自己的判断。"
+    },
+    "sea": {
+      "text": "心有山海，何惧风霜",
+      "gloss": "心怀广阔的志向与坚定的信念，便有勇气面对磨砺。"
+    }
+  }
+}

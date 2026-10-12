@@ -1,0 +1,18 @@
+{
+  "name": "html-design-lab",
+  "version": "6.0-rc",
+  "publication_status": "staged-incomplete",
+  "source_archive": "html-design-lab-v6-rc.zip (conversation artifact)",
+  "hashes": {
+    "assets/v55-renderer.html": "c5f50e18d4e8639864d3ca6f52e6b9a1e873c1ba551cba393aeed4b05c557c22",
+    "scripts/generate.py": "ed14add2bf2e6ef69dd8fa494bba9cbbe98b860ab18ec270780ccc79c93f4390",
+    "scripts/browser_review.py": "d0844ee68292efa83fea533e349d5201360da8558746fd84d51667090162fc02",
+    "tests/test_generator.py": "3337067b2a08568d30429a7dfcd9f570f788d387497c8152fca73831e4b672bf"
+  },
+  "gates": {
+    "local_unit": "11/11 pass",
+    "browser": "60/60 prior recorded; not independently replayed from repository",
+    "repo_execution": "BLOCKED: missing sources",
+    "release": "NOT APPROVED"
+  }
+}
