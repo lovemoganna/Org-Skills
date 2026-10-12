@@ -56,8 +56,15 @@ class WikiLoopTests(unittest.TestCase):
         self.assertTrue(m.RETIRED_PAGE_IDS.isdisjoint(pages))
 
     def test_exact_evidence_noop(self):
-        self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL}\n#+SOURCE2: {URL}")
+        self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
         self.assertEqual(self.states([self.entry()])["items"][0]["state"], "NOOP_ALREADY_INDEXED")
+
+    def test_same_snapshot_new_locator_requires_review(self):
+        self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
+        entry = self.entry(locator="section 2")
+        self.assertEqual(self.states([entry])["items"][0]["state"], "REVIEW_EXISTING_SOURCE")
+        self.assertNotEqual(self.states([entry])["items"][0]["event_key"],
+                            self.states([self.entry()])["items"][0]["event_key"])
 
     def test_changed_source_is_not_silently_overwritten(self):
         self.write_page(MAIN, extra=f"#+SOURCE2: {URL}")
