@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "kind": "contract_definitions_not_model_results",
+  "kind": "manual_in_app_contract_cases_not_automatic_A_B",
   "source_fixture": {
     "repository": "lovemoganna/Aone",
     "ref": "47baec353ef5b857a22873bdbb1dd107a16000c9",
@@ -20,7 +20,7 @@
       "layout_mode": null,
       "expected": "未传参时原经典手绘与 4:5 默认保持",
       "kind": "regression",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S02",
@@ -28,7 +28,7 @@
       "layout_mode": "relationship",
       "expected": "手绘关系图，事实方向准确",
       "kind": "positive",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S03",
@@ -36,7 +36,7 @@
       "layout_mode": "auto",
       "expected": "出版排版，不继承螺旋装订",
       "kind": "positive",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S04",
@@ -44,7 +44,7 @@
       "layout_mode": "relationship",
       "expected": "系统层级明确，不编造上线状态",
       "kind": "positive",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S05",
@@ -52,7 +52,7 @@
       "layout_mode": "flow",
       "expected": "来源无顺序时不得硬造流程箭头",
       "kind": "boundary",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S06",
@@ -60,7 +60,7 @@
       "layout_mode": "comparison",
       "expected": "并列差异不画成执行顺序",
       "kind": "positive",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S07",
@@ -68,7 +68,7 @@
       "layout_mode": "auto",
       "expected": "不无声降级到 classic",
       "kind": "boundary",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S08",
@@ -76,7 +76,7 @@
       "layout_mode": "decision",
       "expected": "缺少条件分支不得编造",
       "kind": "boundary",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S09",
@@ -84,7 +84,7 @@
       "layout_mode": null,
       "expected": "用户仅要求文字摘要，不触发图片",
       "kind": "negative",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S10",
@@ -92,7 +92,7 @@
       "layout_mode": null,
       "expected": "可编辑 Chart.js 不得替换成静态图",
       "kind": "negative",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S11",
@@ -100,7 +100,7 @@
       "layout_mode": "auto",
       "expected": "显式 auto 在经典风中也必须按事实自动选语义结构，不硬套默认双栏",
       "kind": "boundary",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     },
     {
       "id": "S12",
@@ -108,8 +108,9 @@
       "layout_mode": "invalid-layout",
       "expected": "说明可用布局并请求必要选择，不静默降级",
       "kind": "boundary",
-      "execution_status": "not_run_in_isolated_target_model"
+      "execution_status": "pending_manual_in_app_review"
     }
   ],
-  "legacy_cases": "evals/cases.json (unchanged)"
+  "legacy_cases": "evals/cases.json (unchanged)",
+  "review_method": "See evals/MANUAL-QA.md. No external API or API key required. Real generated images, source fidelity and visual quality must be reviewed; prior same-session images are supporting evidence, not isolated A/B."
 }
