@@ -76,7 +76,7 @@ G6 回归：执行以下场景，任何安全/保真失败阻断提交。
 ## 2026-10-12 真实同期争议案例回归
 
 - 三份一手来源：CFTC Release 8680-23（2023-03-27）、Binance CEO 官方回应（2023-03-27）、CFTC Release 8837-23（2023-12-18）。URL 分别为 https://www.cftc.gov/PressRoom/PressReleases/8680-23 、https://www.binance.com/en/blog/from-our-ceo/2408916493005890282 、https://www.cftc.gov/PressRoom/PressReleases/8837-23 。
-- org-notes 基线 a94a64513c18c18397184b57cd87df1dcb68fd94；变更 f5f6e72826e444953ed54e19e438283833771dd5：三篇独立 Source、一篇 Synthesis、追加 4 个索引入口和 1 条维护日志事件 source-conflict-binance-cftc-2023-20261012。旧 18 篇笔记未改写。
+- org-notes 基线 a94a64513c18c18397184b57cd87df1dcb68fd94；变更 f5f6e72826e444953ed54e19e438283833771dd5：三篇独立 Source、一篇 Synthesis、追加 4 个索引入口和 1 条维护日志事件 source-conflict-binance-cftc-2023-20261012。原有 16 篇业务/资料笔记未改写；2 篇既有 Wiki 维护页分别追加索引与日志内容。
 - GitHub Actions Run 38246856330：Build、Deploy、Verify live published content 均为 success；MUSEUM-PUBLISHED-RECEIPT sourceCommit 与实际提交相等，22 条 Org 发布记录包含六个受影响目标。
 - 裁决：同期对立说法和后续司法认定得到区分；但“存在准入阻断措施”不排除“有人绕过”，严格 P/非 P 未成立。T19 范围内通过；T17 严格命题互斥仍未验证，不得以此次样例冲抵。
 - 第一次校验器使用错误 Org Wiki 链接正则，将旧链接误判为不存在。修正后通过：原有 17 个索引链接保留，新索引共 21 个不同目标，真实发布器 HTML 校验通过。该错误属于测试器，不是知识库。
