@@ -1572,22 +1572,6 @@ body.dialog-open{overflow:hidden}
 
 </style>
 
-<style>
-/* V4.5 scoped compatibility diagnostics: no changes to existing layout engines. */
-.v45qa{max-width:920px;margin:44px auto 50px;padding:0 22px;color:var(--ink);font-family:var(--sans)}
-.v45qa__shell{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:20px 24px}
-.v45qa summary{font-size:15px;font-weight:650;cursor:pointer;outline-offset:5px}
-.v45qa__intro{color:var(--ink-sub);font-size:13px;line-height:1.8;margin:14px 0}
-.v45qa__actions{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
-.v45qa button{border:1px solid var(--line);color:var(--ink);background:var(--wash);padding:10px 14px;border-radius:6px;font:inherit;font-size:13px;cursor:pointer}
-.v45qa button:disabled{opacity:.5;cursor:not-allowed}
-.v45qa button:focus-visible,.v45qa summary:focus-visible{outline:2px solid var(--accent-readable);outline-offset:3px}
-.v45qa__result{font-size:12px;line-height:1.8;background:var(--wash);border:1px solid var(--line);padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:400px;overflow:auto}
-.v45qa__note{font-size:12px;color:var(--ink-sub);line-height:1.7}
-@media(max-width:480px){.v45qa{padding:0 14px;margin:28px auto}.v45qa__shell{padding:16px}.v45qa button{flex:1}}
-@media print{.v45qa{display:none!important}}
-</style>
-
 <style id="v52-compositions">
 
 /* V5.2 | Five composition families, layout-only changes.
@@ -1856,6 +1840,20 @@ body.dialog-open{overflow:hidden}
 :root[data-no-annotations="true"]:is([data-layout="brutal"],[data-layout="terminal"],[data-layout="swiss"],[data-layout="wabi"],[data-layout="memphis"],[data-layout="typography"]) .chapter-nav{display:none}
 </style>
 
+<style id="code-syntax-theme">
+/* Production-only, bundled syntax tokens. No network fonts or JS dependencies. */
+:root {--hl-keyword:#674ab2;--hl-function:#146692;--hl-string:#20794f;--hl-number:#9a4b19;--hl-comment:#65736b;--hl-operator:#973e73}
+:root[data-theme="dark"] {--hl-keyword:#bca7ff;--hl-function:#7fc8ff;--hl-string:#a4efbd;--hl-number:#ffbf8e;--hl-comment:#bdc8be;--hl-operator:#ff9fc6}
+@media(prefers-color-scheme:dark) {:root[data-theme="auto"] {--hl-keyword:#bca7ff;--hl-function:#7fc8ff;--hl-string:#a4efbd;--hl-number:#ffbf8e;--hl-comment:#bdc8be;--hl-operator:#ff9fc6}}
+.document-code code {font:inherit;tab-size:4}
+.document-code .tok-keyword {color:var(--hl-keyword);font-weight:700}
+.document-code .tok-function {color:var(--hl-function);font-weight:600}
+.document-code .tok-string {color:var(--hl-string)}
+.document-code .tok-number {color:var(--hl-number)}
+.document-code .tok-comment {color:var(--hl-comment);font-style:italic}
+.document-code .tok-operator {color:var(--hl-operator)}
+@media print {.document-code [class^="tok-"] {print-color-adjust:exact}}
+</style>
 </head>
 <body data-reading-mode="original">
   <a class="skip-link" href="#read">跳到正文</a>
@@ -1888,7 +1886,7 @@ body.dialog-open{overflow:hidden}
     </div>
   </section>
 
-  <section class="document-lab" aria-label="内容测试与本地导入">
+  <section class="document-lab" aria-label="文档阅读与本地导入">
     <div class="container document-lab__inner">
       <div class="document-lab__name"><strong>内容引擎 / DOCUMENTS</strong><small>同一套界面 · 三种文档结构</small></div>
       <div class="document-lab__choices" role="group" aria-label="选择文档">
@@ -2010,21 +2008,7 @@ body.dialog-open{overflow:hidden}
     </section>
   </main>
 
-<section class="v45qa" aria-label="兼容性自检">
-  <details id="v45-qa" class="v45qa__shell">
-    <summary>V4.5 · 本地浏览器兼容性自检</summary>
-    <p class="v45qa__intro">在电脑上双击打开本 HTML，再运行检查。工具会检测实际运行协议、本地存储、章节导航、当前风格和横向溢出。刷新保持验证会重新加载页面；建议在「文言文」中先收藏一句。</p>
-    <div class="v45qa__actions">
-      <button type="button" id="v45qa-run">运行自检</button>
-      <button type="button" id="v45qa-reload">刷新并验证设置保留</button>
-      <button type="button" id="v45qa-export">导出自检 JSON</button>
-    </div>
-    <div id="v45qa-output" class="v45qa__result" role="status" aria-live="polite">尚未检查。请在 Chrome、Firefox 或 Safari 中运行。</div>
-    <p class="v45qa__note">自检不能替代真人视觉盲测和所有设备的完整兼容性测试。存储行为随浏览器设置和 file:// 安全策略变化；如果存储不可用，页面应继续提供会话内收藏，刷新后不保证保留。</p>
-  </details>
-</section>
-
-  <footer class="container"><span id="footer-doc">一纸观心 · 观世有感</span><span id="footer-features">原文 · 今译 · 句笺</span></footer>
+<footer class="container"><span id="footer-doc">一纸观心 · 观世有感</span><span id="footer-features">原文 · 今译 · 句笺</span></footer>
   <div id="style-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="style-dialog-title">
     <div class="style-panel">
       <div class="style-panel__head"><div><p class="style-panel__eyebrow">VISUAL EXPERIMENT / DESIGN LIBRARY</p><h2 id="style-dialog-title">选择一种表达方式<span style="color:#789384">.</span></h2><p class="style-panel__sub">30 种风格均有独立构图 · 支持诗文、教程、报告与 JSON 文档</p></div><button type="button" id="close-styles" class="panel-close" aria-label="关闭风格选择器">×</button></div>
@@ -2153,6 +2137,38 @@ body.dialog-open{overflow:hidden}
     if(block.translation){const trans=node('p','translation');trans.append(node('span','tag','今译'),document.createTextNode(block.translation));wrap.append(trans)}
     return wrap;
   }
+
+  // Bundled token renderer: source code is data. Use text nodes only, never innerHTML or eval.
+  const CODE_KEYWORDS = Object.freeze({
+    sql:new Set(('SELECT FROM WHERE JOIN LEFT RIGHT FULL INNER OUTER ON AS WITH GROUP BY ORDER LIMIT HAVING DISTINCT CASE WHEN THEN ELSE END AND OR NOT NULL IS IN BETWEEN LIKE EXISTS UNION ALL INSERT INTO UPDATE DELETE CREATE TABLE VIEW TRUE FALSE ASC DESC OVER PARTITION OFFSET FILTER').split(' ')),
+    javascript:new Set(('const let var if else for while return async await function class extends new import export default from throw try catch finally null undefined true false typeof instanceof in of switch case break continue this').split(' ')),
+    python:new Set(('def class if elif else for while return async await from import as with try except finally raise yield None True False and or not in is lambda pass break continue').split(' ')),
+    bash:new Set(('if then else fi for do done while function case esac in export local readonly return').split(' ')),
+    json:new Set(('true false null').split(' '))
+  });
+  const CODE_FUNCTIONS=new Set(('COUNT SUM AVG MAX MIN TRY_CAST CAST COALESCE NULLIF ROUND LOWER UPPER TRIM SUBSTR SUBSTRING DATE_TRUNC ROW_NUMBER RANK COUNT_IF CONCAT LENGTH ABS').split(' '));
+  function highlightCode(codeElement,original,language){
+    const name=String(language||'text').toLowerCase();
+    const lang=({js:'javascript',jsx:'javascript',ts:'javascript',tsx:'javascript',py:'python',sh:'bash',shell:'bash',zsh:'bash',postgres:'sql',duckdb:'sql'})[name]||name;
+    const keywords=CODE_KEYWORDS[lang]||new Set();
+    const fragment=document.createDocumentFragment();
+    const tokens=/(\s+|--[^\n]*|#[^\n]*|\/\/[^\n]*|\/\*[\s\S]*?\*\/|'(?:''|\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b\d+(?:\.\d+)?\b|[A-Za-z_][\w]*|[^\s])/g;
+    let found;
+    while((found=tokens.exec(original))!==null){
+      const t=found[0];let kind='';
+      if((t.startsWith('--')&&lang==='sql')||(t.startsWith('#')&&['python','bash'].includes(lang))||
+         (t.startsWith('//')&&lang==='javascript')||(t.startsWith('/*')&&['javascript','sql'].includes(lang)))kind='comment';
+      else if(/^['"]/.test(t))kind='string';
+      else if(/^\d/.test(t))kind='number';
+      else if((lang==='sql'&&keywords.has(t.toUpperCase()))||(lang!=='sql'&&keywords.has(t)))kind='keyword';
+      else if(lang==='sql'&&CODE_FUNCTIONS.has(t.toUpperCase()))kind='function';
+      else if(/^[=+*<>!|&%]+$/.test(t))kind='operator';
+      if(!kind){fragment.append(document.createTextNode(t));continue;}
+      const span=document.createElement('span');span.className='tok-'+kind;span.textContent=t;fragment.append(span);
+    }
+    codeElement.replaceChildren(fragment);
+  }
+
   function renderBlock(block){
     if(block.type==='paragraph')return paragraph(block);
     if(block.type==='callout'){
@@ -2173,7 +2189,7 @@ body.dialog-open{overflow:hidden}
       const copy=node('button',null,'复制代码');copy.type='button';copy.setAttribute('aria-label','复制 '+(block.language||'文本')+' 代码');
       copy.addEventListener('click',()=>copyText(block.code));
       bar.append(node('span',null,(block.language||'text').toUpperCase()),copy);
-      const pre=node('pre'),code=node('code',null,block.code);pre.append(code);wrapper.append(bar,pre);return wrapper;
+      const pre=node('pre'),code=node('code');code.dataset.language=block.language||'text';highlightCode(code,block.code,block.language);pre.append(code);wrapper.append(bar,pre);return wrapper;
     }
     throw Error('不可渲染的内容块');
   }
@@ -2250,7 +2266,7 @@ body.dialog-open{overflow:hidden}
     document.documentElement.dataset.documentKind=next.kind;
     document.documentElement.dataset.noAnnotations=String(!hasNotes);
     document.documentElement.dataset.hasTranslations=String(next.chapters.some(ch=>ch.blocks.some(b=>b.type==='paragraph'&&!!b.translation)));
-    document.title=next.title+' · 30 风格实验室';
+    document.title=next.title+' · 专题阅读';
     $('hero-title').textContent=next.title;$('hero-kicker').textContent=next.kicker;$('hero-lead').textContent=next.lead;$('hero-desc').textContent=next.description;
     $('hero-art-caption').textContent=next.lead;$('hero-stamp').textContent=next.kind==='poem'?'心有山海':'';
     $('hero-doc-mark').textContent=next.kind==='tutorial'?'SQL':next.kind==='report'?'RISK':'DOC';
@@ -2449,70 +2465,6 @@ body.dialog-open{overflow:hidden}
     if(e.key==='ArrowRight'&&e.shiftKey){e.preventDefault();next()}
   });
   renderFilters();setStyle(active);
-})();
-</script>
-
-<script>
-(()=>{
- 'use strict';
- const $=(id)=>document.getElementById(id);
- const KEY='guanshi-v45-compat-check';
- let lastReport=null;
- const localRoundTrip=()=>{
-   const k=KEY+'-roundtrip';
-   try{localStorage.setItem(k,'v45');const ok=localStorage.getItem(k)==='v45';localStorage.removeItem(k);return ok}catch(_){return false}
- };
- function inspect(){
-   const origin=location.protocol;
-   const activeDoc=window.DocumentEngine?.getCurrent?.();
-   const links=Array.from(document.querySelectorAll('#document-toc a'));
-   const sections=Array.from(document.querySelectorAll('#document-content .chapter'));
-   const navOk=!!activeDoc && links.length===activeDoc.chapters.length && sections.length===links.length && links.every(link=>{
-     const target=document.getElementById(link.hash.slice(1));return !!target && target.classList.contains('chapter');
-   });
-   const overflow=Math.max(0,document.documentElement.scrollWidth-innerWidth);
-   const loadedAssets=Array.from(document.querySelectorAll('script[src],link[rel="stylesheet"][href],img[src]')).map(e=>e.src||e.href).filter(Boolean);
-   const results={
-     pageRenders:!!document.getElementById('hero-title')?.textContent?.trim(),
-     navigation:navOk,
-     styleActive:!!document.documentElement.dataset.style,
-     localStorageRoundTrip:localRoundTrip(),
-     currentViewportNoHorizontalOverflow:overflow<=2,
-     noExternalAssetDependencies:loadedAssets.every(s=>!/^https?:/i.test(s))
-   };
-   const passed=Object.entries(results).filter(([k,v])=>v && k!=='localStorageRoundTrip').length;
-   const checkCount=Object.keys(results).length-1;
-   const report={version:'V4.5',checkedAt:new Date().toISOString(),protocol:origin,locationMode:origin==='file:'?'本地文件':origin==='http:'||origin==='https:'?'网页服务':'非正常网页来源',userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},documentId:activeDoc?.id||null,style:document.documentElement.dataset.style,theme:document.documentElement.dataset.theme,noteCount:Number(document.getElementById('note-count')?.textContent)||0,checks:results,coreChecksPassed:`${passed}/${checkCount}`,storageStatus:results.localStorageRoundTrip?'本页可读写，跨刷新待验证':'不可用；收藏仅会话级',horizontalOverflowPx:overflow,externalResources:loadedAssets};
-   return report;
- }
- function show(report){lastReport=report;$('v45qa-output').textContent=JSON.stringify(report,null,2)}
- function beginReload(){
-   const result=inspect();
-   if(!result.checks.localStorageRoundTrip){show({...result,refreshCheck:'不支持：本地存储不可写'});return}
-   if(!['file:','http:','https:'].includes(location.protocol)){show({...result,refreshCheck:'无法在此来源下安全执行刷新测试'});return}
-   try{
-     localStorage.setItem(KEY,JSON.stringify({time:Date.now(),style:result.style,theme:result.theme,noteCount:result.noteCount,documentId:result.documentId}));
-     location.reload();
-   }catch(err){show({...result,refreshCheck:'刷新检查未能启动：'+err.message})}
- }
- function afterReload(){
-   let pending=null;
-   try{pending=JSON.parse(localStorage.getItem(KEY)||'null');localStorage.removeItem(KEY)}catch(_){}
-   if(!pending || !Number.isFinite(pending.time) || Date.now()-pending.time>120000)return;
-   const current=inspect();
-   const checks={stylePreserved:current.style===pending.style,themePreserved:current.theme===pending.theme};
-   if(pending.documentId==='poem' && pending.noteCount>0)checks.favoritesPreserved=current.noteCount===pending.noteCount;
-   current.refreshCheck={status:Object.values(checks).every(Boolean)?'通过':'失败',checks,notes:'仅比较保存前后值；手动导入文档默认不跨刷新保留'};
-   $('v45-qa').open=true;show(current);
- }
- $('v45qa-run').addEventListener('click',()=>show(inspect()));
- $('v45qa-reload').addEventListener('click',beginReload);
- $('v45qa-export').addEventListener('click',()=>{
-   const report=lastReport||inspect();
-   const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json;charset=utf-8'}));
-   const a=document.createElement('a');a.href=url;a.download='v45-browser-compatibility.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
- });
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',afterReload,{once:true});else afterReload();
 })();
 </script>
 
