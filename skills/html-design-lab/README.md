@@ -1,6 +1,6 @@
 # HTML Design Lab · V6.0 Candidate
 
-**将 Markdown / Org Mode / DocumentSpec JSON 生成可离线阅读的单文件 HTML。** 内置 30 种视觉风格、30 套构图，支持主题切换、章节目录、JSON 导入导出、代码块、表格、复制及输入提供的批注。生成网页不依赖 CDN。
+**将 Markdown / Org Mode / DocumentSpec JSON 生成可离线阅读的单文件 HTML。** 内置 30 种视觉风格、30 套构图，支持主题切换、章节目录、JSON 导入导出、代码块、表格、复制及输入提供的批注。代码块内置 SQL / Python / JavaScript / Shell / JSON 离线语法高亮，保留原文及复制；正式输出不包含旧版兼容性自检面板。生成网页不依赖 CDN。
 
 ## 立即使用
 
@@ -28,7 +28,7 @@ Markdown/Org 只支持明确子集，**不支持执行 Org Babel/SQL**。严格�
 
 ## 发布及测试边界
 
-源码已经提交到 `lovemoganna/Org-Skills` 的候选分支，详见 [PR #73](https://github.com/lovemoganna/Org-Skills/pull/73)。是否在其他 Agent 运行时自动加载，取决于该环境是否读取并安装了这个 Skill；GitHub 合并本身不等于插件安装。
+源码由 `lovemoganna/Org-Skills` 维护；本次正式输出清理与离线代码高亮修复见 [PR #74](https://github.com/lovemoganna/Org-Skills/pull/74)。是否在其他 Agent 运行时自动加载，取决于该环境是否读取并安装了这个 Skill；GitHub 合并本身不等于插件安装。
 
 当前独立仓库回归使用 GitHub Actions 上的 Chromium `page.set_content()`。这验证已覆盖的生成与交互，不证明本地 `file://`、Firefox、正式 Safari 或完整无障碍审计全部通过。风控样例均为明示的虚构演示内容。
 

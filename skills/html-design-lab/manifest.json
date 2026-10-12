@@ -1,29 +1,29 @@
 {
   "name": "html-design-lab",
-  "version": "6.0-rc",
-  "publication_status": "reviewed-candidate",
-  "source": "GitHub branch feat/html-design-lab-v6-rc",
+  "version": "6.0-rc.1",
+  "publication_status": "regression-verified-candidate",
+  "source": "GitHub lovemoganna/Org-Skills / skills/html-design-lab (PR #74)",
   "repository_files_git_blob_sha1": {
-    "assets/v55-renderer.html": "ad33edfbb118cfef90f777f122a485e1e9ddfdb1",
-    "scripts/generate.py": "2a91680f6b51d35327024b5256046ec830c389a0",
-    "scripts/browser_review.py": "e3d1ee1f0ae189a85c89ae75ae5401269944f128",
-    "tests/test_generator.py": "7c3b8f2dd0ab3d429fbd819311012984fcc59ef8"
+    "assets/v55-renderer.html": "29067c07d7cdbd84d528a1924d64ec3dbb5d7afa",
+    "scripts/generate.py": "417580dfb3d80fcb35166fa767996e616b6a0eb6",
+    "scripts/browser_review.py": "8e01ee0018514061c3f7035c801db4da65bd02de",
+    "tests/test_generator.py": "e813225d455da7e9f05c926b89a65ba439319ca7"
   },
   "baseline_renderer_sha256": "c5f50e18d4e8639864d3ca6f52e6b9a1e873c1ba551cba393aeed4b05c557c22",
   "validation": {
     "workflow": "html-design-lab regression",
-    "passing_run": 38245186555,
-    "source_commit": "bea0de9183bacf386bad3da3b28006e935d12c22",
+    "passing_run": 38254207565,
+    "source_commit": "f4b705864798c1853d8ae9949230c0af60e6d3cf",
     "result": "success",
-    "deterministic_unit_tests": "11/11",
+    "deterministic_unit_tests": "14/14",
     "generated_outputs": [
       "poem.json -> HTML",
       "tutorial.org -> HTML",
       "tutorial.md -> HTML",
       "real-loop-review.md -> HTML"
     ],
-    "chromium_smoke": "4/4 generated HTML cases",
-    "note": "Evidence is limited to CI execution on the indicated source commit; later metadata-only commits require a new check."
+    "chromium_smoke": "4/4 generated HTML cases, including 4 malicious-code and highlight checks per document",
+    "note": "CI checked the source commit before this manifest-only update. Later final CI will cover metadata too."
   },
   "limitations": [
     "file:// direct-open not verified on this CI runner",

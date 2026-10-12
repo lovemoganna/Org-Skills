@@ -41,6 +41,39 @@ def run(htmlfile, out):
             page.locator('#next-style').click()
         report['cases'].append({'check':'30 clickable styles','pass':len(visited)==30 and len(set(visited))==30,'count':len(visited)})
         report['cases'].append({'check':'document kept after style switching','pass':page.locator('#hero-title').inner_text()==doc['title']})
+        report['cases'].append({'check':'no legacy QA shell',
+            'pass':page.locator('.v45qa,#v45-qa').count()==0 and 'guanshi-v45-compat-check' not in data})
+        report['cases'].append({'check':'bundled syntax highlighter',
+            'pass':page.locator('#code-syntax-theme').count()==1 and 'function highlightCode(' in data})
+        # Browser-level content-fidelity and inert-markup verification, never evaluating user-supplied code.
+        malicious="<img src=x onerror='window.__code_attack=1'>\n<script>window.__code_attack=1</script>"
+        languages={
+            'sql':"SELECT 'safe' AS name;\n-- "+malicious+"\nSELECT COUNT(*) FROM users;",
+            'python':"# "+malicious+"\ndef total(items):\n    return len(items)",
+            'javascript':"// "+malicious+"\nconst x = 42; function example(){ return x; }",
+            'bash':"# "+malicious+"\nif true; then echo 'ok'; fi"
+        }
+        for lang,source in languages.items():
+            verify=page.evaluate("""({lang,source})=>{
+              const data=JSON.parse(JSON.stringify(window.DocumentEngine.getCurrent()));
+              data.chapters[0].blocks.push({type:'code',language:lang,code:source});
+              window.DocumentEngine.load(data,false);
+              const firstChapter=document.getElementById('chapter-'+data.chapters[0].id);
+              if(!firstChapter) throw Error('First chapter not rendered');
+              const codes=[...firstChapter.querySelectorAll('.document-code code')];
+              const code=codes[codes.length-1];
+              const kw=code.querySelector('.tok-keyword');
+              const style=kw ? getComputedStyle(kw).color : '';
+              return {text:code.textContent,keywords:code.querySelectorAll('.tok-keyword').length,
+                      noMarkup:code.querySelectorAll('script,img,iframe').length===0,
+                      notExecuted:window.__code_attack===undefined,
+                      computedColor:style,rawColor:getComputedStyle(code).color};
+            }""",{'lang':lang,'source':source})
+            report['cases'].append({'check':f'{lang} code fidelity, inert tags, offline token highlight',
+                'pass':verify['text']==source and verify['keywords']>0 and verify['noMarkup'] and
+                       verify['notExecuted'] and verify['computedColor']!=verify['rawColor'],
+                'data':{**{k:v for k,v in verify.items() if k!='text'}, 'source_length':len(source), 'actual_length':len(verify['text']), 'text_equal':verify['text']==source, 'first_diff':next((i for i,(a,b) in enumerate(zip(source,verify['text'])) if a!=b),-1), 'actual_excerpt':verify['text'][:170]}})
+
         report['cases'].append({'check':'no JavaScript runtime errors','pass':len(report['errors'])==0,'errors':report['errors']})
         b.close()
     report['passed']=sum(x['pass'] for x in report['cases'])
