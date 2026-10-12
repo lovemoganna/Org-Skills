@@ -128,3 +128,10 @@ G6 回归：执行以下场景，任何安全/保真失败阻断提交。
 - `scripts/wiki_loop.py` 执行 `audit`（只读 Org 目录、WIKI_ID、已有关系、删除页检查）及 `plan`（冻结来源快照和哈希、定位粒度去重、已知页面关联及条件 HEAD）。`references/operations.md` 定义来源、审核、Git 条件写入、HTML 发布及 Loop 停止条件。`plan` **永不写入**，也不自动核实互联网 URL 与内容对应关系；这部分必须依靠真实原文访问和独立人工/模型复核。
 - `tests/test_wiki_loop.py` 在隔离目录测试重复执行、同源不同定位、证据哈希变更、引用丢失、已删除页复活、隐私特征、路径穿越、Git HEAD 变化等负例；原 `check_conflict_contract.py` 用例继续保留。流水线应在真实只读 `org-notes` 检查通过后才声称工程门禁通过。
 - 剩余边界不变：T17 真实严格 P/非 P、完整自然语言知识问答、多来源来源撤回及公开发布的语义正确性不能用这些结构测试冒充通过。输出候选结果、失败记录和回归证据需区分 `PROPOSE`、`NOOP`、`BLOCKED` 与已发布。
+
+## 2026-10-12 最终工程回归回执
+
+- 基线 `lovemoganna/Org-Skills` commit `0eaecd7905af3e0d04c6e0c698acbbf48bddc4b0`。真实 GitHub Actions Run [38261241125](https://github.com/lovemoganna/Org-Skills/actions/runs/38261241125) 为 success，原有 17 项合成冲突测试、新增 19 项独立对抗测试、真实 `org-notes` 只读审计均通过。
+- 实际 `org-notes` 仓库只读审计返回 `gate=PASS`、`pages=21`、`retired_absent=true`；不重建用户已经删除的人工索引和维护日志。此结果独立于私有 Skill 的合成笔记测试。
+- 新源码 `scripts/wiki_loop.py` 的 `plan` 必须具有真实临时来源快照、SHA256、定位以及已知关系 ID；输出建议而不修改任何 Org 或 Git。引入三元组 `URL+SHA256+locator` 的确切证据记录，避免把同文章不同段落误判成重复。未运行完整自然语言事实归纳、源撤回或实际写入本工具的端到端测试，因此它们仍需人工证据验收。
+- Loop 结论：对 **可重复的发现/去重/关系预检、已删除身份防复活、Git 源版本门禁、CI 仓库审计** 已具备实测支持；自动事实判断、无监督自主更新和严格 T17 真实冲突仍不属于已验证能力。
