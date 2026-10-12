@@ -79,4 +79,40 @@ class TestGenerator(unittest.TestCase):
         self.assertEqual(s.count('data-doc-choice="custom-doc"'),1)
         self.assertIn('document-theme-custom-doc',s)
 
+
+    def test_published_html_has_no_legacy_qa_shell(self):
+        for kind, doc, style in [('poem',POEM,'oriental'),
+                                  ('tutorial',g.parse_text((ROOT/'examples/tutorial.md').read_text(),kind='tutorial',docid='sql-release'),'terminal')]:
+            with self.subTest(kind=kind):
+                output=g.render(doc,style,TEMPLATE)
+                for stale in ('class="v45qa"', 'id="v45-qa"', 'guanshi-v45-compat-check',
+                              'V4.5 · 本地浏览器兼容性自检', '内容测试与本地导入'):
+                    self.assertNotIn(stale,output)
+                self.assertEqual(output.count('id="code-syntax-theme"'),1)
+                self.assertIn('function highlightCode(',output)
+                self.assertIn('highlightCode(code,block.code,block.language)',output)
+
+    def test_code_content_exact_with_dangerous_markup(self):
+        d=copy.deepcopy(POEM)
+        dangerous="SELECT '--in a string' AS text;\n-- <script>alert(1)</script>\n<img src=x onerror=alert(1)>"
+        d['chapters'][0]['blocks'].append({'type':'code','language':'sql','code':dangerous})
+        rendered=g.render(d,'oriental',TEMPLATE)
+        raw=re.search(r'<script\s+type="application/json"\s+id="document-spec-data">(.*?)</script>',rendered,re.S)[1]
+        self.assertEqual(json.loads(raw)[0]['chapters'][0]['blocks'][-1]['code'],dangerous)
+        self.assertNotIn('<img src=x onerror=alert(1)>',rendered)
+        self.assertNotIn('<script>alert(1)</script>',rendered)
+        # Lexer owns tokens as inert DOM text nodes; never interpret source markup.
+        self.assertIn('span.textContent=t',rendered)
+        self.assertIn('document.createTextNode(t)',rendered)
+        self.assertNotIn('code.innerHTML',rendered)
+
+    def test_source_text_with_word_test_is_preserved(self):
+        d=copy.deepcopy(POEM)
+        expected='测试报告和V4.5属于用户提供的事实正文，必须保留。'
+        d['chapters'][0]['blocks'].append({'type':'paragraph','segments':[expected]})
+        rendered=g.render(d,'oriental',TEMPLATE)
+        raw=re.search(r'<script\s+type="application/json"\s+id="document-spec-data">(.*?)</script>',rendered,re.S)[1]
+        self.assertIn(expected,json.dumps(json.loads(raw),ensure_ascii=False))
+
+
 if __name__=='__main__':unittest.main()
