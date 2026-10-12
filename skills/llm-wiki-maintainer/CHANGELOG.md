@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 — 2026-10-12
+- 三条已读取的公开一手来源形成同期立场对立与后续司法裁决的证据链，成功发布到 org-notes。
+- 将 allegation、party statement、adjudicated finding 的证据状态及命题逻辑强度纳入维护规则；新增 T19。
+- 保留对 T17 真正 P/非 P 未通过和测试器链接正则误判的客观记录。
+
 ## 0.1.3 — 2026-10-12
 - 从线上构建失败回执复现 `wiki:ID#fragment` 跨页引用未解析问题，并仅修复两条引用。
 - 在 canonical Skill 增加导出 HTML 链接门禁，新增 T18 真实发布锚点回归。
