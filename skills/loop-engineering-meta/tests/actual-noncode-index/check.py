@@ -17,6 +17,8 @@ assert new.replace(added,"",1)==src
 assert added.startswith("〔补〕")
 assert "仓库版本已经变化" in added and "固定当前仓库提交" in added
 assert "main" in added and "11 个条目" in added
+assert "=SKILL.md=" in added and "=main=" in added
+assert not re.search(r"`[^`]+`", added), "Org 增量禁止 Markdown 行内代码反引号"
 assert 0<len(added)<300,(len(added),added)
 assert new.count("〔补〕")==src.count("〔补〕")+1
 assert not re.search(r"(?im)^#\+begin_src",src)
