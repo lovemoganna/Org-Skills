@@ -94,4 +94,16 @@ with tempfile.TemporaryDirectory() as d:
     advised = subprocess.run([sys.executable, str(ROOT / "scripts/evaluate_case.py"), str(path), "--advisory"], capture_output=True, text=True)
     assert advised.returncode == 0 and "有条件通过" in advised.stdout
     checks.append(("不阻断的审计模式", "退出状态=0"))
+    # 错误类型的 JSON 仍是有效 JSON；必须返回受控错误，不能泄露 traceback。
+    for label, bad_case in (
+        ("顶层数组拒绝", []),
+        ("scope 非对象拒绝", {**historical, "scope": ["invalid"]}),
+        ("review 非对象拒绝", {**separate, "review": ["invalid"]}),
+    ):
+        path.write_text(json.dumps(bad_case, ensure_ascii=False), encoding="utf-8")
+        proc = subprocess.run([sys.executable, str(ROOT / "scripts/evaluate_case.py"), str(path)], capture_output=True, text=True)
+        assert proc.returncode == 2 and not proc.stderr, (label, proc.returncode, proc.stdout, proc.stderr)
+        verdict = json.loads(proc.stdout)
+        assert verdict["判定"] == "测试准备不足", (label, verdict)
+        checks.append((label, "退出状态=2"))
 print(json.dumps({"结论": "回归通过", "案例数": len(checks), "检查": checks}, ensure_ascii=False, indent=2))

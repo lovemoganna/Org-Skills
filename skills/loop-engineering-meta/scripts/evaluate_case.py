@@ -64,7 +64,7 @@ def main() -> int:
     args = p.parse_args()
     try:
         result = judge(json.loads(args.case.read_text(encoding="utf-8")))
-    except (OSError, json.JSONDecodeError, ValueError, TypeError) as exc:
+    except (OSError, json.JSONDecodeError, ValueError, TypeError, AttributeError) as exc:
         print(json.dumps({"判定": "测试准备不足", "原因": str(exc)}, ensure_ascii=False))
         return 2
     print(json.dumps(result, ensure_ascii=False, indent=2))
