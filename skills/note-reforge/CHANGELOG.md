@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 2026-10-12 — natural expression pass (minimal adoption)
+
+Problem:
+- The canonical Skill already enforced accurate wording and result-first writing, but did not explicitly check mechanical parallelism, unsupported promotional emphasis, vague authority, and repetitive rhetorical patterns.
+- Copying a generic "AI detection evasion" prompt would duplicate existing rules and risk damaging author voice, technical content, and source fidelity.
+
+Change:
+- Added a single, optional-in-effect natural-expression pass after existing semantic and evidence work.
+- Explicitly disallowed keyword blacklists, compulsory first person, forced colloquial phrasing, and blanket bans on useful contrast, passive voice or technical terms.
+- Preserved protected quotations, exact code and commands, author identity, source attribution, and uncertainty.
+
+New regression:
+- `tests/regression/natural-voice-preservation.md` covers technical blog, AML investigation, concise high-quality note, Org tutorial, quote preservation, and non-absolute vocabulary.
+- `tests/check_repo.py` now checks the rule's presence and regression coverage.
+
+Verification:
+- Structural contract and GitHub CI are separate from independent semantic A/B tests. Do not claim naturalness improved merely because structural checks pass.
+
+External references:
+- https://developers.google.com/style/tone
+- https://learn.microsoft.com/en-us/style-guide/word-choice/use-simple-words-concise-sentences
+
 ## 2026-10-05 — controlled-language finishing pass
 
 Problem:
