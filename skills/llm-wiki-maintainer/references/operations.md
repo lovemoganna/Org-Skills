@@ -46,8 +46,10 @@ python3 skills/llm-wiki-maintainer/scripts/wiki_loop.py plan \
 
 状态定义：
 
-- `NOOP_ALREADY_INDEXED`：已有页面明确记录相同 URL、SHA256 和段落定位三元组的 `#+EVIDENCE_RECORD: <sha256> <url> <locator>`；不重复收录。
-- `NOOP_DUPLICATE_INPUT`：同批输入具有同一 URL、快照哈希、段落定位、目标和版本；本轮不重复处理。
+- `NOOP_ALREADY_INDEXED`：已有**指定目标页面**同时记录 URL、SHA256、段落定位，且所有请求的 Wiki 关联 ID 在该页面真实存在。其他页面包含相同证据、或目标页缺少请求的关联，必须进入复核，不能返回 NOOP。
+- `NOOP_DUPLICATE_INPUT`：同批输入的来源、快照、段落、目标、版本及**请求的关联 ID 集合**完全相同才算重复。
+
+证据标记格式为 `#+EVIDENCE_RECORD: <sha256> <url> <locator>`。关联是否具有事实支持仍需单独阅读原文核验；检出 Wiki ID 不代表语义成立。
 - `REVIEW_EXISTING_SOURCE`：URL 已被已有页面引用，但缺少同一哈希配对或快照可能改变；必须阅读原文后做差异判断，不能覆盖。
 - `PROPOSE_UPDATE`：给现有页面追加已经核实的新证据；检查既有段落和适用范围。
 - `PROPOSE_NEW`：找不到相应页面的建议，仍应先人工验证无语义重复。

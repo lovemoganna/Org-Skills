@@ -181,7 +181,10 @@ def make_plan(root: Path, evidence_dir: Path, manifest: list[dict]) -> dict:
             data = snapshot(evidence_dir, entry.get("snapshot_file"), digest)
             if not data:
                 raise Invalid("empty source snapshot")
-            identity = json.dumps([url, digest, target, entry.get("revision", ""), loc.strip()],
+            requested_links = sorted(set(relations))
+            # Relation requests are independent work, even for the same source.
+            identity = json.dumps([url, digest, target, entry.get("revision", ""),
+                                   loc.strip(), requested_links],
                                   ensure_ascii=False, separators=(",", ":"))
             event = hashlib.sha256(identity.encode()).hexdigest()[:24]
             row.update({"event_key": event, "url": url, "target_wiki_id": target,
@@ -191,12 +194,21 @@ def make_plan(root: Path, evidence_dir: Path, manifest: list[dict]) -> dict:
             else:
                 events.add(event)
                 matched = [page for page in pages.values() if url in page.source_urls]
-                if any((digest, url, loc.strip()) in page.evidence_records for page in matched):
+                destination = pages.get(target)
+                exact_at_target = (destination is not None
+                                   and (digest, url, loc.strip()) in destination.evidence_records)
+                linked_at_target = (destination is not None
+                                    and set(requested_links).issubset(destination.links))
+                if exact_at_target and linked_at_target:
                     row.update({"state": "NOOP_ALREADY_INDEXED",
-                                "reason": "source URL, digest and exact locator already recorded"})
+                                "reason": "exact evidence exists on requested page and all requested wiki links exist; semantics not verified"})
+                elif exact_at_target:
+                    row.update({"state": "REVIEW_EXISTING_SOURCE",
+                                "reason": "exact evidence exists on target, but requested links are missing or unverified",
+                                "existing_pages": [target]})
                 elif matched:
                     row.update({"state": "REVIEW_EXISTING_SOURCE",
-                                "reason": "URL already cited; compare claims and snapshot before modifying",
+                                "reason": "URL already cited elsewhere or at different locator; inspect intended target and claims",
                                 "existing_pages": sorted(p.wiki_id for p in matched)})
                 elif target in pages:
                     row.update({"state": "PROPOSE_UPDATE",

@@ -56,10 +56,31 @@ class WikiLoopTests(unittest.TestCase):
         self.assertTrue(m.RETIRED_PAGE_IDS.isdisjoint(pages))
 
     def test_exact_evidence_noop(self):
-        self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
+        self.write_page(MAIN, body=f"* Links\n[[wiki:{OTHER}][Related]]",
+                        extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
         p = self.states([self.entry()])
         self.assertEqual(p["items"][0]["state"], "NOOP_ALREADY_INDEXED")
         self.assertEqual(p["gate"], "NOOP")
+
+    def test_same_evidence_in_other_page_requires_review(self):
+        self.write_page(OTHER, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
+        result = self.states([self.entry()])
+        self.assertEqual(result["items"][0]["state"], "REVIEW_EXISTING_SOURCE")
+        self.assertEqual(result["gate"], "REVIEW_REQUIRED")
+        self.assertEqual(result["items"][0]["existing_pages"], [OTHER])
+
+    def test_exact_evidence_with_missing_target_link_needs_review(self):
+        self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
+        result = self.states([self.entry()])
+        self.assertEqual(result["items"][0]["state"], "REVIEW_EXISTING_SOURCE")
+        self.assertIn("requested links", result["items"][0]["reason"])
+
+    def test_distinct_relation_requests_do_not_collapse(self):
+        result = self.states([self.entry(related_wiki_ids=[OTHER]),
+                              self.entry(related_wiki_ids=[])])
+        self.assertEqual([x["state"] for x in result["items"]], ["PROPOSE_UPDATE", "PROPOSE_UPDATE"])
+        self.assertNotEqual(result["items"][0]["event_key"], result["items"][1]["event_key"])
+        self.assertEqual(result["writes_performed"], 0)
 
     def test_same_snapshot_new_locator_requires_review(self):
         self.write_page(MAIN, extra=f"#+EVIDENCE_RECORD: {self.digest} {URL} section 1\n#+SOURCE2: {URL}")
