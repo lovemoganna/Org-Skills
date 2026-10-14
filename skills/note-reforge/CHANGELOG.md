@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 2026-10-14 — evidence-first mainline and linked appendix validation
+
+Problem:
+- A real published prompt-foundations note mixed its four-element lesson with verbose preservation notes and a full XML prompt optimizer; deleting the protected code would violate fidelity, while leaving it inline obscured the lesson.
+- The Org checker only accepted every original code block inside one draft file, so it could not validate a faithful split appendix.
+
+Change:
+- Added a conditional external-knowledge preflight based on the existing AgentComponent research prompt; evidence must resolve a real factual or judgment gap, not inflate the note.
+- Introduced mainline relevance filtering: delete empty/repeated process prose, retain essential knowledge, and split long protected source material only if it interrupts the main point.
+- Added repeatable `--appendix` validation: exact code-block multiset, real main-to-appendix file links, no duplicate publication identities, indexed-root isolation for all split artifacts.
+- Kept single-file validation and published-note updating rules backward compatible.
+
+Verification boundary:
+- Automated checks prove code/header preservation, appendix links and safe draft placement only when indexed root is provided. They do not prove editorial quality, off-page asset reachability or actual deployment.
+
+Reference case:
+- https://github.com/lovemoganna/org-notes/blob/main/notes/knowledge/prompt-foundations/1cda8367-e385-5232-83f6-fd1dbc3918da.org
+- https://github.com/lovemoganna/AgentComponent/blob/main/prompts/research/discover/research-concept-learning-materials.md
+
 ## 2026-10-12 — natural expression pass (minimal adoption)
 
 Problem:
