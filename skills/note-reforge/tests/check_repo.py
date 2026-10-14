@@ -277,3 +277,19 @@ with tempfile.TemporaryDirectory() as d:
 print("note-reforge heading/editorial navigation regression: OK")
 
 print("note-reforge contracts + 7 Org draft identity checks: OK")
+
+
+# Split-artifact code integrity: positive and adversarial cases.
+assert "#### 外部知识预检" in canonical
+assert "#### 主线聚焦与素材分流" in canonical
+assert "--appendix" in canonical and "发布身份" in canonical
+assert "概念笔记附录分流" in shapes
+appendix_regression = (SKILL_ROOT / "tests" / "regression" / "prompt-foundations-split.md").read_text(encoding="utf-8")
+assert "1cda8367-e385-5232-83f6-fd1dbc3918da" in appendix_regression
+assert "XML" in appendix_regression and "no forced expansion" in appendix_regression
+split_test = subprocess.run(
+    [sys.executable, str(SKILL_ROOT / "tests" / "test_appendix_split.py")],
+    capture_output=True, text=True, check=False,
+)
+assert split_test.returncode == 0, (split_test.stdout, split_test.stderr)
+print("note-reforge linked appendix regression: OK")
