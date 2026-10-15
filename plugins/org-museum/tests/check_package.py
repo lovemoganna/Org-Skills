@@ -50,6 +50,17 @@ def check() -> list[str]:
     if len(bootstrap) > 3000:
         errors.append("bootstrap may bundle stale execution rules")
 
+    # Real 2026-10-15 negative case: five already-published sources were
+    # rewritten before the existing V1 preflight was called. The entry
+    # must direct the agent to check source identity BEFORE authoring.
+    ingest = (PLUGIN / "skills" / "org-museum-ingest" / "SKILL.md").read_text(encoding="utf-8")
+    if "先运行来源身份预检，再生成下一版正文或配图" not in ingest:
+        errors.append("ingest does not place source preflight before generation")
+    if "org_museum_release_v1.py preflight --source" not in ingest:
+        errors.append("ingest does not call the existing source identity tool")
+    if "无实质增量则 NOOP" not in ingest or "保留原 Wiki ID" not in ingest:
+        errors.append("ingest may create duplicate source publications instead of reuse")
+
     for name in ("org-museum-ingest", "org-museum-update"):
         entry = PLUGIN / "skills" / name / "SKILL.md"
         if not entry.is_file():

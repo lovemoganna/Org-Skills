@@ -26,6 +26,13 @@ description: 收录到知识库、整理并发布笔记：自动整理编程、�
 - 摘录观点和用户思考分开；不替用户编造经历、测试结果或观点。
   隐私信息从公开稿省略并说明，原始材料和临时草稿不提交。
 
+## 新收录前先识别来源身份
+
+- 对有明确 GitHub 原始文件 URL 的 Org Museum 收录任务，*先运行来源身份预检，再生成下一版正文或配图*：在 `lovemoganna/org-notes` 当前源码执行 `python3 tools/org_museum_release_v1.py preflight --source '<固定 GitHub 文件 URL>'`；必须检查返回的已有 Wiki ID 和原路径。
+- 若已有发布版本，先读已发布正文并做增量反查；无实质增量则 NOOP，有实质增量则走 `org-museum-update` 保留原 Wiki ID、原 URL 和版本，不得新建同源文章。
+- 预检无结果或运行不可用，不得声称“来源不重复”；身份无法确认时只交付审阅草稿，不合并发布。只有确认为新来源的输入才进入新文章创建流程。
+- 此处属于*收录入口的执行顺序*，不改变 `note-reforge` 的正文写作与保真规则。
+
 ## 路径、格式与公开检查
 
 读取 `references/storage.md`。使用 `notes/<kind>/<topic>/<id>.org`，kind 只能是
