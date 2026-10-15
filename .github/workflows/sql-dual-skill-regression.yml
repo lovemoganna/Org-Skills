@@ -120,6 +120,8 @@ jobs:
           print(json.dumps({'Q001':result['verdict'],'Q002':verdict,'USD':q2mechanism,'issues':q2issues},ensure_ascii=False,default=str))
           print(json.dumps({'verdict':result['verdict'],'source_rows':counts[0],'groups':len(group),'issues':issues,'commit':os.environ.get('GITHUB_SHA')},ensure_ascii=False))
           PY
+      - name: Same-run scoped handoff replay (Q002)
+        run: python3 skills/analysis-verifier/scripts/replay_four_sheet_handoff.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -135,4 +137,7 @@ jobs:
             dual-evidence/concentration.json
             dual-evidence/source-counts.json
             dual-evidence/original-read.sha256
+            dual-evidence/s3-scoped-qa.json
+            dual-evidence/s4-scoped-finding.json
+            dual-evidence/s1-s4-review.json
           if-no-files-found: warn
