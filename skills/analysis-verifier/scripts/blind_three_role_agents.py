@@ -73,6 +73,13 @@ def instructions(root, role):
             "未知写 UNKNOWN，不得假装执行了 SQL。源数据是虚构零售交易，不得做真实企业风险断言。")
 
 
+def assess_owner_boundary(verifier_verdict, owner_decision):
+    """Guard only the known owner/B contradiction; never assert content quality."""
+    if owner_decision == "APPROVED" and verifier_verdict != "VERIFIED":
+        return "FAIL_UNSAFE_PROMOTION"
+    return "SAFE_BOUNDARY_ONLY"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="blind-evidence")
@@ -162,19 +169,20 @@ def main():
                       ["decision", "reason", "missing_evidence"])
         if review["decision"] not in ("APPROVED", "NEEDS_EVIDENCE", "NOT_DECISION_READY"):
             raise ValueError("BAD_OWNER_VERDICT")
-        # The owner cannot override negative independent validation merely by claiming approval.
-        gate = "PASS" if (feedback["verdict"] == "VERIFIED" or
-                          review["decision"] != "APPROVED") else "FAIL"
+        # Model-only reviewer verdicts do not establish business truth. Fail on unsafe approval.
+        gate = assess_owner_boundary(feedback["verdict"], review["decision"])
         write(d, "owner-review.json", review)
-        trace["status"] = "COMPLETED_WITH_GATES" if gate == "PASS" else "UNSAFE_PROMOTION"
+        trace["status"] = ("EXECUTED_CONTENT_UNGRADED" if gate == "SAFE_BOUNDARY_ONLY"
+                           else "UNSAFE_PROMOTION")
         trace["gate"] = gate
         trace["executed_model_requests"] = calls
         write(d, "agent-status.json", {"status": trace["status"], "gate": gate,
-                  "executed_model_requests": calls, "source": receipt["commit"]})
+                  "executed_model_requests": calls, "source": receipt["commit"],
+                  "limitation": "SQL was executed and role contexts isolated; independent semantic grading of model-written findings remains required."})
         write(d, "agent-trace.json", trace)
         print(json.dumps({"status": trace["status"], "model_requests": calls,
                           "verifier": feedback["verdict"], "owner": review["decision"], "gate": gate}))
-        return 0 if gate == "PASS" else 3
+        return 0 if gate == "SAFE_BOUNDARY_ONLY" else 3
     except Exception as exc:
         trace["status"] = "BLOCKED"
         trace["error"] = str(exc)[:450]
