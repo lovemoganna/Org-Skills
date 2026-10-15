@@ -1,0 +1,42 @@
+name: SQL Chat Paired Eval
+on:
+  push:
+    branches: [main, experiment/sql-chat-eval-20261015]
+    paths:
+      - ".github/workflows/sql-chat-paired-eval.yml"
+      - "skills/analysis-verifier/scripts/evaluate_chat_sql.py"
+      - "skills/analysis-verifier/scripts/blind_source_preflight.py"
+      - "skills/analysis-verifier/scripts/scope_gate.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  current-chat-evaluation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned DuckDB
+        run: python -m pip install duckdb==1.4.2
+      - name: Materialize and verify pinned retail CSVs
+        run: python skills/analysis-verifier/scripts/blind_source_preflight.py sql-eval-evidence
+      - name: Run old versus three-role actual SQL and independent counterexamples
+        run: python skills/analysis-verifier/scripts/evaluate_chat_sql.py sql-eval-evidence
+      - name: Preserve all evidence including on failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sql-chat-eval-receipts
+          if-no-files-found: warn
+          path: |
+            sql-eval-evidence/source-receipt.json
+            sql-eval-evidence/sql-eval-baseline.json
+            sql-eval-evidence/sql-eval-split.json
+            sql-eval-evidence/sql-eval-qa.json
+            sql-eval-evidence/sql-eval-finding.json
+            sql-eval-evidence/sql-eval-holdout.json
+            sql-eval-evidence/sql-eval-regression.json
+            sql-eval-evidence/sql-eval-summary.json
