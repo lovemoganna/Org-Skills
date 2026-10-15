@@ -36,6 +36,14 @@ jobs:
           if [ -f skills/analysis-verifier/tests/check_blind_three_role.py ]; then
             python skills/analysis-verifier/tests/check_blind_three_role.py
           fi
+      - name: Install optional OpenAI client only for enabled model run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BLIND_MODEL: ${{ inputs.model }}
+        run: |
+          if [ -n "$OPENAI_API_KEY" ] && [ -n "$BLIND_MODEL" ]; then
+            python -m pip install 'openai>=2.0,<3.0'
+          fi
       - name: Optional separate model contexts (fail closed without credential/model)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
