@@ -7,7 +7,7 @@
 - 仅 users, fiat_transactions, crypto_transactions, exchange_rates；禁止其他 Sheet；DuckDB 1.4.2 + read_xlsx；httpfs/excel 安装与加载各一次；四表分别只读、物化一次。后续仅查本会话物化表。
 - 每次新的执行以当次回执为准。样本行数与用户名不能写死进通用 Skill。
 - 真实试验：https://github.com/lovemoganna/Org-Skills/actions/runs/38748162141
-- 变异测试及泛化修正：https://github.com/lovemoganna/Org-Skills/actions/runs/38748703208
+- 变异测试及泛化修正：https://github.com/lovemoganna/Org-Skills/actions/runs/38750016332
 - 现阶段这是 **确定性 SQL 结果驱动编排**，并非三个独立 LLM 自主研究的证据。
 
 ## 基线失败
@@ -17,7 +17,7 @@
 | 现象 | 首轮证据 | 决定性的二轮 SQL | 能证实什么 | 不能证明什么 |
 |---|---|---|---|---|
 | 非 completed 仍有 completed_at | fiat_details 记录 status=failed | stage2_completed_at_mismatch + status aggregation | status=completed 43 笔，而 completed_at 非空 44 笔，失败 EUR 300 提现也有终止时间 | 不能凭这个字段认定失败交易实际到账 |
-| 同 UID 的法币/Crypto 接近 | crossrail_status_and_time | stage2_crossrail_completion_order | 5 组近时配对中 2 组创建与完成排序相反 | 不能证明是一次换汇或同一资金路径 |
+| 同 UID 的法币/Crypto 接近 | crossrail_status_and_time | stage2_crossrail_completion_order | 5 行近时配对实际只涉及 2 名 UID、3 笔法币订单、3 笔 Crypto 订单；2 行创建与完成排序相反，但同一订单可重复进入不同配对，不是 5 个独立案件 | 不能证明是一次换汇或同一资金路径 |
 | BRL 短期入出 | fiat_roundtrip_7d | stage2_completed_pair_peer_baseline | 同 UID、同币种、24 小时内各 1 笔完成态入/出金 | 不能证明钱原路返回或洗钱目的 |
 | frozen 用户仍有提现 | frozen_account_activity + schema_users | temporal_state_gate | 状态快照与两笔完成态提现共存 | 没有 frozen_at/变更日志就不能倒推出当时被冻结 |
 
