@@ -222,6 +222,10 @@ query("keys_quality","""
  COUNT(*) FILTER(WHERE uid IS NULL),
  COUNT(*) FILTER(WHERE amount IS NULL OR amount<=0) FROM crypto_transactions
 """)
+# The follow-up planner runs AFTER the native SQL has produced stage-1 receipts.
+# The .read is in the same process, so the four materialized tables remain live.
+statements.append(".shell python3 skills/analysis-verifier/scripts/four_sheet_research_followup.py discovery\n")
+statements.append(".read discovery/second-pass.sql\n")
 (out/"first-pass.sql").write_text(source+"\n".join(statements))
 print({"source_reads":4,"allowed_tables":tables,"queries_after_materialization":len(statements)-1,
        "source_read_sha256":hashlib.sha256(source.encode()).hexdigest()})
