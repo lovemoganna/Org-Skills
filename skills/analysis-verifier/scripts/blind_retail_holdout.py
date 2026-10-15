@@ -77,6 +77,21 @@ def run(data_dir):
         WHERE o.order_status='Completed' AND oi.promotion_id IS NOT NULL
         GROUP BY 1 ORDER BY 1
         """)
+        overlap=single("""
+        WITH by_order AS (
+          SELECT o.order_id,
+            COUNT(*) FILTER (WHERE oi.promotion_id IS NOT NULL) AS promo_lines,
+            COUNT(*) FILTER (WHERE oi.promotion_id IS NULL) AS nonpromo_lines
+          FROM orders o JOIN order_items oi USING(order_id)
+          WHERE o.order_status='Completed'
+          GROUP BY 1
+        )
+        SELECT COUNT(*) AS unique_completed_orders,
+          COUNT(*) FILTER (WHERE promo_lines>0) AS orders_with_promo_lines,
+          COUNT(*) FILTER (WHERE nonpromo_lines>0) AS orders_with_nonpromo_lines,
+          COUNT(*) FILTER (WHERE promo_lines>0 AND nonpromo_lines>0) AS mixed_promo_orders
+        FROM by_order
+        """)
         # Independent non-joined sums for line-level reconciliation.
         completed_line_total=single("""
         SELECT COUNT(*) AS lines, SUM(line_net_amount) AS line_net_native
@@ -84,6 +99,8 @@ def run(data_dir):
           SELECT order_id FROM orders WHERE order_status='Completed')
         """)
     by_status_completed=next(x for x in by_status if x["order_status"]=="Completed")
+    assert sum(int(x["orders_in_group"]) for x in by_promo) - int(overlap["mixed_promo_orders"]) == int(overlap["unique_completed_orders"]), "non-additive order segments must reconcile by overlap"
+    assert int(overlap["unique_completed_orders"]) == int(by_status_completed["orders"])
     summary_line_total=sum(float(x["line_net_native"]) for x in by_promo)
     assert int(completed_line_total["lines"])==sum(int(x["line_count"]) for x in by_promo)
     assert abs(float(completed_line_total["line_net_native"])-summary_line_total)<0.01
@@ -97,6 +114,8 @@ def run(data_dir):
       "source_integrity":integrity,
       "order_status_breakdown":by_status,
       "completed_promo_comparison":by_promo,
+      "mixed_order_overlap":overlap,
+      "grain_warning":"Promotion and nonpromotion line cohorts can overlap in one order; their distinct-order counts must not be summed.",
       "completed_campaign_breakdown":campaign,
       "independent_line_reconciliation":completed_line_total,
       "evidence_scope":"2025 fictional retail transaction records, completed statuses; line_net - product unit_cost proxy; not net profit",
