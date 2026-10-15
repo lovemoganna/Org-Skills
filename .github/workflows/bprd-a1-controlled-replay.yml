@@ -1,4 +1,4 @@
-name: BPRD A1 Controlled Replay
+name: BPRD A2 Controlled Replay
 
 on:
   push:
@@ -35,22 +35,23 @@ jobs:
               ["git", "show", "2d84e28835c12375cc1519234f2fd4595cfa8349:skills/bprd-plus/SKILL.md"], text=True
           )
           candidate = Path("skills/bprd-plus/SKILL.md").read_text(encoding="utf-8")
-          task = """旧版约束：“DuckDB Editor Pro 可视化继续使用 Chart.js，不更换技术栈。”
-          新反馈：“全部图表改为 ECharts。”
-          两条均有效，且未说明谁有优先级。请用 bprd-plus 合并成可开发、可验收 BRD。未提供项目代码。"""
+          task = """初始需求：“所有可视化组件共用统一格式化逻辑；筛选后图例与数据保持同步。”
+          新增反馈：“页面切换不得残留之前数据集的图例与筛选状态。”
+          请用 bprd-plus 给出简短 BRD，需要说明新增反馈影响哪个原有要求以及哪条验收。
+          没有真实组件、文件名、测试结果，不得推断。"""
           intro = """你正在执行 BRD 生成任务。以下 Skill 是你此轮唯一的专业操作规范。
           不得访问仓库或外部工具；不得声称已访问代码、已验证效果。
           请直接给出最终中文 BRD，不输出 Skill 分析、评分、实验信息或自评。"""
-          output = Path("bprd-a1-results")
+          output = Path("bprd-a2-results")
           output.mkdir(exist_ok=True)
           for name, instruction in [("baseline",baseline),("candidate",candidate)]:
               (output / (name + ".prompt.txt")).write_text(
                   intro + "\n\n<skill>\n" + instruction + "\n</skill>\n\n<user>\n" + task + "\n</user>\n",
                   encoding="utf-8",
               )
-          print("Prepared A1 baseline and candidate: same task, frozen base SHA")
+          print("Prepared A2 baseline and candidate: same task, frozen base SHA")
           PY
-      - name: A1 run baseline and candidate (isolated sessions)
+      - name: A2 run baseline and candidate (isolated sessions)
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -60,17 +61,17 @@ jobs:
           for arm in baseline candidate; do
             mkdir -p "$RUNNER_TEMP/copilot-$arm"
             export COPILOT_HOME="$RUNNER_TEMP/copilot-$arm"
-            timeout 240s copilot -p "$(cat "bprd-a1-results/$arm.prompt.txt")" \
+            timeout 240s copilot -p "$(cat "bprd-a2-results/$arm.prompt.txt")" \
               --max-ai-credits 30 --no-ask-user -s \
-              > "bprd-a1-results/$arm.output.md"
-            test -s "bprd-a1-results/$arm.output.md"
+              > "bprd-a2-results/$arm.output.md"
+            test -s "bprd-a2-results/$arm.output.md"
             echo "=== $arm output ==="
-            cat "bprd-a1-results/$arm.output.md"
+            cat "bprd-a2-results/$arm.output.md"
             echo
           done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: bprd-a1-paired-results
-          path: bprd-a1-results/
+          path: bprd-a2-results/
           retention-days: 30
