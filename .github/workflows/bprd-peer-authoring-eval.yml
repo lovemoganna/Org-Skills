@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        case_id: [S2, S4, S5]
+        case_id: [S6]
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
