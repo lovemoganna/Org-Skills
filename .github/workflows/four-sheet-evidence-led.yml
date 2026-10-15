@@ -8,6 +8,7 @@ on:
       - "skills/analysis-verifier/scripts/four_sheet_investigate.py"
       - "skills/analysis-verifier/scripts/four_sheet_research_followup.py"
       - "skills/analysis-verifier/scripts/four_sheet_research_quality.py"
+      - "skills/analysis-verifier/scripts/test_four_sheet_adaptive_replay.py"
       - "skills/analysis-verifier/scripts/temporal_state_gate.py"
   workflow_dispatch:
 permissions:
@@ -48,6 +49,8 @@ jobs:
           PY
       - name: Verify evidence-led follow-up and business discovery gate
         run: python3 skills/analysis-verifier/scripts/four_sheet_research_quality.py discovery
+      - name: Mutation test decision changes and meaningful stop
+        run: python3 skills/analysis-verifier/scripts/test_four_sheet_adaptive_replay.py discovery
       - name: Enforce temporal-state evidence gate and counterexamples
         run: |
           python3 skills/analysis-verifier/scripts/temporal_state_gate.py discovery --output discovery/temporal-state-gate.json
