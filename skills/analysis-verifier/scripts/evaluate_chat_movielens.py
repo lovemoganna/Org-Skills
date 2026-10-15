@@ -127,6 +127,33 @@ with duckdb.connect(str(db)) as c:
     assert len(verify)==qa["rated_movies"]
     byid={int(x["movie_id"]):x for x in verify}
     overall=float(c.execute("SELECT SUM(CAST(rating AS BIGINT))*1.0/COUNT(*) FROM ratings").fetchone()[0])
+    # Truly independent source-level holdout: direct TSV parser, no SQL / DuckDB.
+    from collections import defaultdict
+    counts=Counter();sums=Counter();pair_seen=set();raw_n=0;total_score=0
+    for row in csv.reader(io.StringIO(rb.decode("ascii")),delimiter="\\t"):
+        if len(row)!=4: raise ValueError("RAW_TSV_SHAPE")
+        uid,mid,rating,ts=map(int,row)
+        if (uid,mid) in pair_seen: raise ValueError("RAW_DUPLICATE_RATING_KEY")
+        pair_seen.add((uid,mid))
+        if rating not in (1,2,3,4,5): raise ValueError("RAW_BAD_RATING")
+        counts[mid]+=1;sums[mid]+=rating;raw_n+=1;total_score+=rating
+    assert raw_n==qa["ratings"] and len(counts)==qa["rated_movies"]
+    independent_global=total_score/raw_n
+    assert abs(overall-independent_global)<1e-11
+    for mid,v in byid.items():
+        assert v["n"]==counts[mid] and v["raw_sum"]==sums[mid]
+    # An intentionally corrupted held-out metric must be rejected.
+    def independent_score_matches(x):
+        mid=int(x["movie_id"])
+        if x["rating_count"]!=counts[mid]:return False
+        if abs(x["avg_rating"]-sums[mid]/counts[mid])>0.000051:return False
+        if "shrunk_mean" in x:
+            expected=(sums[mid]+20*independent_global)/(counts[mid]+20)
+            return abs(x["shrunk_mean"]-expected)<=0.000051
+        return True
+    assert all(independent_score_matches(x) for x in old+new)
+    altered=dict(new[0],shrunk_mean=new[0]["shrunk_mean"]+0.1)
+    assert not independent_score_matches(altered), "mutated score incorrectly accepted"
     for rows in (old,new):
         for row in rows:
             v=byid[int(row["movie_id"])]
@@ -201,6 +228,8 @@ with duckdb.connect(str(db)) as c:
           "top_old_movie_id":old[0]["movie_id"],"top_new_movie_id":new[0]["movie_id"],
           "top_old_ratings":old[0]["rating_count"],"top_new_ratings":new[0]["rating_count"],
           "sensitivity":sensitivity,"negative_controls":negatives,
+          "independent_parser":"Python csv.reader over publisher u.data (not DuckDB table)",
+          "independent_source_rows":raw_n,"corrupted_score_negative_test":"REJECTED",
           "scope_pass":gate,"scope_bad":rejected})
     summary={
       "evaluation_type":"same-conversation SQL strategy contrast, not independent model behavior eval",
