@@ -280,6 +280,11 @@ print("note-reforge contracts + 7 Org draft identity checks: OK")
 
 
 # Split-artifact code integrity: positive and adversarial cases.
+assert "**专家知识吸收门禁（仅在外部检索有必要时）。**" in canonical
+assert "来源事实 → 推理依据 → 适用边界 → 可执行结论" in canonical
+expert_transfer_regression = (SKILL_ROOT / "tests" / "regression" / "authority-to-decision-transfer.md").read_text(encoding="utf-8")
+for case in ("block all", "same test set", "four weeks", "NOOP", "independently measured"):
+    assert case in expert_transfer_regression, ("expert knowledge-transfer regression missing", case)
 assert "#### 外部知识预检" in canonical
 assert "#### 主线聚焦与素材分流" in canonical
 assert "--appendix" in canonical and "发布身份" in canonical
