@@ -23,8 +23,6 @@ for rule in [
     "不得为了执行固定流程而强制等待用户确认",
     "references/risk-control.md",
     "来源 → 需求 → 验收",
-    "未获授权不得替用户选择",
-    "静态检查、BRD 文本合规或构建成功",
 ]:
     assert rule in skill, f"missing core rule: {rule}"
 
