@@ -19,3 +19,10 @@
 - 保留 Generalization / Counterexample 能力，但压缩为运行规则，不再把内部分析过程写进 BRD 正文。
 - 将 AML、Fraud、制裁、RFI、STR 等风控专项规则移入 `references/risk-control.md` 按需加载。
 - 新增 `tests/regression-cases.md`，覆盖 DuckDB Editor Pro 原失败样本、历史风控样本和泛化边界。
+
+## 2026-10-15 — evidence and traceability gates
+
+- 对复杂或反复修改的需求增加最小来源—需求—验收映射；简单需求不强制追踪表。
+- 遇到实质冲突时明确冲突双方、影响和待裁决事项，不静默裁决。
+- 验收要求操作、预期结果和可观察证据；静态检查不冒充业务验收。
+- 增加四类 A/B 回归用例；实际模型执行的独立对比仍需单独运行，不由静态检查冒充。
