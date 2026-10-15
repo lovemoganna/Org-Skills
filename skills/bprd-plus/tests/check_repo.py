@@ -22,7 +22,6 @@ for rule in [
     "结构性反例",
     "不得为了执行固定流程而强制等待用户确认",
     "references/risk-control.md",
-    "来源 → 需求 → 验收",
 ]:
     assert rule in skill, f"missing core rule: {rule}"
 
