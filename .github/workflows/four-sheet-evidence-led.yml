@@ -1,0 +1,54 @@
+name: Four Sheet Evidence Led Discovery
+on:
+  push:
+    branches: [experiment/four-sheet-evidence-led-report-20261015]
+    paths:
+      - ".github/workflows/four-sheet-evidence-led.yml"
+      - "skills/analysis-verifier/scripts/four_sheet_discovery.py"
+      - "skills/analysis-verifier/scripts/four_sheet_investigate.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install DuckDB 1.4.2
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 2 https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip -o duckdb.zip
+          unzip -q duckdb.zip
+          chmod +x duckdb
+          ./duckdb -version
+      - name: Build immutable four-read SQL plus exploratory probes
+        run: python3 skills/analysis-verifier/scripts/four_sheet_discovery.py discovery
+      - name: Run first-pass SQL against LIVE remote Excel
+        run: ./duckdb :memory: < discovery/first-pass.sql
+      - name: Check source integrity and all expected result receipts
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("discovery")
+          names=["user_base","fiat_details","crypto_details","rates_detail","uid_rail_coverage",
+              "date_coverage","keys_quality","schema_users","schema_fiat_transactions",
+              "schema_crypto_transactions","schema_exchange_rates"]
+          j={name:json.loads((root/(name+".json")).read_text()) for name in names}
+          assert len(j["user_base"])>0
+          assert len(j["fiat_details"])>0 and len(j["crypto_details"])>0
+          assert sum(r["n"] for r in j["keys_quality"])==len(j["fiat_details"])+len(j["crypto_details"])
+          assert all(x["n"]==x["unique_orders"] for x in j["keys_quality"])
+          print(json.dumps({"gate":"DISCOVERY_PASS","counts":{k:len(v) for k,v in j.items()},
+            "coverage":j["date_coverage"],"uid_rail":j["uid_rail_coverage"]},ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: four-sheet-stage1-discovery
+          if-no-files-found: warn
+          path: |
+            discovery/*.json
+            discovery/read-plan.sha256
+            discovery/first-pass.sql
