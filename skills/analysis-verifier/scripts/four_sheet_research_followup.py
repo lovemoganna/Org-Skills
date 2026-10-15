@@ -22,7 +22,10 @@ returns=load("fiat_roundtrip_7d")
 profiles=load("joined_users")
 frozen=load("frozen_account_activity")
 schema=load("schema_users")
-assert len(fiat)==25 and len(crypto)==25 and len(profiles)==10
+assert fiat and crypto and profiles
+quality=load('keys_quality')
+assert sum(int(q['n']) for q in quality)==len(fiat)+len(crypto)
+assert len({p['uid'] for p in profiles})==len(profiles)
 uid_name={x["uid"]:x["user_name"] for x in profiles}
 cases=[]
 # Evidence of a real data-semantics pitfall: completion timestamp != completed status.
