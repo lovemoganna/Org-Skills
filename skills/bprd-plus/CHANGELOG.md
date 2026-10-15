@@ -20,9 +20,9 @@
 - 将 AML、Fraud、制裁、RFI、STR 等风控专项规则移入 `references/risk-control.md` 按需加载。
 - 新增 `tests/regression-cases.md`，覆盖 DuckDB Editor Pro 原失败样本、历史风控样本和泛化边界。
 
-## 2026-10-15 — targeted traceability A/B
+## 2026-10-15 — evidence-backed A/B evaluation
 
-- 同模型隔离回放 A1/A2/A3/A4；旧版在冲突处理、证据边界和精简方面未见明显劣势。
-- 回退重复的冲突和证据提示，仅对多版本增量需求补充最小来源、原需求、验收映射要求。
-- 缺失决策的关键行为保持“待确认”，不为追踪增加 BRD 表格。
-- 后续结果必须以新候选的独立回放为准；静态 CI 不是行为验收。
+- 通过 GitHub Actions 的隔离 Copilot CLI 会话执行 A1 冲突、A2 增量追踪、A4 证据边界与 A3 精简四类用例，并对 A2/A3 执行精简候选复测。
+- A1/A4 新旧均满足关键约束；A2 没有稳定领先；A3 长短变化存在波动。优化收益证据不足。
+- 按 loop-engineering-meta 规则回退所有 SKILL.md 行为变更，保留回归用例、测试记录及按需触发的 A/B 执行入口。
+- `skills/bprd-plus/tests/ab-report-20261015.md` 记录实测证据与局限。
