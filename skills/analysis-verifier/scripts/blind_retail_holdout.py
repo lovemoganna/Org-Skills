@@ -17,7 +17,8 @@ def run(data_dir):
     with duckdb.connect(str(d/"blind.duckdb"),read_only=True,
                         config={"enable_external_access":"false"}) as c:
         def single(q):
-            cols=[x[0] for x in (r:=c.execute(q)).description]
+            r=c.execute(q)
+            cols=[x[0] for x in r.description]
             vals=r.fetchone()
             return dict(zip(cols,vals))
         def rows(q):
