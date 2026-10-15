@@ -64,6 +64,12 @@ class BlindThreeRoleTests(unittest.TestCase):
             with duckdb.connect(str(db), read_only=True) as c:
                 self.assertEqual(c.execute("SELECT COUNT(*) FROM orders").fetchone()[0], 2)
 
+    def test_no_self_certifying_owner_review(self):
+        self.assertEqual(agents.assess_owner_boundary("REJECTED", "APPROVED"), "FAIL_UNSAFE_PROMOTION")
+        self.assertEqual(agents.assess_owner_boundary("UNRESOLVED", "APPROVED"), "FAIL_UNSAFE_PROMOTION")
+        self.assertEqual(agents.assess_owner_boundary("VERIFIED", "APPROVED"), "SAFE_BOUNDARY_ONLY")
+        self.assertEqual(agents.assess_owner_boundary("BLOCKED", "NEEDS_EVIDENCE"), "SAFE_BOUNDARY_ONLY")
+
     def test_actual_roles_are_isolated_requests(self):
         source = (SCRIPTS / "blind_three_role_agents.py").read_text(encoding="utf-8")
         self.assertIn("client.responses.create(", source)
