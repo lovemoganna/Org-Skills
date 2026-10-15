@@ -163,11 +163,18 @@ spec.loader.exec_module(module)
 fixture = (SKILL_ROOT / "tests" / "regression" / "result-first-no-process-leak.md").read_text(encoding="utf-8")
 assert "原文提出五个观察维度" in fixture and "个人学习配置表应记录五项实际表现" in fixture
 assert "成品视角（内部分析不得外溢）" in canonical and "成品视角反查" in canonical
+assert "独立成品门禁（终稿拒收项）" in canonical and "同题增益门禁（内容质量独立验收）" in canonical
+independent_fixture = (SKILL_ROOT / "tests" / "regression" / "independent-reader-final-artifact.md").read_text(encoding="utf-8")
+for label in ("原稿还给出", "模拟项目", "四周", "对照原稿", "NOOP", "事实归属", "独立使用效果"):
+    assert label in independent_fixture, ("independent reader regression missing", label)
 bad = [
     "原文提出五个观察维度：能量节奏、刺激偏好等。",
     "原文一方面要求按原方法执行，另一方面强调灵活调整。",
     "需要区分两个判断。原文说 A。",
     "本次炼化保留了八个探索问题。",
+    "原始材料并非一份单纯的相关方管理教程。",
+    "原稿还给出两条用于演示的冲突登记记录。",
+    "新版补充 NIST 的风险管理方法。",
 ]
 good = [
     "个人学习配置表应记录五项实际表现：能量节奏、刺激偏好、社交偏好、启动难易和注意稳定性。",
@@ -176,6 +183,10 @@ good = [
     "## 证据边界\n原文建议两周为一轮，尚无实测证据。",
     "~~~text\n原文提出五个观察维度\n~~~",
     "> 原文提出五个观察维度（逐字引文）。",
+    "* 参考依据与原始材料\n原稿还给出两条用于演示的冲突登记记录。",
+    "* deepfunk：模拟项目\ndeepfunk 是一个模拟项目，四周差距来自情境设定，不属于已执行记录。",
+    "#+begin_src text\n原稿还给出两条记录。\n#+end_src",
+    "#+begin_quote\n原稿还给出两条记录。\n#+end_quote",
 ]
 for text_case in bad:
     assert module.candidates(text_case), ("false negative", text_case)
@@ -191,6 +202,17 @@ with tempfile.TemporaryDirectory() as tmp:
     md.write_text(bad[0], encoding="utf-8")
     outcome = subprocess.run(cmd + ["--advisory"], capture_output=True, text=True, check=False)
     assert outcome.returncode == 0 and "疑似过程叙述 1 处" in outcome.stdout
+with tempfile.TemporaryDirectory() as tmp:
+    org = Path(tmp) / "note.org"
+    command = [sys.executable, str(SKILL_ROOT / "tests" / "check_result_voice.py"), str(org)]
+    for content, expected in [
+        ("* 冲突登记\n原稿还给出两条用于演示的冲突登记记录。\n", 1),
+        ("* 参考依据与原始材料\n原稿还给出两条用于演示的冲突登记记录。\n", 0),
+        ("* 实例\n#+begin_src text\n原稿还给出两条记录。\n#+end_src\n", 0),
+    ]:
+        org.write_text(content, encoding="utf-8")
+        result = subprocess.run(command, capture_output=True, text=True, check=False)
+        assert result.returncode == expected, (content, result.stdout, result.stderr)
 print("note-reforge finished-result perspective regression: OK")
 
 
