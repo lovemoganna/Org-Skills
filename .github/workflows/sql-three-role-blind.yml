@@ -1,0 +1,59 @@
+name: Three Role Blind Retail Trial
+on:
+  push:
+    branches: [main, experiment/three-role-blind-20261015]
+    paths:
+      - ".github/workflows/sql-three-role-blind.yml"
+      - "skills/analysis-verifier/scripts/blind_source_preflight.py"
+      - "skills/analysis-verifier/scripts/blind_three_role_agents.py"
+      - "skills/analysis-verifier/tests/check_blind_three_role.py"
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Explicit model ID for optional live independent AI stages"
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  unseen-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install native DuckDB Python runtime
+        run: python -m pip install duckdb==1.4.2
+      - name: Verify pinned foreign dataset and record true data-grain baseline
+        run: python skills/analysis-verifier/scripts/blind_source_preflight.py blind-evidence
+      - name: Offline orchestration contract regression
+        run: |
+          if [ -f skills/analysis-verifier/tests/check_blind_three_role.py ]; then
+            python skills/analysis-verifier/tests/check_blind_three_role.py
+          fi
+      - name: Optional separate model contexts (fail closed without credential/model)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BLIND_MODEL: ${{ inputs.model }}
+        run: |
+          if [ -f skills/analysis-verifier/scripts/blind_three_role_agents.py ]; then
+            python skills/analysis-verifier/scripts/blind_three_role_agents.py --data blind-evidence --model "$BLIND_MODEL"
+          else
+            echo '{"state":"NOT_IMPLEMENTED","reason":"role pipeline not committed yet"}' > blind-evidence/agent-status.json
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unseen-retail-source-and-agent-evidence
+          path: |
+            blind-evidence/source-receipt.json
+            blind-evidence/agent-status.json
+            blind-evidence/agent-trace.json
+            blind-evidence/owner-brief.json
+            blind-evidence/analyst-packet.json
+            blind-evidence/verifier-feedback.json
+            blind-evidence/final-report.json
+            blind-evidence/owner-review.json
+          if-no-files-found: warn
