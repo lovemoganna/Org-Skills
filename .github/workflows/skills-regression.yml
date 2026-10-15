@@ -44,6 +44,9 @@ jobs:
             python "$check"
           done
 
+      - name: Reject historical account-state claims without event-time evidence
+        run: python3 skills/analysis-verifier/tests/test_temporal_state_gate.py
+
       - name: Verify Org Museum plugin package and canonical Skill locks
         run: python plugins/org-museum/tests/check_package.py
 
