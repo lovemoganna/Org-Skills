@@ -127,6 +127,91 @@ query("snapshot_rate_coverage","""
  FROM tx LEFT JOIN exchange_rates r USING(asset)
 """)
 
+
+# Stage 2 is selected based on the observed stage-1 account and event distributions.
+# It tests administrative/transaction temporal relationships and transaction semantics;
+# do not infer that a present-day status was active when a historical order executed.
+query("account_state_transaction_matrix","""
+WITH tx AS (
+  SELECT TRY_CAST(uid AS BIGINT) uid,'fiat' rail,
+         CAST(direction AS VARCHAR) direction,CAST(status AS VARCHAR) status
+  FROM fiat_transactions
+  UNION ALL
+  SELECT TRY_CAST(uid AS BIGINT),'crypto',
+         CAST(direction AS VARCHAR),CAST(status AS VARCHAR)
+  FROM crypto_transactions
+)
+SELECT u.account_status,tx.rail,tx.direction,tx.status,
+       COUNT(*) AS records,COUNT(DISTINCT tx.uid) users
+FROM users u JOIN tx ON TRY_CAST(u.uid AS BIGINT)=tx.uid
+GROUP BY 1,2,3,4 ORDER BY account_status,rail,direction,status
+""")
+query("frozen_account_activity","""
+SELECT CAST(u.uid AS VARCHAR) uid,u.user_name,u.account_status,
+       CAST(u.created_at AS VARCHAR) account_created,
+       CAST(u.kyc_level AS VARCHAR) kyc_level,
+       'fiat' rail,CAST(f.fiat_order_id AS VARCHAR) order_id,
+       CAST(f.currency AS VARCHAR) asset,f.direction,f.status,
+       CAST(f.amount AS DECIMAL(24,8)) amount,
+       CAST(f.created_at AS VARCHAR) created_at,
+       CAST(f.completed_at AS VARCHAR) completed_at
+FROM users u JOIN fiat_transactions f ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(f.uid AS BIGINT)
+WHERE u.account_status='frozen'
+UNION ALL
+SELECT CAST(u.uid AS VARCHAR),u.user_name,u.account_status,
+       CAST(u.created_at AS VARCHAR),CAST(u.kyc_level AS VARCHAR),
+       'crypto',CAST(c.crypto_order_id AS VARCHAR),CAST(c.asset AS VARCHAR),
+       c.direction,c.status,CAST(c.amount AS DECIMAL(24,8)),
+       CAST(c.created_at AS VARCHAR),CAST(c.completed_at AS VARCHAR)
+FROM users u JOIN crypto_transactions c ON TRY_CAST(u.uid AS BIGINT)=TRY_CAST(c.uid AS BIGINT)
+WHERE u.account_status='frozen'
+ORDER BY uid,created_at
+""")
+query("crypto_transfer_support","""
+SELECT CAST(TRY_CAST(uid AS BIGINT) AS VARCHAR) uid,crypto_order_id,asset,
+       direction,network,status,CAST(amount AS DECIMAL(24,8)) amount,
+       CASE WHEN tx_hash IS NOT NULL AND LENGTH(TRIM(tx_hash))>0
+         THEN TRUE ELSE FALSE END has_hash,
+       CASE WHEN address IS NOT NULL AND LENGTH(TRIM(address))>0
+         THEN TRUE ELSE FALSE END has_address,
+       confirmations,CAST(created_at AS VARCHAR) created_at,
+       CAST(completed_at AS VARCHAR) completed_at
+FROM crypto_transactions ORDER BY uid,created_at
+""")
+query("crossrail_status_and_time","""
+SELECT CAST(TRY_CAST(f.uid AS BIGINT) AS VARCHAR) uid,
+  CAST(f.fiat_order_id AS VARCHAR) fiat_order,
+  f.currency fiat_asset,f.direction fiat_direction,f.status fiat_status,
+  CAST(f.amount AS DECIMAL(24,8)) fiat_amount,
+  CAST(f.created_at AS VARCHAR) fiat_time,
+  CAST(c.crypto_order_id AS VARCHAR) crypto_order,
+  c.asset crypto_asset,c.direction crypto_direction,c.status crypto_status,
+  CAST(c.amount AS DECIMAL(24,8)) crypto_amount,
+  CAST(c.created_at AS VARCHAR) crypto_time,
+  ABS(DATE_DIFF('minute',f.created_at,c.created_at)) gap_minutes,
+  c.network,c.confirmations,
+  CASE WHEN c.tx_hash IS NOT NULL AND LENGTH(TRIM(c.tx_hash))>0
+    THEN TRUE ELSE FALSE END has_hash
+FROM fiat_transactions f JOIN crypto_transactions c
+ON TRY_CAST(f.uid AS BIGINT)=TRY_CAST(c.uid AS BIGINT)
+WHERE ABS(DATE_DIFF('minute',f.created_at,c.created_at))<=1440
+ORDER BY gap_minutes,uid
+""")
+query("transaction_status_timing","""
+WITH tx AS (
+ SELECT 'fiat' rail,CAST(status AS VARCHAR) status,
+ CAST(direction AS VARCHAR) direction,created_at,completed_at
+ FROM fiat_transactions
+ UNION ALL
+ SELECT 'crypto',CAST(status AS VARCHAR),CAST(direction AS VARCHAR),
+ created_at,completed_at FROM crypto_transactions
+)
+SELECT rail,status,direction,COUNT(*) records,
+ COUNT(*) FILTER(WHERE completed_at IS NULL) missing_completed_at,
+ COUNT(*) FILTER(WHERE completed_at<created_at) completed_before_created
+FROM tx GROUP BY rail,status,direction ORDER BY rail,status,direction
+""")
+
 query("keys_quality","""
  SELECT 'fiat' rail,COUNT(*) n,
  COUNT(DISTINCT fiat_order_id) unique_orders,
