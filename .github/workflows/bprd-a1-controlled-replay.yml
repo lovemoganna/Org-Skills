@@ -61,7 +61,7 @@ jobs:
             mkdir -p "$RUNNER_TEMP/copilot-$arm"
             export COPILOT_HOME="$RUNNER_TEMP/copilot-$arm"
             timeout 240s copilot -p "$(cat "bprd-a1-results/$arm.prompt.txt")" \
-              --model claude-haiku-4.5 --max-ai-credits 30 --no-ask-user -s \
+              --max-ai-credits 30 --no-ask-user -s \
               > "bprd-a1-results/$arm.output.md"
             test -s "bprd-a1-results/$arm.output.md"
             echo "=== $arm output ==="
