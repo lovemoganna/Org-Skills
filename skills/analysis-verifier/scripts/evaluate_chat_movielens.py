@@ -130,7 +130,7 @@ with duckdb.connect(str(db)) as c:
     # Truly independent source-level holdout: direct TSV parser, no SQL / DuckDB.
     from collections import defaultdict
     counts=Counter();sums=Counter();pair_seen=set();raw_n=0;total_score=0
-    for row in csv.reader(io.StringIO(rb.decode("ascii")),delimiter="\\t"):
+    for row in csv.reader(io.StringIO(rb.decode("ascii")),delimiter="\t"):
         if len(row)!=4: raise ValueError("RAW_TSV_SHAPE")
         uid,mid,rating,ts=map(int,row)
         if (uid,mid) in pair_seen: raise ValueError("RAW_DUPLICATE_RATING_KEY")
