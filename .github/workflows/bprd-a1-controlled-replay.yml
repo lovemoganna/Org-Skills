@@ -1,4 +1,4 @@
-name: BPRD A4 Controlled Replay
+name: BPRD A3 Controlled Replay
 
 on:
   push:
@@ -35,22 +35,21 @@ jobs:
               ["git", "show", "2d84e28835c12375cc1519234f2fd4595cfa8349:skills/bprd-plus/SKILL.md"], text=True
           )
           candidate = Path("skills/bprd-plus/SKILL.md").read_text(encoding="utf-8")
-          task = """全面扫描 DuckDB Editor Pro 可视化组件，找到共性根因再修复。
-          当前没有代码、截图、构建日志或测试结果。请用 bprd-plus 整理成可开发、可验收 BRD。
-          禁止声称已完成扫描、已修复或已通过测试。"""
+          task = """列表增加 CSV 导出按钮。只导出当前筛选结果；没有数据时禁用按钮。
+          请用 bprd-plus 写一份最短可执行 BRD。不得扩大本次功能范围。"""
           intro = """你正在执行 BRD 生成任务。以下 Skill 是你此轮唯一的专业操作规范。
           不得访问仓库或外部工具；不得声称已访问代码、已验证效果。
           请直接给出最终中文 BRD，不输出 Skill 分析、评分、实验信息或自评。"""
-          output = Path("bprd-a4-results")
+          output = Path("bprd-a3-results")
           output.mkdir(exist_ok=True)
           for name, instruction in [("baseline",baseline),("candidate",candidate)]:
               (output / (name + ".prompt.txt")).write_text(
                   intro + "\n\n<skill>\n" + instruction + "\n</skill>\n\n<user>\n" + task + "\n</user>\n",
                   encoding="utf-8",
               )
-          print("Prepared A4 baseline and candidate: same task, frozen base SHA")
+          print("Prepared A3 baseline and candidate: same task, frozen base SHA")
           PY
-      - name: A4 run baseline and candidate (isolated sessions)
+      - name: A3 run baseline and candidate (isolated sessions)
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -60,17 +59,17 @@ jobs:
           for arm in baseline candidate; do
             mkdir -p "$RUNNER_TEMP/copilot-$arm"
             export COPILOT_HOME="$RUNNER_TEMP/copilot-$arm"
-            timeout 240s copilot -p "$(cat "bprd-a4-results/$arm.prompt.txt")" \
+            timeout 240s copilot -p "$(cat "bprd-a3-results/$arm.prompt.txt")" \
               --max-ai-credits 30 --no-ask-user -s \
-              > "bprd-a4-results/$arm.output.md"
-            test -s "bprd-a4-results/$arm.output.md"
+              > "bprd-a3-results/$arm.output.md"
+            test -s "bprd-a3-results/$arm.output.md"
             echo "=== $arm output ==="
-            cat "bprd-a4-results/$arm.output.md"
+            cat "bprd-a3-results/$arm.output.md"
             echo
           done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: bprd-a1-paired-results
-          path: bprd-a4-results/
+          path: bprd-a3-results/
           retention-days: 30
