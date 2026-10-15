@@ -6,6 +6,8 @@ on:
       - ".github/workflows/four-sheet-evidence-led.yml"
       - "skills/analysis-verifier/scripts/four_sheet_discovery.py"
       - "skills/analysis-verifier/scripts/four_sheet_investigate.py"
+      - "skills/analysis-verifier/scripts/four_sheet_research_followup.py"
+      - "skills/analysis-verifier/scripts/four_sheet_research_quality.py"
       - "skills/analysis-verifier/scripts/temporal_state_gate.py"
   workflow_dispatch:
 permissions:
@@ -44,6 +46,8 @@ jobs:
           print(json.dumps({"gate":"DISCOVERY_PASS","counts":{k:len(v) for k,v in j.items()},
             "coverage":j["date_coverage"],"uid_rail":j["uid_rail_coverage"]},ensure_ascii=False))
           PY
+      - name: Verify evidence-led follow-up and business discovery gate
+        run: python3 skills/analysis-verifier/scripts/four_sheet_research_quality.py discovery
       - name: Enforce temporal-state evidence gate and counterexamples
         run: |
           python3 skills/analysis-verifier/scripts/temporal_state_gate.py discovery --output discovery/temporal-state-gate.json
@@ -78,3 +82,7 @@ jobs:
             discovery/*.json
             discovery/read-plan.sha256
             discovery/first-pass.sql
+            discovery/second-pass.sql
+            discovery/research-plan.json
+            discovery/research-verdict.json
+            discovery/research-note.md
