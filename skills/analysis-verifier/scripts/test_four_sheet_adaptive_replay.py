@@ -15,7 +15,8 @@ script=Path(__file__).with_name("four_sheet_research_followup.py")
 root=Path(sys.argv[1] if len(sys.argv)>1 else "discovery")
 names=["fiat_details.json","crypto_details.json",
        "crossrail_status_and_time.json","fiat_roundtrip_7d.json",
-       "joined_users.json","frozen_account_activity.json","schema_users.json"]
+       "joined_users.json","frozen_account_activity.json","schema_users.json",
+       "keys_quality.json"]
 for n in names:assert (root/n).exists(),n
 def run(config):
     with tempfile.TemporaryDirectory() as tmp:
