@@ -19,7 +19,7 @@ for rule in (
  "业务认知",
 ):
  assert rule in skill,rule
-for datum in ("43 笔","44 笔","2 组","38748162141","38748703208"):
+for datum in ("43 笔","44 笔","2 行","38748162141","38750016332"):
  assert datum in case,datum
 assert "模拟交易样本" in skill or "小型教学样本" in skill
 print("PASS: business investigator routing, evidence, value and stop contracts (STRUCTURAL ONLY)")
