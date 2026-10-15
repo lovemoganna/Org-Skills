@@ -23,6 +23,9 @@ regression = (
 compact_regression = (
     SKILL_ROOT / "tests" / "regression" / "compact-note-no-bloat.md"
 ).read_text(encoding="utf-8")
+semantic_dedup_regression = (
+    SKILL_ROOT / "tests" / "regression" / "final-semantic-dedup.md"
+).read_text(encoding="utf-8")
 cognition_regression = (
     SKILL_ROOT / "tests" / "regression" / "polished-source-knowledge-gain.md"
 ).read_text(encoding="utf-8")
@@ -56,6 +59,10 @@ assert CALL in readme
 assert "Start a new conversation with only:" in regression
 assert "same invocation string uses the new canonical behavior" in regression
 assert "Keep the note compact." in compact_regression
+assert "#### 终稿去冗余（跨章节语义检查）" in canonical
+assert "10. **终稿去冗余验收:**" in canonical
+for clause in ("56f68e5", "0503bc8", "相同字词不构成冗余", "9/10", "两版都保留", "NOOP", "失败条件", "语义去冗余"):
+    assert clause in semantic_dedup_regression, ("final semantic dedup regression missing", clause)
 assert "最小必要升级" in canonical
 assert "#### 炼化内核:三魂七魄" in canonical
 assert "事实 → 本体与关系 → 机制 → 判断 → 行动 → 反查证据与边界" in canonical
