@@ -59,18 +59,18 @@ query("rates_detail","""
  FROM exchange_rates ORDER BY asset,effective_date
 """)
 query("uid_rail_coverage","""
- WITH f AS (SELECT CAST(uid AS VARCHAR) uid,COUNT(*) n,
+ WITH f AS (SELECT TRY_CAST(uid AS BIGINT) uid,COUNT(*) n,
                COUNT(*) FILTER(WHERE status='completed') completed_n
             FROM fiat_transactions GROUP BY uid),
-      c AS (SELECT CAST(uid AS VARCHAR) uid,COUNT(*) n,
+      c AS (SELECT TRY_CAST(uid AS BIGINT) uid,COUNT(*) n,
                COUNT(*) FILTER(WHERE status='completed') completed_n
             FROM crypto_transactions GROUP BY uid)
  SELECT CAST(u.uid AS VARCHAR) uid,
  COALESCE(f.n,0) fiat_n,COALESCE(c.n,0) crypto_n,
  COALESCE(f.completed_n,0) fiat_completed,
  COALESCE(c.completed_n,0) crypto_completed
- FROM users u LEFT JOIN f ON CAST(u.uid AS VARCHAR)=f.uid
- LEFT JOIN c ON CAST(u.uid AS VARCHAR)=c.uid ORDER BY uid
+ FROM users u LEFT JOIN f ON TRY_CAST(u.uid AS BIGINT)=f.uid
+ LEFT JOIN c ON TRY_CAST(u.uid AS BIGINT)=c.uid ORDER BY uid
 """)
 query("date_coverage","""
 SELECT 'fiat' rail,COUNT(*) total,MIN(created_at) first_at,
