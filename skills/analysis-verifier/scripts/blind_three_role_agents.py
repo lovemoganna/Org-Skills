@@ -88,8 +88,8 @@ def main():
     def emit(stage, obj):
         trace["stages"].append({"stage": stage, "result": obj})
         write(d, "agent-trace.json", trace)
-    if not os.getenv("OPENAI_API_KEY") or not model:
-        trace["status"] = "BLOCKED_NO_MODEL_CREDENTIAL_OR_MODEL_ID"
+    if not model or not os.getenv("OPENAI_API_KEY"):
+        trace["status"] = "BLOCKED_MODEL_ID_REQUIRED" if not model else "BLOCKED_API_CREDENTIAL_REQUIRED"
         trace["executed_model_requests"] = 0
         write(d, "agent-trace.json", trace)
         write(d, "agent-status.json", {"status": trace["status"], "executed_model_requests": 0,
