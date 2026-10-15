@@ -72,6 +72,12 @@ class BlindThreeRoleTests(unittest.TestCase):
         self.assertIn('verifier_plan = call("analysis-verifier"', source)
         self.assertIn('brief = call("business-owner"', source)
         self.assertIn('review = call("business-owner"', source)
+        self.assertNotIn("holdout-verifier.json", source, "holdout must never enter agent prompts")
+        skill = (SCRIPTS.parent / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("不同组的订单数相加", skill)
+        holdout = (SCRIPTS / "blind_retail_holdout.py").read_text(encoding="utf-8")
+        self.assertIn("mixed_promo_orders", holdout)
+        self.assertIn("non-additive order segments", holdout)
 
 
 if __name__ == "__main__":
