@@ -16,7 +16,8 @@ mismatch=read("stage2_completed_at_mismatch")
 pairs=read("stage2_completed_pair_peer_baseline")
 cross=read("stage2_crossrail_completion_order")
 subject=read("stage2_subject_events")
-assert len(base)==50
+expected_n=sum(int(x['n']) for x in read('keys_quality'))
+assert expected_n>0 and len(base)==expected_n
 groups_expected=Counter()
 groups_timestamp=Counter()
 for x in base:
