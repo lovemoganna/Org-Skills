@@ -59,6 +59,17 @@ minimal_correction: "对 A 最小可执行修改指令"
 next_test: "最小额外证据或 NONE"
 ```
 
+## S3→S4 证据范围门禁（交接必检）
+
+在宣称 S4 某条 Finding **已验证**前，用 `python3 skills/analysis-verifier/scripts/scope_gate.py qa.json finding.json` 独立检查交接证据。执行结果为 `PASS` 才能进入经验证的管理报告；`BLOCKED` 只能陈述缺口，不得将其改写为已确认结论。
+
+- `qa.json` 须含 S3 `verdict`、`qa_receipt_ref`、`checked_scopes`；每个已检查范围明确 `grain`（行粒度）、`population`（主体及过滤范围）、`time_window`、`status_meaning`（状态语义）和 `metrics`。
+- `finding.json` 须含 S4 独立验证结果 `verdict=VERIFIED`、`packet_id/revision` 与 `verified_packet_id/verified_revision`、`scope`、`result_receipt_ref` 和 `verification_receipt_ref`。
+- 双方须具有**同一已锁定物化会话**的 `run_id/source_id/materialization_id/read_plan_sha256`；这里的 `read_plan_sha256` 是读取方案哈希，**不是原始文件字节或数据快照的哈希**。不允许跨运行把历史反馈移植到新结果上；若原始文件会在同一任务内重新读取，必须另建数据版本证据。
+- `S3=PARTIAL` 时只准使用已检查的范围；每条 Finding 的范围四字段必须完整精确匹配同一条 `checked_scopes` 记录，指标集合只能是其子集。未知、空凭据、状态偷换、跨币种、跨时段、错版反馈均判 `BLOCKED`。这是**证据覆盖门禁**，并不能单独证明数据真假或业务因果。
+
+执行器是独立可调用的保守校验器；既有历史报告缺这些凭据时标「未完成本门禁」，不得追认 PASS。对照与反例：`tests/check_repo.py`。
+
 ## 反馈是唯一出口
 反馈必须绑定本轮实际执行的 packet_id 和 revision，写明证据、失败原因、最小修正及新信号；反馈给分析端后停止。验证端不能直接生成下一轮分析议题。
 

@@ -37,6 +37,10 @@
 - 老板**只接收 S4 完整报告**（可展开证据附录），不审核 Analysis Packet 或原始 SQL。老板可以退回一个影响决策的缺口，但不得要求无信息增量的轮数。
 - 在输出 Stage4 报告前先出 executive conclusion（事实 → 原因/竞争解释 → 影响 → 行动）；SQL、QA 详表放附录，不让执行日志抢管理报告首屏。
 
+## 独立验收新增：S3/S4 证据范围一致性
+
+S3 对某个字段、币种或时间段的 `PARTIAL/PASS` 不是整份 S4 报告的通行证。B 必须先用 `skills/analysis-verifier/scripts/scope_gate.py` 检查每条关键 Finding 是否在同一运行与物化数据范围内；缺完整来源凭据、结果回执、独立反馈或范围交集时为 `BLOCKED`。Owner 只能把门禁 `PASS` 且业务证据充分的结论写作「已验证」，否则向决策方报告缺口。门禁不替代 S4 实际独立 SQL 与语义反证。
+
 ## 固定四种结构化产物
 ```text
 S1 TaskBrief:
