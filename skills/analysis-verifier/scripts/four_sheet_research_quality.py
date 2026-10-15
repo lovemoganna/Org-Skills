@@ -43,6 +43,14 @@ completed_missing_time=sum(x["status"]=="completed" and not x["completed_at"] fo
 assert with_time==done-completed_missing_time+len(wrong)
 inverse=[x for x in near if x["created_gap_crypto_minus_fiat"] *
                               x["completed_gap_crypto_minus_fiat"]<0]
+# A temporal JOIN can pair the same order multiple times. Pair rows are not
+# independent investigations; report unique users and source order identifiers.
+near_users={x["uid"] for x in near}
+fiat_orders={x["fiat_id"] for x in near}
+crypto_orders={x["crypto_id"] for x in near}
+assert len(near)==len({(x["fiat_id"],x["crypto_id"]) for x in near})
+assert len(near)>=len(near_users)
+
 signals=sum(bool(x) for x in [wrong,returns,inverse])
 is_report=signals>=2
 v={"source":"Authorized four-sheet remote XLSX / Native DuckDB 1.4.2",
@@ -53,6 +61,11 @@ v={"source":"Authorized four-sheet remote XLSX / Native DuckDB 1.4.2",
    "noncompleted_with_timestamp":len(wrong),
    "completed_missing_timestamp":completed_missing_time,
    "completed_crossrail_near_pairs":len(near),
+   "near_pair_unique_users":len(near_users),
+   "near_pair_unique_fiat_orders":len(fiat_orders),
+   "near_pair_unique_crypto_orders":len(crypto_orders),
+   "reused_fiat_orders":len(near)-len(fiat_orders),
+   "reused_crypto_orders":len(near)-len(crypto_orders),
    "creation_completion_order_inversions":len(inverse),
    "same_fiat_asset_return_pairs":len(returns),
    "blocked_questions":len(plan["blocked"]),
@@ -80,6 +93,7 @@ if inverse:
        "## 跨渠道订单相邻，不代表完成顺序相同",
        "",
        f"在 {len(near)} 组已完成状态、同 UID、创建时间相隔 24 小时内的法币与 Crypto 配对中，有 {len(inverse)} 组创建和完成顺序相反。",
+       f"但 {len(near)} 组只是 JOIN 形成的候选配对，实际上涉及 {len(near_users)} 名用户、{len(fiat_orders)} 笔不同法币订单和 {len(crypto_orders)} 笔不同 Crypto 订单；同一订单会出现于多个候选配对。不能把 5 组当成 5 个独立案件。",
        f"UID {t['uid']}：法币订单 {t['fiat_id']} 创建于 {t['fiat_created']}、完成于 {t['fiat_completed']}；Crypto 订单 {t['crypto_id']} 创建于 {t['crypto_created']}、完成于 {t['crypto_completed']}。",
        "因此不能仅凭时间接近解释为兑换或资金路径。还需订单关联标识、支付/结算流水或链上入账的外部证据。",
        ""])
