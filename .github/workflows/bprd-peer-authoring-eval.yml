@@ -1,21 +1,29 @@
 name: BPRD Writer Peer Benchmark
 on:
-  push:
-    branches: [test/bprd-plus-peer-review-20261015]
-    paths:
-      - '.github/workflows/bprd-peer-authoring-eval.yml'
-      - 'skills/bprd-plus/tests/peer-eval-cases-20261015.json'
-      - 'skills/bprd-plus/tests/peer-scope-gate-candidate.md'
   workflow_dispatch:
+    inputs:
+      case_id:
+        description: Real BRD writing case
+        required: true
+        default: S6
+        type: choice
+        options: [S1, S2, S3, S4, S5, S6]
+      candidate_variant:
+        description: Isolated candidate self-check (does not change the live SKILL.md)
+        required: true
+        default: scope
+        type: choice
+        options: [reader, scope]
+      model:
+        description: Optional accessible Copilot model ID; blank means unpinned default
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: read
   copilot-requests: write
 jobs:
   paired-authoring:
-    strategy:
-      fail-fast: false
-      matrix:
-        case_id: [S6]
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
@@ -25,43 +33,47 @@ jobs:
           node-version: '22'
       - name: Install Copilot CLI
         run: npm install -g @github/copilot
-      - name: Freeze prompts and original Skill
+      - name: Freeze matched prompts
         env:
-          CASE_ID: ${{ matrix.case_id }}
+          CASE_ID: ${{ inputs.case_id }}
+          CANDIDATE_VARIANT: ${{ inputs.candidate_variant }}
         run: |
           python - <<'PY'
-          import json,os
+          import json, os
           from pathlib import Path
-          src=Path('skills/bprd-plus')
-          cases=json.loads((src/'tests/peer-eval-cases-20261015.json').read_text(encoding='utf-8'))['cases']
-          case=next(x for x in cases if x['id']==os.environ['CASE_ID'])
-          skill=(src/'SKILL.md').read_text(encoding='utf-8')
-          extra=(src/'tests/peer-scope-gate-candidate.md').read_text(encoding='utf-8')
-          root=Path('peer-results')
+          src = Path("skills/bprd-plus")
+          cases = json.loads((src / "tests/peer-eval-cases-20261015.json").read_text(encoding="utf-8"))["cases"]
+          case = next(x for x in cases if x["id"] == os.environ["CASE_ID"])
+          skill = (src / "SKILL.md").read_text(encoding="utf-8")
+          extra_path = src / "tests" / ("peer-" + os.environ["CANDIDATE_VARIANT"] + "-gate-candidate.md")
+          extra = extra_path.read_text(encoding="utf-8")
+          root = Path("peer-results")
           root.mkdir(exist_ok=True)
-          intro='你是一个写 BRD 的助手。只输出可以交付给开发者的最终中文 BRD。下面是指定使用的完整规则，禁止阅读仓库其他文件或调用工具；没有真实的项目代码，不声称已实施。'
-          for arm,addition in [('baseline',''),('candidate','\n'+extra)]:
-            (root/f'{arm}.prompt.txt').write_text(intro+'\n<skill>\n'+skill+addition+'\n</skill>\n<user>\n'+case['prompt']+'\n</user>',encoding='utf-8')
-          (root/'case.json').write_text(json.dumps(case,ensure_ascii=False,indent=2),encoding='utf-8')
-          print('case',case['id'],'assertions',len(case['expectations']))
+          intro = "你是一个写 BRD 的助手。只输出可以交付给开发者的最终中文 BRD。下面是指定使用的完整规则，禁止阅读仓库其他文件或调用工具；没有真实的项目代码，不声称已实施。"
+          for arm, addition in [("baseline", ""), ("candidate", "\n" + extra)]:
+              (root / (arm + ".prompt.txt")).write_text(intro + "\n<skill>\n" + skill + addition + "\n</skill>\n<user>\n" + case["prompt"] + "\n</user>", encoding="utf-8")
+          (root / "case.json").write_text(json.dumps(case, ensure_ascii=False, indent=2), encoding="utf-8")
+          print("case", case["id"], "expectations", len(case["expectations"]), "candidate", extra_path)
           PY
-      - name: Run two clean authoring sessions
+      - name: Run independent baseline and candidate
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          MODEL: ${{ inputs.model }}
         run: |
           set -euo pipefail
           for arm in baseline candidate; do
-            export COPILOT_HOME="$RUNNER_TEMP/copilot-$arm-${{ matrix.case_id }}"
+            export COPILOT_HOME="$RUNNER_TEMP/copilot-$arm-${{ inputs.case_id }}"
             mkdir -p "$COPILOT_HOME"
-            echo "CASE ${{ matrix.case_id }} ARM $arm"
-            timeout 260s copilot -p "$(cat "peer-results/$arm.prompt.txt")" --max-ai-credits 30 --no-ask-user -s > "peer-results/$arm.output.md"
+            args=(--max-ai-credits 30 --no-ask-user -s)
+            if [[ -n "$MODEL" ]]; then args+=(--model "$MODEL"); fi
+            timeout 260s copilot -p "$(cat "peer-results/$arm.prompt.txt")" "${args[@]}" > "peer-results/$arm.output.md"
             test -s "peer-results/$arm.output.md"
-            echo "output words $(wc -c < peer-results/$arm.output.md)"
+            echo "case ${{ inputs.case_id }} $arm: $(wc -c < peer-results/$arm.output.md) bytes"
           done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: bprd-peer-eval-${{ matrix.case_id }}
+          name: bprd-peer-eval-${{ inputs.case_id }}
           path: peer-results/
           retention-days: 14
