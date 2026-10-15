@@ -6,6 +6,7 @@ on:
       - ".github/workflows/four-sheet-evidence-led.yml"
       - "skills/analysis-verifier/scripts/four_sheet_discovery.py"
       - "skills/analysis-verifier/scripts/four_sheet_investigate.py"
+      - "skills/analysis-verifier/scripts/temporal_state_gate.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -42,6 +43,31 @@ jobs:
           assert all(x["n"]==x["unique_orders"] for x in j["keys_quality"])
           print(json.dumps({"gate":"DISCOVERY_PASS","counts":{k:len(v) for k,v in j.items()},
             "coverage":j["date_coverage"],"uid_rail":j["uid_rail_coverage"]},ensure_ascii=False))
+          PY
+      - name: Enforce temporal-state evidence gate and counterexamples
+        run: |
+          python3 skills/analysis-verifier/scripts/temporal_state_gate.py discovery --output discovery/temporal-state-gate.json
+          python3 - <<'PY'
+          import json,sys
+          from pathlib import Path
+          from copy import deepcopy
+          sys.path.insert(0,"skills/analysis-verifier/scripts")
+          from temporal_state_gate import evaluate
+          p=Path("discovery")
+          schema=json.loads((p/"schema_users.json").read_text())
+          rows=json.loads((p/"frozen_account_activity.json").read_text())
+          current=evaluate(schema,rows)
+          assert current["verdict"]=="NEEDS_AUTHORIZED_HISTORY"
+          assert not current["account_status_at_withdrawal_identified"]
+          assert all(x["account_status_at_order_time"]=="UNKNOWN" for x in current["events"])
+          future_schema=schema+[{"column_name":"frozen_at"}]
+          assert evaluate(future_schema,rows)["verdict"]=="IN_SOURCE_FIELD_REVIEW_REQUIRED"
+          invalid=deepcopy(rows)
+          invalid[0]["completed_at"]="2020-01-01 00:00:00"
+          try: evaluate(schema,invalid)
+          except ValueError: pass
+          else: raise AssertionError("reversed event chronology accepted")
+          print("PASS: snapshot inference rejected, relevant available field handled, invalid timestamp rejected")
           PY
       - uses: actions/upload-artifact@v4
         if: always()
