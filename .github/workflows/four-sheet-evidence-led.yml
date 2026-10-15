@@ -25,7 +25,7 @@ jobs:
       - name: Build immutable four-read SQL plus exploratory probes
         run: python3 skills/analysis-verifier/scripts/four_sheet_discovery.py discovery
       - name: Run first-pass SQL against LIVE remote Excel
-        run: ./duckdb :memory: < discovery/first-pass.sql
+        run: './duckdb :memory: < discovery/first-pass.sql'
       - name: Check source integrity and all expected result receipts
         run: |
           python3 - <<'PY'
