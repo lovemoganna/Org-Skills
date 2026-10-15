@@ -107,13 +107,13 @@ query("crossrail_24h","""
 query("fiat_roundtrip_7d","""
  SELECT CAST(TRY_CAST(a.uid AS BIGINT) AS VARCHAR) uid,a.currency asset,
  a.fiat_order_id in_order,b.fiat_order_id out_order,a.amount amount_in,
- b.amount amount_out,DATE_DIFF('minute',a.created_at,b.created_at) minutes
+ b.amount amount_out,DATE_DIFF('minute',a.created_at,b.created_at) AS elapsed_min
  FROM fiat_transactions a JOIN fiat_transactions b
  ON TRY_CAST(a.uid AS BIGINT)=TRY_CAST(b.uid AS BIGINT) AND a.currency=b.currency
  WHERE a.status='completed' AND b.status='completed'
  AND a.direction='deposit' AND b.direction='withdrawal'
  AND b.created_at>=a.created_at AND b.created_at<=a.created_at+INTERVAL 7 DAY
- ORDER BY minutes,uid
+ ORDER BY elapsed_min,uid
 """)
 query("snapshot_rate_coverage","""
  WITH tx AS (
