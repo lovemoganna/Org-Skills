@@ -104,7 +104,7 @@ org_update_skill = (
 ).read_text(encoding="utf-8")
 assert "check_published_update.py" in org_update_skill
 assert "任一失败即停止写入" in org_update_skill
-assert "不能运行时必须实施等效" in org_update_skill
+assert "必须对 GitHub 返回的**完整原稿与候选稿**执行相同的逐项多重集差异" in org_update_skill
 assert "已发布页面的提交前保护。" in canonical
 
 guard_spec = _spec_from_file_location("published_gate", SKILL_ROOT / "tests" / "check_published_update.py")
