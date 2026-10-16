@@ -92,6 +92,102 @@ cross_section_regression = (SKILL_ROOT / "tests" / "regression" / "cross-section
 assert "**跨章节条件一致性。**" in canonical
 for clause in ("36b1fa705a60d5049b7d104b33d13170d8123d64", "881ce0f790f3fdf21d59b911c19d6fa0f9e60b1d", "同一问题的 A/B", "无发布分支", "maybe posted", "不能证明目标读者"):
     assert clause in cross_section_regression, ("cross-section regression missing", clause)
+# Published-page pre-submit protection: actual positive and negative cases.
+import subprocess
+import sys
+import tempfile
+from importlib.util import module_from_spec as _module_from_spec, spec_from_file_location as _spec_from_file_location
+import copy
+
+org_update_skill = (
+    REPO_ROOT / "plugins" / "org-museum" / "skills" / "org-museum-update" / "SKILL.md"
+).read_text(encoding="utf-8")
+assert "check_published_update.py" in org_update_skill
+assert "任一失败即停止写入" in org_update_skill
+assert "必须对 GitHub 返回的**完整原稿与候选稿**执行相同的逐项多重集差异" in org_update_skill
+assert "已发布页面的提交前保护。" in canonical
+
+guard_spec = _spec_from_file_location("published_gate", SKILL_ROOT / "tests" / "check_published_update.py")
+assert guard_spec and guard_spec.loader
+guard = _module_from_spec(guard_spec)
+guard_spec.loader.exec_module(guard)
+
+origin_org = (
+    "#+TITLE: Published title\n#+WIKI_ID: case-id\n#+SOURCE: Evidence\n"
+    "#+FILETAGS: :sample:\n\n"
+    "* 状态更新的四种分支〔补〕\n:PROPERTIES:\n:CUSTOM_ID: four-branches\n:END:\n"
+    "引用：[[https://example.org/][official]]\n"
+    "#+begin_src python\nprint(1)\n#+end_src\n"
+    "#+begin_quote\n保留引文\n#+end_quote\n"
+)
+# File TITLE and new sections may change, without altering prior references.
+valid_org = origin_org.replace("TITLE: Published title", "TITLE: Better navigation") + (
+    "\n* 新增补充说明\n无发送情形另行定义。\n"
+)
+assert guard.evaluate(origin_org, valid_org) == []
+for bad_doc, wanted in [
+    (valid_org.replace("* 状态更新的四种分支", "* 状态更新的五种分支"), "headings"),
+    (valid_org.replace("WIKI_ID: case-id", "WIKI_ID: changed"), "WIKI_ID"),
+    (valid_org.replace("SOURCE: Evidence", "SOURCE: Unknown"), "metadata"),
+    (valid_org.replace("CUSTOM_ID: four-branches", "CUSTOM_ID: five-branches"), "anchors"),
+    (valid_org.replace("https://example.org/", "https://elsewhere.org/"), "links"),
+    (valid_org.replace("print(1)", "print(2)"), "literal_blocks"),
+]:
+    problems = guard.evaluate(origin_org, bad_doc)
+    assert any(wanted in problem for problem in problems), (wanted, problems)
+# Real two-step publication failure: reverting a renamed title in the NEXT commit
+# must also fail; do not mistake the preserved CUSTOM_ID for title preservation.
+mutated = origin_org.replace("四种分支", "五种分支")
+assert any("headings" in x for x in guard.evaluate(mutated, origin_org))
+with tempfile.TemporaryDirectory() as tempdir:
+    folder = Path(tempdir)
+    a, b = folder / "before.org", folder / "after.org"
+    a.write_text(origin_org, encoding="utf-8")
+    b.write_text(valid_org, encoding="utf-8")
+    cmd = [sys.executable, str(SKILL_ROOT / "tests" / "check_published_update.py"), str(a), str(b)]
+    success = subprocess.run(cmd, capture_output=True, text=True)
+    assert success.returncode == 0 and "PASS:" in success.stdout, success.stdout
+    b.write_text(valid_org.replace("四种分支", "五种分支"), encoding="utf-8")
+    rejected = subprocess.run(cmd, capture_output=True, text=True)
+    assert rejected.returncode == 1 and "headings" in rejected.stdout
+
+task_fixture = (SKILL_ROOT / "tests" / "regression" / "independent-task-transfer-agent-automations.md").read_text(encoding="utf-8")
+assert "独立任务效果门禁。" in canonical
+for expected_case in ("按约定静默", "Slack 请求未知", "静默+单源故障", "迟到且不可补读", "偏好变更后的追溯"):
+    assert expected_case in task_fixture
+assert "当前裁决：待核验" in task_fixture and "不能把模型自评" in task_fixture
+
+eval_spec = _spec_from_file_location("task_transfer", SKILL_ROOT / "tests" / "evaluate_task_transfer.py")
+assert eval_spec and eval_spec.loader
+task_eval = _module_from_spec(eval_spec)
+eval_spec.loader.exec_module(task_eval)
+case = {
+    "author": "writer",
+    "reviewer": {"id": "reader", "independent": True, "method": "blind reading"},
+    "baseline": "old.org", "candidate": "new.org",
+    "task_results": [{
+        "question": f"Task {i}: what decision is justified?",
+        "acceptance": "Decision and action must follow facts",
+        "baseline": {"answer": "old reason", "evidence_location": "old.org:section", "rationale": "missing condition", "grades": {"facts": 1, "decision": 0, "action": 0}},
+        "candidate": {"answer": "new with conditions", "evidence_location": "new.org:section", "rationale": "explains branch", "grades": {"facts": 2, "decision": 2, "action": 2}}
+    } for i in range(3)]
+}
+assert task_eval.adjudicate(case)[0] == "RECORDED"
+self_review = copy.deepcopy(case)
+self_review["reviewer"]["id"] = "writer"
+assert task_eval.adjudicate(self_review)[0] == "PENDING"
+no_result = copy.deepcopy(case)
+no_result["task_results"][0]["candidate"]["answer"] = ""
+assert task_eval.adjudicate(no_result)[0] == "PENDING"
+regression_result = copy.deepcopy(case)
+regression_result["task_results"][0]["candidate"]["grades"]["facts"] = 0
+assert task_eval.adjudicate(regression_result)[0] == "REJECT"
+no_gain = copy.deepcopy(case)
+for item in no_gain["task_results"]:
+    item["candidate"]["grades"] = dict(item["baseline"]["grades"])
+assert task_eval.adjudicate(no_gain)[0] == "REJECT"
+print("note-reforge published preflight and task-transfer evidence contracts: OK")
+
 assert "**表达层收口。**" in canonical
 assert "一词一义" in canonical and "一句一事" in canonical and "主语明确" in canonical
 assert "no fixed Chinese character or English word limit" in controlled_language_regression

@@ -22,11 +22,21 @@ description: 用户明确要求炼化、重写或更新一个已发布的 Org Mu
    此次要求覆盖其默认 .next 交付，
    更新准确的原路径。保留 wiki_id、所有原元数据及其写法（TITLE 可改文字）、
    链接目标、锚点、已有标题和代码；不动其他系列文件，不添加无依据内容。
-5. 有执行工具时，用发布器 `tools/museum_update.py` 的 resolve/update/status
-   执行确定性检查及提交。没有执行工具时，用现有 GitHub tree/commit/ref 工具，
-   latest main 作 parent，只修改已存在的目标 path，message 为 `Museum-Update: <id>`，
-   force=false。并发失败重读；目标 blob 改变就停止，其他文件变化最多重试两次。
-6. Commit 成功后继续检查 publish.yml 的 build 与 deploy，且在线核验步骤成功。
+5. **远程写入前强制预检。** 以最新 main 的完整 Org 源为 original、完整候选 Org 为 candidate，
+   在首次提交、创建 PR、更新 GitHub 文件或移动 ref **之前**运行
+   `python skills/note-reforge/tests/check_published_update.py <original.org> <candidate.org>`。
+   该脚本来自 `lovemoganna/Org-Skills` 当前版本。预检保留已有 `WIKI_ID`、除 `TITLE` 外的元数据、
+   章节标题引用（不仅是 `CUSTOM_ID`）、链接、ID 锚点和逐字代码/引用块；
+   新增章节允许，但不能改写或删除旧标题。**任一失败即停止写入，不先提交再等 CI 拒绝。**
+   如没有文件执行环境，必须对 GitHub 返回的**完整原稿与候选稿**执行相同的逐项多重集差异
+   （含出现次数），核对全部结果；无法执行也无法等效验证时停止，不得以模型自评代替。
+   如果 main/source blob 在检查后改变，重新读取并重跑预检。
+6. 预检通过后，有执行工具时用发布器 `tools/museum_update.py` 的 resolve/update/status
+   完成提交和验证。仅 GitHub 连接可用时，使用现有 GitHub tree/commit/ref 工具，
+   latest main 作 parent，只修改已存在目标路径，message 为 `Museum-Update: <id>`，
+   force=false；并发冲突后必须重新核验内容，不得覆盖。正式发布器还有自己的验证，
+   不可用「PR CI 通过」替代源分支的提交前门禁。
+7. Commit 成功后继续检查 publish.yml 的 build 与 deploy，且在线核验步骤成功。
    `MUSEUM-PUBLISHED-RECEIPT` 中目标 id、path、源内容 sha256 必须属于本次版本。
    只有 Pages 核验完成才回复更新完成；超时回复已提交、发布中，失败报告阶段。
 
