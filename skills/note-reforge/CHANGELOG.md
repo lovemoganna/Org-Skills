@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-10-17 — published-title protection and real-task acceptance
+
+- Publish failures were not missing checks in the publisher. The GitHub connector write route skipped the publisher's pre-submit protection. Added a runnable Org update preflight and made it mandatory before any GitHub write.
+- Historical Org section title references must remain even if CUSTOM_ID is unchanged; verified both rename and revert-as-next-commit negatives.
+- Recorded failures `4a6beee` and `bc202707` and successful final publication `ec47b2c` / GitHub Actions `38928094246` in the real regression case.
+- Task-based A/B evidence is now evaluated using externally completed, source-linked answers and manual fact/decision/action judgments. Script validates evidence contract and detects regressions; it does not verify identities, judge text, or claim independent task effectiveness.
+- The real article's independent-reader verdict remains **pending**. No article text was changed by this Skill fix.
+
 ## 2026-10-16 — cross-section exception coherence (real agent automation A/B)
 
 - Real article regression found one published edition that added a no-posting completion path while retaining unconditional Slack-confirmation requirements elsewhere.
