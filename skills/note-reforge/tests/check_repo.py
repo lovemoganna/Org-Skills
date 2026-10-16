@@ -93,6 +93,9 @@ assert "**跨章节条件一致性。**" in canonical
 for clause in ("36b1fa705a60d5049b7d104b33d13170d8123d64", "881ce0f790f3fdf21d59b911c19d6fa0f9e60b1d", "同一问题的 A/B", "无发布分支", "maybe posted", "不能证明目标读者"):
     assert clause in cross_section_regression, ("cross-section regression missing", clause)
 # Published-page pre-submit protection: actual positive and negative cases.
+import subprocess
+import sys
+import tempfile
 from importlib.util import module_from_spec as _module_from_spec, spec_from_file_location as _spec_from_file_location
 import copy
 
