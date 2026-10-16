@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-16 — cross-section exception coherence (real agent automation A/B)
+
+- Real article regression found one published edition that added a no-posting completion path while retaining unconditional Slack-confirmation requirements elsewhere.
+- Added a conditional cross-section reverse check: changes to exceptions or states must be propagated to workflows, summaries, tables, definitions, and acceptance cases, with existing branches preserved.
+- Recorded controlled pre/post source revisions and adversarial examples under `tests/regression/cross-section-condition-consistency.md`.
+- Static checks verify rule/fixture presence only; independently measured usability remains unverified.
+
 ## 2026-10-16 — direct language without semantic loss
 
 - Adopted Anthropic's Writing density / mannered prose guidance as a targeted extension of the existing natural-expression pass; no new workflow or mandatory output section.
