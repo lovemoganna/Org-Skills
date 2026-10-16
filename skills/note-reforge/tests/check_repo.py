@@ -80,9 +80,12 @@ natural_voice_regression = (
     SKILL_ROOT / "tests" / "regression" / "natural-voice-preservation.md"
 ).read_text(encoding="utf-8")
 assert "**自然表达审稿。**" in canonical
+assert "刻意雕琢的修辞（mannered prose）" in canonical
+assert "信息密度高不等于表达负担高" in canonical
+assert "标题、列表与加粗只按读者理解" in canonical
 for rule in ("机械排比", "模糊权威归因", "不使用固定禁词表", "不强制第一人称", "引用、原始提示词、代码"):
     assert rule in canonical, ("natural-voice contract missing", rule)
-for case in ("技术博客", "高质量原文", "AML 调查", "Org 教程", "受保护的逐字引文", "非绝对禁词", "事实反查"):
+for case in ("技术博客", "高质量原文", "AML 调查", "Org 教程", "受保护的逐字引文", "非绝对禁词", "事实反查", "修辞与阅读负担", "20 秒", "DuckDB 1.4.2", "格式边界"):
     assert case in natural_voice_regression, ("natural-voice regression missing", case)
 assert "**表达层收口。**" in canonical
 assert "一词一义" in canonical and "一句一事" in canonical and "主语明确" in canonical
