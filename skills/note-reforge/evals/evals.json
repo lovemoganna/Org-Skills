@@ -1,0 +1,55 @@
+{
+  "skill_name": "note-reforge",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用 note-reforge 炼成下一版：notes/knowledge/project-operations/6e9c2b10-7e84-459e-a5f1-d98019ed0a33.org",
+      "expected_output": "保留发布身份、原始图片和管理四环节；新增判断需可追溯，禁止把推论标为外部已验证知识。",
+      "files": [],
+      "expectations": [
+        "保留全部原始文件头及图片链接",
+        "不覆盖已发布原文",
+        "不把项目管理建议冒充实测",
+        "RACI、相关方、风险/问题/变更、复盘均能回答实际问题",
+        "无外部来源时不得用〔补〕冒充已核验专家知识"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "用 note-reforge 炼成下一版：notes/knowledge/prompt-audit-template/9009ec8f-3692-5bd0-88d4-10d562843f9b.org",
+      "expected_output": "保持原始完整提示词代码块逐字一致，解释静态结构审查与真实任务验证的区别，不因冗余压缩破坏历史材料。",
+      "files": [],
+      "expectations": [
+        "原始完整提示词代码块逐字保留且仅出现一次",
+        "保留历史来源与附件链接",
+        "不把模型自评分称为实际效果",
+        "若已有判断充分，允许NOOP或最小改动"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "用 note-reforge 炼成下一版：notes/knowledge/knowledge-refinement/2e6386cf-04d1-4dd9-9dd6-76a982c7a35e.org",
+      "expected_output": "保留中英双语、三魂七魄作为内部比喻的非官方边界，新增内容必须改变实际判断。",
+      "files": [],
+      "expectations": [
+        "中文和英文事实语义一致",
+        "不得称三魂七魄为Anthropic官方框架",
+        "不凭空添加讲座实测结果",
+        "若无真实增量则NOOP"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "用 note-reforge 炼成下一版：notes/knowledge/recursive-account-discovery/9e630aba-13de-4fe3-b8f3-d2d304e6ed4a.org",
+      "expected_output": "原文已是可执行需求，保留全部验收约束和代码块，禁止改写成空泛方法论；无法提高则NOOP。",
+      "files": [],
+      "expectations": [
+        "原始需求代码块逐字保留",
+        "真实关系证据、递归扩展、去重、停止条件、状态维护不可丢",
+        "不得编造种子账号、搜索频率或规模",
+        "不把尚未实现的系统描述成已交付",
+        "无实质增量则NOOP"
+      ]
+    }
+  ]
+}
