@@ -87,6 +87,11 @@ for rule in ("机械排比", "模糊权威归因", "不使用固定禁词表", "
     assert rule in canonical, ("natural-voice contract missing", rule)
 for case in ("技术博客", "高质量原文", "AML 调查", "Org 教程", "受保护的逐字引文", "非绝对禁词", "事实反查", "修辞与阅读负担", "20 秒", "DuckDB 1.4.2", "格式边界"):
     assert case in natural_voice_regression, ("natural-voice regression missing", case)
+
+cross_section_regression = (SKILL_ROOT / "tests" / "regression" / "cross-section-condition-consistency.md").read_text(encoding="utf-8")
+assert "**跨章节条件一致性。**" in canonical
+for clause in ("36b1fa705a60d5049b7d104b33d13170d8123d64", "881ce0f790f3fdf21d59b911c19d6fa0f9e60b1d", "同一问题的 A/B", "无发布分支", "maybe posted", "不能证明目标读者"):
+    assert clause in cross_section_regression, ("cross-section regression missing", clause)
 assert "**表达层收口。**" in canonical
 assert "一词一义" in canonical and "一句一事" in canonical and "主语明确" in canonical
 assert "no fixed Chinese character or English word limit" in controlled_language_regression
