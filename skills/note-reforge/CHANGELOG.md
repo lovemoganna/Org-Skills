@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-10-16 — direct language without semantic loss
+
+- Adopted Anthropic's Writing density / mannered prose guidance as a targeted extension of the existing natural-expression pass; no new workflow or mandatory output section.
+- Prefer a precise literal phrase when decorative metaphor obstructs understanding; preserve explanatory metaphors, source quotations, author voice, and protected technical content.
+- Distinguish genuinely difficult long sentences from information-rich accurate passages; preserve useful structure and formatting rather than imposing a blanket ban.
+- Added semantic A/B regression cases for metaphor removal, condition-rich text, protected quotation, and navigational formatting. Structural checks only verify contracts and fixture presence, not editorial improvement.
+
+Source: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1#writing-density
+
 ## 2026-10-14 — evidence-first mainline and linked appendix validation
 
 Problem:
