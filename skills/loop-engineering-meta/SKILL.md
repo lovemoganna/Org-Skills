@@ -263,6 +263,20 @@ Rollback:
 
 Do not use “the model needs to try harder” as a root cause.
 
+### 5.6a Principle Steering (multi-step repairs only)
+
+Use a named principle **only when observed evidence triggers it and it changes a concrete decision**. These names point to existing gates; they do not add another compulsory workflow. Select at most three unless a specific task requires more.
+
+| Principle | Trigger | Decision it must change | Existing owner |
+|---|---|---|---|
+| **Attack the Premise** | Two fixes fail under the same assumption | Test the shared premise before attempting a third patch | 5.2, 5.6, 8 |
+| **Subtract Before You Add** | About to add a rule, step, adapter, or agent | Remove or merge obsolete/overlapping mechanisms first | 3, 5.7, G6 |
+| **Prove It Works** | A proxy (lint, self-report, attractive output) is being called success | Verify the actual artifact or user-facing boundary | 5.2b, 5.9, G2–G3 |
+| **Test Behavior, Not Implementation** | A test rewards wording or internal structure rather than outcome | Replace it with observable acceptance and regression checks | 5.2b, G3, G5 |
+| **Encode Lessons in Structure** | The same correction recurs | Place an enforceable check at the authoritative owner, not another reminder | 3, 5.10, G6 |
+
+For each **actually used** principle, retain one audit record: `name | observed trigger | rejected choice -> chosen choice | verifiable artifact/trace`. The rejected and chosen choices must differ. Naming a principle, writing a rationale, or passing a structural check does not establish causal impact; evaluate the changed behavior in REPLAY and EVALUATE. Omit the record when no choice changed. Do not fabricate a hypothetical rejected choice after the fact.
+
 ### 5.7 PATCH
 
 Apply the smallest change that can test the hypothesis.
@@ -322,6 +336,8 @@ Promote a change only when:
 - no critical regression appeared;
 - maintenance cost is acceptable;
 - ownership is clear.
+
+Before promoting a **new named principle**, require a recurring correction or controlled replay demonstrating a distinct decision benefit; merge it with an existing principle if the behavior overlaps. Retire or revert principles that produce no observable benefit, repeatedly fail to steer a decision, or cost more to maintain than they save. Preserve contrary runs.
 
 Store the learning at the lowest stable layer:
 
@@ -635,6 +651,8 @@ For normal use, return this compact report:
 ```
 
 When the target is Skill/Prompt maintenance, state test fitness separately from target quality, state content-quality evidence and its review independence, and render decision labels in Chinese (e.g., 测试设计无效 / 有条件通过 / 测试失败 / 测试通过 / 证据不足). Do not label a Skill defective because the evaluator chose an out-of-scope case.
+
+For multi-step repair, include only principle audit records with a real decision change and replay evidence (Section 5.6a), inside `Loop QA` rather than a separate ceremonial list. Omit this entirely for unused principles and Fast Path tasks.
 
 For simple tasks, collapse the report to the primary result plus one concise QA note. Do not expose private chain-of-thought. Report observable reasoning, evidence, decisions, and test results.
 
