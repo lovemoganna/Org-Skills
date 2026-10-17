@@ -307,6 +307,19 @@ Hold stable where practical:
 
 Do not leak the desired answer from the repair session into the replay.
 
+### 5.8a Paired, Outcome-Based Eval (repeatable Skill / Agent repairs)
+
+For noisy or repeated Skill / Agent improvements, compare the current version (`baseline`) against a separately stored candidate (`candidate`); retain the exact original version and do not silently overwrite it. A **task** is a test case; a **trial** is one fresh execution; a **trace** is the actions/outputs; an **outcome** is the independently checked final artifact or environment state. A successful trace, assertion that work is done, or valid syntax cannot replace outcome evidence.
+
+1. Use at least three correctly scoped cases: **original failure**, **historically passing regression**, and **new generalization**. Record expected results and grader before running. If a test case is out of scope, repair the test design first (Section 5.2a).
+2. For each case, run both arms with at least **3 fresh, isolated trials per arm** when behavior is nondeterministic (minimum 18 total attempts for 3 cases). Keep input, model/version, tool interface, starting-state contract, permissions and rubric equivalent; record any uncontrollable differences. No answer leakage, selective reruns, or cherry-picking.
+3. Save each run's `run_id`, worker identity, exact condition identifiers, trace, actual output artifact, verified **outcome**, grader identity and evidence reference. Record latency/tokens/cost if available; never invent missing values.
+4. Grade objective postconditions with executable code or state checks. For writing/research quality, use a separately identified model or human evaluator with explicit rubric and source-level review. Reject same-executor subjective self-grading. Keep transcript/process defects separate from outcome defects.
+5. Compare **per-case trial success counts**, not just one lucky output; check every case for regression. A lower success count on any case blocks promotion pending diagnosis. No measurable gain means revert or retain baseline. Small 3-trial samples are exploratory, **not statistical proof** or a reason to claim overall reliability.
+6. `scripts/compare_trials.py <experiment.json>` validates the comparison **record contract** and summarizes observed outcomes. Input: `experiment_id`; `cases[]` with `id`, `suite` (`failure|regression|generalization`), and fixed `controls` (`model, task_input_hash, tools_hash, environment_hash, rubric_hash`); `trials.baseline[]` and `trials.candidate[]` containing `run_id, worker_id`, matching controls, `trace_ref, artifact_ref, outcome.passed, outcome.evidence_ref, outcome.verifier.kind/id`, and optionally `cost_usd`. Exit `0` means a **candidate gain in supplied records only**, `1` means no gain/regression, `2` means incomplete/invalid records. The tool cannot open external evidence or independently prove that runs occurred; manually inspect receipts and graders before any real promotion.
+
+If tools, money, human review, or test sessions are unavailable, stop at **unverified candidate / evidence gap**. Never transform simulated contract checks or historical receipts into a claim of a new real A/B experiment.
+
 ### 5.9 EVALUATE
 
 Use Section 7 (Quality Gates) below.
@@ -653,6 +666,8 @@ For normal use, return this compact report:
 When the target is Skill/Prompt maintenance, state test fitness separately from target quality, state content-quality evidence and its review independence, and render decision labels in Chinese (e.g., 测试设计无效 / 有条件通过 / 测试失败 / 测试通过 / 证据不足). Do not label a Skill defective because the evaluator chose an out-of-scope case.
 
 For multi-step repair, include only principle audit records with a real decision change and replay evidence (Section 5.6a), inside `Loop QA` rather than a separate ceremonial list. Omit this entirely for unused principles and Fast Path tasks.
+
+For repeatable Skill / Agent A/B, attach baseline/candidate trial counts, checked outcomes, evaluator independence, measured cost (if available), negative runs, and any unverified evidence. Do not equate a passing comparison record with a proven deployment or statistically significant gain.
 
 For simple tasks, collapse the report to the primary result plus one concise QA note. Do not expose private chain-of-thought. Report observable reasoning, evidence, decisions, and test results.
 
