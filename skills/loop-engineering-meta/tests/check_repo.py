@@ -22,8 +22,20 @@ for required in (
     "Test Behavior, Not Implementation", "Encode Lessons in Structure",
     "rejected choice -> chosen choice", "Omit the record when no choice changed",
     "Retire or revert principles", "Preserve contrary runs",
+    "references/subagent-context-isolation.md",
 ):
     assert required in skill, required
+
+
+# Delegation policy is linked from the canonical Skill, with clear negative boundaries.
+policy = (ROOT / "references/subagent-context-isolation.md").read_text(encoding="utf-8")
+for required in (
+    "The default remains one worker", "Fresh", "Forked", "evidence gap",
+    "not independently verified", "read-only", "rollback",
+    "randomize", "same-thread", "do not promote",
+):
+    assert required.lower() in policy.lower(), required
+assert skill.count("references/subagent-context-isolation.md") == 2
 
 spec = spec_from_file_location("loop_evaluator", ROOT / "scripts/evaluate_case.py")
 mod = module_from_spec(spec)
