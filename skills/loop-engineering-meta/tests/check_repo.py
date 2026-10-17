@@ -111,4 +111,12 @@ with tempfile.TemporaryDirectory() as d:
         verdict = json.loads(proc.stdout)
         assert verdict["判定"] == "测试准备不足", (label, verdict)
         checks.append((label, "退出状态=2"))
+# 成对多次结果态门禁：模拟契约与变异反例，不冒充真实 Agent A/B。
+paired = subprocess.run(
+    [sys.executable, str(ROOT / "tests/check_trial_comparison.py")],
+    capture_output=True, text=True,
+)
+assert paired.returncode == 0, (paired.returncode, paired.stdout, paired.stderr)
+checks.append(("成对试验比较器的模拟契约与反例", "退出状态=0"))
+
 print(json.dumps({"结论": "回归通过", "案例数": len(checks), "检查": checks}, ensure_ascii=False, indent=2))
