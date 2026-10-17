@@ -17,6 +17,11 @@ for required in (
     "### 5.2b Skill / Prompt 调试专用：内容质量独立验收",
     "测试设计无效", "同一执行者的自评不能冒充独立质量合格证明",
     "scripts/evaluate_case.py", "内容与效果质量",
+    "### 5.6a Principle Steering", "Attack the Premise",
+    "Subtract Before You Add", "Prove It Works",
+    "Test Behavior, Not Implementation", "Encode Lessons in Structure",
+    "rejected choice -> chosen choice", "Omit the record when no choice changed",
+    "Retire or revert principles", "Preserve contrary runs",
 ):
     assert required in skill, required
 
