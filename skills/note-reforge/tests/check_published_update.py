@@ -7,6 +7,7 @@ independent user value, link reachability, or live deployment.
 from __future__ import annotations
 
 import argparse
+import json
 from collections import Counter
 from pathlib import Path
 import re
@@ -39,25 +40,38 @@ def protected(original: str) -> dict[str, Counter[str]]:
     }
 
 
-def evaluate(original: str, candidate: str) -> list[str]:
+def evaluate(original: str, candidate: str, authorized_removals=None) -> list[str]:
     before, after = protected(original), protected(candidate)
     errors = []
-    wiki_id = re.compile(r"(?im)^#\+WIKI_ID:\s*(\S+)\s*$")
-    first, second = wiki_id.search(original), wiki_id.search(candidate)
-    if not first or not second or first.group(1) != second.group(1):
+    ids = re.compile(r"(?im)^#\\+WIKI_ID:\\s*(\\S+)\\s*$")
+    old_id, new_id = ids.search(original), ids.search(candidate)
+    if not old_id or not new_id or old_id.group(1) != new_id.group(1):
         errors.append("published WIKI_ID missing or changed")
-    for kind in before:
-        removed = before[kind] - after[kind]
-        if removed:
-            item, count = next(iter(removed.items()))
-            errors.append(f"{kind}: {count} original occurrence(s) removed or changed: {item[:100]!r}")
+    if before["metadata"] != after["metadata"]:
+        errors.append("original publication metadata changed")
+    scope = authorized_removals or {}
+    labels = {"links":"references", "anchors":"anchors", "headings":"heading references",
+              "literal_blocks":"literal blocks"}
+    if authorized_removals is not None:
+        if not isinstance(authorized_removals, dict):
+            return errors + ["scope must be an object"]
+        if set(scope) - {"user_directive", *labels.values()}:
+            errors.append("unknown removal scope field")
+        if not isinstance(scope.get("user_directive"), str) or not scope.get("user_directive", "").strip():
+            errors.append("explicit user directive required")
+    for kind, field in labels.items():
+        declared = scope.get(field, [])
+        if not isinstance(declared, list) or any(not isinstance(item, str) or not item for item in declared):
+            errors.append(f"{kind}: invalid removal entries")
+        elif before[kind] - after[kind] != Counter(declared):
+            errors.append(f"{kind}: actual removals do not match declared scope")
     return errors
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("original", type=Path, help="original published Org file from current main")
     parser.add_argument("candidate", type=Path, help="complete candidate Org file before ANY remote write")
+    parser.add_argument("--authorized-removals", type=Path)
     args = parser.parse_args()
     try:
         original = args.original.read_text(encoding="utf-8-sig")
@@ -65,12 +79,17 @@ def main() -> int:
     except (OSError, UnicodeError) as exc:
         print(f"FAIL: unable to read original/candidate: {exc}", file=sys.stderr)
         return 2
-    errors = evaluate(original, candidate)
+    try:
+        scope = json.loads(args.authorized_removals.read_text(encoding="utf-8-sig")) if args.authorized_removals else None
+    except (OSError, ValueError, UnicodeError) as exc:
+        print(f"FAIL: invalid scope: {exc}", file=sys.stderr)
+        return 2
+    errors = evaluate(original, candidate, scope)
     if errors:
         for issue in errors:
             print("FAIL:", issue)
         return 1
-    print("PASS: original identity, metadata, heading references, anchors, links and literal blocks retained")
+    print("PASS: publication identity/metadata and exact user-authorized edit scope verified")
     print("NOTE: semantics, source truth and live deployment require separate verification")
     return 0
 

@@ -17,25 +17,26 @@ description: 用户明确要求炼化、重写或更新一个已发布的 Org Mu
    `/actions/runs?head_sha=<HEAD>&event=push`，不用只筛 PR 的快捷工具。
 3. 以准确 path 从 GitHub 读取完整 Org。页面的 Org Mode 视图是过滤正文，不能
    用它覆盖文件头。不存在唯一源绑定、源文件不存在或版本冲突时停止并说明。
-4. 通过 `../note-reforge/SKILL.md` 启动入口读取 `lovemoganna/Org-Skills` 当前默认分支的
-   `skills/note-reforge/SKILL.md` 加工当前单篇。canonical 读取失败即停止，不回退到内置旧版。
-   此次要求覆盖其默认 .next 交付，
-   更新准确的原路径。保留 wiki_id、所有原元数据及其写法（TITLE 可改文字）、
-   链接目标、锚点、已有标题和代码；不动其他系列文件，不添加无依据内容。
-5. **远程写入前强制预检。** 以最新 main 的完整 Org 源为 original、完整候选 Org 为 candidate，
-   在首次提交、创建 PR、更新 GitHub 文件或移动 ref **之前**运行
-   `python skills/note-reforge/tests/check_published_update.py <original.org> <candidate.org>`。
-   该脚本来自 `lovemoganna/Org-Skills` 当前版本。预检保留已有 `WIKI_ID`、除 `TITLE` 外的元数据、
-   章节标题引用（不仅是 `CUSTOM_ID`）、链接、ID 锚点和逐字代码/引用块；
-   新增章节允许，但不能改写或删除旧标题。**任一失败即停止写入，不先提交再等 CI 拒绝。**
-   如没有文件执行环境，必须对 GitHub 返回的**完整原稿与候选稿**执行相同的逐项多重集差异
-   （含出现次数），核对全部结果；无法执行也无法等效验证时停止，不得以模型自评代替。
-   如果 main/source blob 在检查后改变，重新读取并重跑预检。
-6. 预检通过后，有执行工具时用发布器 `tools/museum_update.py` 的 resolve/update/status
-   完成提交和验证。仅 GitHub 连接可用时，使用现有 GitHub tree/commit/ref 工具，
-   latest main 作 parent，只修改已存在目标路径，message 为 `Museum-Update: <id>`，
-   force=false；并发冲突后必须重新核验内容，不得覆盖。正式发布器还有自己的验证，
-   不可用「PR CI 通过」替代源分支的提交前门禁。
+4. 读取 `lovemoganna/Org-Skills` 当前默认分支的 `skills/note-reforge/SKILL.md`
+   加工指定的完整 Org，不能静默回退旧规则。用户最近一次明确编辑标准决定本次
+   可删改内容；保留同一原路径、WIKI_ID 和除 TITLE 外的元数据，不改其他文章。
+   不得把应删除的内容挪入附录或正文其他位置伪装完成。
+5. **写入前预检：默认严格，明确授权删改时按范围精确放行。** 比对完整 original 与
+   candidate 的原有标题、链接、锚点、字面块，计算出现次数（多重集）差异。
+   若本次用户明确要求删减，编制 scope.json：包含 `user_directive`（用户原意）
+   和 `references`、`heading references`、`anchors`、`literal blocks`
+   中实际被删除的字符串数组（逐字、重复项逐个列出）。空泛的“全部放行”无效。
+   执行 `python skills/note-reforge/tests/check_published_update.py original.org candidate.org
+   --authorized-removals scope.json`；无删减时省略 scope 以维持严格保留。
+   无执行环境必须完成同等的多重集差异审查；无法核验则停止。
+6. **提交与审计。** 可运行本地发布器时使用
+   `tools/museum_update.py update --authorized-removals scope.json`；仅 GitHub 插件
+   可用时，基于 latest main 创建只修改原 Org 的 tree/commit/ref，禁止 force。
+   有用户授权删减时，Commit 标题仍为 `Museum-Update: <id>`，另加单行
+   `Museum-Update-Authorized-Removals: <scope-json>`，其值为紧凑合法 JSON，
+   要与提交前精确清单相同。CI 对提交中的实际删除与声明执行逐项一致性核对；
+   未授权的引用、标题、锚点或逐字块被删除时拒绝发布。提交后仍须通过
+   页面构建、部署和线上版本核验，不能以“GitHub 提交成功”冒充发布成功。
 7. Commit 成功后继续检查 publish.yml 的 build 与 deploy，且在线核验步骤成功。
    `MUSEUM-PUBLISHED-RECEIPT` 中目标 id、path、源内容 sha256 必须属于本次版本。
    只有 Pages 核验完成才回复更新完成；超时回复已提交、发布中，失败报告阶段。
