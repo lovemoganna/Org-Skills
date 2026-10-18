@@ -43,7 +43,7 @@ def protected(original: str) -> dict[str, Counter[str]]:
 def evaluate(original: str, candidate: str, authorized_removals=None) -> list[str]:
     before, after = protected(original), protected(candidate)
     errors = []
-    ids = re.compile(r"(?im)^#\\+WIKI_ID:\\s*(\\S+)\\s*$")
+    ids = re.compile(r"(?im)^#\+WIKI_ID:\s*(\S+)\s*$")
     old_id, new_id = ids.search(original), ids.search(candidate)
     if not old_id or not new_id or old_id.group(1) != new_id.group(1):
         errors.append("published WIKI_ID missing or changed")
