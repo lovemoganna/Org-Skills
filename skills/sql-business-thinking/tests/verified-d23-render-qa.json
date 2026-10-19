@@ -2,7 +2,7 @@
   "stage": "D23",
   "status": "PASS",
   "artifact_path": "skills/sql-business-thinking/artifacts/verified-d22-report.html",
-  "artifact_git_blob_sha": "e315a061fd6afd4d4de811c6ceff7bd5c8667ef6",
+  "artifact_git_blob_sha": "75e51f7ef52f86dd371a819a3c999f377f23a8fb",
   "remote_render_run": 37754620999,
   "remote_render_artifact_id": 11539662138,
   "remote_runner_revision": "33f69b66ad34897519d61d74ca0834dea6236bd8",
@@ -36,5 +36,5 @@
     "audit_closed_mobile.png"
   ],
   "limitations": "Validates historical Report artifact only. Does not imply operational risk, realtime status or full end-to-end live SQL execution in the HTML.",
-  "artifact_sha256": "46c3b645ff5107b5a7778367a6cf9c16ff6d245cb64c634ed76c6856474ab3a4"
+  "artifact_sha256": "3733a07fc07daf1a2865d01ace1cdde16d415cb62431e32e6a342886f8629be7"
 }
