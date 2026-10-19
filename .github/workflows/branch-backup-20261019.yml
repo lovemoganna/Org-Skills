@@ -1,83 +1,149 @@
-name: Dashboard 16 branch verified full-history backup
+name: Guarded Dashboard branch cleanup batch 3
 on:
   push:
     branches:
       - ops/branch-backup-20261019
 permissions:
-  contents: read
+  contents: write
   actions: read
+  pull-requests: read
 jobs:
-  backup:
+  clean:
     if: github.repository == 'lovemoganna/Org-Skills'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Download prior independent Dashboard audit
+          persist-credentials: true
+      - name: Restore independently verified full-history backup
         uses: actions/download-artifact@v4
         with:
-          name: dashboard-16-branches-audit
-          run-id: 39219340932
+          name: dashboard-16-branch-precleanup-bundle
+          run-id: 39219787734
           github-token: ${{ github.token }}
-          path: dashboard-audit
-      - name: Verify audited branches and create restorable Git bundle
+          path: dashboard-backup
+      - name: Verify historical evidence and remove exactly 16 pinned refs
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
         run: |
           set -euo pipefail
           git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
           python3 - <<'PY'
-          import hashlib, json, pathlib, subprocess
+          import hashlib,json,pathlib,subprocess,sys,tempfile
           root=pathlib.Path.cwd()
-          m=json.loads((root/'.github/dashboard-branch-audit-20261019.json').read_text())
-          r=json.loads((root/'dashboard-audit/report.json').read_text())
-          assert m['scope']=='READ_ONLY_DASHBOARD_BRANCH_AUDIT'
-          assert r['baseline_main']==m['main'] and len(r['branches'])==16
-          assert r['main_regression']['exit_code']==0
-          assert set(b['branch'] for b in r['branches'])==set(m['targets'])
-          for row in r['branches']:
-              assert not row['not_present_in_main'], 'MISSING_MAIN_FILE'
-              assert not row['old_assertion_literals_absent'], 'UNMIGRATED_ASSERT_LITERAL'
+          saved=root/'dashboard-backup'
+          dest=root/'dashboard-delete-receipt'
+          dest.mkdir(exist_ok=True)
+          backup_sha='a97403c5c0c50700ce5e94298dda16766a514ef67bf8568e16946a9e1cbfe849'
+          expected_main='80c90b9eff4df12594709308b98d7c52e3123890'
+          ops='ops/branch-backup-20261019'
+          output=dest/'receipt.json'
+          result={'status':'NOT_STARTED','scope':'DASHBOARD_16','deleted':[],
+             'main':expected_main,'backup_run':39219787734,'backup_artifact':12171595519,
+             'bundle_sha256':backup_sha}
+          def save():
+              output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
           def out(*a):
               return subprocess.check_output(a,text=True).strip()
-          refs=dict((line.split()[1].removeprefix('refs/heads/'),line.split()[0])
-                    for line in out('git','ls-remote','--heads','origin').splitlines())
-          assert len(refs)==68, 'REF_COUNT_DRIFT'
-          assert refs.get('main')==m['main'], 'MAIN_DRIFT'
-          assert all(refs.get(n)==sha for n,sha in m['targets'].items()), 'TARGET_DRIFT'
-          prs=json.loads(out('gh','api','repos/lovemoganna/Org-Skills/pulls?state=open&per_page=100'))
-          assert len(prs)<100, 'PAGINATED_PRS'
-          assert not set(m['targets']) & {p['head']['ref'] for p in prs},'PROTECTED_PR_HEAD'
-          track=dict((line.split()[1].removeprefix('refs/remotes/origin/'),line.split()[0])
-                     for line in out('git','for-each-ref','--format=%(objectname) %(refname)',
-                                     'refs/remotes/origin').splitlines()
-                     if line.split()[1]!='refs/remotes/origin/HEAD')
-          assert refs==track,'TRACKING_REFS_OUT_OF_SYNC'
-          dest=root/'dashboard-backup'
-          dest.mkdir(exist_ok=True)
-          (dest/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
-          (dest/'refs.json').write_text(json.dumps(refs,indent=2)+'\n')
-          (dest/'audit-report.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
-          bundle=dest/'full-history.bundle'
-          subprocess.run(['git','bundle','create',str(bundle),'--all'],check=True)
-          empty=dest/'verify-in-empty.git'
-          subprocess.run(['git','init','--bare',str(empty)],check=True,stdout=subprocess.DEVNULL)
-          subprocess.run(['git','-C',str(empty),'bundle','verify',str(bundle)],check=True)
-          listed=set(out('git','bundle','list-heads',str(bundle)).splitlines())
-          assert all(sha+' refs/remotes/origin/'+n in listed for n,sha in refs.items()), 'BUNDLE_MISSING_REF'
-          digest=hashlib.sha256(bundle.read_bytes()).hexdigest()
-          (dest/'full-history.sha256').write_text(digest+'  full-history.bundle\n')
-          (dest/'CHECKS.txt').write_text('DASHBOARD_FULL_HISTORY_BACKUP_VERIFIED\n'
-              +'MAIN '+refs['main']+'\nBRANCHES '+str(len(refs))+'\nTARGETS 16\nSHA256 '+digest+'\n')
-          print((dest/'CHECKS.txt').read_text())
+          def getrefs():
+              return dict((s.split()[1].removeprefix('refs/heads/'),s.split()[0])
+                          for s in out('git','ls-remote','--heads','origin').splitlines())
+          def check_pr(target_names):
+              p=json.loads(out('gh','api','repos/lovemoganna/Org-Skills/pulls?state=open&per_page=100'))
+              assert len(p)<100, 'PAGINATED_PRS'
+              heads={item['head']['ref'] for item in p}
+              assert not set(target_names)&heads,'OPEN_PR_HEAD_MATCH'
+              return heads
+          def gitblob(rev,path):
+              p=subprocess.run(['git','rev-parse','--verify',rev+':'+path],
+                               capture_output=True,text=True)
+              return p.stdout.strip() if p.returncode==0 else None
+          try:
+              m=json.loads((saved/'manifest.json').read_text())
+              original=json.loads((saved/'refs.json').read_text())
+              a=json.loads((saved/'audit-report.json').read_text())
+              current=json.loads((root/'.github/dashboard-branch-audit-20261019.json').read_text())
+              assert m==current,'MANIFEST_CHANGED_AFTER_BACKUP'
+              assert m['main']==expected_main and a['baseline_main']==expected_main
+              targets=m['targets']
+              assert len(targets)==16 and len(a['branches'])==16,'TARGET_COUNT_CHANGED'
+              assert len(original)==68 and original['main']==expected_main,'REFS_BACKUP_INVALID'
+              assert a['main_regression']['exit_code']==0,'BASELINE_TEST_NOT_PASSING'
+              assert set(targets)=={row['branch'] for row in a['branches']},'AUDIT_SCOPE_MISMATCH'
+              for row in a['branches']:
+                  assert not row['not_present_in_main'],'MISSING_MAIN_PATH:'+row['branch']
+                  assert not row['old_assertion_literals_absent'],'UNMIGRATED_ASSERTION:'+row['branch']
+              bundle=saved/'full-history.bundle'
+              digest=hashlib.sha256(bundle.read_bytes()).hexdigest()
+              assert digest==backup_sha,'BUNDLE_DIGEST_WRONG'
+              assert (saved/'full-history.sha256').read_text().strip()==digest+'  full-history.bundle'
+              empty=dest/'empty.git'
+              subprocess.run(['git','init','--bare',str(empty)],stdout=subprocess.DEVNULL,check=True)
+              subprocess.run(['git','-C',str(empty),'bundle','verify',str(bundle)],check=True)
+              bundled=set(out('git','bundle','list-heads',str(bundle)).splitlines())
+              assert all(sha+' refs/remotes/origin/'+name in bundled for name,sha in original.items()),'BUNDLE_REF_MISSING'
+              now=getrefs()
+              assert set(now)==set(original),'REMOTE_BRANCH_SET_CHANGED'
+              assert all(now.get(n)==sha for n,sha in original.items() if n!=ops),'BRANCH_SHA_CHANGED'
+              assert now['main']==expected_main,'MAIN_MOVED'
+              for name,sha in targets.items():
+                  assert now.get(name)==sha,'TARGET_SHA_CHANGED:'+name
+                  common=out('git','merge-base',expected_main,sha)
+                  paths=subprocess.check_output(['git','diff','--name-only','-z',common,sha]).split(b'\0')
+                  assert any(paths),'EMPTY_TARGET_DIFF:'+name
+                  for p in paths:
+                      if not p:continue
+                      assert gitblob(expected_main,p.decode()) is not None, 'HISTORICAL_ONLY_PATH:'+name+':'+p.decode()
+              protected=check_pr(targets)
+              with tempfile.TemporaryDirectory() as td:
+                  checkout=pathlib.Path(td)/'main'
+                  subprocess.run(['git','worktree','add','--detach',str(checkout),expected_main],
+                      check=True,capture_output=True,text=True)
+                  try:
+                      t=subprocess.run(['python3',str(checkout/'skills/dataset-dashboard-builder/tests/check_repo.py')],
+                          capture_output=True,text=True,timeout=120)
+                      assert t.returncode==0,'MAIN_REGRESSION_FAILED:'+t.stderr[-300:]
+                  finally:
+                      subprocess.run(['git','worktree','remove','--force',str(checkout)],
+                          check=True,capture_output=True,text=True)
+              result.update(status='BACKUP_AND_CHECKS_PASS',before=len(original),
+                            protected_pr_heads=sorted(protected))
+              save()
+              for name,sha in targets.items():
+                  live=getrefs()
+                  assert live.get('main')==expected_main,'MAIN_CHANGED_DURING_DELETE'
+                  assert live.get(name)==sha,'TARGET_CHANGED_DURING_DELETE:'+name
+                  check_pr(targets)
+                  subprocess.run(['git','push','--porcelain',
+                      '--force-with-lease=refs/heads/'+name+':'+sha,
+                      'origin',':refs/heads/'+name],check=True)
+                  assert name not in getrefs(),'DELETE_NOT_CONFIRMED:'+name
+                  result['deleted'].append({'branch':name,'sha':sha})
+                  result['status']='IN_PROGRESS'
+                  save()
+              final=getrefs()
+              assert final.get('main')==expected_main
+              assert len(final)==len(original)-len(targets),'POST_COUNT_MISMATCH'
+              assert all(x not in final for x in targets),'DELETION_INCOMPLETE'
+              assert all(h in final for h in protected),'PR_HEAD_MISSING_AFTER'
+              result.update(status='COMPLETE',after=len(final))
+              save()
+              print('DASHBOARD_16_DELETION_COMPLETE',len(result['deleted']),'REMAINING',len(final))
+          except Exception as exc:
+              result.update(status='BLOCKED_OR_PARTIAL',error=type(exc).__name__+': '+str(exc))
+              save()
+              print('DASHBOARD_16_STOPPED',result['error'],file=sys.stderr)
+              sys.exit(1)
           PY
-          rm -rf dashboard-backup/verify-in-empty.git
-      - uses: actions/upload-artifact@v4
+          rm -rf dashboard-delete-receipt/empty.git
+      - name: Upload deletion receipt
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: dashboard-16-branch-precleanup-bundle
-          path: dashboard-backup/
+          name: dashboard-16-branch-deletion-receipt
+          path: dashboard-delete-receipt/receipt.json
           retention-days: 90
           if-no-files-found: error
