@@ -12,7 +12,7 @@ BASE=ROOT/'evals'
 
 
 def case_refs(ident):
-    if ident.startswith('runtime-'): return ['runtime.md']
+    if ident.startswith(('runtime-', 'blocked-', 'source-', 'url-', 'fixed-', 'reusable-runtime-', 'no-false-completion-')): return ['runtime.md']
     if ident.startswith(('rule-','relation-','aggregation-','multihop-')): return ['ontology.md','lisp.md']
     if ident.startswith(('sql-','question-','signal-','metric-','complex-','competition-','robustness-','dashboard-','multigrain-')): return ['analysis-loop.md','validator.md']
     if ident.startswith(('local-','evidence-','cross-object-')): return ['analysis-loop.md','validator.md']
@@ -35,16 +35,28 @@ def make_plan(cases):
             for c in cases for v in ('baseline','with_skill')]
 
 
-def openai_call(client,model, instructions, prompt):
-    r=client.responses.create(model=model,instructions=instructions,input=prompt)
-    return r.output_text
+def openai_call(client,model, instructions, prompt, recorder=None):
+    started=time.perf_counter()
+    try:
+        response=client.responses.create(model=model,instructions=instructions,input=prompt)
+        if recorder is not None:
+            usage=getattr(response,'usage',None)
+            recorder['usage']={
+                'input_tokens':getattr(usage,'input_tokens',None),
+                'output_tokens':getattr(usage,'output_tokens',None),
+                'total_tokens':getattr(usage,'total_tokens',None),
+            }
+        return response.output_text
+    finally:
+        if recorder is not None:
+            recorder['elapsed_seconds']=round(time.perf_counter()-started,6)
 
 
-def judge(client,model,case,output):
+def judge(client,model,case,output,recorder=None):
     rubric={'prompt':case['prompt'],'expected_output':case['expected_output'],
            'assertions':case['assertions'],'actual_output':output}
     instr='你是独立评测员。仅根据当前问题、预期要求、实际答案评估每条断言。不要因措辞相近而放行实质错误。只输出JSON对象：{"passed":boolean,"failed_assertions":[string],"rationale":string}。无法判断则passed=false。'
-    raw=openai_call(client,model,instr,json.dumps(rubric,ensure_ascii=False))
+    raw=openai_call(client,model,instr,json.dumps(rubric,ensure_ascii=False),recorder=recorder)
     try:
         text=raw.strip(); text=text[7:-3] if text.startswith('```json') and text.endswith('```') else text
         return json.loads(text)
@@ -58,9 +70,16 @@ def main():
     parser.add_argument('--model',default=None,help='subject model name (required for --run)')
     parser.add_argument('--judge-model',default=None,help='optional evaluator model; without it results ungraded')
     parser.add_argument('--repeat',type=int,default=1)
+    parser.add_argument('--ids',default='',help='comma-separated case ids; empty means all')
     parser.add_argument('--output',default=None)
     args=parser.parse_args()
     cases=json.loads((BASE/'quality-evals.json').read_text(encoding='utf-8'))['evals']
+    if args.ids:
+        selected=set(args.ids.split(','))
+        unknown=selected-{c['id'] for c in cases}
+        if unknown: raise SystemExit('Unknown case ids: '+', '.join(sorted(unknown)))
+        cases=[c for c in cases if c['id'] in selected]
+    if not cases or args.repeat < 1: raise SystemExit('No cases or repeat < 1')
     plan=make_plan(cases)
     out=Path(args.output) if args.output else ROOT.parent/'behavior-eval-results.json'
     # Preserve independence: sealed expectations only used AFTER the model responds.
@@ -83,17 +102,27 @@ def main():
             ident=item['id'];c=byid[ident]
             record={'id':ident,'variant':item['variant'],'repeat':repetition,'model':args.model}
             try:
-                text=openai_call(client,args.model,make_subject_context(ident,item['variant']=='with_skill'),c['prompt'])
+                record['subject_call']={}
+                text=openai_call(client,args.model,make_subject_context(ident,item['variant']=='with_skill'),c['prompt'],recorder=record['subject_call'])
                 record['output_text']=text
                 if args.judge_model:
-                    record['judge']=judge(client,args.judge_model,c,text)
+                    record['judge_call']={}
+                    record['judge']=judge(client,args.judge_model,c,text,recorder=record['judge_call'])
                 else:
                     record['judge']={'status':'NOT_SCORED'}
             except Exception as ex:
                 record['error']=str(ex)[:400]
             results.append(record)
             out.write_text(json.dumps({'model':args.model,'judge_model':args.judge_model,'results':results},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-    print(json.dumps({'cases':len(cases),'executed':len(results),'errors':sum('error' in x for x in results),
-                      'judged':sum(x.get('judge',{}).get('passed') in (True,False) for x in results)},ensure_ascii=False))
+    usages=[x[call]['usage'] for x in results for call in ('subject_call','judge_call')
+            if call in x and 'usage' in x[call]]
+    totals={key:sum(u[key] for u in usages) if usages and all(isinstance(u.get(key),int) for u in usages) else None
+            for key in ('input_tokens','output_tokens','total_tokens')}
+    print(json.dumps({'cases':len(cases),'attempted':len(results),
+                      'successful_subject_requests':sum('output_text' in x for x in results),
+                      'errors':sum('error' in x for x in results),
+                      'judged':sum(x.get('judge',{}).get('passed') in (True,False) for x in results),
+                      'recorded_usage':totals,'usd_cost':'NOT_ESTIMATED_NO_VERIFIED_MODEL_PRICING'},ensure_ascii=False))
+    if any('error' in x for x in results): sys.exit(2)
 
 if __name__=='__main__':main()

@@ -143,5 +143,49 @@ class SkillIntegrityTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
+
+class ModelEvalHarnessRegression(unittest.TestCase):
+    """Skill-creator style harness checks, not model-behavior pass claims."""
+
+    @staticmethod
+    def _runner():
+        import importlib.util
+        path = ROOT / "scripts" / "run_behavior_evals.py"
+        spec = importlib.util.spec_from_file_location("ontology_behavior_evals", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_runtime_cases_load_runtime_reference(self):
+        runner = self._runner()
+        for ident in (
+            "runtime-contract-hard-boundary",
+            "blocked-source-still-deliver-report",
+            "source-byte-gate-not-metadata",
+            "url-bytes-staging-not-new-source",
+            "fixed-remote-function-no-staging",
+            "reusable-runtime-no-olist-hardcoding",
+        ):
+            with self.subTest(ident=ident):
+                self.assertIn("runtime.md", runner.case_refs(ident))
+
+    def test_real_model_call_receipt_preserves_usage_and_elapsed_time(self):
+        runner = self._runner()
+        from types import SimpleNamespace
+        class Responses:
+            def create(self, **kwargs):
+                return SimpleNamespace(
+                    output_text="stub-only-not-a-model-evaluation",
+                    usage=SimpleNamespace(input_tokens=12, output_tokens=9, total_tokens=21),
+                )
+        client = SimpleNamespace(responses=Responses())
+        record = {}
+        text = runner.openai_call(client, "stub-model", "instructions", "prompt", recorder=record)
+        self.assertEqual(text, "stub-only-not-a-model-evaluation")
+        self.assertEqual(record["usage"]["input_tokens"], 12)
+        self.assertEqual(record["usage"]["output_tokens"], 9)
+        self.assertEqual(record["usage"]["total_tokens"], 21)
+        self.assertGreaterEqual(record["elapsed_seconds"], 0)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
