@@ -1,32 +1,81 @@
-name: Dashboard historical branch audit and main regression
+name: Dashboard 16 branch verified full-history backup
 on:
   push:
     branches:
       - ops/branch-backup-20261019
 permissions:
   contents: read
+  actions: read
 jobs:
-  audit:
+  backup:
     if: github.repository == 'lovemoganna/Org-Skills'
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - name: Download prior independent Dashboard audit
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.12'
-      - name: Run read-only audit and main regression
+          name: dashboard-16-branches-audit
+          run-id: 39219340932
+          github-token: ${{ github.token }}
+          path: dashboard-audit
+      - name: Verify audited branches and create restorable Git bundle
+        shell: bash
         run: |
           set -euo pipefail
           git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
-          python3 .github/scripts/dashboard_branch_audit_20261019.py
-      - name: Save full audit report
-        if: always()
-        uses: actions/upload-artifact@v4
+          python3 - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root=pathlib.Path.cwd()
+          m=json.loads((root/'.github/dashboard-branch-audit-20261019.json').read_text())
+          r=json.loads((root/'dashboard-audit/report.json').read_text())
+          assert m['scope']=='READ_ONLY_DASHBOARD_BRANCH_AUDIT'
+          assert r['baseline_main']==m['main'] and len(r['branches'])==16
+          assert r['main_regression']['exit_code']==0
+          assert set(b['branch'] for b in r['branches'])==set(m['targets'])
+          for row in r['branches']:
+              assert not row['not_present_in_main'], 'MISSING_MAIN_FILE'
+              assert not row['old_assertion_literals_absent'], 'UNMIGRATED_ASSERT_LITERAL'
+          def out(*a):
+              return subprocess.check_output(a,text=True).strip()
+          refs=dict((line.split()[1].removeprefix('refs/heads/'),line.split()[0])
+                    for line in out('git','ls-remote','--heads','origin').splitlines())
+          assert len(refs)==68, 'REF_COUNT_DRIFT'
+          assert refs.get('main')==m['main'], 'MAIN_DRIFT'
+          assert all(refs.get(n)==sha for n,sha in m['targets'].items()), 'TARGET_DRIFT'
+          prs=json.loads(out('gh','api','repos/lovemoganna/Org-Skills/pulls?state=open&per_page=100'))
+          assert len(prs)<100, 'PAGINATED_PRS'
+          assert not set(m['targets']) & {p['head']['ref'] for p in prs},'PROTECTED_PR_HEAD'
+          track=dict((line.split()[1].removeprefix('refs/remotes/origin/'),line.split()[0])
+                     for line in out('git','for-each-ref','--format=%(objectname) %(refname)',
+                                     'refs/remotes/origin').splitlines()
+                     if line.split()[1]!='refs/remotes/origin/HEAD')
+          assert refs==track,'TRACKING_REFS_OUT_OF_SYNC'
+          dest=root/'dashboard-backup'
+          dest.mkdir(exist_ok=True)
+          (dest/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+          (dest/'refs.json').write_text(json.dumps(refs,indent=2)+'\n')
+          (dest/'audit-report.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          bundle=dest/'full-history.bundle'
+          subprocess.run(['git','bundle','create',str(bundle),'--all'],check=True)
+          empty=dest/'verify-in-empty.git'
+          subprocess.run(['git','init','--bare',str(empty)],check=True,stdout=subprocess.DEVNULL)
+          subprocess.run(['git','-C',str(empty),'bundle','verify',str(bundle)],check=True)
+          listed=set(out('git','bundle','list-heads',str(bundle)).splitlines())
+          assert all(sha+' refs/remotes/origin/'+n in listed for n,sha in refs.items()), 'BUNDLE_MISSING_REF'
+          digest=hashlib.sha256(bundle.read_bytes()).hexdigest()
+          (dest/'full-history.sha256').write_text(digest+'  full-history.bundle\n')
+          (dest/'CHECKS.txt').write_text('DASHBOARD_FULL_HISTORY_BACKUP_VERIFIED\n'
+              +'MAIN '+refs['main']+'\nBRANCHES '+str(len(refs))+'\nTARGETS 16\nSHA256 '+digest+'\n')
+          print((dest/'CHECKS.txt').read_text())
+          PY
+          rm -rf dashboard-backup/verify-in-empty.git
+      - uses: actions/upload-artifact@v4
         with:
-          name: dashboard-16-branches-audit
-          path: dashboard-audit/
+          name: dashboard-16-branch-precleanup-bundle
+          path: dashboard-backup/
           retention-days: 90
           if-no-files-found: error
