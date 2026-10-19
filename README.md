@@ -32,7 +32,7 @@
 
 ## 视觉知识图解
 
-- `plantuml-diagram-engine`：按语义选择 WBS / Activity / Sequence / Component / State，合并本体建模与 PlantUML 绘图规则；默认交付在线 PNG 直链，验证状态如实报告。
+- `plantuml-diagram-engine`：按语义选择 WBS / Activity / Sequence / Component / State / Class / Deployment / Gantt / MindMap 9 类图，加载 Ink & Signal (v7) 通用样式，默认交付在线 PNG 直链，验证状态如实报告。
 
 - `sketchnote-generator`：材料核验 → 动态知识模块 → 复古笔记本式 Sketchnote → 图片生成 → 视觉与事实检查。需要实际可用的图像生成工具；纯 Claude 环境不能凭 Skill 生成插画。
 - 固定调用：`手绘图：<文章 / 案例 / 链接>`。
@@ -86,6 +86,7 @@
 | `ontology-constrained-analysis` | 本体约束多表分析与真实验证，源不可用时交付审计报告 | `skills/ontology-constrained-analysis/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |
 | `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
+| `plantuml-diagram-engine` | 按语义将业务/系统结构转为 9 类 PlantUML，加载 Ink & Signal v7 样式并交付在线 PNG 直链 | `skills/plantuml-diagram-engine/SKILL.md` | Active; 9 diagram types verified |
 | `sketchnote-generator` | 把真实材料制成复古手绘中文知识信息图，需具备图片工具 | `skills/sketchnote-generator/SKILL.md` | Packaged; image E2E pending |
 
 ## 目录约定

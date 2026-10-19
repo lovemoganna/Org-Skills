@@ -1,0 +1,20 @@
+@startgantt
+language zh
+!include ../styles/style-ink-and-signal.puml
+
+[需求调研与技术选型] lasts 5 days
+[架构方案评审与定稿] lasts 3 days
+[架构方案评审与定稿] starts at [需求调研与技术选型]'s end
+
+[核心引擎开发] lasts 10 days
+[核心引擎开发] starts at [架构方案评审与定稿]'s end
+
+[周边扩展图型适配] lasts 6 days
+[周边扩展图型适配] starts at [核心引擎开发]'s start
+
+[集成测试与稳定性压测] lasts 5 days
+[集成测试与稳定性压测] starts at [核心引擎开发]'s end
+
+[正式发布与基线归档] happens at [集成测试与稳定性压测]'s end
+
+@endgantt

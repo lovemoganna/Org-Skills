@@ -41,13 +41,46 @@ def plantuml_token(source: str) -> str:
     return ''.join(result)
 
 
+def resolve_includes(source: str, base_dir: Path | None = None, depth: int = 0) -> str:
+    """Preprocess local !include directives so public renderers receive inlined definitions."""
+    if depth > 5:
+        return source
+    lines = []
+    skill_root = Path(__file__).resolve().parent.parent
+    for line in source.splitlines():
+        stripped = line.strip()
+        if (stripped.startswith('!include ') or stripped.startswith('!include_many ')
+                or stripped.startswith('!include_once ')):
+            parts = stripped.split(maxsplit=1)
+            if len(parts) == 2:
+                target_str = parts[1].strip().strip('"\'')
+                if target_str.startswith('http://') or target_str.startswith('https://'):
+                    lines.append(line)
+                    continue
+                candidates = []
+                if base_dir:
+                    candidates.append((base_dir / target_str).resolve())
+                candidates.append((skill_root / target_str).resolve())
+                candidates.append((skill_root / 'styles' / target_str).resolve())
+                candidates.append((skill_root / 'styles' / Path(target_str).name).resolve())
+                target_file = next((c for c in candidates if c.is_file()), None)
+                if target_file:
+                    content = target_file.read_text(encoding='utf-8')
+                    resolved_content = resolve_includes(content, base_dir=target_file.parent, depth=depth + 1)
+                    lines.append(resolved_content)
+                    continue
+        lines.append(line)
+    return '\n'.join(lines)
+
+
 def kroki_token(source: str) -> str:
     return base64.urlsafe_b64encode(zlib.compress(source.encode('utf-8'), 9)).decode('ascii').rstrip('=')
 
 
-def get_links(source: str) -> dict[str, str]:
-    return {'plantuml': PLANTUML_BASE + plantuml_token(source),
-            'kroki': KROKI_BASE + kroki_token(source)}
+def get_links(source: str, base_dir: Path | None = None) -> dict[str, str]:
+    expanded = resolve_includes(source, base_dir=base_dir) if '!include' in source else source
+    return {'plantuml': PLANTUML_BASE + plantuml_token(expanded),
+            'kroki': KROKI_BASE + kroki_token(expanded)}
 
 
 def validate_source(source: str) -> None:
@@ -114,7 +147,7 @@ def main(argv=None) -> int:
         raise RenderError('PUBLIC_UPLOAD_DENIED: --public-ok required for network requests')
     source = args.source.read_text(encoding='utf-8')
     validate_source(source)
-    links = get_links(source)
+    links = get_links(source, base_dir=args.source.parent)
     status = 'URL_GENERATED / HTTP_UNVERIFIED'
     backend = None
     dimensions = None

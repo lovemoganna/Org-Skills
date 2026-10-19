@@ -1,0 +1,41 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+}
+participant "Browser" as B
+participant "API Gateway" as GW
+participant "Auth Service" as Auth
+participant "Order Service" as Order
+participant "Inventory Service" as Inv
+participant "Payment Service" as Pay
+participant "Database" as DB
+
+B -> GW : POST /api/orders
+GW -> Auth : 校验 Token
+alt 无效 Token
+  Auth --> GW : 401
+  GW --> B : 401
+else 有效
+  GW -> Order : 下单
+  Order -> Inv : 查库存
+  Inv --> Order : 结果
+  Order -> Pay : 扣款请求
+  alt 失败
+    Pay --> Order : Error
+    Order --> GW : 500
+    GW --> B : 500
+  else 成功
+    Pay --> Order : OK
+    Order -> DB : 持久化
+    DB --> Order : Done
+    Order --> GW : 201
+    GW --> B : 201
+  end
+end
+@enduml

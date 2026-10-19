@@ -1,0 +1,16 @@
+@startuml
+' 隐私拒绝：原始输入含内部凭据，不予公开编码
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam class {
+  BackgroundColor #FEE2E2
+  BorderColor #FCA5A5
+  FontColor #334155
+}
+note as PRIVACY_BLOCK
+  BLOCKED: 含敏感信息，拒绝生成公共 URL
+  原始字段：UID / 密码哈希 / API Key / 内部主机
+  建议脱敏后重试
+end note
+@enduml

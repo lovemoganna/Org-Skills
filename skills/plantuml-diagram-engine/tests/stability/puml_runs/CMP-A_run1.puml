@@ -1,0 +1,24 @@
+@startuml
+' 输入模糊，最小假设：三个角色映射为组件（已标注推断）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+' 推断：将"前端"、"后端"、"测试"视为独立组件
+[前端组件（推断）] as FE
+[后端组件（推断）] as BE
+[测试组件（推断）] as QA
+
+FE --> BE : 协作（推断）
+BE --> QA : 测试接口（推断）
+note bottom of FE
+  原始输入仅描述团队角色
+  组件边界和接口为最小推断
+  需用户确认
+end note
+@enduml

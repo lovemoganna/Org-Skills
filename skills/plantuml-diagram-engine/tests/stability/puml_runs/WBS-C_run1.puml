@@ -1,0 +1,36 @@
+@startwbs
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+<style>
+wbsDiagram {
+  FontColor #334155
+  LineColor #94A3B8
+  node {
+    BackgroundColor #F8FAFC
+    LineColor #CBD5E1
+    RoundCorner 12
+    Padding 8
+    Margin 5
+    MaximumWidth 200
+  }
+}
+</style>
+* [#172554] <color:white><b>企业数字化转型</b></color>
+**< [#DBEAFE] <b>技术</b>
+***< 基础设施升级
+***< 应用现代化
+***< 安全合规
+**< [#EDE9FE] <b>人员</b>
+***< 培训计划
+***< 组织架构调整
+***< 激励机制
+** [#CCFBF1] <b>流程</b>
+*** 流程数字化
+*** 自动化部署
+*** 绩效监控
+** [#FEF3C7] <b>数据</b>
+*** 数据治理
+*** BI 平台
+*** AI 模型
+@endwbs

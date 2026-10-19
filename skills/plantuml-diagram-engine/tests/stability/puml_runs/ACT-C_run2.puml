@@ -1,0 +1,43 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  DiamondBackgroundColor #DBEAFE
+  StartColor #2563EB
+  EndColor #172554
+  RoundCorner 12
+}
+title 订单处理流程（含异常回退）
+start
+:接收用户订单;
+if (库存检查通过？) then (是)
+else (否)
+  #FEE2E2:通知用户库存不足;
+  stop
+endif
+if (支付网关成功？) then (是)
+else (否)
+  :回退库存;
+  #FEE2E2:通知支付失败;
+  stop
+endif
+:调用物流接口;
+repeat
+  if (物流响应正常？) then (是)
+  else (否)
+    #FEF3C7:等待后重试;
+  endif
+repeat while (失败次数 < 3？) is (是) not (否)
+if (仍然失败？) then (是)
+  #FEE2E2:人工处理;
+  stop
+endif
+:更新订单状态为已发货;
+#CCFBF1:发送确认通知;
+stop
+@enduml

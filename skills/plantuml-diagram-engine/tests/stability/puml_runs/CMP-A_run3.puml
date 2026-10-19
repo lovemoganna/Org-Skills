@@ -1,0 +1,17 @@
+@startuml
+' 极简推断：无虚构组件
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+[Frontend] --> [Backend] : 接口（推断）
+note right
+  仅保留明确提及的角色
+  测试职责归属未明，暂不建模
+end note
+@enduml

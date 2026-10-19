@@ -1,0 +1,52 @@
+@startuml
+' Case E: 时序图 — 交易支付与库存扣减时序交互
+!include ../styles/style-ink-and-signal.puml
+
+autonumber "<b>[00]</b>"
+title 交易支付与履约扣减时序交互
+
+actor "顾客 (Customer)" as user
+participant "前端商城 (Web/App)" as client
+participant "订单中心 (Order Svc)" as order
+participant "风控服务 (Risk Svc)" as risk
+participant "支付网关 (Pay GW)" as pay
+participant "库存中心 (Inventory Svc)" as inv
+
+user -> client : 点击确认支付
+activate client
+
+client -> order : POST /v1/orders/{id}/pay
+activate order
+
+order -> risk : 评估交易安全与反欺诈
+activate risk
+risk --> order : 风控校验通过 <<ok>>
+deactivate risk
+
+alt 风控通过
+  order -> inv : 预冻结订单商品库存
+  activate inv
+  inv --> order : 冻结成功
+  deactivate inv
+
+  order -> pay : 发起扣款请求 (流水号, 金额)
+  activate pay
+  pay --> order : 扣款成功 (HTTP 200 OK)
+  deactivate pay
+
+  order -> inv : 正式提交库存核销
+  activate inv
+  inv --> order : 核销完成
+  deactivate inv
+
+  order --> client : 订单支付成功 (SUCCESS)
+  client --> user : 展示支付成功页与履约进度
+else 风控拦截 / 扣款失败
+  order --> client : 交易拦截或支付失败响应 <<high>>
+  client --> user : 提示异常并引导重试
+end
+
+deactivate order
+deactivate client
+
+@enduml

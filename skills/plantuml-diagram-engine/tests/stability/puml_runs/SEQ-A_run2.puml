@@ -1,0 +1,20 @@
+@startuml
+' 模糊输入 → 最小假设，两个泛化参与者
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+}
+participant "请求方（推断）" as Req
+participant "系统（推断）" as Sys
+
+Req -> Sys : 请求
+activate Sys
+Sys --> Req : 响应
+deactivate Sys
+note over Sys : 参与者名称为推断\n原输入未明确命名
+@enduml

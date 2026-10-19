@@ -1,6 +1,6 @@
 ---
 name: plantuml-diagram-engine
-description: 将文字、代码、业务流程或本体模型转为 PlantUML，按语义选择 WBS、活动图、时序图、组件图或状态图，设计清晰统一的图形样式，并默认返回可直接打开的在线 PNG 图片 URL。适用于用户要求 PlantUML、图解、流程图、结构图、在线渲染图片链接或优化已有 .puml；不默认下载文件。
+description: 将文字、代码、业务流程或本体模型转为 PlantUML，按语义选择 WBS、活动图、时序图、组件图、状态图、类图、部署图、甘特图或思维导图，设计清晰统一的图形样式，并默认返回可直接打开的在线 PNG 图片 URL。适用于用户要求 PlantUML、图解、流程图、结构图、类图、架构部署图、排期甘特图、思维导图、在线渲染图片链接或优化已有 .puml；不默认下载文件。
 ---
 
 # PlantUML Diagram Engine v1.0
@@ -15,22 +15,39 @@ description: 将文字、代码、业务流程或本体模型转为 PlantUML，�
 
 ## 合并决策协议：不是机械拼接两个提示
 1. **语义重建**：抽取对象、属性、动作、条件、顺序、消息、状态与依赖；区分「明确事实 / 推断 / 缺口」。以最短路径推导图的真实阅读目的。
-2. **按目的选主图**：分类与任务拆解选 WBS；顺序、条件、回路选 Activity；参与者消息选 Sequence；系统依赖选 Component；状态转换选 State；对象类型和关系选 Class/Object。默认只出一张主图；用户明确需要多个视角才多图。
+2. **按目的选主图**：分类与任务拆解选 WBS；顺序、条件、回路选 Activity；参与者消息交互选 Sequence；系统逻辑依赖选 Component；硬件/网络/容器节点分布选 Deployment；单实体生命周期演进选 State；实体属性契约与关系选 Class；时间线/工期前后置依赖选 Gantt；发散概念与知识脑图选 MindMap（各类型详细约束与语法门禁参考 `registry/diagram_types.json`）。默认只出一张主图；用户明确需要多个视角才多图。
 3. **智能深度**：简单输入直接出图；只有复杂结构/术语歧义时启动本体建模；只有同口径互斥分类时做 MECE 检查；TRIZ/洞察仅在用户要求创新时启用。不把时间顺序或因果关系强塞进 MECE 树。
 4. **语义映射**：关键对象、关系、条件必须在源码中可追溯；图型不可表达的关系用说明补足，不新增虚构关联。已给 `.puml` 时执行最小差异修改。
 5. **输出源码**：编写一份完整的 UTF-8 `.puml`，确保 `@startuml`/`@enduml` 等匹配。不要把未经运行的代码称作“验证通过”。
 
-## 默认视觉方案：Editorial Light
-采用白底 `#FFFFFF`、标题深蓝 `#172554`、正文深灰 `#334155`、连线灰蓝 `#94A3B8`、中性底 `#F8FAFC`；主流程淡蓝 `#DBEAFE`、成功浅青 `#CCFBF1`、待确认浅黄 `#FEF3C7`、错误浅红 `#FEE2E2`。同级节点用同一视觉语法，颜色只在传达语义时变化。
+## 默认视觉方案：Ink & Signal (v7)（默认生图必须加载）
+所有生成的 PlantUML 图必须加载通用样式规范 `styles/style-ink-and-signal.puml`（通过 `!include styles/style-ink-and-signal.puml` 加载，或在单文件独立交付时完整内联注入）。`scripts/encode_url.py` 原生支持 `!include` 预处理内联，生成可直接在公网 PlantUML / Kroki 渲染的有效直链。
 
-- 先优化结构再优化装饰；优先减少文字拥挤、缩短节点和交叉线；必要时换图型，不得删除真实节点求整洁。
-- 字体使用现代无衬线中文字体；`Noto Sans CJK SC` 为候选，最终依服务端字体实际效果判断。相同层级的字重、字号、间距、圆角、边框要一致；至少保证中文与标签可读。
-- WBS 平衡左右主分支，但不要求完全对称；层级不超过读者可理解的粒度。Activity 保持主流程自上而下，分支标明「是 / 否」和退出条件；序列图按消息真实先后组织。
-- 优先使用官方文档确证的 `<style>`/`skinparam`；不同图型样式能力不同，不把 CSS 或 WBS 的参数直接套到 Activity。示例：`examples/01_wbs.puml` 与 `examples/02_activity.puml`。
+### 1. 设计语言与色彩规范
+- **设计基调**：暖纸底 `#FAF8F3`（深色 `#13111F`）+ 靛蓝墨色 `#1B1836`（深色 `#EEEAFB`）+ 信号黄 `#FFCD00`。无阴影（`shadowing false`）、发丝线边框（1.25px）、圆角统一（10px）。
+- **语义色只用于风险与状态**：
+  - 极低/安全：构造型 `<<ok>>` 或常量 `COLOR_RISK_OK_BG`（`#EBF0D6`，边框 `#5F7600`）
+  - 低风险：构造型 `<<low>>` 或常量 `COLOR_RISK_LOW_BG`（`#E3F2F3`，边框 `#2E7F85`）
+  - 中风险：构造型 `<<mid>>` 或常量 `COLOR_RISK_MID_BG`（`#FDEEDC`，边框 `#C25E00`）
+  - 高风险/错误：构造型 `<<high>>` 或常量 `COLOR_RISK_HIGH_BG`（`#F9E1E1`，边框 `#C82829`）
+
+### 2. 参数注入规范（在 !include 之前声明）
+- 深色主题：`!$THEME = "dark"`
+- 正交连线：`!$LINETYPE = "ortho"`（默认 `polyline`）
+- 状态图紧凑：`!$STATE_COMPACT = %true()`（写入 `hide empty description`；甘特图等非法类型默认关闭）
+- 字体覆盖：`!$FONT_BODY`（默认 `"Noto Sans SC"`）、`!$FONT_TITLE`（默认 `"Noto Serif SC"`）、`!$FONT_NOTE`（默认 `"LXGW WenKai Mono"`）
+
+### 3. 各图型排版与语法门禁
+- **树状图/脑图/WBS**：根节点实心深色底（`#211551`），一级节点浅底（`#F1EEE6`），叶子节点白底（`#FFFFFF`）。平衡左右分支，层级不过载。
+- **活动图**：主流程自上而下，分支标明「是 / 否」和退出条件，尽量采用显式 `if (...) then (...) else (...) endif`。
+- **时序图**：消息严格按真实先后组织，生命线与分组边框采用低饱和暖灰。
+- **甘特图**：必须使用专属定界符 `@startgantt`，前后置依赖必须使用撇号语法 `[Task2] starts at [Task1]'s end`。
+- **组件图**：必须显式声明组件（如 `component "Name" as alias`），严禁使用无声明的裸写方括号（如 `[A] --> [B]`），否则会被服务端按时序图误解析导致 HTTP 400。
+- **类图**：所有属性与方法必须独立成行，严禁单行分号压缩语法。
 - 视觉评分不是事实验收。若无法取得远程图像，只能声称样式规则已写入，不能声称视觉检查通过。
 
 ## URL 与网络规则
-- 默认用 `python scripts/encode_url.py <file.puml>` 离线生成可点击直链；无网络请求、无 PNG 下载。官方格式：raw DEFLATE + **PlantUML 专用 Base64 字符表**；Kroki：zlib + URL-safe Base64。这两种 token 不可混用。
+- 默认用 `python skills/plantuml-diagram-engine/scripts/encode_url.py <file.puml>`（或在对应目录执行 `python scripts/encode_url.py`）离线生成可点击直链；无网络请求、无 PNG 下载。官方格式：raw DEFLATE + **PlantUML 专用 Base64 字符表**；Kroki：zlib + URL-safe Base64。这两种 token 不可混用。
 - 不得对敏感源码输出可公开解码的 URL；若确有敏感材料，优先本地 PlantUML 渲染（且不泄露源码）；`--private` 会拒绝公共 URL 生成。
 - 仅在用户授权公共渲染与实际联网核验时调用 `--check-online --public-ok`；需要保存 PNG 时另外显式提供 `--download <path> --public-ok`。网络错误可尝试备用 Kroki；语法错误不可仅靠切换服务掩盖。
 - 服务端即便 HTTP 200、PNG 签名有效，仍可能是 **PlantUML 错误图**。检查 HTTP 错误头、格式、尺寸，并在能够读取图片时检查内容；无法检查时明说「视觉未验证」。
@@ -49,10 +66,16 @@ description: 将文字、代码、业务流程或本体模型转为 PlantUML，�
 
 用户明确请求源码/图型说明时补充相应内容。**用户只请求 URL 时，直接给 URL。**
 
-## 回归用例
-- Case A：把同一主题组织为四个工作包；预期 WBS，MECE 只施加在分类上，保证层级完整、没有伪造依赖。
-- Case B：把同一主题表达为顺序/判断/修复闭环；预期 Activity，有条件标签、退出条件、不把循环当作分类。
-- Case C：URL-only 不发起网络，也不写 PNG；明确 `--private` 必须拒绝；未授权的 `--check-online` / `--download` 必须失败。
-- Case D：校验 PlantUML 官方已知编码值、中文 round trip、Kroki 编码、HTTP 错误、PNG 伪响应、主服务失败回退及语法错误不回退。
+## 回归用例（全部 9 类图已验证支持）
+- Case 01 (WBS): 四个工作包组织，MECE 互斥分类，层级完整 (`examples/01_wbs.puml`)。
+- Case 02 (Activity): 顺序/判断/修复闭环，分支标明条件标签 (`examples/02_activity.puml`)。
+- Case 03 (Deployment): 节点集群、网络隔离区与通信端口协议 (`examples/03_deployment.puml`)。
+- Case 04 (Gantt): 专用定界符 `@startgantt`，任务工期与前后置依赖 (`examples/04_gantt.puml`)。
+- Case 05 (MindMap): 专用定界符 `@startmindmap`，放射状发散与双向分支 (`examples/05_mindmap.puml`)。
+- Case 06 (Sequence): 交易支付时序交互、参与者生命线与分支响应 (`examples/06_sequence.puml`)。
+- Case 07 (State): 订单全生命周期状态流转与守卫条件 (`examples/07_state.puml`)。
+- Case 08 (Component): 电商微服务解耦、构造型语义色与数据持久层 (`examples/08_component.puml`)。
+- Case 09 (Class): DDD 领域模型、字段方法独立成行与组合继承关联 (`examples/09_class.puml`)。
+- Case Security & Offline: 默认离线 URL 生成不发起网络；明确 `--private` 必须阻断公共直链；未授权的 `--check-online` / `--download` 必须失败；语法错误不盲目降级。
 
 参考文档：<https://plantuml.com/server> · <https://plantuml.com/text-encoding> · <https://plantuml.com/wbs-diagram> · <https://plantuml.com/activity-diagram-beta> · <https://docs.kroki.io/kroki/setup/usage>

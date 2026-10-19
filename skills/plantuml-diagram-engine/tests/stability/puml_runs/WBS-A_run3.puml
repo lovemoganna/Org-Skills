@@ -1,0 +1,22 @@
+@startuml
+' 时序输入不适合 WBS，改用 Activity 图（已标注推断）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  StartColor #2563EB
+  EndColor #172554
+}
+title 开发流程（顺序步骤）
+start
+:收集需求;
+:分析需求;
+:设计方案;
+:实现编码;
+:测试上线;
+stop
+@enduml

@@ -1,0 +1,32 @@
+@startwbs
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+<style>
+wbsDiagram {
+  FontColor #334155
+  LineColor #94A3B8
+  node {
+    BackgroundColor #F8FAFC
+    LineColor #CBD5E1
+    RoundCorner 12
+    Padding 10
+    Margin 6
+    MaximumWidth 200
+  }
+}
+</style>
+* [#172554] <color:white><b>在线 PNG 交付</b></color>
+**< [#DBEAFE] <b>01 输入</b>
+***< 明确目标与来源
+***< 提取对象和关系
+**< [#EDE9FE] <b>02 结构</b>
+***< 选择合适图类型
+***< 保留真实节点
+** [#CCFBF1] <b>03 渲染</b>
+*** 编码生成 URL
+*** 默认返回直链
+** [#FEF3C7] <b>04 验收</b>
+*** 检查结构完整性
+*** 标注未验证项目
+@endwbs

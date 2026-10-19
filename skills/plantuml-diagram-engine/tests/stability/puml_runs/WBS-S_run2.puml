@@ -1,0 +1,32 @@
+@startwbs
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+<style>
+wbsDiagram {
+  FontColor #334155
+  LineColor #94A3B8
+  node {
+    BackgroundColor #F8FAFC
+    LineColor #CBD5E1
+    RoundCorner 12
+    Padding 10
+    Margin 6
+    MaximumWidth 200
+  }
+}
+</style>
+* [#172554] <color:white><b>在线 PNG 交付任务</b></color>
+**< [#DBEAFE] <b>输入阶段</b>
+***< 接收原始材料
+***< 识别核心对象
+**< [#EDE9FE] <b>结构阶段</b>
+***< 语义建模
+***< 图类型匹配
+** [#CCFBF1] <b>渲染阶段</b>
+*** 生成 PlantUML 源码
+*** 离线编码为 URL
+** [#FEF3C7] <b>验收阶段</b>
+*** 静态语法检查
+*** 在线图片验证
+@endwbs

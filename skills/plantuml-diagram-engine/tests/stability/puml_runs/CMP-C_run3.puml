@@ -1,0 +1,23 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+[API Gateway] --> [UserService] : REST
+[API Gateway] --> [OrderService] : REST
+[API Gateway] --> [PaymentService] : REST
+[OrderService] --> [InventoryService] : gRPC
+[OrderService] --> [MessageQueue] : 异步
+[PaymentService] --> [PaymentGateway] : 第三方
+[UserService] --> [ServiceRegistry]
+[OrderService] --> [ServiceRegistry]
+[PaymentService] --> [ServiceRegistry]
+[InventoryService] --> [ServiceRegistry]
+[UserService] --> [UserDB]
+[OrderService] --> [OrderDB]
+@enduml

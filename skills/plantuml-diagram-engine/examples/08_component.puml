@@ -1,0 +1,36 @@
+@startuml
+' Case G: 组件图 — 电商核心系统逻辑架构与模块解耦
+!include ../styles/style-ink-and-signal.puml
+
+title 电商核心系统服务化逻辑组件架构
+
+package "接入与网关层 (Edge & Gateway)" {
+  component "API 网关服务 (Gateway)" as gw
+  component "统一认证与鉴权 (OAuth/JWT)" as auth <<low>>
+}
+
+package "业务领域核心服务层 (Core Domain Services)" {
+  component "订单核心服务 (Order Svc)" as order_svc
+  component "商品品类服务 (Catalog Svc)" as catalog_svc
+  component "库存履约服务 (Inventory Svc)" as inv_svc <<mid>>
+  component "交易结算服务 (Payment Svc)" as pay_svc <<high>>
+}
+
+package "基础支撑与数据层 (Infrastructure & Data)" {
+  database "订单主从数据库 (MySQL Cluster)" as order_db
+  database "商品缓存与搜索 (Redis/ES)" as search_cache
+  queue "交易事件消息总线 (Kafka)" as event_bus <<ok>>
+}
+
+gw --> auth : 身份校验与令牌解析
+gw --> order_svc : 转发交易请求
+gw --> catalog_svc : 转发商品查询
+
+order_svc --> inv_svc : RPC 锁定与核销库存
+order_svc --> pay_svc : RPC 发起支付流水
+order_svc --> event_bus : 发布订单状态变更事件
+
+catalog_svc --> search_cache : 读写缓存与检索
+order_svc --> order_db : 事务读写持久化
+
+@enduml

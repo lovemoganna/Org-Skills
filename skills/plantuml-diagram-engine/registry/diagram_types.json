@@ -1,0 +1,256 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PlantUML Diagram Type Registry",
+  "description": "Formal registry of supported PlantUML diagram types, syntax delimiters, selection rules, disambiguation guidelines, and validation gates.",
+  "selection_decision_tree": [
+    "1. 核心需求是工期排期与任务前后置依赖？-> 选 Gantt (@startgantt)",
+    "2. 核心需求是知识联想、发散头脑风暴、非严格分类概念展开？-> 选 MindMap (@startmindmap)",
+    "3. 核心需求是同口径互斥分解、自顶向下交付物拆解、MECE 工作包？-> 选 WBS (@startwbs)",
+    "4. 核心需求是多服务/多角色时序消息交互与 RPC 调用链？-> 选 Sequence (@startuml)",
+    "5. 核心需求是单一业务实体的生命周期演进与状态守卫？-> 选 State (@startuml)",
+    "6. 核心需求是操作执行顺序、业务流判断、回路与异常回修？-> 选 Activity (@startuml)",
+    "7. 核心需求是领域实体模型、字段属性、类型契约与类间继承组合？-> 选 Class (@startuml)",
+    "8. 核心需求是物理硬件/云宿主/网络拓扑隔离与通信端口？-> 选 Deployment (@startuml)",
+    "9. 核心需求是系统内部软件模块解耦、微服务接口与依赖拓扑？-> 选 Component (@startuml)"
+  ],
+  "diagram_types": {
+    "wbs": {
+      "name": "WBS (工作分解结构图)",
+      "delimiters": ["@startwbs", "@endwbs"],
+      "semantic_purpose": "分类与任务拆解、工作包组织、自顶向下结构化分解",
+      "selection_rules": [
+        "同口径互斥分类",
+        "层级任务分解",
+        "MECE 工作包定义",
+        "不要将时序步骤强塞入 WBS"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_mindmap": "WBS 具有严格的上下级工作包归属与 MECE 约束；MindMap 属于自由联想与放射状发散。",
+        "vs_activity": "WBS 节点表达名词性交付物或工作包；Activity 表达时间线上的动词性操作步骤与判断。"
+      },
+      "syntax_constraints": [
+        "根节点为 *",
+        "层级通过 ** / *** 表达",
+        "左右平衡通过 **< 和 ** 控制",
+        "节点内不要写复杂逻辑或箭头"
+      ],
+      "anti_patterns": [
+        "禁止在 WBS 中使用 --> 连线箭头",
+        "禁止将前后因果关系画成同级子分支",
+        "禁止使用非 @startwbs 的其它定界符"
+      ],
+      "status": "supported"
+    },
+    "activity": {
+      "name": "Activity (活动流程图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "执行顺序、条件分支、回路与重试控制、业务流程生命周期",
+      "selection_rules": [
+        "存在先后因果或顺序步骤",
+        "存在条件判断 (是/否)",
+        "存在有限次循环与重试",
+        "存在明确的开始与结束退出点"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_state": "Activity 节点必须是动词性操作动作（如'校验库存'、'发送通知'）；State 节点必须是名词/形容词性状态（如'已支付'、'待发货'）。",
+        "vs_sequence": "Activity 聚焦单流程内的控制逻辑与决策网；Sequence 聚焦跨多个不同实体间的时序通信。"
+      },
+      "syntax_constraints": [
+        "必须有 start 和至少一个 stop / end 退出",
+        "尽量采用对称的 if (...) then (...) else (...) endif 结构",
+        "循环使用 repeat ... repeat while (...) is (...) not (...)",
+        "每个分支必须标明条件标签"
+      ],
+      "anti_patterns": [
+        "禁止缺少分支条件标签直接分叉",
+        "禁止死循环无退出点",
+        "禁止在活动图中混入 class 或 state 关键字"
+      ],
+      "status": "supported"
+    },
+    "sequence": {
+      "name": "Sequence (时序图 / 序列图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "多参与者之间的消息传递、RPC 调用链、异步事件流、时序交互",
+      "selection_rules": [
+        "存在两个及以上明确系统角色/服务",
+        "关注消息调用的先后时间顺序与返回值",
+        "微服务调用链、接口协议交互"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_activity": "Sequence 强调消息跨越实体生命线的顺序交互；Activity 强调逻辑流转决策，实体边界次要。",
+        "vs_component": "Sequence 展示动态运行时调用；Component 展示静态软件模块与依赖结构。"
+      },
+      "syntax_constraints": [
+        "参与者必须预先定义 (participant / actor)",
+        "调用使用 ->，返回使用 -->",
+        "分支使用 alt ... else ... end",
+        "激活生命线使用 activate / deactivate"
+      ],
+      "anti_patterns": [
+        "禁止未声明参与者直接使用未知缩写连线",
+        "禁止在时序图内部嵌套流程图 start/stop 语法",
+        "禁止缺少返回响应箭头导致调用悬空"
+      ],
+      "status": "supported"
+    },
+    "state": {
+      "name": "State (状态机图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "单实体的生命周期、状态演进、事件驱动的状态转移与守卫条件",
+      "selection_rules": [
+        "关注同一实体的状态集合",
+        "状态转移必须由事件/动作触发",
+        "区分状态与业务动作（状态通常是形容词或被动态，如已支付、待审核）"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_activity": "State 节点为持久的停留状态，转移由事件触发；Activity 节点为瞬时的处理步骤，执行完毕自动流转。",
+        "vs_class": "State 描述单个实体随时间的动态状态变迁；Class 描述实体的静态属性与方法结构。"
+      },
+      "syntax_constraints": [
+        "初始状态 [*] --> 初态",
+        "状态转移使用 --> 并带冒号事件标签",
+        "终态 转移到 [*]",
+        "严禁将纯顺序流程步骤画成状态机"
+      ],
+      "anti_patterns": [
+        "禁止将动作当成状态（如把'扣减库存'作为状态节点）",
+        "禁止状态转移缺少触发事件标签",
+        "禁止孤立状态无法流转至终态"
+      ],
+      "status": "supported"
+    },
+    "component": {
+      "name": "Component (组件图 / 逻辑架构图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "软件逻辑模块、服务划分、接口提供与依赖消费关系",
+      "selection_rules": [
+        "系统内部逻辑划分与解耦",
+        "关注模块/服务间的 API 与依赖关系",
+        "不关注物理机、云节点等部署拓扑"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_deployment": "Component 表现的是'运行在什么之上的软件逻辑代码'；Deployment 表现的是'承载软件运行的物理/虚拟/容器基础设施'。",
+        "vs_sequence": "Component 是静态依赖连接；Sequence 是动态调用消息时序。"
+      },
+      "syntax_constraints": [
+        "组件定义必须使用显式 component 声明（如 component \"服务名\" as alias），严禁裸写纯方括号 [A] --> [B]，避免被服务端按 Sequence 误解析报 HTTP 400",
+        "依赖使用 --> 或 ..>",
+        "接口可以使用 () 或 interface 关键字",
+        "数据存储使用 database 容器，消息队列表现为 queue"
+      ],
+      "anti_patterns": [
+        "禁止裸写纯方括号 [A] --> [B] 触发类型推断歧义",
+        "禁止在组件图内写时序图激活生命线语法",
+        "禁止组件之间互相双向强依赖形成回路死锁"
+      ],
+      "status": "supported"
+    },
+    "class": {
+      "name": "Class (类图 / 领域模型图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "领域实体、数据模型、属性与方法契约、实体间继承与关联关系",
+      "selection_rules": [
+        "关注数据结构、字段、类型与方法",
+        "实体间的包含、继承、多对多/一对多基数关系",
+        "领域驱动设计 (DDD) 聚合与实体"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_state": "Class 展现的是实体在任意时刻的属性结构；State 展现的是实体状态随生命周期的变化。",
+        "vs_component": "Class 表现的是细粒度代码类/领域对象；Component 表现的是粗粒度微服务/系统模块。"
+      },
+      "syntax_constraints": [
+        "类定义必须使用 class ClassName { ... }",
+        "类体内的所有属性和方法必须独立成行",
+        "严禁在单行内用分号分隔字段（如 { id; name }），官方引擎会崩溃解析为时序图并报 HTTP 400",
+        "关系使用 -->、*-- (组合)、o-- (聚合)、<|-- (继承)"
+      ],
+      "anti_patterns": [
+        "绝对严禁单行分号压缩字段定义（如 class A { id: Long; name: String; } 会触发 HTTP 400）",
+        "禁止把流程流转箭头当作类关系连线",
+        "禁止忽略属性类型与方法可见性"
+      ],
+      "status": "supported"
+    },
+    "deployment": {
+      "name": "Deployment (部署拓扑图 / 物理架构图)",
+      "delimiters": ["@startuml", "@enduml"],
+      "semantic_purpose": "物理机、虚拟机、容器、集群、网络边界与计算/存储硬件部署拓扑",
+      "selection_rules": [
+        "关注系统在物理或云基础设施上的实际部署拓扑",
+        "关注网络隔离区 (DMZ、私有网段)、负载均衡与节点分布",
+        "区分逻辑组件（Component）与物理运行载体（Deployment）"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_component": "Deployment 必须包含宿主容器、机房、网络区域或云环境（node, cloud, frame）；Component 只体现软件组件本身。",
+        "vs_activity": "Deployment 是静态拓扑；Activity 是动态流程。"
+      },
+      "syntax_constraints": [
+        "物理基础设施载体使用 node / cloud / frame",
+        "部署包使用 artifact / file",
+        "存储使用 database / storage",
+        "节点连接使用 --> 并标明通信协议与端口 (如 HTTP 8080, TCP 5432)"
+      ],
+      "anti_patterns": [
+        "禁止缺少通信协议和端口标注的纯裸连线",
+        "禁止将纯软件逻辑接口当成物理节点嵌套",
+        "禁止破坏网络层级边界直接穿透隔离区"
+      ],
+      "status": "supported"
+    },
+    "gantt": {
+      "name": "Gantt (甘特图 / 项目排期图)",
+      "delimiters": ["@startgantt", "@endgantt"],
+      "semantic_purpose": "项目排期、工期评估、任务前后置依赖链、里程碑追踪",
+      "selection_rules": [
+        "输入包含明确的工期（如 5 days, 2 weeks）或起止日期",
+        "关注任务之间的依赖推进（Task B 必须在 Task A 完成后开始）",
+        "不关注微观代码或复杂系统通信，聚焦项目进度与交付节奏"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_activity": "Gantt 强调的是日历时间轴与工期长度；Activity 强调的是执行逻辑分支与回路，无绝对时间比例尺。",
+        "vs_wbs": "Gantt 包含任务依赖与时间排期；WBS 仅包含工作包层级分解，无前后置依赖与时间轴。"
+      },
+      "syntax_constraints": [
+        "以 @startgantt 和 @endgantt 包裹",
+        "任务使用 [任务名称] lasts X days",
+        "任务依赖关系使用 [Task B] starts at [Task A]'s end（注意英文所有格撇号）",
+        "里程碑使用 [Milestone] happens at [Task]'s end",
+        "中文排期可首行配置 language zh"
+      ],
+      "anti_patterns": [
+        "禁止使用 @startuml 包裹甘特图",
+        "禁止省略任务依赖中的所有格撇号（写成 [Task A] end 会语法报错）",
+        "禁止在甘特图内写入 UML 专用 skinparam（如 hide empty description 会报错）"
+      ],
+      "status": "supported"
+    },
+    "mindmap": {
+      "name": "MindMap (思维导图 / 放射状发散图)",
+      "delimiters": ["@startmindmap", "@endmindmap"],
+      "semantic_purpose": "头脑风暴、概念发散、多维发散思维、知识图谱脉络",
+      "selection_rules": [
+        "围绕单一中心概念向四周放射状展开",
+        "不强调强 MECE 层级约束，允许自由发散与关联",
+        "区分于 WBS 的严格树状层级：MindMap 是放射状、发散性的"
+      ],
+      "disambiguation_vs_adjacent": {
+        "vs_wbs": "MindMap 为放射状展开，支持左右两侧分支（left side），允许自由关联；WBS 为严格树状向下展开，强调 MECE。",
+        "vs_class": "MindMap 表达发散概念与思想；Class 表达面向对象的严格数据结构与契约。"
+      },
+      "syntax_constraints": [
+        "以 @startmindmap 和 @endmindmap 包裹",
+        "中心主题为 * 核心主题",
+        "一级分支为 ** 分支名称",
+        "子级分支逐层递增 * 号 (***, ****)",
+        "支持 left side 控制左右分支展开"
+      ],
+      "anti_patterns": [
+        "禁止使用 @startuml 包裹思维导图",
+        "禁止在思维导图内编写关联箭头连线",
+        "禁止跳跃层级定义（如从 * 直接跳到 ****）"
+      ],
+      "status": "supported"
+    }
+  }
+}

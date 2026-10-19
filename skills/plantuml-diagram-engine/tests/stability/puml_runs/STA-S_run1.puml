@@ -1,0 +1,17 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  StartColor #2563EB
+  EndColor #172554
+}
+[*] --> 关闭
+关闭 --> 开启 : turnOn
+开启 --> 关闭 : turnOff
+开启 --> [*]
+@enduml

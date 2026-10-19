@@ -1,0 +1,518 @@
+' ═══════════════════════════════════════════════════════════════
+' PlantUML Style · Ink & Signal  (v7)
+' 设计语言：暖纸底 + 靛蓝墨色 + 信号黄；无阴影、发丝线边框、语义色只用于风险
+' 用法：!include 本文件
+'   深色主题     !include 之前写  !$THEME = "dark"
+'   正交连线     !include 之前写  !$LINETYPE = "ortho"      （默认 polyline）
+'   状态图紧凑   !include 之前写  !$STATE_COMPACT = %true()  （会写入 hide empty description，
+'                                                             该指令在甘特图等类型下非法，故默认关闭）
+'   语义色       元素后加 <<low>> <<mid>> <<high>> <<ok>>；活动图可用 COLOR_RISK_HIGH_BG 等常量
+'   SVG 嵌入     输出 SVG 已去掉固定宽高，页面里请用 CSS：width:100%; height:auto
+'                （PlantUML 固定输出 preserveAspectRatio="none"，容器若同时限定宽高会被拉伸）
+' ═══════════════════════════════════════════════════════════════
+
+' ───────────────────────────────────────────────────────────────
+' 〇、可注入参数（?= 表示：外部未定义时才使用默认值）
+' ───────────────────────────────────────────────────────────────
+!$THEME      ?= "light"
+!$FONT_BODY  ?= "Noto Sans SC"
+!$FONT_TITLE ?= "Noto Serif SC"
+!$FONT_NOTE  ?= "LXGW WenKai Mono"
+!$LINETYPE   ?= "polyline"
+!$STATE_COMPACT ?= %false()
+
+' ───────────────────────────────────────────────────────────────
+' 一、设计令牌（Design Tokens）
+' ───────────────────────────────────────────────────────────────
+!if ($THEME == "dark")
+  !$BG        = "#13111F"
+  !$SURFACE   = "#1D1A33"
+  !$SURFACE2  = "#26224A"
+  !$GROUP     = "#171429"
+  !$BORDER    = "#3E3868"
+  !$INK       = "#EEEAFB"
+  !$MUTED     = "#9C97B8"
+  !$ARROW     = "#A8A2DA"
+  !$ACCENT    = "#8E84F0"
+  !$SIGNAL    = "#FFCD00"
+  !$ON_ACCENT = "#13111F"
+  !$NOTE_BG   = "#2C2710"
+  !$NOTE_LINE = "#B8920A"
+  !$NOTE_INK  = "#FFE58A"
+  !$LOW_BG    = "#12302F"
+  !$LOW_LINE  = "#4FB5BB"
+  !$MID_BG    = "#3A2410"
+  !$MID_LINE  = "#F5871F"
+  !$HIGH_BG   = "#3C1618"
+  !$HIGH_LINE = "#EF5B5C"
+  !$OK_BG     = "#232C0B"
+  !$OK_LINE   = "#9DBB1A"
+!else
+  !$BG        = "#FAF8F3"
+  !$SURFACE   = "#FFFFFF"
+  !$SURFACE2  = "#F1EEE6"
+  !$GROUP     = "#F4F1E9"
+  !$BORDER    = "#CFC9B8"
+  !$INK       = "#1B1836"
+  !$MUTED     = "#6B667E"
+  !$ARROW     = "#4B4570"
+  !$ACCENT    = "#211551"
+  !$SIGNAL    = "#FFCD00"
+  !$ON_ACCENT = "#FFFFFF"
+  !$NOTE_BG   = "#FFF6D0"
+  !$NOTE_LINE = "#E3B800"
+  !$NOTE_INK  = "#5A4A00"
+  !$LOW_BG    = "#E3F2F3"
+  !$LOW_LINE  = "#2E7F85"
+  !$MID_BG    = "#FDEEDC"
+  !$MID_LINE  = "#C25E00"
+  !$HIGH_BG   = "#F9E1E1"
+  !$HIGH_LINE = "#C82829"
+  !$OK_BG     = "#EBF0D6"
+  !$OK_LINE   = "#5F7600"
+!endif
+
+' ───────────────────────────────────────────────────────────────
+' 二、兼容常量（沿用原有命名，旧图无需改动）
+' ───────────────────────────────────────────────────────────────
+!define COLOR_DEFAULT_BACKGROUND $SURFACE
+!define COLOR_ITP_DARK_BLUE    #211551
+!define COLOR_ITP_YELLOW       #FFCD00
+!define COLOR_ITP_Red          #c82829
+!define COLOR_ITP_Orange       #f5871f
+!define COLOR_ITP_Green        #718c00
+!define COLOR_ITP_Aqua         #3e999f
+!define COLOR_ITP_Purple       #8959a8
+!define COLOR_ITP_BLACK #000000
+!define COLOR_ITP_WHITE #ffffff
+!define CurrentLine  #efefef
+!define Selection    #d6d6d6
+!define Foregound    #4d4d4c
+!define Comment      #8e908c
+!define COLOR_DEFAULT_TEXT $INK
+!define FONT_FIRA_MONO $FONT_BODY
+!define FONT_FIRA_SANS $FONT_BODY
+!define TITLE_FONT $FONT_TITLE
+!define NOTE_COMMENT_FONT $FONT_NOTE
+
+' ───────────────────────────────────────────────────────────────
+' 三、全局基础
+' ───────────────────────────────────────────────────────────────
+skinparam defaultFontName $FONT_BODY
+skinparam defaultFontSize 13
+skinparam defaultFontStyle plain
+skinparam defaultFontColor $INK
+skinparam backgroundColor $BG
+skinparam roundCorner 10
+skinparam shadowing false
+skinparam dpi 160
+skinparam svgDimensionStyle false
+skinparam minClassWidth 90
+skinparam nodesep 44
+skinparam ranksep 56
+skinparam padding 6
+skinparam linetype $LINETYPE
+skinparam componentStyle rectangle
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam wrapWidth 220
+skinparam maxMessageSize 220
+!pragma svginteractive true
+skinparam pathHoverColor $MID_LINE
+skinparam packageTitleAlignment left
+
+' 3.1 标题 / 表头 / 表尾 / 图例
+skinparam title {
+  FontName $FONT_TITLE
+  FontSize 26
+  FontStyle bold
+  FontColor $INK
+  HorizontalAlignment left
+  BorderThickness 0
+}
+skinparam header {
+  HorizontalAlignment left
+  FontSize 11
+  FontColor $MUTED
+}
+skinparam footer {
+  HorizontalAlignment right
+  FontSize 10
+  FontColor $MUTED
+}
+skinparam legend {
+  BackgroundColor $SURFACE
+  BorderColor $BORDER
+  FontSize 11
+  FontColor $INK
+}
+
+' 3.2 笔记（便签黄）
+skinparam note {
+  BackgroundColor $NOTE_BG
+  BorderColor $NOTE_LINE
+  BorderThickness 1
+  FontName $FONT_NOTE
+  FontSize 11
+  FontColor $NOTE_INK
+}
+
+' 3.3 箭头
+skinparam arrow {
+  Color $ARROW
+  Thickness 1.25
+  FontColor $INK
+  FontSize 12
+}
+
+' 3.4 实体 / 通用容器
+skinparam entity {
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  BorderThickness 1.25
+}
+skinparam package {
+  BackgroundColor $GROUP
+  BorderColor $BORDER
+  BorderThickness 1
+  FontColor $INK
+  FontStyle bold
+  FontSize 12
+}
+
+' ───────────────────────────────────────────────────────────────
+' 四、各类图
+' ───────────────────────────────────────────────────────────────
+' 4.1 活动图
+skinparam activity {
+  StartColor $SIGNAL
+  EndColor $INK
+  BarColor $ACCENT
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  BorderThickness 1.25
+  ArrowColor $ARROW
+  FontColor $INK
+}
+skinparam activityEnd {
+  BackgroundColor $OK_BG
+  BorderColor $OK_LINE
+}
+skinparam activityDecision {
+  BackgroundColor $SURFACE2
+  BorderColor $ACCENT
+}
+skinparam activityDiamond {
+  BackgroundColor $SURFACE2
+  BorderColor $ACCENT
+  FontSize 12
+  FontColor $INK
+}
+skinparam partition {
+  BackgroundColor $GROUP
+  BorderColor $BORDER
+  FontColor $INK
+}
+skinparam swimlane {
+  BorderColor $BORDER
+  BorderThickness 1
+  TitleBackgroundColor $SURFACE2
+  TitleFontColor $INK
+}
+
+' 4.2 类图
+skinparam class {
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  BorderThickness 1.25
+  ArrowColor $ARROW
+  HeaderBackgroundColor $SURFACE2
+  AttributeFontColor $INK
+  AttributeIconSize 9
+  FontStyle bold
+}
+skinparam circledCharacterFontColor $INK
+skinparam circledCharacterFontSize 11
+skinparam circledCharacterRadius 9
+skinparam stereotypeCBackgroundColor $SURFACE2
+skinparam stereotypeCBorderColor $ACCENT
+skinparam stereotypeIBackgroundColor $LOW_BG
+skinparam stereotypeIBorderColor $LOW_LINE
+skinparam stereotypeEBackgroundColor $MID_BG
+skinparam stereotypeEBorderColor $MID_LINE
+skinparam stereotypeABackgroundColor $NOTE_BG
+skinparam stereotypeABorderColor $NOTE_LINE
+
+' 4.3 用例图
+skinparam usecase {
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  BorderThickness 1.25
+  ArrowColor $ARROW
+}
+skinparam actor {
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  FontColor $INK
+}
+
+' 4.4 状态图
+skinparam state {
+  BackgroundColor $SURFACE
+  BorderColor $ACCENT
+  BorderThickness 1.25
+  StartColor $SIGNAL
+  EndColor $INK
+  ArrowColor $ARROW
+}
+
+!if ($STATE_COMPACT == %true())
+  hide empty description
+!endif
+
+' 4.5 时序图
+skinparam sequence {
+  ArrowColor $ARROW
+  ArrowThickness 1.25
+  ArrowFontColor $INK
+  ActorBackgroundColor $SURFACE
+  ActorBorderColor $ACCENT
+  ParticipantBackgroundColor $SURFACE
+  ParticipantBorderColor $ACCENT
+  ParticipantBorderThickness 1.25
+  ParticipantFontColor $INK
+  ParticipantPadding 24
+  LifeLineBorderColor $BORDER
+  LifeLineBackgroundColor $SURFACE2
+  GroupBorderColor $BORDER
+  GroupBackgroundColor $ACCENT
+  GroupBodyBackgroundColor transparent
+  GroupHeaderFontColor $ON_ACCENT
+  GroupFontColor $INK
+  DividerBorderColor $BORDER
+  DividerBackgroundColor $SURFACE2
+  ReferenceBackgroundColor $SURFACE2
+  ReferenceBorderColor $BORDER
+  BoxBorderColor $BORDER
+  BoxBackgroundColor $GROUP
+  MessageAlignment direction
+}
+
+' ───────────────────────────────────────────────────────────────
+' 五、组件图及其余元素：通用宏
+' ───────────────────────────────────────────────────────────────
+!procedure $common_style($name, $bg=$SURFACE, $fontsize=12, $fontcolor=$INK, $line=$ACCENT)
+  skinparam $name {
+    BackgroundColor $bg
+    BorderColor $line
+    BorderThickness 1.25
+    ArrowColor $ARROW
+    FontSize $fontsize
+    FontColor $fontcolor
+  }
+!endprocedure
+
+!$leaf = %splitstr("actor~agent~artifact~boundary~card~circle~collections~component~control~database~entity~file~hexagon~interface~label~queue~stack~storage~usecase~cloud~node", "~")
+!foreach $item in $leaf
+  %invoke_procedure("$common_style", $item)
+!endfor
+
+' 容器类元素：低对比分组面
+!$groups = %splitstr("folder~frame~package~rectangle", "~")
+!foreach $item in $groups
+  %invoke_procedure("$common_style", $item, $GROUP, 12, $INK, $BORDER)
+!endfor
+
+' ───────────────────────────────────────────────────────────────
+' 六、语义构造型：<<low>> <<mid>> <<high>> <<ok>>
+' ───────────────────────────────────────────────────────────────
+!define COLOR_RISK_LOW_BG    $LOW_BG
+!define COLOR_RISK_LOW_LINE  $LOW_LINE
+!define COLOR_RISK_MID_BG    $MID_BG
+!define COLOR_RISK_MID_LINE  $MID_LINE
+!define COLOR_RISK_HIGH_BG   $HIGH_BG
+!define COLOR_RISK_HIGH_LINE $HIGH_LINE
+!define COLOR_RISK_OK_BG     $OK_BG
+!define COLOR_RISK_OK_LINE   $OK_LINE
+
+!procedure $semantic($name)
+  skinparam $name<<low>> {
+    BackgroundColor $LOW_BG
+    BorderColor $LOW_LINE
+  }
+  skinparam $name<<mid>> {
+    BackgroundColor $MID_BG
+    BorderColor $MID_LINE
+  }
+  skinparam $name<<high>> {
+    BackgroundColor $HIGH_BG
+    BorderColor $HIGH_LINE
+  }
+  skinparam $name<<ok>> {
+    BackgroundColor $OK_BG
+    BorderColor $OK_LINE
+  }
+!endprocedure
+
+!$sem_targets = %splitstr("rectangle~class~component~card~usecase~state~node~cloud~database~queue~entity~interface~hexagon~agent~artifact~file~folder~frame~storage~stack~label~collections~boundary~control~package", "~")
+!foreach $item in $sem_targets
+  %invoke_procedure("$semantic", $item)
+!endfor
+skinparam stereotypeFontColor $MUTED
+
+' ───────────────────────────────────────────────────────────────
+' 七、style 精修（skinparam 无法表达的部分）
+' ───────────────────────────────────────────────────────────────
+<style>
+document {
+  title {
+    FontName $FONT_TITLE
+    FontSize 26
+    FontStyle bold
+    FontColor $INK
+    Margin 4 0 18 0
+  }
+  header {
+    HorizontalAlignment left
+    FontSize 11
+    FontColor $MUTED
+  }
+  footer {
+    HorizontalAlignment right
+    FontSize 10
+    FontColor $MUTED
+  }
+}
+document {
+  BackgroundColor $BG
+}
+rectangle {
+  HorizontalAlignment center
+}
+
+' 思维导图 / WBS：根节点实心，一级浅底，叶子白底
+mindmapDiagram {
+  node {
+    BackgroundColor $SURFACE
+    LineColor $ACCENT
+    LineThickness 1.25
+    FontColor $INK
+    RoundCorner 12
+    Padding 8
+    Margin 6
+  }
+  rootNode {
+    BackgroundColor $ACCENT
+    LineColor $ACCENT
+    FontColor $ON_ACCENT
+    FontStyle bold
+    FontSize 15
+  }
+  :depth(1) {
+    BackgroundColor $SURFACE2
+    FontStyle bold
+  }
+  arrow {
+    LineColor $ARROW
+    LineThickness 1.25
+  }
+}
+wbsDiagram {
+  node {
+    BackgroundColor $SURFACE
+    LineColor $ACCENT
+    LineThickness 1.25
+    FontColor $INK
+    RoundCorner 10
+    Padding 8
+  }
+  rootNode {
+    BackgroundColor $ACCENT
+    LineColor $ACCENT
+    FontColor $ON_ACCENT
+    FontStyle bold
+  }
+  :depth(1) {
+    BackgroundColor $SURFACE2
+    FontStyle bold
+  }
+  arrow {
+    LineColor $ARROW
+    LineThickness 1.25
+  }
+}
+
+' 甘特图
+ganttDiagram {
+  FontSize 12
+  FontColor $INK
+  task {
+    BackgroundColor $LOW_BG
+    LineColor $LOW_LINE
+    LineThickness 1.25
+    FontColor $INK
+    RoundCorner 6
+  }
+  milestone {
+    BackgroundColor $SIGNAL
+    LineColor $INK
+    LineThickness 1.25
+  }
+  timeline {
+    BackgroundColor $SURFACE2
+    FontSize 11
+    FontColor $MUTED
+    LineColor $BORDER
+  }
+  separator {
+    LineColor $BORDER
+    FontColor $MUTED
+  }
+  note {
+    BackgroundColor $NOTE_BG
+    LineColor $NOTE_LINE
+    FontColor $NOTE_INK
+  }
+  arrow {
+    LineColor $ARROW
+  }
+}
+
+' JSON / YAML
+jsonDiagram {
+  node {
+    BackgroundColor $SURFACE
+    LineColor $ACCENT
+    LineThickness 1.25
+    FontColor $INK
+    RoundCorner 6
+    Padding 4
+  }
+  highlight {
+    BackgroundColor $NOTE_BG
+    FontColor $NOTE_INK
+    FontStyle bold
+  }
+  arrow {
+    LineColor $ARROW
+  }
+}
+yamlDiagram {
+  node {
+    BackgroundColor $SURFACE
+    LineColor $ACCENT
+    LineThickness 1.25
+    FontColor $INK
+    RoundCorner 6
+  }
+  highlight {
+    BackgroundColor $NOTE_BG
+    FontColor $NOTE_INK
+    FontStyle bold
+  }
+  arrow {
+    LineColor $ARROW
+  }
+}
+</style>

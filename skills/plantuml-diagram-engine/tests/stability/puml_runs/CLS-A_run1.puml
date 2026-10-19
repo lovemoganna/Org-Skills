@@ -1,0 +1,19 @@
+@startuml
+' PRIVACY GATE TRIGGERED: source contains sensitive markers
+' 真实 UID、密码哈希、API Key、数据库主机不得编码进公共 URL
+' 以下为脱敏后的结构示意（不含原始敏感值）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam class {
+  BackgroundColor #FEE2E2
+  BorderColor #FCA5A5
+  FontColor #334155
+}
+note as N
+  <b>隐私门禁已触发</b>
+  输入包含：UID、密码哈希、API Key、内部主机
+  已拒绝生成公共 PNG URL
+  请先脱敏或使用本地渲染
+end note
+@enduml

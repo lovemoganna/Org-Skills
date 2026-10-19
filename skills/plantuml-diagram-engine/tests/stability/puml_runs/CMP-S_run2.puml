@@ -1,0 +1,18 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+package "Web 应用" {
+  [前端（React）] as FE
+  [后端（Node.js）] as BE
+  [数据库（PostgreSQL）] as DB
+}
+FE --> BE : API 调用
+BE --> DB : 数据访问
+@enduml

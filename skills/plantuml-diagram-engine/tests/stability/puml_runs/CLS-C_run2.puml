@@ -1,0 +1,51 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+class User {
+  id
+  name
+  email
+}
+class Product {
+  id
+  name
+  price
+  stock
+}
+class Order {
+  id
+  status
+  createdAt
+}
+class OrderItem {
+  quantity
+  unitPrice
+}
+class Payment {
+  id
+  amount
+  method
+  status
+}
+class Cart {
+  id
+}
+class CartItem {
+  quantity
+}
+
+User --> Order : "1..* owns"
+User --> Cart : "1 has"
+Order --> OrderItem : "1..* contains"
+OrderItem --> Product : "* ref"
+Order --> Payment : "1 has"
+Cart --> CartItem : "* has"
+CartItem --> Product : "* ref"
+@enduml

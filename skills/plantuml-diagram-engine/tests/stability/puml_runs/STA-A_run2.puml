@@ -1,0 +1,20 @@
+@startuml
+' 时序日程 → Activity 图（而非状态图）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  StartColor #2563EB
+  EndColor #172554
+}
+start
+:早上起床;
+:洗漱准备;
+:吃早餐;
+:出发上班;
+stop
+@enduml

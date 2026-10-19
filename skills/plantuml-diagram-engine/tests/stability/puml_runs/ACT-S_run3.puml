@@ -1,0 +1,25 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  DiamondBackgroundColor #DBEAFE
+  StartColor #2563EB
+  EndColor #172554
+  RoundCorner 12
+}
+title 用户登录
+start
+:输入用户名和密码;
+if (认证成功？) then (是)
+  #CCFBF1:跳转系统首页;
+  stop
+else (否)
+  #FEE2E2:返回错误，提示重试;
+  stop
+endif
+@enduml

@@ -1,0 +1,27 @@
+@startwbs
+' 输入是分类，改选 WBS
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+<style>
+wbsDiagram {
+  FontColor #334155
+  LineColor #94A3B8
+  node {
+    BackgroundColor #F8FAFC
+    LineColor #CBD5E1
+    RoundCorner 10
+    Padding 10
+    Margin 6
+    MaximumWidth 180
+  }
+}
+</style>
+* [#172554] <color:white><b>水果种类</b></color>
+**< [#DBEAFE] <b>热带水果</b>
+***< 芒果
+***< 木瓜
+** [#CCFBF1] <b>温带水果</b>
+*** 苹果
+*** 梨
+@endwbs

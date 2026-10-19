@@ -1,0 +1,23 @@
+@startmindmap
+!include ../styles/style-ink-and-signal.puml
+
+* 研发工程效能与质量体系
+** 交付速度 (Velocity)
+*** CI/CD 持续集成部署
+*** 容器化环境秒级交付
+*** 研发自动化工具链
+** 交付质量 (Quality)
+*** 单元测试与变异测试
+*** 接口自动化测试
+*** 灰度发布与自动化回滚
+left side
+** 可观测性 (Observability)
+*** 结构化分布式调用链跟踪
+*** 实时日志采集与告警
+*** 核心业务指标大盘
+** 架构演进 (Evolution)
+*** 领域驱动设计 (DDD) 边界解耦
+*** 异步事件驱动架构 (EDA)
+*** 数据契约与架构治理
+
+@endmindmap

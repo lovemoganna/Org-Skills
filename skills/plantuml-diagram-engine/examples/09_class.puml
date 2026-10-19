@@ -1,0 +1,57 @@
+@startuml
+' Case H: 类图 — 领域驱动核心实体与契约模型
+!include ../styles/style-ink-and-signal.puml
+
+title 订单与商品领域驱动核心模型 (DDD Domain Model)
+
+enum OrderStatus {
+  CREATED
+  PAID
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+class Customer {
+  - customerId: String
+  - username: String
+  - email: String
+  - level: String
+  + getDeliveryAddresses(): List<String>
+}
+
+class Product {
+  - skuCode: String
+  - title: String
+  - price: BigDecimal
+  - stockQuantity: int
+  + isAvailable(qty: int): boolean
+  + deductStock(qty: int): void
+}
+
+class OrderItem {
+  - itemId: String
+  - skuCode: String
+  - unitPrice: BigDecimal
+  - quantity: int
+  - subTotal: BigDecimal
+  + calculateSubTotal(): BigDecimal
+}
+
+class Order {
+  - orderId: String
+  - customerId: String
+  - totalAmount: BigDecimal
+  - status: OrderStatus
+  - createdAt: LocalDateTime
+  + calculateTotal(): BigDecimal
+  + markPaid(): void
+  + cancel(reason: String): void
+}
+
+Order "1" *-- "1..*" OrderItem : 包含明细 (Composition)
+OrderItem --> "1" Product : 关联货品
+Order --> "1" Customer : 归属买家
+Order ..> OrderStatus : 状态引用
+
+@enduml

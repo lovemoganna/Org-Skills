@@ -1,20 +1,6 @@
 @startuml
 ' Case B: 顺序、条件与有限次回修（继承专家 v0.1）
-skinparam backgroundColor #FFFFFF
-skinparam shadowing false
-skinparam defaultFontName "Noto Sans CJK SC"
-skinparam dpi 150
-skinparam activity {
-  BackgroundColor #F8FAFC
-  BorderColor #CBD5E1
-  FontColor #334155
-  ArrowColor #94A3B8
-  DiamondBackgroundColor #DBEAFE
-  DiamondBorderColor #93C5FD
-  StartColor #2563EB
-  EndColor #172554
-  RoundCorner 12
-}
+!include ../styles/style-ink-and-signal.puml
 title PlantUML 在线 PNG 交付流程
 start
 :接收需求、来源与边界;
