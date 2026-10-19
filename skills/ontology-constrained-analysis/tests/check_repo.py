@@ -143,5 +143,73 @@ class SkillIntegrityTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
+
+class ModelEvalHarnessRegression(unittest.TestCase):
+    """Skill-creator style harness checks, not model-behavior pass claims."""
+
+    @staticmethod
+    def _runner():
+        import importlib.util
+        path = ROOT / "scripts" / "run_behavior_evals.py"
+        spec = importlib.util.spec_from_file_location("ontology_behavior_evals", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_runtime_cases_load_runtime_reference(self):
+        runner = self._runner()
+        for ident in (
+            "runtime-contract-hard-boundary",
+            "blocked-source-still-deliver-report",
+            "source-byte-gate-not-metadata",
+            "url-bytes-staging-not-new-source",
+            "fixed-remote-function-no-staging",
+            "reusable-runtime-no-olist-hardcoding",
+        ):
+            with self.subTest(ident=ident):
+                self.assertIn("runtime.md", runner.case_refs(ident))
+
+    def test_real_model_call_receipt_preserves_usage_and_elapsed_time(self):
+        runner = self._runner()
+        from types import SimpleNamespace
+        class Responses:
+            def create(self, **kwargs):
+                return SimpleNamespace(
+                    output_text="stub-only-not-a-model-evaluation",
+                    usage=SimpleNamespace(input_tokens=12, output_tokens=9, total_tokens=21),
+                )
+        client = SimpleNamespace(responses=Responses())
+        record = {}
+        text = runner.openai_call(client, "stub-model", "instructions", "prompt", recorder=record)
+        self.assertEqual(text, "stub-only-not-a-model-evaluation")
+        self.assertEqual(record["usage"]["input_tokens"], 12)
+        self.assertEqual(record["usage"]["output_tokens"], 9)
+        self.assertEqual(record["usage"]["total_tokens"], 21)
+        self.assertGreaterEqual(record["elapsed_seconds"], 0)
+
+    def test_bounded_plan_and_invalid_inputs(self):
+        import json
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "plan.json"
+            cmd = [sys.executable, str(ROOT / "scripts" / "run_behavior_evals.py")]
+            ok = subprocess.run(
+                cmd + ["--ids", "runtime-contract-hard-boundary,ambiguous-schema",
+                       "--repeat", "2", "--output", str(target)],
+                capture_output=True, text=True, check=False
+            )
+            self.assertEqual(ok.returncode, 0, ok.stdout + ok.stderr)
+            saved = json.loads(target.read_text(encoding="utf-8"))
+            self.assertEqual(saved["status"]["mode"], "OFFLINE_PLAN_ONLY")
+            self.assertEqual(saved["status"]["cases"], 2)
+            self.assertEqual(saved["status"]["paired_requests"], 8)
+            self.assertEqual(saved["status"]["executed_subject_requests"], 0)
+            self.assertEqual(len(saved["plan"]), 4)
+            self.assertTrue(all("expected_output" not in p for p in saved["plan"]))
+            for flags in (["--ids", "not-a-real-case"], ["--repeat", "0"]):
+                bad = subprocess.run(cmd + flags + ["--output", str(target)],
+                                     capture_output=True, text=True, check=False)
+                self.assertNotEqual(bad.returncode, 0, flags)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
