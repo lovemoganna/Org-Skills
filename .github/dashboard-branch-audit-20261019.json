@@ -1,0 +1,24 @@
+{
+  "scope": "READ_ONLY_DASHBOARD_BRANCH_AUDIT",
+  "repo": "lovemoganna/Org-Skills",
+  "main": "80c90b9eff4df12594709308b98d7c52e3123890",
+  "ops_before": "ed89c09cd20b2654a2ede40184346af532093dc0",
+  "targets": {
+    "dataset-dashboard-builder-v19-business-surface": "866c983e3349223012125e10281f0319e17136d2",
+    "dataset-dashboard-builder-v20-analysis-models": "2909b704679a0bb495d766b7fe589c8b4021b28b",
+    "feat/dashboard-decision-diagnostics-v16": "b11e8a13c8bd1016030415e00bac42386dec2778",
+    "feat/dashboard-insight-hierarchy-v15": "adbe9b2aebd52d470a1567ec94c4f33ee6e40245",
+    "feat/dataset-dashboard-analysis-spec": "8245fdfc8d64d3aab4689ec59b17f1d973a2ce8d",
+    "feat/dataset-dashboard-builder-realdata": "a6bb96037d41c62e0117f9886b77b531091646fc",
+    "feat/dataset-dashboard-domain-intelligence": "e3b0a1a7582c19a1bdfa7e8d399eca17a3c60ae6",
+    "feat/dataset-dashboard-v12-funds-scale-vela": "2e15f5ea4c4be661e99666ca6998643daac10c1f",
+    "feat/dataset-dashboard-v13-redundancy-gate": "ceca8f4321d99ccbe6b0b247d38543de01f778b9",
+    "fix/dataset-dashboard-context-drill": "4463fb54376692ac9f98bcba67ca3d6ee27d5bcc",
+    "fix/dataset-dashboard-depth-visuals": "95e1e880dede82fd05eec4febefb3b10a6ff87c8",
+    "fix/dataset-dashboard-explicit-scope-gate": "c6e75a3d496defeb90b9853420fd9c1eb395818a",
+    "fix/dataset-dashboard-investigation-loop": "a9559cf7032bff65788592b76e135c2b099667de",
+    "fix/dataset-dashboard-priority-synthesis": "b1cf769c2c8f7ec40de772d03d760b38d26d31fe",
+    "fix/dataset-dashboard-quality-framework": "e69de230e75141cc29be93b3d01391453e600202",
+    "fix/dataset-dashboard-source-authority": "edcd2e565bea70a4cbb813ff4b484803fb4a66db"
+  }
+}
