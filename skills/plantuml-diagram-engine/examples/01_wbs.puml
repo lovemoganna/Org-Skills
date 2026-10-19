@@ -1,0 +1,42 @@
+@startwbs
+' Case A: 工作包层级（继承本体论 + MECE）
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam shadowing false
+<style>
+wbsDiagram {
+  FontColor #334155
+  LineColor #94A3B8
+  node {
+    BackgroundColor #F8FAFC
+    LineColor #CBD5E1
+    LineThickness 1
+    RoundCorner 12
+    Padding 12
+    Margin 6
+    MaximumWidth 220
+  }
+  arrow {
+    LineColor #94A3B8
+    LineThickness 1.5
+  }
+}
+</style>
+* [#172554] <color:white><b>PlantUML 在线 PNG 交付</b></color>
+**< [#DBEAFE] <b>01 输入与关系</b>
+***< 明确目标与来源内容
+***< 提取对象、属性和关系
+***< 标记证据缺口与约束
+**< [#EDE9FE] <b>02 结构表达</b>
+***< 根据任务选择图类型
+***< 分类任务按需遵循 MECE
+***< 保留真实节点与联系
+** [#CCFBF1] <b>03 在线交付</b>
+*** 输出 UTF-8 PlantUML 源码
+*** 按官方规则生成图片 URL
+*** 默认返回直链，不下载
+** [#FEF3C7] <b>04 验证与修复</b>
+*** 检查语义与结构完整性
+*** 联网可用时检查真实图片
+*** 未验证的项目明确说明
+@endwbs
