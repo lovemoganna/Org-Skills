@@ -1,68 +1,135 @@
-name: One-time Org-Skills branch backup (read-only)
+name: One-time Org-Skills guarded branch cleanup
 on:
   push:
     branches:
       - ops/branch-backup-20261019
 permissions:
-  contents: read
+  contents: write
+  actions: read
 jobs:
-  archive:
+  remove-verified-ancestors:
     if: github.repository == 'lovemoganna/Org-Skills'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout with full history
+      - name: Checkout with complete history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Create and independently verify complete Git bundle
+          persist-credentials: true
+      - name: Restore Git Bundle from successful backup run
+        uses: actions/download-artifact@v4
+        with:
+          name: org-skills-branch-precleanup-bundle
+          run-id: 39212036945
+          github-token: ${{ github.token }}
+          path: branch-backup
+      - name: Verify backup, verify refs and delete only pinned ancestors
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
           python3 - <<'PY'
-          import hashlib, json, pathlib, subprocess
+          import hashlib, json, pathlib, subprocess, sys
           root = pathlib.Path.cwd()
-          data = json.loads((root/'.github/branch-backup-20261019.json').read_text())
-          assert data['phase'] == 'BACKUP_ONLY_NO_DELETION'
-          def output(*a):
-              return subprocess.check_output(a, text=True).strip()
-          remote = {}
-          for line in output('git','ls-remote','--heads','origin').splitlines():
-              sha, ref = line.split()
-              remote[ref.removeprefix('refs/heads/')] = sha
-          tracking = {}
-          for line in output('git','for-each-ref','--format=%(objectname) %(refname)','refs/remotes/origin').splitlines():
-              sha, ref = line.split()
-              if ref == 'refs/remotes/origin/HEAD':
-                  continue
-              tracking[ref.removeprefix('refs/remotes/origin/')] = sha
-          assert remote == tracking, 'REMOTE_TRACKING_REF_MISMATCH'
-          assert remote['main'] == data['created_from_main'], 'MAIN_MOVED_REAUDIT_REQUIRED'
-          for name, expected in data['targets'].items():
-              assert remote.get(name) == expected, 'TARGET_CHANGED_OR_MISSING:' + name
-              subprocess.run(['git','merge-base','--is-ancestor',expected,remote['main']],check=True)
           archive = root/'branch-backup'
-          archive.mkdir(exist_ok=True)
-          (archive/'precleanup-refs.tsv').write_text(''.join(f'{sha}\t{name}\n' for name, sha in sorted(remote.items())))
-          (archive/'manifest.json').write_text(json.dumps(data,indent=2)+'\n')
-          subprocess.run(['git','bundle','create',str(archive/'all-refs.bundle'),'--all'],check=True)
-          subprocess.run(['git','init','--bare',str(archive/'empty-check.git')],check=True,stdout=subprocess.DEVNULL)
-          # Verify against an EMPTY repository: no missing prerequisites allowed.
-          subprocess.run(['git','-C',str(archive/'empty-check.git'),'bundle','verify',str(archive/'all-refs.bundle')],check=True)
-          refs = output('git','bundle','list-heads',str(archive/'all-refs.bundle'))
-          for name, sha in data['targets'].items():
-              assert f'{sha} refs/remotes/origin/{name}' in refs.splitlines(), 'BUNDLE_MISSING_REF:' + name
-          digest = hashlib.sha256((archive/'all-refs.bundle').read_bytes()).hexdigest()
-          (archive/'bundle.sha256').write_text(digest+'  all-refs.bundle\n')
-          (archive/'CHECKS.txt').write_text('BACKUP_VERIFIED\nMAIN '+remote['main']+'\nBRANCHES '+str(len(remote))+'\nTARGETS '+str(len(data['targets']))+'\nSHA256 '+digest+'\n')
-          print((archive/'CHECKS.txt').read_text())
+          report = root/'cleanup-receipts'
+          report.mkdir(exist_ok=True)
+          live_ops = 'ops/branch-backup-20261019'
+          initial_main = '80c90b9eff4df12594709308b98d7c52e3123890'
+          expected_bundle = 'bdddef5ff154f2b9f0d5881b48faecd05d16a3366fa5e0a55e0984e83f438617'
+          receipt = {'operation':'ancestor-cleanup-20261019', 'main':initial_main,
+                     'backup_run':39212036945, 'backup_artifact_id':12168216372,
+                     'bundle_sha256':expected_bundle, 'deleted':[], 'status':'NOT_STARTED'}
+          dest = report/'deletion-receipt.json'
+          def persist():
+              dest.write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n')
+          def out(*args):
+              return subprocess.check_output(args,text=True).strip()
+          def remote_refs():
+              refs = {}
+              for line in out('git','ls-remote','--heads','origin').splitlines():
+                  sha, full = line.split()
+                  refs[full.removeprefix('refs/heads/')]=sha
+              return refs
+          try:
+              original = json.loads((archive/'manifest.json').read_text())
+              assert original.get('phase') == 'BACKUP_ONLY_NO_DELETION'
+              assert original.get('repo') == 'lovemoganna/Org-Skills'
+              assert original.get('created_from_main') == initial_main
+              assert len(original['targets']) == 15
+              registered = json.loads((root/'.github/branch-backup-20261019.json').read_text())
+              assert original == registered, 'MANIFEST_CHANGED_SINCE_ARCHIVE'
+              bundle = archive/'all-refs.bundle'
+              digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+              assert digest == expected_bundle, 'BUNDLE_SHA256_WRONG'
+              assert (archive/'bundle.sha256').read_text().strip() == digest+'  all-refs.bundle'
+              empty = report/'empty-check.git'
+              subprocess.run(['git','init','--bare',str(empty)],check=True,stdout=subprocess.DEVNULL)
+              subprocess.run(['git','-C',str(empty),'bundle','verify',str(bundle)],check=True)
+              listed = set(out('git','bundle','list-heads',str(bundle)).splitlines())
+              for name,sha in original['targets'].items():
+                  assert sha+' refs/remotes/origin/'+name in listed,'BUNDLE_MISSING_TARGET:'+name
+              saved = {}
+              for line in (archive/'precleanup-refs.tsv').read_text().splitlines():
+                  sha, name = line.split('\t')
+                  assert name not in saved, 'DUPLICATE_BACKUP_REF'
+                  saved[name] = sha
+              assert len(saved)==98, 'INCOMPLETE_PRE_CLEANUP_REFS'
+              refs=remote_refs()
+              assert set(refs)==set(saved), 'BRANCH_SET_CHANGED_REAUDIT'
+              for name,sha in saved.items():
+                  if name != live_ops:
+                      assert refs[name]==sha, 'BRANCH_MOVED_REAUDIT:'+name
+              assert refs.get('main')==initial_main, 'MAIN_MOVED_REAUDIT'
+              for name,sha in original['targets'].items():
+                  assert refs.get(name)==sha, 'TARGET_MOVED_REAUDIT:'+name
+                  subprocess.run(['git','merge-base','--is-ancestor',sha,initial_main],check=True)
+              def check_open_prs():
+                  p = json.loads(out('gh','api','repos/lovemoganna/Org-Skills/pulls?state=open&per_page=100'))
+                  assert len(p) < 100, 'OPEN_PR_LIST_PAGINATED'
+                  heads={item['head']['ref'] for item in p}
+                  assert not heads.intersection(original['targets']), 'OPEN_PR_HEAD_PROTECTED'
+              check_open_prs()
+              receipt['status']='BACKUP_AND_PREFLIGHT_VERIFIED'
+              receipt['precleanup_branches']=len(refs)
+              persist()
+              for name, sha in original['targets'].items():
+                  refs=remote_refs()
+                  assert refs.get('main')==initial_main, 'MAIN_MOVED_DURING_CLEANUP'
+                  assert refs.get(name)==sha, 'TARGET_MOVED_DURING_CLEANUP:'+name
+                  check_open_prs()
+                  subprocess.run(['git','merge-base','--is-ancestor',sha,initial_main],check=True)
+                  subprocess.run(['git','push','--porcelain',
+                      '--force-with-lease=refs/heads/'+name+':'+sha,
+                      'origin',':refs/heads/'+name],check=True)
+                  assert name not in remote_refs(), 'DELETION_NOT_CONFIRMED:'+name
+                  receipt['deleted'].append({'branch':name,'sha':sha})
+                  receipt['status']='IN_PROGRESS'
+                  persist()
+              final=remote_refs()
+              assert final.get('main')==initial_main
+              assert len(final)==len(saved)-len(original['targets'])
+              assert all(n not in final for n in original['targets'])
+              receipt['status']='COMPLETE'
+              receipt['postcleanup_branches']=len(final)
+              persist()
+              print('FIRST_BATCH_DELETION_COMPLETE',len(receipt['deleted']), 'remaining',len(final))
+          except Exception as exc:
+              receipt['status']='BLOCKED_OR_PARTIAL'
+              receipt['error']=type(exc).__name__+': '+str(exc)
+              persist()
+              print('CLEANUP_STOPPED',receipt['error'],file=sys.stderr)
+              sys.exit(1)
           PY
-          rm -rf branch-backup/empty-check.git
-      - name: Upload independent full-history snapshot
+          rm -rf cleanup-receipts/empty-check.git
+      - name: Upload immutable cleanup receipt
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: org-skills-branch-precleanup-bundle
-          path: branch-backup/
+          name: org-skills-first-batch-deletion-receipt
+          path: cleanup-receipts/deletion-receipt.json
           retention-days: 90
           if-no-files-found: error
