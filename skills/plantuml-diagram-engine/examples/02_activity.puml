@@ -21,8 +21,13 @@ start
 :选择图类型并保留关键关系;
 :生成 PlantUML 源码;
 repeat
+  if (含敏感信息或未经公开授权？) then (是)
+    #FEE2E2:禁止生成公共图片 URL;
+    :使用本地渲染;
+    stop
+  endif
   #DBEAFE:编码生成在线 PNG URL;
-  if (内容允许公开且可联网？) then (是)
+  if (具备联网验证条件？) then (是)
     :访问在线图片服务;
     if (返回有效图片？) then (是)
       #CCFBF1:检查字体、布局及语义;
@@ -30,16 +35,12 @@ repeat
       #FEF3C7:记录响应问题;
     endif
   else (否)
-    #FEF3C7:仅执行离线编码;
+    #FEF3C7:保留链接并标记未联网验证;
   endif
   if (发现可修复缺陷？) then (是)
     :按证据最小修复源码;
   endif
 repeat while (仍需修复且少于两轮？) is (是) not (否)
-if (包含未经授权的敏感内容？) then (是)
-  #FEE2E2:不交付公共图片 URL;
-else (否)
-  #CCFBF1:返回在线 PNG 链接与验证状态;
-endif
+#CCFBF1:返回在线 PNG 链接与验证状态;
 stop
 @enduml
