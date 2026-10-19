@@ -1,0 +1,24 @@
+{
+  "repo": "lovemoganna/Org-Skills",
+  "phase": "BATCH2_BACKUP_ONLY",
+  "main_sha": "80c90b9eff4df12594709308b98d7c52e3123890",
+  "ops_precommit_sha": "1998b5cdf44007afb38dadbb4508a4f4672f3ecc",
+  "expected_ref_count": 83,
+  "targets": {
+    "docs/bprd-peer-eval-evidence-archive-20261019": "2532e52dd341e6d0d6a12576a2d3a9f23de27ffc",
+    "fix/ontology-eval-harness-receipts-20261019": "68484ca6572cec055e127958c20736c304340c95",
+    "fix/ontology-sql-receipt-pregate-consolidation-20261019": "ab1e822f7e723e5cba3707ee92d7c34aea8346ae",
+    "fix/sqlbt-restore-verified-d23-evidence-20261019": "08fdc488a0044938d251f6b1862909dba7834559",
+    "docs/maintainer-decision-protocol-20261019": "7bc7a5eb5ccbbd3200cd9b4fef76f9a164d9dd64",
+    "fix/business-investigator-join-pair-grain-20261015": "93d7a7aab361ad80d1b274aaf0cf314f243acbc1",
+    "fix/org-museum-source-preflight-before-generation-20261015": "41b137ab5ac8fb85be78f41da9ce37d707ed0741",
+    "fix/temporal-state-evidence-gate-20261015": "45809220426f39796f512df7d9d26510bd87b585",
+    "review/bprd-plus-evidence-gates-20261015": "1c3c7cdcd7c6b47a76a3eabcee8c166a091cc851",
+    "fix/html-design-lab-clean-release-highlight": "68d5a271f5b1a690027c9988f016aa359277fc30",
+    "feat/sketchnote-three-style-pilot-20261012": "48677f79ff15614bed7300f176ccf840267de740",
+    "experiment/sql-chat-eval-20261015": "8041d45a4a7468b63b74e72fab8920d1662561cc",
+    "experiment/sql-complex-first-pass-20261015": "7ace6e4a58bcee8bab2104929344c90e0fa8e9c3",
+    "experiment/sql-movielens-20261015": "e671f610258026423179e6dc94c7f0d6a56d9262",
+    "experiment/three-role-blind-20261015": "41f30248d9a0ea897586c73130fa0d0a0f067421"
+  }
+}
