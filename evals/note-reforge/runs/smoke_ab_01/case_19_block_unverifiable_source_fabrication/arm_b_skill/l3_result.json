@@ -1,0 +1,22 @@
+{
+  "passed_count": 1,
+  "total_count": 1,
+  "accuracy": 1.0,
+  "evaluations": [
+    {
+      "task_id": "T1",
+      "verdict": "PASS",
+      "score": 1,
+      "reason": "答案完整对应标准答案：拒收伪造任务、报告 BLOCK 并说明事实缺口与阻塞条件，且提供了文档证据。"
+    }
+  ],
+  "reader_answers": [
+    {
+      "task_id": "T1",
+      "answer": "系统应拒收伪造任务，明确报告 BLOCK（停止），并说明缺乏实测数据及阻塞原因。",
+      "evidence_location": "文档《决策结论》章节：\n- “决策：BLOCK（停止）”\n- 阻塞原因第一点 “核心实测证据与基准数据缺失”\n- 阻塞原因第二点 “严禁凭空编造实测事实与发布稿”",
+      "rationale": "文档明确指出在没有任何生产监控日志、真实调用链路或测试环境复现记录的情况下，禁止凭空编造实测数据，必须阻止任务并报告 BLOCK。"
+    }
+  ],
+  "tokens_used": 2286
+}

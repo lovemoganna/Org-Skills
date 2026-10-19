@@ -1,0 +1,19 @@
+{
+  "arm": "arm_a_baseline",
+  "l1_pass": true,
+  "decision_detected": "BLOCK",
+  "decision_matched": true,
+  "l2_total_score": 0,
+  "l2_scores": {
+    "fact_fidelity": 0,
+    "decision_contract": 0,
+    "mechanism_depth": 0,
+    "actionability": 0,
+    "conciseness_no_bloat": 0
+  },
+  "l2_hard_failure": true,
+  "l3_accuracy": 1.0,
+  "l3_passed": 1,
+  "l3_total": 1,
+  "output_chars": 900
+}

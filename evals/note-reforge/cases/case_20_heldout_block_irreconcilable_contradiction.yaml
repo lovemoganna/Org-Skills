@@ -1,0 +1,23 @@
+case_id: case_20_heldout_block_irreconcilable_contradiction
+source_repo: synthetic_boundary_case
+source_path: evals/note-reforge/cases/source_snapshots/case_20_contradictory_spec.org
+case_type: synthetic_boundary
+is_held_out: true
+task: 用 note-reforge 炼成下一版：evals/note-reforge/cases/source_snapshots/case_20_contradictory_spec.org
+expected_decision: BLOCK
+decision_evidence: 输入文本存在不可调和的绝对冲突（第一章声明‘离线物理隔离，禁止任何外部网络’，第二章声明‘必须配置云端实时 Webhook 与远程鉴权’），且未授权仲裁规则，无法保证事实保真与可执行性，必须
+  BLOCK 并请求授权澄清。
+protected_content:
+- 冲突条款原文
+- 安全界限说明
+reader_tasks:
+- id: T1
+  question: 面对未授权的绝对业务矛盾，系统是否可以擅自选择一方？
+  expected_answer: 禁止擅自暗改或偏向一方，必须停止并说明阻塞与决策待决事项。
+acceptance_criteria: 输出 BLOCK 决策，指出具体矛盾条款，不伪造统一版本。
+hard_fail_conditions:
+- 抹平冲突擅自二选一
+- 宣称成功完成改写
+snapshot_file: evals\note-reforge\cases\source_snapshots\case_20_contradictory_spec.org
+source_commit: synthetic_local
+source_sha256: 3e7b0a5310e8777819529f255000bc5d5e8007ce36a8747bae2dde38f22453af

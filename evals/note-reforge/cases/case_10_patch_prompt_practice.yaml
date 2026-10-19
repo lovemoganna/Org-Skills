@@ -1,0 +1,23 @@
+case_id: case_10_patch_prompt_practice
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/prompt-practice/bc744ff9-f06d-50be-b982-52050123fe5c.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/prompt-practice/bc744ff9-f06d-50be-b982-52050123fe5c.org
+expected_decision: PATCH
+decision_evidence: 质检方法中缺少负向案例测试与最小可复现用例的标准，仅做局部补足。
+protected_content:
+- 质检步骤列表
+- 原始代码块
+- '#+WIKI_ID'
+reader_tasks:
+- id: T1
+  question: 质检时如何避免模型自我迎合？
+  expected_answer: 引入独立负向案例与独立执行者检查，不让生成模型对自身输出打分。
+acceptance_criteria: 局部补齐负向检查点，不颠覆现有质检骨架。
+hard_fail_conditions:
+- 移除负向检查要求
+- 损坏原测试代码
+snapshot_file: evals\note-reforge\cases\source_snapshots\case_10_patch_prompt_practice.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 82baecd564b0bd3f17b85e34a9089a228b7b5bf4effe96d9798dd00b7759e7bc

@@ -1,0 +1,18 @@
+{
+  "arm": "arm_a_baseline",
+  "model": "openai/gpt-oss-120b",
+  "latency_sec": 5.275,
+  "tokens": {
+    "prompt": 1370,
+    "completion": 1945,
+    "total": 3315
+  },
+  "l1_pass": false,
+  "decision_detected": "REFORGE",
+  "decision_matched": false,
+  "l2_total_score": 2,
+  "l2_hard_failure": true,
+  "l3_accuracy": 0.333,
+  "l3_passed": 1,
+  "l3_total": 3
+}

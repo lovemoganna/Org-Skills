@@ -6,9 +6,13 @@ from copy import deepcopy
 import json
 from pathlib import Path
 from importlib.util import module_from_spec, spec_from_file_location
+import os
 import subprocess
 import sys
 import tempfile
+
+os.environ["PYTHONIOENCODING"] = "utf-8"
+os.environ["PYTHONUTF8"] = "1"
 
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")

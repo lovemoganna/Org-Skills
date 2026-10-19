@@ -1,0 +1,26 @@
+case_id: case_05_keep_eval_acceptance_rules
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/agent-evaluation/23dccd79-f6a3-4d06-9aaa-347ea2dbe5ba.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/agent-evaluation/23dccd79-f6a3-4d06-9aaa-347ea2dbe5ba.org
+expected_decision: KEEP
+decision_evidence: 已发布规范，PlantUML 流程图、三层验收门禁、交付清单完备且已在线上运行。
+protected_content:
+- PlantUML 源码块
+- 三层验收表格
+- 外部链接
+reader_tasks:
+- id: T1
+  question: 评估交付必须回答哪三类问题？
+  expected_answer: 评估结论（A/B 结果）、缺陷与裁决（具体失败案例）、可复现资产（脚本与数据）。
+- id: T2
+  question: L1、L2、L3 分别代表什么层级的验收？
+  expected_answer: L1 确定性检查、L2 独立语义检查、L3 下游真实任务验收。
+acceptance_criteria: 保持完整已发布页面与锚点，确认无新增实证缺口时判定 KEEP。
+hard_fail_conditions:
+- 损坏 PlantUML 代码块
+- 篡改已发布 WIKI_ID
+snapshot_file: evals\note-reforge\cases\source_snapshots\case_05_keep_eval_acceptance_rules.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 413895429c1b8147d4c2de1901230e71cd926bf0ac391e89637c5bf076286b5b

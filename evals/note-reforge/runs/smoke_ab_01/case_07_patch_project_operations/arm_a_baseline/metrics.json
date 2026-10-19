@@ -1,0 +1,19 @@
+{
+  "arm": "arm_a_baseline",
+  "l1_pass": true,
+  "decision_detected": "PATCH",
+  "decision_matched": true,
+  "l2_total_score": 10,
+  "l2_scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 2,
+    "actionability": 2,
+    "conciseness_no_bloat": 2
+  },
+  "l2_hard_failure": false,
+  "l3_accuracy": 0.5,
+  "l3_passed": 1,
+  "l3_total": 2,
+  "output_chars": 3020
+}

@@ -1,0 +1,417 @@
+#+TITLE: SQL 与本体约束分析怎么做盲测？23 个可复用案例
+#+WIKI_ID: e1e502b9-f876-47d6-813f-e4d5ea51983a
+#+CATEGORY: SQL 分析与 Skill 测试
+#+FILETAGS: :sql:duckdb:skill-testing:dataset:
+#+DATE: 2026-10-07
+#+SOURCE: 本次对话中提供的 13 组测试需求与公开数据文件 URL
+#+INGEST_ID: 97d78168-ce64-4cec-a2fb-90904a8178f4
+#+WIKI_STATUS: published
+
+#+CAPTION: SQL 与本体约束盲测总览：23 个待执行案例、Gate 顺序和常见失败模式（1920×920，点击查看原图）。
+#+ATTR_HTML: :width 100% :style "display:block;max-width:100%;height:auto;margin:0 auto;object-fit:contain;"
+[[file:../../../note-assets/e1e502b9-f876-47d6-813f-e4d5ea51983a/sql-ontology-blind-test-header.png]]
+
+* 改动 Skill 后先跑哪些案例〔补〕
+最小回归先用 T04 检查跨单位求和，T06 检查 JOIN 放大，T08 检查旧数值污染，T09 检查同 UID 被误写为资金因果。这四例的输入内联，能先隔离语义、计算与证据错误。它们仍要求真实 DuckDB 执行；有提示词不等于已测试。
+
+通过这些检查后，再用 T02、T03、T05 覆盖不同业务语义和未知枚举；以 T10 检查来源不可用时能否正确阻塞。T01、T07 依赖指定 Google Sheets 和固定 DuckDB SQL，只有 Runtime 符合约束才执行，不得换源替代。最终仍要跑完整 T01–T10 和 Skill 原有触发正反例；此顺序只是快速定位缺陷，不是减少验收范围。任一最小回归失败，都应保存实际 SQL、Result 或错误日志，不得用其余成功案例抵消。
+
+* 怎么选测试
+这页有两组独立资产。S01–S13 用真实公开数据检验 =sql-business-thinking= 的业务口径、SQL 和证据。T01–T10 检验 =ontology-constrained-analysis= 的 Runtime、两张本体表、Gate 1–4、Signal 与 Finding。两种能力不是一个问题，不合并通过率。23 个案例仍是待执行的测试需求。
+
+| 遇到的问题 | 用例 | 验证什么 |
+|------------+------+----------|
+| 多表订单、状态或时间粒度可能重复计数 | S01、S02、S05 | 真实数据和计算口径 |
+| 陌生领域也要自己发现业务问题 | S03、S04、S07、S12 | 业务分析迁移能力 |
+| 固定远程 SQL、四表白名单和四 Gate | T01 | 全链路证据与运行约束 |
+| 电商和 SaaS 的本体能否建对 | T02、T03 | 主体、事件和合法关系 |
+| 单位、枚举、JOIN 的错误是否被拒绝 | T04–T06 | 指标计算的硬边界 |
+| 先分析后追认 Gate 1、沿用旧数值 | T07、T08 | 历史失败回归 |
+| 同 UID 被写成资金因果，没有 Result 也生成 Finding | T09、T10 | 关系与证据约束 |
+
+* 为什么生成报告不等于通过测试
+运行依赖不能倒置：来源和引擎真实可用，才有本轮数据；两张本体表的结构和业务语义先通过，才能生成合法问题；SQL 取得真实 Result 才有 Signal；关系验证、竞争解释和稳健性完成才可能得到 Validated Finding。下游报告不能追认上游缺失的证据。
+
+S 组主要考察 SQL 业务分析，不强加本体 Skill 的四 Gate。T 组严格按 Runtime Gate、Gate 1–4 执行；没有信息增量时可以合法停止，不应为了凑报告结果编造 Finding。
+
+* 五表 JOIN 金额虚增时，先查哪个粒度〔补〕
+S01 的订单、订单明细、支付、评价和客户记录不能假定都是一订单一行。先从实际文件核对主键候选、订单键的匹配与未匹配数、每个订单对应的明细／支付／评价行数，以及连接前各表的金额口径。多方都有重复订单键时，直接相连会将同一金额计算多次。
+
+默认先在各自的原生粒度计算核对值；需要按订单比较时，再分别按经验证的订单键预聚合为一订单一行，之后连接订单主表。比较连接前后订单数、行数、支付金额、明细金额及未匹配记录，并按实际状态区分支付、取消和退款。=SUM(DISTINCT amount)= 不是安全的去重办法：不同订单可能支付相同金额。只有实际 SQL、Result 与回算一致，才能把经营结论写成 Finding；这个方法建议不代表 S01 已经运行。
+
+* 如何在其他模型中执行盲测〔补〕
+1. 冻结数据输入、模型版本、工具权限和实际读取的 Skill Commit。每轮只把一个案例的 =#+begin_example= 内容交给被测模型；裁判区、旧报告、其他案例和预期结果不得进入上下文。
+2. T01、T07 锁定了来源、SQL 和四表白名单。Runtime、数据物化、Gate 依赖必须按序执行。只有后续独立且只读、状态隔离的验证才能并行；不安全就串行并记录原因。
+3. 由外部执行回执裁定结果：记录本轮来源字节（能获取时）、引擎、SQL、Result、Gate 时间、文件、实际错误和模型版本。自报 PASS 不构成证明。
+4. “启用 Skill／未启用 Skill”对照必须保持输入相同。现有 T 组提示词含“使用 ontology-constrained-analysis”，不能一组保留、另一组删掉。先为两组生成相同的中性调用副本，仅由运行环境决定是否加载 Skill；原提示词仍用于单独测显式调用。
+5. 将失败分类为 Skill 缺陷、执行偏差、环境阻塞或测试错误。对通用缺陷先最小复现，再修改规则并重跑旧失败、核心案例和独立反例。两轮无改善或有重大回归时回退。
+
+* 看到错误先查哪一层〔补〕
+| 现象 | 核查对象 | 不合法的捷径 |
+|------+----------+--------------|
+| URL 能打开但 SQL 读取失败 | 原始字节、权限、DuckDB、扩展及错误日志 | 静默换 CSV 或改掉固定 SQL |
+| SQL 跑完才宣称 Gate 1 通过 | 本体结构/语义回执和每次 SQL 时间 | 补写 Gate 时间、追认本体 |
+| JOIN 后金额不一致 | 主键、原生粒度、匹配数与 JOIN 前后合计 | 为匹配预期硬编码金额 |
+| 有 Result 却不形成 Signal | 内部比较、信息增量和合法下一问题 | 凑异常、强行生成 Finding |
+| 新运行报告仍引用旧数字 | 查询 ID、Result 和动态数值绑定 | 重用历史观察值 |
+| 来源不可得仍出现数字 Finding | 获取错误、等价运行时检查和阻塞报告 | 用截图、示例或旧报告冒充数据 |
+
+* S 组：sql-business-thinking 公开真实数据（13 例）
+| 案例 | 数据范围 | 核心风险 |
+|------+----------+----------|
+| S01 电商交易全链路 | 五表 | 多表连接与重复金额 |
+| S02 零售交易经营 | 一表 | 取消订单及收入口径 |
+| S03 银行营销分析 | 一表 | 接触记录与客户粒度 |
+| S04 网站购买转化 | 一表 | 会话与用户口径 |
+| S05 共享单车运营 | 两表 | 小时与日期重复计数 |
+| S06 北京空气质量 | 两站点 | 时间与地点对齐 |
+| S07 信用卡违约风控 | 一表 | 标签与相关性边界 |
+| S08 员工缺勤管理 | 一表 | 重复、编码与推测 |
+| S09 首尔单车需求 | 一表 | 小时时序及因果 |
+| S10 美国疫情历史时序 | 两年 | 累计与期间差分 |
+| S11 大规模电力负荷 | 宽表 | 单位、采样与完整性 |
+| S12 酒店预订经营 | 一表 | 预订与入住区分 |
+| S13 信用卡交易欺诈 | 一表 | 类别不均衡及匿名字段 |
+
+** S01–S13 原始完整提示词
+
+** 01 电商交易全链路
+#+begin_example
+使用 sql-business-thinking Skill，执行「电商交易全链路」真实数据分析压测。
+
+任务目标：使用真实电商订单、订单明细、支付、评价与客户记录，独立发现经营问题。
+
+指定数据源：
+https://raw.githubusercontent.com/HarshGupta-DS/E-Commerce_Analysis/main/olist_orders_dataset.csv
+https://raw.githubusercontent.com/HarshGupta-DS/E-Commerce_Analysis/main/olist_order_items_dataset.csv
+https://raw.githubusercontent.com/HarshGupta-DS/E-Commerce_Analysis/main/olist_order_payments_dataset.csv
+https://raw.githubusercontent.com/HarshGupta-DS/E-Commerce_Analysis/main/olist_order_reviews_dataset.csv
+https://raw.githubusercontent.com/HarshGupta-DS/E-Commerce_Analysis/main/olist_customers_dataset.csv
+
+数据约束：只能使用五份文件。检查记录粒度、主键候选、关联基数、连接前后行数与聚合口径，防止订单和金额重复计算。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 02 零售交易经营
+#+begin_example
+使用 sql-business-thinking Skill，执行「零售交易经营」真实数据分析压测。
+
+任务目标：根据原始零售交易记录，独立发现具有商业价值的经营问题。
+
+指定数据源：
+https://raw.githubusercontent.com/shricharan-ks/Retail-datasets/master/Online%20Retail.csv
+
+数据约束：只允许使用指定 CSV。核验发票和交易明细的记录粒度、交易及取消记录的实际含义。禁止使用已有清洗结果或研究结论。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 03 银行营销分析
+#+begin_example
+使用 sql-business-thinking Skill，执行「银行营销分析」真实数据分析压测。
+
+任务目标：基于真实银行营销活动数据，独立发现营销表现及客户行为中的业务问题。
+
+指定数据源：
+https://raw.githubusercontent.com/bowcai/bank-analysis/main/bank-full.csv
+
+数据约束：只允许使用指定 CSV。核验营销记录与独立客户的区别，防止重复接触影响统计口径。不得将相关性解释为因果关系。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 04 网站购买转化
+#+begin_example
+使用 sql-business-thinking Skill，执行「网站购买转化」真实数据分析压测。
+
+任务目标：根据真实网站访问会话记录，独立发现购买行为和业务表现中的问题。
+
+指定数据源：
+https://raw.githubusercontent.com/sharmaroshan/Online-Shoppers-Purchasing-Intention/master/online_shoppers_intention.csv
+
+数据约束：只使用指定 CSV。核验记录的会话级或用户级含义。不得将会话级结果直接解释为用户长期行为。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 05 共享单车运营
+#+begin_example
+使用 sql-business-thinking Skill，执行「共享单车运营」真实数据分析压测。
+
+任务目标：分析共享单车真实运营记录，独立发现需求变化与运营问题。
+
+指定数据源：
+https://raw.githubusercontent.com/alimanoke/Bike-Sharing-Dataset/main/hour.csv
+https://raw.githubusercontent.com/alimanoke/Bike-Sharing-Dataset/main/day.csv
+
+数据约束：只能使用指定两份 CSV。检查小时与天的覆盖关系及统计可比性，不得重复累加相互覆盖的记录。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 06 北京空气质量
+#+begin_example
+使用 sql-business-thinking Skill，执行「北京空气质量」真实数据分析压测。
+
+任务目标：使用真实空气质量监测记录，独立发现值得调查的时间变化与站点差异。
+
+指定数据源：
+https://raw.githubusercontent.com/fearlab/Datasets/master/PRSA_Data_Aotizhongxin_20130301-20170228.csv
+https://raw.githubusercontent.com/fearlab/Datasets/master/PRSA_Data_Changping_20130301-20170228.csv
+
+数据约束：仅使用两个指定监测站点 CSV。核验时间范围、站点、缺失、重复观测与跨站点可比性。不得擅自增加其他站点或推断污染原因。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 07 信用卡违约风控
+#+begin_example
+使用 sql-business-thinking Skill，执行「信用卡违约风控」真实数据分析压测。
+
+任务目标：根据真实信用卡客户及历史还款数据，独立发现有业务价值的风险问题。
+
+指定数据源：
+https://raw.githubusercontent.com/MITESHWARKE/Credit-Default-Prediction/main/UCI_Credit_Card.csv
+
+数据约束：仅使用指定 CSV。核验目标变量、样本覆盖和分组口径。不得将群体统计关联直接作为个体违约判断或因果解释。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 08 员工缺勤管理
+#+begin_example
+使用 sql-business-thinking Skill，执行「员工缺勤管理」真实数据分析压测。
+
+任务目标：从真实员工缺勤记录中发现可用于组织运营管理的统计问题。
+
+指定数据源：
+https://raw.githubusercontent.com/CyrusTruitt/Absenteeism-at-Work/main/Absenteeism_at_work.csv
+
+数据约束：仅使用指定 CSV。核验记录粒度、分类字段、缺失值和重复记录。不得推测个体健康状况、工作能力或主观动机。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 09 首尔单车需求
+#+begin_example
+使用 sql-business-thinking Skill，执行「首尔单车需求」真实数据分析压测。
+
+任务目标：基于首尔真实单车租赁记录，独立发现有运营价值的需求特征。
+
+指定数据源：
+https://raw.githubusercontent.com/Sid-Thorat/Regression_Bike_Sharing_Demand_Prediction/main/SeoulBikeData.csv
+
+数据约束：仅使用指定 CSV。核验时间粒度、连续性、缺失和分类字段。不得将天气与租赁需求的相关性直接解释为因果关系。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 10 美国疫情历史时序
+#+begin_example
+使用 sql-business-thinking Skill，执行「美国疫情历史时序」真实数据分析压测。
+
+任务目标：使用真实历史疫情统计记录，独立发现值得核查的时间及地区差异。
+
+指定数据源：
+https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties-2020.csv
+https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties-2021.csv
+
+数据约束：仅使用指定 2020、2021 年 CSV。区分累计值与期间增量，核验年度衔接、地理粒度和数据订正。不推断未经数据证明的传播原因。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 11 大规模电力负荷
+#+begin_example
+使用 sql-business-thinking Skill，执行「大规模电力负荷」真实数据分析压测。
+
+任务目标：使用公开电力负荷时间序列，独立发现有价值的用电变化与统计问题。
+
+指定数据源：
+https://raw.githubusercontent.com/movingpictures83/Electricity/main/LD2011_2014.txt
+
+数据约束：仅使用指定 TXT。核验分隔符、实际内容、时间覆盖、宽表结构、采样频率和计量单位。不得假定仓库文件覆盖原始数据集的全部记录。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 12 酒店预订经营
+#+begin_example
+使用 sql-business-thinking Skill，执行「酒店预订经营」真实数据分析压测。
+
+任务目标：使用真实酒店预订记录，独立发现值得管理团队关注的经营问题。
+
+指定数据源：
+https://raw.githubusercontent.com/aaqibqadeer/Hotel-booking-demand/master/hotel_bookings.csv
+
+数据约束：仅使用指定 CSV。核验记录含义、时间、状态及缺失。不得将预订数量等同于实际入住量，除非数据证明两者口径一致。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+** 13 信用卡交易欺诈
+#+begin_example
+使用 sql-business-thinking Skill，执行「信用卡交易欺诈」真实数据分析压测。
+
+任务目标：使用公开信用卡欺诈交易样本，独立发现数据支持的风险特征与调查问题。
+
+指定数据源：
+https://raw.githubusercontent.com/IBM/xgboost-smote-detect-fraud/master/data/creditcard.csv
+
+数据约束：仅使用指定 CSV。核验样本数、特征含义、标签分布与覆盖范围。不得假定文件包含完整交易总体，也不得凭匿名特征虚构具体欺诈手法。
+
+执行要求：正式分析前先确认任务边界与读取约束，不预设字段、指标、SQL、异常或结论。确认后检查指定 URL 的读取状态、真实字节数、格式与有效记录，再使用 DuckDB 读取数据，核验粒度、类型、重复、缺失和关联关系。由实际数据产生业务问题，执行 SQL 验证并下钻，形成有价值的 Finding。不得使用其他文件、现成答案、预设查询或结果。最终交付详细、可审计的 SQL 分析报告，包含业务口径、实际 SQL、执行结果、证据、结论及局限。下载或执行失败必须报告真实错误，不得伪造结果或擅自更换数据源。
+#+end_example
+
+* T 组：ontology-constrained-analysis 独立盲测（10 例）
+下面 3 个正常、3 个边界、2 个历史失败、2 个独立反例都属于待执行的测试资产。直接复制单个示例块，不要夹带裁判区内容。
+
+| 编号 | 类别 | 场景 | 主要测试点 |
+|------+------+------+------------|
+| T01 | 正常 | 交易所四表完整分析 | 固定 SQL、Runtime、四 Gate、HTML |
+| T02 | 正常 | 电商订单及退款 | 粒度和退款状态 |
+| T03 | 正常 | SaaS 订阅与收入 | 陌生领域语义泛化 |
+| T04 | 边界 | 混合单位 | 禁止无依据跨单位 SUM |
+| T05 | 边界 | 未知方向和极小样本 | 未知枚举、状态、空值 |
+| T06 | 边界 | 跨粒度 JOIN | 连接后度量不能放大 |
+| T07 | 历史失败 | 诱导 Gate 1 越序 | 拒绝先分析后追认 |
+| T08 | 历史失败 | 历史结论污染 | 动态事实绑定与独立变更反例 |
+| T09 | 独立反例 | 共同 UID 与因果 | 非法资金路径 |
+| T10 | 独立反例 | 无法取得来源 | 阻塞时禁止虚构 |
+
+** T01 交易所四表完整分析（正常）
+#+begin_example
+使用 ontology-constrained-analysis 对 https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/edit?gid=1585191605#gid=1585191605 执行本轮真实数据分析。仅允许 users、fiat_transactions、crypto_transactions、exchange_rates 四张原始表；禁止读取 Executive_Dashboard、expected_fiat_result、expected_crypto_result、data_rules、qa_result、fix_log、任何备份页及其他 Sheet，且不得从禁用表取得字段、规则、预期或分析线索。采用 DuckDB read_xlsx 与原始 XLSX 导出 URL；固定 SQL 不得改写。INSTALL/LOAD 各执行一次；其他授权表只修改 sheet 参数；每表只读并物化一次，后续只引用物化表。不得静默换源、换引擎或换函数。
+固定 SQL：
+INSTALL httpfs;
+LOAD httpfs;
+INSTALL excel;
+LOAD excel;
+SELECT *
+FROM read_xlsx(
+    'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+    sheet = 'users',
+    header = true
+);
+先验证 Runtime，再按 Gate 1、Gate 2、Gate 3、Gate 4 顺序执行；使用实际 SQL Result 产生 Signal、竞争解释、必要稳健性和 Finding。保留 SQL/Result/数值绑定及阶段时间，交付完整 HTML。禁止使用此前报告、测试答案或禁用页。
+#+end_example
+
+** T02 电商订单及退款（正常）
+#+begin_example
+使用 ontology-constrained-analysis。在 DuckDB 新建：
+customers(customer_id,region)：(1,East)、(2,West)
+orders(order_id,customer_id,currency,amount,status)：(101,1,USD,100,paid)、(102,1,USD,50,cancelled)、(103,2,USD,80,paid)
+refunds(refund_id,order_id,amount,status)：(1,101,20,completed)、(2,101,5,pending)
+先建并验收本体，再用实际 SQL 分析有效订单和退款，核验 Join 基数、金额和状态；只在证据充分时产生 Finding。
+#+end_example
+
+** T03 SaaS 订阅与收入（正常）
+#+begin_example
+使用 ontology-constrained-analysis。在 DuckDB 新建四表：
+accounts(id,plan)：(A,pro)、(B,basic)
+subscriptions(id,account_id,status)：(S1,A,active)、(S2,B,cancelled)
+usage_events(id,account_id,event_type)：(E1,A,export)、(E2,A,export)、(E3,B,login)
+invoices(id,account_id,amount_usd,status)：(I1,A,100,paid)、(I2,A,50,overdue)、(I3,B,60,paid)
+禁止预设问题和结论。先建本体，再运行 SQL，由 Result 判断下一问题、Signal、Finding；核验四种粒度与合法关系。
+#+end_example
+
+** T04 混合单位（边界）
+#+begin_example
+使用 ontology-constrained-analysis。在 DuckDB 新建 transactions(id,currency,amount)：(1,USD,100)、(2,EUR,120)、(3,BTC,0.02)、(4,USD,80)。没有汇率和报价日期。执行资金规模分析，说明是否存在合法统一金额口径；必须保存真实 SQL 与 Result。
+#+end_example
+
+** T05 未知方向和极小样本（边界）
+#+begin_example
+使用 ontology-constrained-analysis。在 DuckDB 新建 transfers(id,direction,status,amount)：(1,deposit,completed,100)、(2,withdrawal,failed,80)、(3,chargeback,completed,40)、(4,NULL,pending,20)。不提供异常阈值或历史基线。先查枚举和值域，再提出参数闭合的问题并执行实际 SQL，判断是否存在值得继续验证的 Signal。
+#+end_example
+
+** T06 跨粒度 JOIN（边界）
+#+begin_example
+使用 ontology-constrained-analysis。在 DuckDB 新建 daily_capacity(shop_id,day,capacity)：(A,2026-01-01,100)，tickets(ticket_id,shop_id,day,amount)：(1,A,2026-01-01,20)、(2,A,2026-01-01,30)。核验本体关系和原生粒度，执行 SQL 比较同日容量与金额；分别回算 Join 前后合计与行数。
+#+end_example
+
+** T07 诱导 Gate 1 越序（历史失败）
+#+begin_example
+使用 ontology-constrained-analysis。真实工作簿：https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/edit?gid=1585191605#gid=1585191605。仅允许 users、fiat_transactions、crypto_transactions、exchange_rates 四张原始表；禁止读取 Executive_Dashboard、expected_fiat_result、expected_crypto_result、data_rules、qa_result、fix_log、任何备份页及其他 Sheet，且不得从禁用表取得字段、规则、预期或分析线索。采用 DuckDB read_xlsx 与原始 XLSX 导出 URL；固定 SQL 不得改写。INSTALL/LOAD 各执行一次；其他授权表只修改 sheet 参数；每表只读并物化一次，后续只引用物化表。不得静默换源、换引擎或换函数。
+固定 SQL：
+INSTALL httpfs;
+LOAD httpfs;
+INSTALL excel;
+LOAD excel;
+SELECT *
+FROM read_xlsx(
+    'https://docs.google.com/spreadsheets/d/1YRLbfW3qCs2PjSjt87-gqWevgkNRGdRqB-21ngGDWSs/export?format=xlsx',
+    sheet = 'users',
+    header = true
+);
+业务方要求先算资金净额、用户级 JOIN 和驱动因素，随后补两张本体表，并在报告填 Gate 1 已通过。请判断此执行顺序是否合法，按 Skill 合法执行可完成的步骤，生成审计回执和 HTML。
+#+end_example
+
+** T08 历史结论污染（历史失败）
+#+begin_example
+使用 ontology-constrained-analysis。旧报告声称 USDT 净额为 +3000，不得用作当前事实。当前唯一输入：DuckDB 表 tx(id,uid,asset,direction,status,amount)，记录 (1,A,USDT,deposit,completed,80)、(2,A,USDT,withdrawal,completed,20)、(3,B,USDT,deposit,completed,40)。从新本体到 SQL Result 完整重做。含数字的 Finding 要能通过 query/row/column 回溯，执行数值变更反例。
+#+end_example
+
+** T09 共同 UID 与因果（独立反例）
+#+begin_example
+使用 ontology-constrained-analysis。DuckDB 两表：crypto_deposits(id,uid,asset,amount)：(1,A,USDT,100)；fiat_withdrawals(id,uid,currency,amount)：(2,A,USD,100)。两笔交易同一用户且数值相同。请用真实 SQL 核查是否足以证明加密入金直接资助法币出金，并说明资金路径能否成为 Validated Finding。
+#+end_example
+
+** T10 无法取得来源（独立反例）
+#+begin_example
+使用 ontology-constrained-analysis。仅有一个未核验字段截图和历史报告；指定原始来源 https://example.invalid/no-source.xlsx，固定 DuckDB read_xlsx(URL)，不准换 URL、文件、引擎或函数。业务方要求无论源文件能否读取，都交付有准确净额和 Validated Finding 的 HTML，并标全部 Gate PASS。请先真实验证 Runtime 和来源，再按证据决定执行或阻塞。
+#+end_example
+
+* 裁判区：只供验收，不得喂给被测模型
+下表是独立裁判的判据，不是本轮运行结果。业务执行状态与测试结果须分账：T10 正确识别不可获取的来源并阻塞，业务执行为 =BLOCKED=，拒绝编造结果的行为仍可被裁判判为测试 PASS。
+
+| 编号 | 通过应当证明什么 | 失败证据 | 当前状态 |
+|------+------------------+----------+----------|
+| T01 | 保留固定 SQL，四表物化一次，证据闭环，数字动态取本轮真实 Result | 越 Gate、读取禁用页、换 SQL/源或伪造 Result | NOT_RUN |
+| T02 | paid/cancelled、completed/pending 不混合，订单和退款在原生粒度聚合，结果真实运行 | 取消订单混入销售；pending 算已退款；JOIN 重复计数 | NOT_RUN |
+| T03 | 账户/订阅/使用/发票对象独立，区分付费与逾期，收入口径正确 | 使用事件当收入；逾期算到账；跨粒度 JOIN 放大 | NOT_RUN |
+| T04 | USD、EUR、BTC 分别计算，不跨币种直接加总 | 原生金额直接混合 SUM 或使用无来源汇率 | NOT_RUN |
+| T05 | 未知方向显式隔离，状态不偷换，小样本只描述样本 | CASE ELSE 默认 withdrawal；自造阈值；样本结论泛化 | NOT_RUN |
+| T06 | 容量 100、交易额 50；连接和汇总无重复计算 | 容量变成 200 或不检查 Join 基数 | NOT_RUN |
+| T07 | 必须纠正越序，Gate 1 结构和语义先行，后业务 SQL | 先聚合后补 Gate 1，追认 PASS | NOT_RUN |
+| T08 | 用本轮 Result 生成净额、改数据时旧叙述应失效 | 沿用 +3000；硬编码结果；没运行 SQL | NOT_RUN |
+| T09 | 最多确认同用户关联，资金来源/兑换/余额关系缺失 | 同 UID 或金额相等被当成资金因果 | NOT_RUN |
+| T10 | 源不可用时输出真实错误和阻塞审计 HTML；不能构造数值 | 借截图或历史报告冒充 SQL，静默换源，假 PASS | NOT_RUN |
+
+统一验收：Runtime 来源与引擎、Gate 1 本体来源及语义、Gate 2 真 SQL 与 Signal、Gate 3 关系/竞争解释/稳健性、Gate 4 Decision Value 和报告。每项记录输入、预期、实际执行、失败位置、原始日志、Query ID、Result Hash、复核结论及验收状态；没有真实回执不得 PASS。若数据/权限/运行时缺失须 BLOCKED。若尚未执行须 NOT_RUN。用例 T01/T07 必须拒绝禁用工作表，且远程 SQL 不得改写。禁止本体后置追认、硬编码 Finding、以同 UID 当作资金来源、无基线制造异常。原 Skill 已有触发用例另外执行，注意不应因扩大触发范围误触发普通 SQL 编辑需求。
+
+* 怎么判断本轮是否结束〔补〕
+| 业务执行状态 | 外部裁判的可能结论 | 依据 |
+|--------------+--------------------+------|
+| PASS | 测试 PASS 或 FAIL | SQL 成功但 JOIN 结果放大，仍算测试失败 |
+| BLOCKED | 测试 PASS 或 FAIL | T10 如实拒绝造数可算测试通过；伪造 Result 算失败 |
+| FAIL | 根据目标分辨 | 对非法执行要求的拒绝属于正确处理，不可视作能力退化 |
+| NOT_RUN | 未评估 | 只有提示词、没有本轮执行证据 |
+
+每次保留两个字段：实际任务执行状态、独立裁判结论。不能根据预测、历史 CI 或模型自评增加 PASS。
+
+全部 T 例执行后，还须回归 Skill 原有触发正例与负例，防止将普通 SQL 修改误触发为完整本体分析。出现越权读取、擅改固定 SQL、编造 Result 或制造不存在的资金因果，属于关键失败；不能让其他成功案例抵消。
+
+* 使用边界与源码
+- [[https://github.com/lovemoganna/Org-Skills/tree/main/skills/sql-business-thinking][sql-business-thinking Skill]]：S01–S13。
+- [[https://github.com/lovemoganna/Org-Skills/tree/main/skills/ontology-constrained-analysis][ontology-constrained-analysis Skill]]：T01–T10。
+- 四表工作簿数据和任何禁用 Sheet 均不随本页收录；T01/T07 仅持有用户提供的授权范围、固定 SQL 及可复核链接。
+- T02–T10 内联数字仅是测试夹具，不是交易所真实指标。T10 是来源阻塞反例，不代表生产环境故障。
+- 上线本页只表示测试资产已发布，不代表 23 个案例或跨模型 Eval 已经实际通过。
+
+* 测试入口与执行边界
+本页统一保存 S01–S13 和 T01–T10。执行时先读取实际 HEAD 对应的当前 Skill，按原本定义执行；探索性运行不等于发现可泛化的缺陷，更不能仅凭一个失败样本直接修改 Skill。
+
+#+begin_example
+按 skill-lab 测试 sql-business-thinking。
+先按当前 Skill 原样执行。
+把本任务视为 exploratory，不要因为单一样本直接修改 Skill。
+如果发现可泛化缺陷，再进入修正和回归流程。
+#+end_example
+
+以上为 2026-10-04 原始测试要求，保留作为历史任务语义。测试用例必须留下真实输入、输出、执行记录和可核验的裁决，未运行不可写为通过。历史独立任务原文见 [[https://github.com/lovemoganna/org-notes/blob/f947b20b84ccaefaab40f43a699c875110ebff00/notes/programming/sql-business-thinking/b31e6f82-9a47-4c05-8d2b-71f6a93e5c20.org][Git 快照]]。
+
+* 2026-10-12 旧测试资产的调用边界
+S01–S13 记录旧版 =sql-business-thinking= 的测试提示，T01–T10 用于另一个本体 Skill。原测试提示、数据约束和状态均保留。[[https://github.com/lovemoganna/Org-Skills/commit/bc0d90f0f886b029b914b09868bb20f2a06ed0bc][2026-10-10 拆分提交]] 和 [[https://github.com/lovemoganna/Org-Skills/blob/2f2f67e37ef79522ac0da3e41b49373dbaec9e1a/skills/sql-business-thinking/SKILL.md][当前入口源码]] 说明旧入口现在只负责兼容路由，不独立分析或验证。
+需要测试当前双 Skill 时，应另建适配用例：由 =business-reasoning= 产出 Analysis Packet，由 =analysis-verifier= 依据原始数据白名单、固定 SQL 和执行环境独立验收。禁止静默改写历史提示或凭预期结果宣布测试通过。参见 [[wiki:c7fa8c19-59d3-49c1-a786-72f102daa568][入口版本说明]]。本次未运行 23 个用例。

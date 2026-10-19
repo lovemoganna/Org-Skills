@@ -1,4 +1,8 @@
+import os
 from pathlib import Path
+
+os.environ["PYTHONIOENCODING"] = "utf-8"
+os.environ["PYTHONUTF8"] = "1"
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = SKILL_ROOT.parents[1]
@@ -63,7 +67,7 @@ assert "#### 终稿去冗余（跨章节语义检查）" in canonical
 assert "10. **终稿去冗余验收:**" in canonical
 for clause in ("56f68e5", "0503bc8", "相同字词不构成冗余", "9/10", "两版都保留", "NOOP", "失败条件", "语义去冗余"):
     assert clause in semantic_dedup_regression, ("final semantic dedup regression missing", clause)
-assert "最小必要升级" in canonical
+assert "最小必要范围" in canonical
 assert "#### 炼化内核:三魂七魄" in canonical
 assert "事实 → 本体与关系 → 机制 → 判断 → 行动 → 反查证据与边界" in canonical
 assert "dependency determines sequencing" in cognition_regression
@@ -103,9 +107,9 @@ org_update_skill = (
     REPO_ROOT / "plugins" / "org-museum" / "skills" / "org-museum-update" / "SKILL.md"
 ).read_text(encoding="utf-8")
 assert "check_published_update.py" in org_update_skill
-assert "任一失败即停止写入" in org_update_skill
-assert "必须对 GitHub 返回的**完整原稿与候选稿**执行相同的逐项多重集差异" in org_update_skill
-assert "已发布页面的提交前保护。" in canonical
+assert "无法核验则停止" in org_update_skill
+assert "无执行环境必须完成同等的多重集差异审查" in org_update_skill
+assert "已发布页面的提交前保护" in canonical
 
 guard_spec = _spec_from_file_location("published_gate", SKILL_ROOT / "tests" / "check_published_update.py")
 assert guard_spec and guard_spec.loader
@@ -152,7 +156,7 @@ with tempfile.TemporaryDirectory() as tempdir:
     assert rejected.returncode == 1 and "headings" in rejected.stdout
 
 task_fixture = (SKILL_ROOT / "tests" / "regression" / "independent-task-transfer-agent-automations.md").read_text(encoding="utf-8")
-assert "独立任务效果门禁。" in canonical
+assert "单轮任务效果门禁（默认不做 A/B）。" in canonical
 for expected_case in ("按约定静默", "Slack 请求未知", "静默+单源故障", "迟到且不可补读", "偏好变更后的追溯"):
     assert expected_case in task_fixture
 assert "当前裁决：待核验" in task_fixture and "不能把模型自评" in task_fixture
@@ -273,8 +277,8 @@ assert spec and spec.loader
 spec.loader.exec_module(module)
 fixture = (SKILL_ROOT / "tests" / "regression" / "result-first-no-process-leak.md").read_text(encoding="utf-8")
 assert "原文提出五个观察维度" in fixture and "个人学习配置表应记录五项实际表现" in fixture
-assert "成品视角（内部分析不得外溢）" in canonical and "成品视角反查" in canonical
-assert "独立成品门禁（终稿拒收项）" in canonical and "同题增益门禁（内容质量独立验收）" in canonical
+assert "成品视角（内部分析不得外溢）" in canonical and "决策及增量反查" in canonical
+assert "独立成品门禁（终稿拒收项）" in canonical and "同题增益门禁" in canonical
 independent_fixture = (SKILL_ROOT / "tests" / "regression" / "independent-reader-final-artifact.md").read_text(encoding="utf-8")
 for label in ("原稿还给出", "模拟项目", "四周", "对照原稿", "NOOP", "事实归属", "独立使用效果"):
     assert label in independent_fixture, ("independent reader regression missing", label)

@@ -1,0 +1,213 @@
+{
+  "run_id": "smoke_ab_01",
+  "evaluated_at": "2026-10-19T03:01:09.497651+00:00",
+  "total_cases": 4,
+  "arm_a_baseline": {
+    "l1_pass_rate": "4/4 (100.0%)",
+    "decision_accuracy": "4/4 (100.0%)",
+    "avg_l2_score": 6.5,
+    "avg_l3_accuracy": 0.875
+  },
+  "arm_b_skill": {
+    "l1_pass_rate": "4/4 (100.0%)",
+    "decision_accuracy": "4/4 (100.0%)",
+    "avg_l2_score": 9.25,
+    "avg_l3_accuracy": 0.833
+  },
+  "deltas": {
+    "l1_pass_diff": "+0",
+    "decision_accuracy_diff": "+0",
+    "l2_score_gain": 2.75,
+    "l3_accuracy_gain": -0.042
+  },
+  "case_summaries": [
+    {
+      "case_id": "case_01_keep_recursive_discovery",
+      "expected_decision": "KEEP",
+      "arm_a_baseline": {
+        "arm": "arm_a_baseline",
+        "l1_pass": true,
+        "decision_detected": "KEEP",
+        "decision_matched": true,
+        "l2_total_score": 7,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 1,
+          "actionability": 0,
+          "conciseness_no_bloat": 2
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 1.0,
+        "l3_passed": 3,
+        "l3_total": 3,
+        "output_chars": 2084
+      },
+      "arm_b_skill": {
+        "arm": "arm_b_skill",
+        "l1_pass": true,
+        "decision_detected": "KEEP",
+        "decision_matched": true,
+        "l2_total_score": 8,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 1,
+          "actionability": 2,
+          "conciseness_no_bloat": 1
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 0.333,
+        "l3_passed": 1,
+        "l3_total": 3,
+        "output_chars": 2215
+      },
+      "delta": {
+        "l2_score_diff": 1,
+        "l3_accuracy_diff": -0.667,
+        "char_length_diff": 131
+      }
+    },
+    {
+      "case_id": "case_07_patch_project_operations",
+      "expected_decision": "PATCH",
+      "arm_a_baseline": {
+        "arm": "arm_a_baseline",
+        "l1_pass": true,
+        "decision_detected": "PATCH",
+        "decision_matched": true,
+        "l2_total_score": 10,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 2,
+          "actionability": 2,
+          "conciseness_no_bloat": 2
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 0.5,
+        "l3_passed": 1,
+        "l3_total": 2,
+        "output_chars": 3020
+      },
+      "arm_b_skill": {
+        "arm": "arm_b_skill",
+        "l1_pass": true,
+        "decision_detected": "PATCH",
+        "decision_matched": true,
+        "l2_total_score": 9,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 2,
+          "actionability": 2,
+          "conciseness_no_bloat": 1
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 1.0,
+        "l3_passed": 2,
+        "l3_total": 2,
+        "output_chars": 3132
+      },
+      "delta": {
+        "l2_score_diff": -1,
+        "l3_accuracy_diff": 0.5,
+        "char_length_diff": 112
+      }
+    },
+    {
+      "case_id": "case_15_reforge_agent_automations",
+      "expected_decision": "REFORGE",
+      "arm_a_baseline": {
+        "arm": "arm_a_baseline",
+        "l1_pass": true,
+        "decision_detected": "REFORGE",
+        "decision_matched": true,
+        "l2_total_score": 9,
+        "l2_scores": {
+          "fact_fidelity": 1,
+          "decision_contract": 2,
+          "mechanism_depth": 2,
+          "actionability": 2,
+          "conciseness_no_bloat": 2
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 1.0,
+        "l3_passed": 3,
+        "l3_total": 3,
+        "output_chars": 12646
+      },
+      "arm_b_skill": {
+        "arm": "arm_b_skill",
+        "l1_pass": true,
+        "decision_detected": "REFORGE",
+        "decision_matched": true,
+        "l2_total_score": 10,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 2,
+          "actionability": 2,
+          "conciseness_no_bloat": 2
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 1.0,
+        "l3_passed": 3,
+        "l3_total": 3,
+        "output_chars": 12265
+      },
+      "delta": {
+        "l2_score_diff": 1,
+        "l3_accuracy_diff": 0.0,
+        "char_length_diff": -381
+      }
+    },
+    {
+      "case_id": "case_19_block_unverifiable_source_fabrication",
+      "expected_decision": "BLOCK",
+      "arm_a_baseline": {
+        "arm": "arm_a_baseline",
+        "l1_pass": true,
+        "decision_detected": "BLOCK",
+        "decision_matched": true,
+        "l2_total_score": 0,
+        "l2_scores": {
+          "fact_fidelity": 0,
+          "decision_contract": 0,
+          "mechanism_depth": 0,
+          "actionability": 0,
+          "conciseness_no_bloat": 0
+        },
+        "l2_hard_failure": true,
+        "l3_accuracy": 1.0,
+        "l3_passed": 1,
+        "l3_total": 1,
+        "output_chars": 900
+      },
+      "arm_b_skill": {
+        "arm": "arm_b_skill",
+        "l1_pass": true,
+        "decision_detected": "BLOCK",
+        "decision_matched": true,
+        "l2_total_score": 10,
+        "l2_scores": {
+          "fact_fidelity": 2,
+          "decision_contract": 2,
+          "mechanism_depth": 2,
+          "actionability": 2,
+          "conciseness_no_bloat": 2
+        },
+        "l2_hard_failure": false,
+        "l3_accuracy": 1.0,
+        "l3_passed": 1,
+        "l3_total": 1,
+        "output_chars": 1225
+      },
+      "delta": {
+        "l2_score_diff": 10,
+        "l3_accuracy_diff": 0.0,
+        "char_length_diff": 325
+      }
+    }
+  ]
+}

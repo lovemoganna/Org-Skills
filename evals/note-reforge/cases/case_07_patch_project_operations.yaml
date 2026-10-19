@@ -1,0 +1,27 @@
+case_id: case_07_patch_project_operations
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/project-operations/6e9c2b10-7e84-459e-a5f1-d98019ed0a33.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/project-operations/6e9c2b10-7e84-459e-a5f1-d98019ed0a33.org
+expected_decision: PATCH
+decision_evidence: 原文缺少 RACI 相关方职责矩阵与复盘反查证据具体界限，仅需局部补足管理四环节缺口，不做全篇重写。
+protected_content:
+- '#+WIKI_ID: 6e9c2b10-7e84-459e-a5f1-d98019ed0a33'
+- 原始发布身份
+- 图片链接
+reader_tasks:
+- id: T1
+  question: 项目闭环的四个关键环节是什么？
+  expected_answer: 立项输入、方案与执行、质量检查与回归、复盘沉淀。
+- id: T2
+  question: 当无外部核验证据时，如何标记新增推论？
+  expected_answer: 必须明确标为假设/待验证，禁止冒充实测专家知识。
+acceptance_criteria: 保留原始发布身份，仅局部修补 RACI 与证据边界，产出符合规范的补丁稿。
+hard_fail_conditions:
+- 把管理建议冒充实测
+- 覆盖原文件
+- 丢弃原始头
+snapshot_file: evals\note-reforge\cases\source_snapshots\case_07_patch_project_operations.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: b625ae76a0dddb2db1afc461446789b1b446edc9856e55aff84ae4df4f0309b7

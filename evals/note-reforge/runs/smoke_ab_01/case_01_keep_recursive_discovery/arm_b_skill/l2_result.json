@@ -1,0 +1,22 @@
+{
+  "scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 1,
+    "actionability": 2,
+    "conciseness_no_bloat": 1
+  },
+  "total_score": 8,
+  "hard_failure": false,
+  "hard_failure_reason": "",
+  "evidence_quotes": [
+    "\"**裁决**：`KEEP`\"",
+    "\"原文作为一份完整的开发需求文档，目标、平台范围、六大执行要求、Crypto 风控场景、开发测试原则与九条验收标准均已具备严密自洽的规范\"",
+    "\"系统的递归扩展停止条件（没有有效新增或达到已设置的搜索限制时结束）已完全明确\"",
+    "\"原样保留，不生成 `.next` 文件\"",
+    "完整的 org 文档块被原样复制，未出现任何修改"
+  ],
+  "reasoning": "候选产物完整保留原始需求文档，未捏造数据，正确给出 KEEP 决策并提供合理依据。对机制的阐述仅停留在停机条件层面，深度有限。操作指示明确（原样保留、不生成 .next），但前置说明略有冗余，导致整体简洁度略降。综合得分8分。",
+  "latency_sec": 34.752,
+  "tokens_used": 4510
+}

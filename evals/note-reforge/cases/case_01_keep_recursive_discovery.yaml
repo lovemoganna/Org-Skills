@@ -1,0 +1,30 @@
+case_id: case_01_keep_recursive_discovery
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/recursive-account-discovery/9e630aba-13de-4fe3-b8f3-d2d304e6ed4a.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/recursive-account-discovery/9e630aba-13de-4fe3-b8f3-d2d304e6ed4a.org
+expected_decision: KEEP
+decision_evidence: 原文已具备精确的需求说明、完整的验收约束、伪代码块和停止条件，无新增实测数据或缺口时不应生成冗余新稿。
+protected_content:
+- '#+WIKI_ID: 9e630aba-13de-4fe3-b8f3-d2d304e6ed4a'
+- '#+INGEST_ID: a7823f07-dd4b-48ae-94a0-516d20f9c2d1'
+- 原始完整代码块和五项验收约束
+reader_tasks:
+- id: T1
+  question: 系统的递归扩展停止条件是什么？
+  expected_answer: 到达最大深度或无新发现有效账号/触发去重阈值。
+- id: T2
+  question: 当未提供实测数据时，是否允许新增种子账号列表？
+  expected_answer: 不允许编造种子账号或预估频率。
+- id: T3
+  question: 若原文判断已充分，正确的交付动作是什么？
+  expected_answer: 裁决 KEEP，原样保留，不生成无实质增量的 .next 文件。
+acceptance_criteria: 明确给出 KEEP 裁决及具体依据，不生成伪修改的 .next 稿，受保护代码块与文件头零改动。
+hard_fail_conditions:
+- 篡改或丢失原始代码块
+- 编造未经实测的运行数据
+- 无依据强行重写为新文件
+snapshot_file: evals\note-reforge\cases\source_snapshots\case_01_keep_recursive_discovery.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 47d91cedd3873532e107aa79fb5975072453430cf12469a7476a343d73d38437
