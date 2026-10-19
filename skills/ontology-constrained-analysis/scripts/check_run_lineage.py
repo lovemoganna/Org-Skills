@@ -19,39 +19,60 @@ def when(value):
     return t.astimezone(timezone.utc)
 
 def _is_pre_gate_business_sql(statement):
-    """Conservatively distinguish a neutral row/null-count probe from analysis.
+    """Fail closed: permit only narrow source inventory and non-analytical probes.
 
-    Pre-Gate 1 may inspect schemas, examples and nulls; aggregates, grouped
-    analysis and filtered business counts belong after ontology approval.
-    This is a narrow guard, not a general SQL parser or semantic validator.
+    This classifier does not execute SQL and is not a complete SQL parser.
+    Gate 0 may inspect schema, unfiltered row/null counts and bounded samples.
+    Calculations, filters on business values, sorting and unknown SQL forms
+    require an approved Gate 1. Preserve comments-in-COUNT behavior.
     """
     import re
-    # Comments can separate SQL function names from '('; keep quoted strings intact.
+    if not isinstance(statement, str):
+        return True
+    # Strip SQL comments; quoted identifiers and strings are preserved.
     statement = re.sub(
         r"""'(?:''|[^'])*'|"(?:\"\"|[^"])*"|/\*[\s\S]*?\*/|--[^\r\n]*""",
         lambda match: match.group(0) if match.group(0).startswith(("'", '"')) else " ",
         statement,
     )
-    if re.search(
-        r"\b(?:JOIN\b|GROUP\s+BY\b|HAVING\b|QUALIFY\b|CASE\s+WHEN\b|"
-        r"(?:SUM|AVG|MIN|MAX|MEDIAN|STDDEV(?:_POP|_SAMP)?|VAR_POP|VAR_SAMP|"
-        r"APPROX_COUNT_DISTINCT)\s*\()",
-        statement, re.I,
-    ):
+    sql = statement.strip().rstrip(";").strip()
+    if not sql:
         return True
-    if not re.search(r"\bCOUNT\s*\(", statement, re.I):
-        return False
-    # Bare table row counts and single-field null counts are Gate 0 probes.
-    # Other COUNT expressions (including DISTINCT, business WHERE and FILTER)
-    # are analyses; the classifier fails closed for unrecognized COUNT forms.
-    table = r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)?"
-    neutral_count = (
-        r"SELECT\s+COUNT\s*\(\s*\*\s*\)\s+"
-        r"(?:AS\s+[A-Za-z_]\w*\s+)?FROM\s+" + table +
-        r"(?:\s+WHERE\s+[A-Za-z_]\w*\s+IS\s+(?:NOT\s+)?NULL)?"
+    ident = r'(?:[A-Za-z_]\w*|"(?:""|[^"])*"|\x60(?:\x60\x60|[^\x60])*\x60)'
+    qualified = rf'{ident}(?:\.{ident})*'
+
+    # Row count, alias and single-column null profiling; UNION ALL only
+    # when every component is itself a neutral count probe.
+    count = (
+        rf'SELECT\s+COUNT\s*\(\s*\*\s*\)\s*'
+        rf'(?:AS\s+{ident}\s+)?FROM\s+{qualified}'
+        rf'(?:\s+WHERE\s+{qualified}\s+IS\s+(?:NOT\s+)?NULL)?'
     )
-    parts = re.split(r"\bUNION\s+ALL\b", statement.strip().rstrip(";"), flags=re.I)
-    return not all(re.fullmatch(neutral_count, part.strip(), re.I) for part in parts)
+    parts = re.split(r'\bUNION\s+ALL\b', sql, flags=re.I)
+    if all(re.fullmatch(count, part.strip(), flags=re.I) for part in parts):
+        return False
+
+    if re.fullmatch(r'SHOW\s+(?:ALL\s+)?TABLES', sql, flags=re.I):
+        return False
+    if re.fullmatch(rf'(?:DESCRIBE|DESC|SHOW\s+COLUMNS\s+FROM)\s+{qualified}', sql, flags=re.I):
+        return False
+    pragma = rf"PRAGMA\s+table_info\s*\(\s*(?:{qualified}|'[A-Za-z_]\w*')\s*\)"
+    if re.fullmatch(pragma, sql, flags=re.I):
+        return False
+
+    sample = (
+        rf'SELECT\s+(?:\*|{qualified}(?:\s*,\s*{qualified})*)\s+FROM\s+{qualified}'
+        rf'(?:\s+WHERE\s+{qualified}\s+IS\s+(?:NOT\s+)?NULL)?'
+        rf'\s+LIMIT\s+[1-9]\d*'
+    )
+    distinct = (
+        rf'SELECT\s+DISTINCT\s+{qualified}\s+FROM\s+{qualified}'
+        rf'(?:\s+LIMIT\s+[1-9]\d*)?'
+    )
+    return not (
+        re.fullmatch(sample, sql, flags=re.I)
+        or re.fullmatch(distinct, sql, flags=re.I)
+    )
 
 
 def check(chain, prior=None):
@@ -75,7 +96,15 @@ def check(chain, prior=None):
     review = details.get("semantic_review")
     if not isinstance(review, dict) or review.get("status") != "PASS" or not review.get("evidence"):
         errors.append("GATE1_SEMANTIC_EVIDENCE_MISSING")
+    seen_query_ids = set()
     for q in chain.get("queries", []):
+        ident = q.get("id")
+        if not isinstance(ident, str) or not ident.strip():
+            errors.append("SQL_RECEIPT_ID_MISSING")
+        elif ident.strip() in seen_query_ids:
+            errors.append("DUPLICATE_SQL_RECEIPT_ID:" + ident.strip())
+        else:
+            seen_query_ids.add(ident.strip())
         try:
             if when(q.get("timestamp")) < approved_at:
                 errors.append("ANALYSIS_SQL_BEFORE_GATE1:" + str(q.get("id", "")))
