@@ -1,8 +1,15 @@
 import os
+import subprocess
 from pathlib import Path
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
 os.environ["PYTHONUTF8"] = "1"
+
+_orig_run = subprocess.run
+def _utf8_run(*args, **kwargs):
+    kwargs.setdefault("encoding", "utf-8")
+    return _orig_run(*args, **kwargs)
+subprocess.run = _utf8_run
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = SKILL_ROOT.parents[1]
