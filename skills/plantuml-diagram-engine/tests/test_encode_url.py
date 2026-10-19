@@ -74,6 +74,14 @@ class TestMerge(unittest.TestCase):
         for item in ('if (', 'then (是)', 'else (否)', 'repeat while', 'stop', '少于两轮'):
             self.assertIn(item, text)
 
+    def test_activity_privacy_gate_before_public_url_and_request(self):
+        text = (ROOT / 'examples/02_activity.puml').read_text(encoding='utf-8')
+        assert text.index('含敏感信息或未经公开授权？') < text.index('编码生成在线 PNG URL')
+        assert text.index('含敏感信息或未经公开授权？') < text.index('访问在线图片服务')
+        assert text.index('禁止生成公共图片 URL') < text.index('编码生成在线 PNG URL')
+        assert '具备联网验证条件？' in text
+        assert '内容允许公开且可联网？' not in text
+
     def test_default_generates_online_url_without_network_or_file(self):
         with tempfile.TemporaryDirectory() as td:
             src = Path(td) / 'case.puml'
