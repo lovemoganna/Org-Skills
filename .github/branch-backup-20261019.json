@@ -1,0 +1,23 @@
+{
+  "operation": "first-batch-ancestor-only-20261019",
+  "repo": "lovemoganna/Org-Skills",
+  "created_from_main": "80c90b9eff4df12594709308b98d7c52e3123890",
+  "phase": "BACKUP_ONLY_NO_DELETION",
+  "targets": {
+    "audit/ontology-skillcreator-20261009-baseline": "9cdfc728bfd1d97c6d226b79309ca55a377f9fb5",
+    "baseline/ontology-constrained-analysis-20261008-9f3c631": "9f3c631c3c0d0172e5d81f0d0ce23b92cdde72cb",
+    "baseline/ontology-constrained-analysis-20261008-a6247485": "a62474851e45ea5aec0c3b5d239911695b2377ca",
+    "baseline/ontology-constrained-analysis-v16-35240522-20261008": "35240522371d13520acc90711c7e3d67d76efec6",
+    "baseline/ontology-constrained-analysis-v16.2-20261008": "9f3c631c3c0d0172e5d81f0d0ce23b92cdde72cb",
+    "baseline/ontology-constrained-analysis-v16.3-20261008": "b9b00766089d26e064a9d4e39e893080ce57254a",
+    "baseline/ontology-constrained-analysis-v16.4-20261008": "9bd1b9634fe17006127f52fe4cceebf32b987d21",
+    "baseline/sql-business-thinking-20261008-e35c0fc": "e35c0fc4ccf96e4072475fa352cfed558ed318f5",
+    "feat/dashboard-audit-loop-v14": "c19cc36c0b1527be685343f5d2c5b67a9aca3ca7",
+    "feature/business-owner-decision-framing-20261011": "226b1335f5e62b825dde87b96d5d8a0ee48e4155",
+    "refactor/carmen-four-stage-review-20261011": "721bb87bbf26d092c69125740d9294726d91d0d0",
+    "refactor/sql-two-skills-20261011": "2a5945918749d995a30740614b20bc7a04e90d52",
+    "test/note-reforge-heldout-generalization-20261011": "26e8a1e536174d77d407f494d65122927b99b884",
+    "tmp/sqlbt-analysis-20261006": "c3c42621847562c596b3b13217715a3ac1c1b1ec",
+    "tmp-duckdb-sql-e2e": "296c7a7643a4e4ab2e723fc6d6d7abf2b74c5e42"
+  }
+}

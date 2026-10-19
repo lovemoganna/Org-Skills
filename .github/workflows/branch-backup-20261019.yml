@@ -1,0 +1,68 @@
+name: One-time Org-Skills branch backup (read-only)
+on:
+  push:
+    branches:
+      - ops/branch-backup-20261019
+permissions:
+  contents: read
+jobs:
+  archive:
+    if: github.repository == 'lovemoganna/Org-Skills'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create and independently verify complete Git bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          python3 - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path.cwd()
+          data = json.loads((root/'.github/branch-backup-20261019.json').read_text())
+          assert data['phase'] == 'BACKUP_ONLY_NO_DELETION'
+          def output(*a):
+              return subprocess.check_output(a, text=True).strip()
+          remote = {}
+          for line in output('git','ls-remote','--heads','origin').splitlines():
+              sha, ref = line.split()
+              remote[ref.removeprefix('refs/heads/')] = sha
+          tracking = {}
+          for line in output('git','for-each-ref','--format=%(objectname) %(refname)','refs/remotes/origin').splitlines():
+              sha, ref = line.split()
+              if ref == 'refs/remotes/origin/HEAD':
+                  continue
+              tracking[ref.removeprefix('refs/remotes/origin/')] = sha
+          assert remote == tracking, 'REMOTE_TRACKING_REF_MISMATCH'
+          assert remote['main'] == data['created_from_main'], 'MAIN_MOVED_REAUDIT_REQUIRED'
+          for name, expected in data['targets'].items():
+              assert remote.get(name) == expected, 'TARGET_CHANGED_OR_MISSING:' + name
+              subprocess.run(['git','merge-base','--is-ancestor',expected,remote['main']],check=True)
+          archive = root/'branch-backup'
+          archive.mkdir(exist_ok=True)
+          (archive/'precleanup-refs.tsv').write_text(''.join(f'{sha}\t{name}\n' for name, sha in sorted(remote.items())))
+          (archive/'manifest.json').write_text(json.dumps(data,indent=2)+'\n')
+          subprocess.run(['git','bundle','create',str(archive/'all-refs.bundle'),'--all'],check=True)
+          subprocess.run(['git','init','--bare',str(archive/'empty-check.git')],check=True,stdout=subprocess.DEVNULL)
+          # Verify against an EMPTY repository: no missing prerequisites allowed.
+          subprocess.run(['git','-C',str(archive/'empty-check.git'),'bundle','verify',str(archive/'all-refs.bundle')],check=True)
+          refs = output('git','bundle','list-heads',str(archive/'all-refs.bundle'))
+          for name, sha in data['targets'].items():
+              assert f'{sha} refs/remotes/origin/{name}' in refs.splitlines(), 'BUNDLE_MISSING_REF:' + name
+          digest = hashlib.sha256((archive/'all-refs.bundle').read_bytes()).hexdigest()
+          (archive/'bundle.sha256').write_text(digest+'  all-refs.bundle\n')
+          (archive/'CHECKS.txt').write_text('BACKUP_VERIFIED\nMAIN '+remote['main']+'\nBRANCHES '+str(len(remote))+'\nTARGETS '+str(len(data['targets']))+'\nSHA256 '+digest+'\n')
+          print((archive/'CHECKS.txt').read_text())
+          PY
+          rm -rf branch-backup/empty-check.git
+      - name: Upload independent full-history snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: org-skills-branch-precleanup-bundle
+          path: branch-backup/
+          retention-days: 90
+          if-no-files-found: error
