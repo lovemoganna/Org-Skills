@@ -1,0 +1,22 @@
+case_id: case_18_heldout_reforge_xianxia_talismans
+source_repo: lovemoganna/org-notes
+source_path: notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org
+case_type: real_historical
+is_held_out: true
+task: 用 note-reforge 炼成下一版：notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org
+expected_decision: REFORGE
+decision_evidence: 十二符咒草稿碎片化严重，设定交叉重叠，需重构为属性/效果/代价的结构化图鉴。
+protected_content:
+- 十二符咒原始名称与核心设定
+- '#+WIKI_ID: 9e15fa89-5e58-47a9-aebf-5784261806ad'
+reader_tasks:
+- id: T1
+  question: 兔符咒的核心能力与使用代价分别是什么？
+  expected_answer: 极速移动；消耗大量真元/需承受反冲。
+acceptance_criteria: 重构为统一规范的图鉴条目，十二设定全量保留。
+hard_fail_conditions:
+- 遗漏任一符咒
+- 擅自改变作者核心设定
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_18_heldout_reforge_xianxia_talismans.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 26469ea885ea6c98fbf7008c6bfecf8c7b6968a23be4570bd1c53a859c90bef7

@@ -1,0 +1,174 @@
+{
+  "dataset_version": "1.0.0",
+  "date": "2026-10-19",
+  "total_cases": 20,
+  "distribution": {
+    "KEEP": 6,
+    "PATCH": 8,
+    "REFORGE": 4,
+    "BLOCK": 2
+  },
+  "held_out_count": 4,
+  "cases": [
+    {
+      "case_id": "case_01_keep_recursive_discovery",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": false,
+      "sha256": "47d91cedd3873532",
+      "file": "skills\\note-reforge\\evals\\cases\\case_01_keep_recursive_discovery.yaml"
+    },
+    {
+      "case_id": "case_02_keep_python_sum_function",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": false,
+      "sha256": "aefc87233aacea4d",
+      "file": "skills\\note-reforge\\evals\\cases\\case_02_keep_python_sum_function.yaml"
+    },
+    {
+      "case_id": "case_03_keep_prompt_foundations",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": false,
+      "sha256": "ddde0609d8b486ff",
+      "file": "skills\\note-reforge\\evals\\cases\\case_03_keep_prompt_foundations.yaml"
+    },
+    {
+      "case_id": "case_04_keep_prompt_tools_selection",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": false,
+      "sha256": "ee8b74c68103c029",
+      "file": "skills\\note-reforge\\evals\\cases\\case_04_keep_prompt_tools_selection.yaml"
+    },
+    {
+      "case_id": "case_05_keep_eval_acceptance_rules",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": false,
+      "sha256": "413895429c1b8147",
+      "file": "skills\\note-reforge\\evals\\cases\\case_05_keep_eval_acceptance_rules.yaml"
+    },
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "type": "real_historical",
+      "expected_decision": "KEEP",
+      "held_out": true,
+      "sha256": "510004a6eac29180",
+      "file": "skills\\note-reforge\\evals\\cases\\case_06_heldout_keep_sql_blind_cases.yaml"
+    },
+    {
+      "case_id": "case_07_patch_project_operations",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "b625ae76a0dddb2d",
+      "file": "skills\\note-reforge\\evals\\cases\\case_07_patch_project_operations.yaml"
+    },
+    {
+      "case_id": "case_08_patch_knowledge_refinement",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "38666b9561e2ebaf",
+      "file": "skills\\note-reforge\\evals\\cases\\case_08_patch_knowledge_refinement.yaml"
+    },
+    {
+      "case_id": "case_09_patch_ai_security_terminology",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "461e137efb40fa6f",
+      "file": "skills\\note-reforge\\evals\\cases\\case_09_patch_ai_security_terminology.yaml"
+    },
+    {
+      "case_id": "case_10_patch_prompt_practice",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "82baecd564b0bd3f",
+      "file": "skills\\note-reforge\\evals\\cases\\case_10_patch_prompt_practice.yaml"
+    },
+    {
+      "case_id": "case_11_patch_org_mode_image_layout",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "5e2aa046ad9e8e73",
+      "file": "skills\\note-reforge\\evals\\cases\\case_11_patch_org_mode_image_layout.yaml"
+    },
+    {
+      "case_id": "case_12_patch_stakeholder_conflict",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "d2ad9ebf463cd005",
+      "file": "skills\\note-reforge\\evals\\cases\\case_12_patch_stakeholder_conflict.yaml"
+    },
+    {
+      "case_id": "case_13_patch_citizen_rights_safety",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": false,
+      "sha256": "0e0d9fad3afa59d8",
+      "file": "skills\\note-reforge\\evals\\cases\\case_13_patch_citizen_rights_safety.yaml"
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "type": "real_historical",
+      "expected_decision": "PATCH",
+      "held_out": true,
+      "sha256": "454aa5272a140e15",
+      "file": "skills\\note-reforge\\evals\\cases\\case_14_heldout_patch_thinking_reconstruction.yaml"
+    },
+    {
+      "case_id": "case_15_reforge_agent_automations",
+      "type": "real_historical",
+      "expected_decision": "REFORGE",
+      "held_out": false,
+      "sha256": "fe062669c39d64f3",
+      "file": "skills\\note-reforge\\evals\\cases\\case_15_reforge_agent_automations.yaml"
+    },
+    {
+      "case_id": "case_16_reforge_claude_code_engineering",
+      "type": "real_historical",
+      "expected_decision": "REFORGE",
+      "held_out": false,
+      "sha256": "e9e8750df29e46bc",
+      "file": "skills\\note-reforge\\evals\\cases\\case_16_reforge_claude_code_engineering.yaml"
+    },
+    {
+      "case_id": "case_17_reforge_prompt_iterative_engineering",
+      "type": "real_historical",
+      "expected_decision": "REFORGE",
+      "held_out": false,
+      "sha256": "cb74a9ea5d43c3ab",
+      "file": "skills\\note-reforge\\evals\\cases\\case_17_reforge_prompt_iterative_engineering.yaml"
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "type": "real_historical",
+      "expected_decision": "REFORGE",
+      "held_out": true,
+      "sha256": "26469ea885ea6c98",
+      "file": "skills\\note-reforge\\evals\\cases\\case_18_heldout_reforge_xianxia_talismans.yaml"
+    },
+    {
+      "case_id": "case_19_block_unverifiable_source_fabrication",
+      "type": "synthetic_boundary",
+      "expected_decision": "BLOCK",
+      "held_out": false,
+      "sha256": "71a000a4b6357f9d",
+      "file": "skills\\note-reforge\\evals\\cases\\case_19_block_unverifiable_source_fabrication.yaml"
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "type": "synthetic_boundary",
+      "expected_decision": "BLOCK",
+      "held_out": true,
+      "sha256": "3e7b0a5310e87778",
+      "file": "skills\\note-reforge\\evals\\cases\\case_20_heldout_block_irreconcilable_contradiction.yaml"
+    }
+  ]
+}

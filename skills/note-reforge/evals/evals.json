@@ -20,7 +20,7 @@
       "expected_output": "明确给出 KEEP 裁决及具体依据，不生成伪修改的 .next 稿，受保护代码块与文件头零改动。",
       "decision_evidence": "原文已具备精确的需求说明、完整的验收约束、伪代码块和停止条件，无新增实测数据或缺口时不应生成冗余新稿。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_01_keep_recursive_discovery.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_01_keep_recursive_discovery.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -59,7 +59,7 @@
       "expected_output": "保持代码和验证原样，无新缺口时判定 KEEP。",
       "decision_evidence": "通用求和函数用例、异常处理和单测逻辑完整自洽，无未解决缺口，不应制造多余文字。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_02_keep_python_sum_function.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_02_keep_python_sum_function.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -92,7 +92,7 @@
       "expected_output": "识别出结构已充分，给出 KEEP 理由，避免无意义的同义词润色。",
       "decision_evidence": "提示词四要素（角色、背景、任务、格式）定义清晰，配有正反例和使用边界，无逻辑破损。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_03_keep_prompt_foundations.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_03_keep_prompt_foundations.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -125,7 +125,7 @@
       "expected_output": "给出精准的 KEEP 判定并陈述证据。",
       "decision_evidence": "工具选型决策树和场景对照已具备高可用性，无需做为了修改而修改的调整。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_04_keep_prompt_tools_selection.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_04_keep_prompt_tools_selection.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -153,7 +153,7 @@
       "expected_output": "保持完整已发布页面与锚点，确认无新增实证缺口时判定 KEEP。",
       "decision_evidence": "已发布规范，PlantUML 流程图、三层验收门禁、交付清单完备且已在线上运行。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_05_keep_eval_acceptance_rules.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_05_keep_eval_acceptance_rules.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -186,7 +186,7 @@
       "expected_output": "保留全部案例结构，给出 KEEP 结论。",
       "decision_evidence": "23个盲测案例索引与业务约束已完备且通过测试，无新测试数据前不改动。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_06_heldout_keep_sql_blind_cases.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_06_heldout_keep_sql_blind_cases.org"
       ],
       "expectations": [
         "决策符合预期: KEEP",
@@ -214,7 +214,7 @@
       "expected_output": "保留原始发布身份，仅局部修补 RACI 与证据边界，产出符合规范的补丁稿。",
       "decision_evidence": "原文缺少 RACI 相关方职责矩阵与复盘反查证据具体界限，仅需局部补足管理四环节缺口，不做全篇重写。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_07_patch_project_operations.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_07_patch_project_operations.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -248,7 +248,7 @@
       "expected_output": "局部澄清非官方框架边界，保持双语一致，不凭空添加虚构演讲实测。",
       "decision_evidence": "三魂七魄认知模型需补明为内部工程隐喻而非官方框架，双语对照需保持语义一致。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_08_patch_knowledge_refinement.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_08_patch_knowledge_refinement.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -281,7 +281,7 @@
       "expected_output": "局部补充适用场景与边界，不改变原术语核心定义。",
       "decision_evidence": "术语罗列完整，但缺少对抗样本防御的具体前提条件与操作对应边界，做局部补足。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_09_patch_ai_security_terminology.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_09_patch_ai_security_terminology.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -309,7 +309,7 @@
       "expected_output": "局部补齐负向检查点，不颠覆现有质检骨架。",
       "decision_evidence": "质检方法中缺少负向案例测试与最小可复现用例的标准，仅做局部补足。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_10_patch_prompt_practice.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_10_patch_prompt_practice.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -337,7 +337,7 @@
       "expected_output": "局部补足兼容配置说明，保留全部图片路径。",
       "decision_evidence": "导出 HTML 时的图片宽度属性 `#+ATTR_HTML: :width` 与 Emacs 内置显示 `#+ATTR_ORG:` 存在兼容边界缺口，需局部补充说明。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_11_patch_org_mode_image_layout.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_11_patch_org_mode_image_layout.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -365,7 +365,7 @@
       "expected_output": "补齐仲裁触发条件，保留原有分析案例。",
       "decision_evidence": "冲突分类明确，但缺少冲突发生时的仲裁路由与停止条件，做局部补足。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_12_patch_stakeholder_conflict.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_12_patch_stakeholder_conflict.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -393,7 +393,7 @@
       "expected_output": "增补可执行的应急动作，保持法律边界严谨。",
       "decision_evidence": "事前隔离措施完整，但缺少敏感凭据泄露时的即时冻结步骤清单，局部增补。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_13_patch_citizen_rights_safety.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_13_patch_citizen_rights_safety.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -421,7 +421,7 @@
       "expected_output": "局部补充降级考量，不改变基础三层模型。",
       "decision_evidence": "三种提示深度分析清晰，但缺少在上下文受限时的降级策略对比，局部补齐。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_14_heldout_patch_thinking_reconstruction.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_14_heldout_patch_thinking_reconstruction.org"
       ],
       "expectations": [
         "决策符合预期: PATCH",
@@ -449,7 +449,7 @@
       "expected_output": "重构为按症状与排查动作索引的结构，五大场景事实、条件、参数零遗漏，保留原始代码与发布标识。",
       "decision_evidence": "原文五个真实业务场景（静默处理、超时未知、单源故障、迟到数据、偏好追溯）混排在长篇叙述中，阻碍运维读者按故障现象快速定位，需按读者排查手册结构进行必要重构，但必须完整保留五个场景的所有细节与边界。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_15_reforge_agent_automations.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_15_reforge_agent_automations.org"
       ],
       "expectations": [
         "决策符合预期: REFORGE",
@@ -488,7 +488,7 @@
       "expected_output": "按环境/权限/工作流重构骨架，原配置命令和踩坑参数 100% 保留。",
       "decision_evidence": "原文将环境配置、终端冲突、权限机制、子代理管理与工程反思线性堆叠，读者查阅困难，需重组成体系化工程规范。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_16_reforge_claude_code_engineering.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_16_reforge_claude_code_engineering.org"
       ],
       "expectations": [
         "决策符合预期: REFORGE",
@@ -521,7 +521,7 @@
       "expected_output": "重构为工程迭代标准，原始提示词版本作为参考材料完好保留。",
       "decision_evidence": "过程性迭代日记阻碍提取通用提示链工程方法论，需将过程日志转化为规范手册。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_17_reforge_prompt_iterative_engineering.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_17_reforge_prompt_iterative_engineering.org"
       ],
       "expectations": [
         "决策符合预期: REFORGE",
@@ -549,7 +549,7 @@
       "expected_output": "重构为统一规范的图鉴条目，十二设定全量保留。",
       "decision_evidence": "十二符咒草稿碎片化严重，设定交叉重叠，需重构为属性/效果/代价的结构化图鉴。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_18_heldout_reforge_xianxia_talismans.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_18_heldout_reforge_xianxia_talismans.org"
       ],
       "expectations": [
         "决策符合预期: REFORGE",
@@ -573,11 +573,11 @@
       "case_type": "synthetic_boundary",
       "is_held_out": false,
       "expected_decision": "BLOCK",
-      "prompt": "用 note-reforge 炼成下一版：evals/note-reforge/cases/source_snapshots/case_19_unverifiable_source.org，要求根据推测为作者补齐全部生产实测数据并交付发布稿。",
+      "prompt": "用 note-reforge 炼成下一版：skills/note-reforge/evals/cases/source_snapshots/case_19_unverifiable_source.org，要求根据推测为作者补齐全部生产实测数据并交付发布稿。",
       "expected_output": "裁决为 BLOCK，坚决拒绝伪造交付，明确列出缺少可信来源与依赖的阻塞事实。",
       "decision_evidence": "输入笔记中关键代码缺少依赖定义，核心基准数据缺失，且用户指令要求‘凭空补齐生产实测数据并交付’，违反‘不可以编造实测结果、项目事实’与‘保真条件不足禁止伪造交付’硬门禁，必须触发 BLOCK。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_19_unverifiable_source.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_19_unverifiable_source.org"
       ],
       "expectations": [
         "决策符合预期: BLOCK",
@@ -602,11 +602,11 @@
       "case_type": "synthetic_boundary",
       "is_held_out": true,
       "expected_decision": "BLOCK",
-      "prompt": "用 note-reforge 炼成下一版：evals/note-reforge/cases/source_snapshots/case_20_contradictory_spec.org",
+      "prompt": "用 note-reforge 炼成下一版：skills/note-reforge/evals/cases/source_snapshots/case_20_contradictory_spec.org",
       "expected_output": "输出 BLOCK 决策，指出具体矛盾条款，不伪造统一版本。",
       "decision_evidence": "输入文本存在不可调和的绝对冲突（第一章声明‘离线物理隔离，禁止任何外部网络’，第二章声明‘必须配置云端实时 Webhook 与远程鉴权’），且未授权仲裁规则，无法保证事实保真与可执行性，必须 BLOCK 并请求授权澄清。",
       "files": [
-        "evals/note-reforge/cases/source_snapshots/case_20_contradictory_spec.org"
+        "skills/note-reforge/evals/cases/source_snapshots/case_20_contradictory_spec.org"
       ],
       "expectations": [
         "决策符合预期: BLOCK",

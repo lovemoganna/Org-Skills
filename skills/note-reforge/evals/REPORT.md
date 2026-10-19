@@ -19,7 +19,7 @@
 
 ## 二、真实评估数据集构建
 
-以 `note-reforge` 为首个试点，构建了包含 20 个案例的基准测试集（元数据位于 [`evals/note-reforge/cases/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/cases) 与 [`dataset_manifest.json`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/cases/dataset_manifest.json)）：
+以 `note-reforge` 为首个试点，构建了包含 20 个案例的基准测试集（元数据位于 [`skills/note-reforge/evals/cases/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/cases) 与 [`dataset_manifest.json`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/cases/dataset_manifest.json)）：
 
 - **分布**：
   - `KEEP`：6 个（原文已自洽完备，坚决不制造无意义改写）
@@ -36,7 +36,7 @@
 
 ## 三、三层评估验证基础设施
 
-在 [`evals/note-reforge/validators/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/validators) 建立了相互独立、层层递进的三层验收体系：
+在 [`skills/note-reforge/evals/validators/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/validators) 建立了相互独立、层层递进的三层验收体系：
 
 1. **L1 确定性检查器（`l1_deterministic.py`）**：
    - 机械校验原文档非标题 Org 头（`#+WIKI_ID`、`#+INGEST_ID` 等）与原始代码块是否 100% 逐字保留。
@@ -99,7 +99,7 @@
    - 在 PATCH（Case 07）中，基础模型往往泛泛而谈，而 Skill 的决策协议与增量门禁成功将下游读者任务正确率从 50% 提升至 100%。
    - 在 BLOCK（Case 19）中，基础模型倾向于迎合用户“补充实测数据”的要求，而 Skill 展现了不可动摇的合规拦截能力。
 2. **评估偏差（Evaluator Bias）定位**：
-   - 在 Case 01 中，Arm B 仅判定 1/3 通过。查阅原始评测记录 [`l3_result.json`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/runs/smoke_ab_01/case_01_keep_recursive_discovery/arm_b_skill/l3_result.json) 发现：读者的回答“递归在没有新发现有效账号或达到搜索限制时停止”完全符合工程事实并引用了原文，但 L3 裁判模型因参考标准中写有“/触发去重阈值”而机械判错。这证明了**盲目依赖自动评分也会产生伪负例，评估标准制定必须允许语义等价**。
+   - 在 Case 01 中，Arm B 仅判定 1/3 通过。查阅原始评测记录 [`l3_result.json`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/runs/smoke_ab_01/case_01_keep_recursive_discovery/arm_b_skill/l3_result.json) 发现：读者的回答“递归在没有新发现有效账号或达到搜索限制时停止”完全符合工程事实并引用了原文，但 L3 裁判模型因参考标准中写有“/触发去重阈值”而机械判错。这证明了**盲目依赖自动评分也会产生伪负例，评估标准制定必须允许语义等价**。
 3. **Token 与上下文负担成本**：
    - canonical `note-reforge/SKILL.md` 体积达 42KB（约 1.3 万字符）。当调用限制较严格的外部 API 时，单次输入极易突破小额并发限制，但在实际效果上，前置的 100 行决策协议已覆盖了 80% 以上的核心增益。
 
@@ -112,25 +112,25 @@
 1. **当前生产版保持锁定（LOCK）**：
    - 实验证明当前 Skill 在 KEEP、PATCH、REFORGE、BLOCK 四项裁决上 100% 准确，在 L2 质量上显著领先基础模型（9.25 vs 6.50），暂无破坏性缺陷，不应为了盲目重写而修改生产版。
 2. **候选精简版（C 组）测试储备**：
-   - 建议在 `evals/note-reforge/` 目录下准备一份候选精简版 `candidate_lean_skill.md`（提炼保留前 150 行决策协议、输入输出与保真要求，剥离长篇范例），在 20 个完整案例上与当前版本进行 Token/耗时与任务正确率的多轮对照，如果精简版效果不退化且降低 60% 冗余，再申请合并。
+   - 建议在 `skills/note-reforge/evals/` 目录下准备一份候选精简版 `candidate_lean_skill.md`（提炼保留前 150 行决策协议、输入输出与保真要求，剥离长篇范例），在 20 个完整案例上与当前版本进行 Token/耗时与任务正确率的多轮对照，如果精简版效果不退化且降低 60% 冗余，再申请合并。
 
 ---
 
 ## 七、回滚与维护说明
 
 - **新增资产位置**：
-  - 数据集与快照：[`evals/note-reforge/cases/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/cases/)
-  - 三层验证器：[`evals/note-reforge/validators/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/validators/)
-  - 执行调度器：[`evals/note-reforge/runner.py`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/runner.py)、[`evaluate_run.py`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/evaluate_run.py)
-  - 实验结果记录：[`evals/note-reforge/runs/smoke_ab_01/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/evals/note-reforge/runs/smoke_ab_01/)
+  - 数据集与快照：[`skills/note-reforge/evals/cases/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/cases/)
+  - 三层验证器：[`skills/note-reforge/evals/validators/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/validators/)
+  - 执行调度器：[`skills/note-reforge/evals/runner.py`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/runner.py)、[`evaluate_run.py`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/evaluate_run.py)
+  - 实验结果记录：[`skills/note-reforge/evals/runs/smoke_ab_01/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/runs/smoke_ab_01/)
 - **生产与线上零破坏**：
   - 未修改生产版 `skills/note-reforge/SKILL.md`。
   - 未向 GitHub 远程仓库推送任何 Commit。
 - **复现测试命令**：
   ```bash
   # 1. 重新生成并校验 20 个冻结数据集案例
-  python evals/note-reforge/build_dataset.py
+  python skills/note-reforge/evals/build_dataset.py
 
   # 2. 对指定运行记录重跑三层验收打分
-  python evals/note-reforge/evaluate_run.py smoke_ab_01
+  python skills/note-reforge/evals/evaluate_run.py smoke_ab_01
   ```

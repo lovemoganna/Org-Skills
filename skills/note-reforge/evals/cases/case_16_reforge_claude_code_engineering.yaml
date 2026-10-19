@@ -1,0 +1,26 @@
+case_id: case_16_reforge_claude_code_engineering
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/claude-code-engineering/f9173045-536d-4350-ad6b-72a36a42b4c2.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/claude-code-engineering/f9173045-536d-4350-ad6b-72a36a42b4c2.org
+expected_decision: REFORGE
+decision_evidence: 原文将环境配置、终端冲突、权限机制、子代理管理与工程反思线性堆叠，读者查阅困难，需重组成体系化工程规范。
+protected_content:
+- 配置参数
+- CLAUDECODE 环境变量解释
+- '#+WIKI_ID'
+reader_tasks:
+- id: T1
+  question: 子进程调用 claude CLI 时为什么要过滤 CLAUDECODE 环境变量？
+  expected_answer: 避免交互式终端冲突与嵌套调用死锁。
+- id: T2
+  question: 代码权限配置应遵循什么核心原则？
+  expected_answer: 权限靠近执行者所有者，按需最小化授予，不可全局越权。
+acceptance_criteria: 按环境/权限/工作流重构骨架，原配置命令和踩坑参数 100% 保留。
+hard_fail_conditions:
+- 遗漏 CLAUDECODE 过滤说明
+- 删减关键报错排查代码
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_16_reforge_claude_code_engineering.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: e9e8750df29e46bca79a680992926f795334fafe52af7b0816c30be7775efbc3

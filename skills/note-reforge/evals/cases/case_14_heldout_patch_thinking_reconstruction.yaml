@@ -1,0 +1,22 @@
+case_id: case_14_heldout_patch_thinking_reconstruction
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b637182dad.org
+case_type: real_historical
+is_held_out: true
+task: 用 note-reforge 炼成下一版：notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b637182dad.org
+expected_decision: PATCH
+decision_evidence: 三种提示深度分析清晰，但缺少在上下文受限时的降级策略对比，局部补齐。
+protected_content:
+- 三种深度层级对照
+- '#+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b637182dad'
+reader_tasks:
+- id: T1
+  question: 什么时候应当压缩思考链深度？
+  expected_answer: 在延迟敏感或下游仅需结构化提取的低复杂度单步任务中。
+acceptance_criteria: 局部补充降级考量，不改变基础三层模型。
+hard_fail_conditions:
+- 改写核心深度定义
+- 丢失对比分析表格
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_14_heldout_patch_thinking_reconstruction.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 454aa5272a140e15cb36cc65e506576e153c924a1f85c928be233d43eb0956b4
