@@ -10,6 +10,7 @@
 | 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
+| 将结构、业务流程或代码转换为 PlantUML，并获得在线 PNG 图片直链 | `plantuml-diagram-engine` | skills/plantuml-diagram-engine/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
@@ -30,6 +31,8 @@
 - 定向修改：`用 bprd-plus 按下面的反馈修改 BRD：<反馈>`
 
 ## 视觉知识图解
+
+- `plantuml-diagram-engine`：按语义选择 WBS / Activity / Sequence / Component / State，合并本体建模与 PlantUML 绘图规则；默认交付在线 PNG 直链，验证状态如实报告。
 
 - `sketchnote-generator`：材料核验 → 动态知识模块 → 复古笔记本式 Sketchnote → 图片生成 → 视觉与事实检查。需要实际可用的图像生成工具；纯 Claude 环境不能凭 Skill 生成插画。
 - 固定调用：`手绘图：<文章 / 案例 / 链接>`。
