@@ -56,21 +56,21 @@ class TestMerge(unittest.TestCase):
 
     def test_source_type_valid(self):
         for path in (ROOT / 'examples').glob('*.puml'):
-            validate_source(path.read_text())
+            validate_source(path.read_text(encoding='utf-8'))
 
     def test_invalid_delimiters(self):
         with self.assertRaises(RenderError):
             validate_source('@startuml\nA->B:hello\n@endwbs')
 
     def test_wbs_four_groups_and_relationship_labels(self):
-        text = (ROOT / 'examples/01_wbs.puml').read_text()
+        text = (ROOT / 'examples/01_wbs.puml').read_text(encoding='utf-8')
         self.assertEqual(len([l for l in text.splitlines() if l.startswith('** ' ) or l.startswith('**< ')]), 4)
         self.assertEqual(len([l for l in text.splitlines() if l.startswith('***')]), 12)
         for item in ('输入与关系','结构表达','在线交付','验证与修复'):
             self.assertIn(item, text)
 
     def test_activity_branch_labels_and_exit(self):
-        text = (ROOT / 'examples/02_activity.puml').read_text()
+        text = (ROOT / 'examples/02_activity.puml').read_text(encoding='utf-8')
         for item in ('if (', 'then (是)', 'else (否)', 'repeat while', 'stop', '少于两轮'):
             self.assertIn(item, text)
 
