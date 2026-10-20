@@ -1,0 +1,17 @@
+{
+  "pass": false,
+  "decision_detected": "PATCH",
+  "decision_matched": false,
+  "headers_preserved": false,
+  "code_blocks_preserved": true,
+  "protected_content_intact": false,
+  "no_source_overwrite": true,
+  "hard_failures": [
+    "Expected KEEP but model decided to rewrite/patch."
+  ],
+  "details": [
+    "Decision mismatch: expected KEEP, detected PATCH",
+    "Missing original headers: ['#+ATTR_HTML::width 100% :style \"display:block;max-width:100%;height:auto;margin:0 auto;object-fit:contain;\"', '#+CAPTION:SQL 与本体约束盲测总览：23 个待执行案例、Gate 顺序和常见失败模式（1920×920，点击查看原图）。', '#+CATEGORY:SQL 分析与 Skill 测试']",
+    "Protected item missing in output: #+WIKI_ID"
+  ]
+}

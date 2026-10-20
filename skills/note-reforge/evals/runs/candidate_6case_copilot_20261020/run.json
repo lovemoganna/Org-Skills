@@ -1,0 +1,261 @@
+{
+  "run_id": "candidate_6case_copilot_20261020",
+  "prepared_at": "2026-10-20T04:22:05.403356+00:00",
+  "mode": "sealed_heldout_subject_ab",
+  "executor": "GitHub Copilot CLI",
+  "model": "ACCOUNT_DEFAULT_UNPINNED",
+  "cases": [
+    "case_06_heldout_keep_sql_blind_cases",
+    "case_14_heldout_patch_thinking_reconstruction",
+    "case_18_heldout_reforge_xianxia_talismans",
+    "case_20_heldout_block_irreconcilable_contradiction",
+    "case_21_heldout_patch_missing_navigation_mutation",
+    "case_22_heldout_reforge_flattened_atlas_mutation"
+  ],
+  "subject_requests_expected": 12,
+  "subject_requests_completed": 12,
+  "status": "EXECUTED_L1_ONLY",
+  "limitations": [
+    "Copilot account default model is not pinned or independently identified.",
+    "Baseline and Skill arms use separate COPILOT_HOME sessions.",
+    "Held-out answer keys and acceptance metadata are excluded from subject prompts.",
+    "Semantic/L3 judging is separate from subject generation."
+  ],
+  "results": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 975,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": false,
+            "code_blocks_preserved": true,
+            "protected_content_intact": false,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected PATCH",
+              "Missing original headers: ['#+ATTR_HTML::width 100% :style \"display:block;max-width:100%;height:auto;margin:0 auto;object-fit:contain;\"', '#+CAPTION:SQL 与本体约束盲测总览：23 个待执行案例、Gate 顺序和常见失败模式（1920×920，点击查看原图）。', '#+CATEGORY:SQL 分析与 Skill 测试']",
+              "Protected item missing in output: #+WIKI_ID"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 174,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 8109,
+          "l1": {
+            "pass": false,
+            "decision_detected": "REFORGE",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected REFORGE"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 157,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 2661,
+          "l1": {
+            "pass": false,
+            "decision_detected": "REFORGE",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected REFORGE"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 150,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 155,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 120,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 280,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": false,
+            "code_blocks_preserved": false,
+            "protected_content_intact": false,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Lost or modified 1 original source code block(s)."
+            ],
+            "details": [
+              "Missing original headers: ['#+ATTR_HTML::width 100% :style display:block;max-width:100%;height:auto;margin:0 auto', '#+AUTHOR:Claude', '#+CAPTION:三种提示深度：5 分钟、15 分钟与 45 分钟的选择']",
+              "Protected item missing in output: #+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b63"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 8023,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 1872,
+          "l1": {
+            "pass": true,
+            "decision_detected": "REFORGE",
+            "decision_matched": true,
+            "headers_preserved": false,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Missing original headers: ['#+ATTR_HTML::width 660px :style min-width:0;width:100%;max-width:660px;table-layout:fixed;margin:auto']"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 210,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected REFORGE, detected KEEP"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "completed_at": "2026-10-20T04:23:03.331045+00:00",
+  "errors": []
+}

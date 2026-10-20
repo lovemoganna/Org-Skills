@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "decision_detected": "REFORGE",
+  "decision_matched": true,
+  "headers_preserved": false,
+  "code_blocks_preserved": true,
+  "protected_content_intact": true,
+  "no_source_overwrite": true,
+  "hard_failures": [],
+  "details": [
+    "Missing original headers: ['#+ATTR_HTML::width 660px :style min-width:0;width:100%;max-width:660px;table-layout:fixed;margin:auto']"
+  ]
+}
