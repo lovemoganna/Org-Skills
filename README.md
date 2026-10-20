@@ -18,6 +18,8 @@
 | 从突发经营事件或业务目标提炼值得决策的分析任务 | `business-owner` | skills/business-owner/SKILL.md |
 | 面对陌生数据集，从业务问题推导数据逻辑与 SQL | `sql-business-thinking` | skills/sql-business-thinking/ |
 | 将模糊要求炼成分类、判定、操作、能力、质量等可执行标准，并完成 Loop 质检 | `standards-engineering-loop` | skills/standards-engineering-loop/SKILL.md |
+| 用历史 K 线盲测训练交易决策、模拟执行和复盘 | `trading-simulation-coach` | skills/trading-simulation-coach/SKILL.md |
+| 只读核验股票行情、财报、DCF、持仓集中度和研究证据 | `equity-research-auditor` | skills/equity-research-auditor/SKILL.md |
 | 从真实多表数据建立本体、独立验证 SQL 与 Finding | `ontology-constrained-analysis` | skills/ontology-constrained-analysis/SKILL.md |
 | 扫描多表数据集并生成高价值定制看板 | `dataset-dashboard-builder` | skills/dataset-dashboard-builder/ |
 | 把业务材料转化为短、准、可开发、可验收的 BRD | `bprd-plus` | skills/bprd-plus/SKILL.md |
@@ -64,6 +66,12 @@
 - `sql-business-thinking`：仅兼容路由；旧版完整规则归档在 `skills/sql-business-thinking/legacy/SKILL.md`。
 - `standards-engineering-loop`：要求还原 → 领域与本体映射 → 原子标准 / Lisp 规则 → 测试 / 依据 → Baseline → Loop 0–9 → 发布判断。
 
+### 交易训练与投资研究（独立边界）
+- `trading-simulation-coach`：历史行情盲测 → 信号/风险 Gate → 模拟执行 → 揭盲复盘 → 独立样本评估；不自动实盘下单。
+- `equity-research-auditor`：行情/原始财报/业绩/DCF/持仓暴露 → 证据化 ResearchPacket；默认只读，不安装第三方工具。
+- **隔离规则**：研究资料只有能证明在历史决策前公开（`available_at <= decision_time`），才可作为训练当时已知资料。用户不授权则不与模拟训练自动联动。
+- 示例调用：`用 trading-simulation-coach 训练我判断一组盲测 K 线`；`用 equity-research-auditor 核查这份公司的财报及DCF假设`。
+
 ### 数据产品
 - `dataset-dashboard-builder`：多表数据 → 质检 → 领域建模 → 指标与问题设计 → SQL / Result / Visual Spec → 看板与审查闭环。
 
@@ -83,6 +91,8 @@
 | `analysis-verifier` | 独立检验业务语义、SQL 和真实结果，反馈反例并驱动下一轮分析 | `skills/analysis-verifier/SKILL.md` | Active; verification only |
 | `sql-business-thinking` | 旧入口兼容路由（执行逻辑已一拆二） | `skills/sql-business-thinking/SKILL.md` | Compatibility only |
 | `standards-engineering-loop` | 通用标准规范撰写与 Loop 自迭代优化 SOP V3；覆盖标准、测试、证据与版本闭环 | `skills/standards-engineering-loop/SKILL.md` | Eval pending |
+| `trading-simulation-coach` | K线盲测训练与模拟交易能力验证，风险优先并隔离未来信息 | `skills/trading-simulation-coach/SKILL.md` | Draft; scenario eval pending |
+| `equity-research-auditor` | 股票投资研究证据审计与估值、持仓风险分析；只读 | `skills/equity-research-auditor/SKILL.md` | Draft; scenario eval pending |
 | `ontology-constrained-analysis` | 本体约束多表分析与真实验证，源不可用时交付审计报告 | `skills/ontology-constrained-analysis/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |
 | `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
