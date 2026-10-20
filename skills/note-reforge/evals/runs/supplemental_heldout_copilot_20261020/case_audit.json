@@ -1,0 +1,40 @@
+{
+  "audit_id": "supplemental_heldout_case_audit_20261020",
+  "created_at": "2026-10-20",
+  "purpose": "Provide PATCH and REFORGE held-out coverage with source-grounded, traceable mutations after the original held-out labels were found stale/unsupported.",
+  "cases": [
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "parent_snapshot": "case_14_heldout_patch_thinking_reconstruction.org",
+      "mutation": "Delete only the 15-minute row from the '先选版本' navigation table.",
+      "facts_preserved": [
+        "整合平衡版（推荐使用） still exists.",
+        "Its property drawer still says EFFORT: 15min.",
+        "The 5-minute and 45-minute navigation rows remain."
+      ],
+      "expected_decision": "PATCH",
+      "why_not_keep": "The navigation table is locally incomplete despite the missing mapping being recoverable from the same document.",
+      "why_not_reforge": "The three detailed prompt bodies and overall architecture remain intact; only one navigation relation is missing.",
+      "acceptance": "Restore the 15-minute -> 整合平衡版 relation or an equivalent local navigation fix; leave all three prompt bodies unchanged."
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "parent_snapshot": "case_18_heldout_reforge_xianxia_talismans.org",
+      "mutation": "Replace twelve per-talisman subheadings with one dense paragraph while preserving every one of the twelve factual descriptions and all other document sections.",
+      "facts_preserved": [
+        "All twelve zodiac names and original descriptions remain verbatim in the dense paragraph.",
+        "The twelve-image index remains.",
+        "The scope/boundary section remains."
+      ],
+      "expected_decision": "REFORGE",
+      "why_not_keep": "The document's primary lookup content can no longer be navigated by talisman; twelve independent records are collapsed into one paragraph.",
+      "why_not_patch": "The main content organization, not a single local sentence, is broken; restoring per-item lookup requires restructuring the core twelve-entry section.",
+      "acceptance": "Reorganize the twelve preserved facts into twelve independent indexed entries or an equivalent structured atlas. Do not add costs, levels, or other new lore."
+    }
+  ],
+  "anti_leakage": [
+    "Subject prompts receive task and mutated snapshot only.",
+    "Expected decision, mutation rationale, reader-task answer and acceptance criteria are excluded from subject prompts.",
+    "Production note-reforge Skill is unchanged before and during the run."
+  ]
+}
