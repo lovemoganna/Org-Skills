@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Trigger marker: harness is now on main.
 """Run the sealed note-reforge held-out A/B subject trial with OpenAI Responses API.
 
 Subject calls never receive expected decisions, reader-task answers, acceptance
