@@ -69,7 +69,8 @@ def load_case(case_id: str) -> tuple[dict, str]:
     meta = yaml.safe_load(case_path.read_text(encoding="utf-8"))
     if not meta.get("is_held_out"):
         raise RuntimeError(f"CASE_NOT_HELD_OUT:{case_id}")
-    source_path = REPO_ROOT / meta["snapshot_file"]
+    snapshot_rel = str(meta["snapshot_file"]).replace("\\\\", "/")
+    source_path = REPO_ROOT / snapshot_rel
     return meta, source_path.read_text(encoding="utf-8")
 
 
