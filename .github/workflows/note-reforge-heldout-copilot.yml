@@ -53,21 +53,44 @@ jobs:
             case_18_heldout_reforge_xianxia_talismans
             case_20_heldout_block_irreconcilable_contradiction
           )
+          run_one() {
+            local case_id="$1"
+            local arm="$2"
+            local prompt="$OUT/$case_id/$arm/prompt.txt"
+            local output="$OUT/$case_id/$arm/output.md"
+            local log="$OUT/$case_id/$arm/runner.log"
+            local home="$RUNNER_TEMP/copilot-$case_id-$arm"
+            local work="$RUNNER_TEMP/work-$case_id-$arm"
+            mkdir -p "$home" "$work"
+            (
+              export COPILOT_HOME="$home"
+              cd "$work"
+              timeout 360s copilot -p "$(cat "$prompt")" --max-ai-credits 60 --no-ask-user -s > "$output" 2> "$log"
+              test -s "$output"
+            )
+          }
+
+          pids=()
+          labels=()
           for case_id in "${cases[@]}"; do
             for arm in arm_a_baseline arm_b_skill; do
-              prompt="$OUT/$case_id/$arm/prompt.txt"
-              output="$OUT/$case_id/$arm/output.md"
-              export COPILOT_HOME="$RUNNER_TEMP/copilot-$case_id-$arm"
-              work="$RUNNER_TEMP/work-$case_id-$arm"
-              mkdir -p "$COPILOT_HOME" "$work"
-              echo "=== $case_id / $arm ==="
-              (
-                cd "$work"
-                timeout 360s copilot -p "$(cat "$prompt")" --max-ai-credits 60 --no-ask-user -s > "$output"
-              )
-              test -s "$output"
+              echo "START $case_id / $arm"
+              run_one "$case_id" "$arm" &
+              pids+=("$!")
+              labels+=("$case_id/$arm")
             done
           done
+
+          failed=0
+          for i in "${!pids[@]}"; do
+            if wait "${pids[$i]}"; then
+              echo "PASS ${labels[$i]}"
+            else
+              echo "FAIL ${labels[$i]}"
+              failed=1
+            fi
+          done
+          exit "$failed"
 
       - name: Summarize deterministic L1 evidence
         id: summarize
