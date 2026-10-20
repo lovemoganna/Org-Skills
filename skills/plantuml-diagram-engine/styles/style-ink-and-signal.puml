@@ -112,7 +112,7 @@ skinparam svgDimensionStyle false
 skinparam minClassWidth 90
 skinparam nodesep 56
 skinparam ranksep 68
-skinparam padding 6
+' v17.1: obsolete global skinparam padding removed (the renderer draws a warning banner)
 skinparam linetype $LINETYPE
 skinparam componentStyle rectangle
 skinparam actorStyle awesome

@@ -81,9 +81,11 @@ description: 将文字、代码、业务流程或本体模型转为 PlantUML，�
 参考文档：<https://plantuml.com/server> · <https://plantuml.com/text-encoding> · <https://plantuml.com/wbs-diagram> · <https://plantuml.com/activity-diagram-beta> · <https://docs.kroki.io/kroki/setup/usage>
 
 
-## v17 样式回归与兼容性门禁（2026-10-20）
+## v17.1 样式回归与兼容性门禁（2026-10-20）
 - 通用配置唯一来源：`styles/style-ink-and-signal.puml`。所有示例和新图必须通过 `!include` 加载；不得在业务图中复制第二套全局配色或强制覆盖样式。深色、正交连线、紧凑状态图参数必须在 `!include` 之前声明。
 - v17 兼容矩阵：浅色活动图、深色时序图、正交组件图、紧凑状态图、甘特图；可复现源码见 `tests/style-v17/`。同时保留并回归 `examples/` 现有九类基准图，不允许以新增样例取代历史回归。
 - 自动渲染：`.github/workflows/plantuml-style-v17.yml` 使用固定版本 PlantUML 和 SHA-256 校验，先 `-checkonly` 再输出 SVG，检查 SVG 格式并上传预览工件。源码解析通过不等于视觉已检查；图形实际被查看前不得标为 `VISUALLY_REVIEWED`。
 - 稳定性检查：兼容常量与 `<<low>> / <<mid>> / <<high>> / <<ok>>` 需保留；禁止用 `root.LineColor` 或 `root.BackGroundColor` 覆盖子元素语义色；脑图/WBS 不得被组件图的全局居中规则污染。默认 `$STATE_COMPACT=%false()`，防止甘特图解析异常。
 - 失败时保持最近一版有效源码、失败图型、错误日志及修复差异；不能将未运行的 fixture 或 URL 生成称为渲染通过。
+
+- 活动图着色须用当前语法 `:动作; <<#RRGGBB>>`，不得再用会产生警告且错误显示的 `#RRGGBB:动作;`；全局 `skinparam padding` 已移除，以免渲染出废弃提示横幅。

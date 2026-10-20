@@ -22,3 +22,8 @@
 5. 发生失败时依据 GitHub Actions 日志定位，不得填写虚构的通过状态。
 
 Actions: https://github.com/lovemoganna/Org-Skills/actions/workflows/plantuml-style-v17.yml
+
+## 渲染发现与修复
+- 初次运行五个新例均可解析，但 SVG 显示全局 `skinparam padding` 废弃提示；浅色活动图使用旧着色语法时还出现警告与文本串行。
+- 原有 `examples/02_activity.puml` 在 PlantUML v1.2026.8 的原提前停止分支中触发 `Cannot find if`；已重排条件分支，保留敏感数据只允许本地渲染的语义。
+- v17.1 移除全局废弃 padding 并将活动图填色改为现代语法；后续以工作流实际验收结果为准。

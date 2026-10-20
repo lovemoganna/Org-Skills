@@ -43,6 +43,7 @@ jobs:
               failures=$((failures+1))
             fi
             java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -tsvg -o "$GITHUB_WORKSPACE/plantuml-v17-svg" "${fixture}" || true
+            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -tpng -o "$GITHUB_WORKSPACE/plantuml-v17-svg" "${fixture}" || true
             echo "::endgroup::"
           done
           echo "Check-only failures: $failures"
@@ -67,8 +68,13 @@ jobs:
               assert root.tag.endswith("svg"), file
               txt=file.read_text(encoding="utf-8")
               assert "Syntax Error" not in txt and "Error line" not in txt, file
+              normalized=" ".join(t.replace("\\u00a0"," ") for t in root.itertext())
+              for msg in ("Please use CSS style instead of skinparam padding","This syntax is deprecated","Cannot find if"):
+                  assert msg not in normalized, (file, msg)
               assert len(txt)>500, file
-              print(f"PASS {file.name} ({len(txt)} bytes)")
+              png=file.with_suffix(".png")
+              assert png.exists() and png.stat().st_size>500, png
+              print(f"PASS {file.name} + {png.name} ({len(txt)} bytes SVG)")
           PY
       - name: Unit regression
         shell: bash
@@ -79,6 +85,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: plantuml-v17-svg-previews
-          path: plantuml-v17-svg/*.svg
+          path: |
+            plantuml-v17-svg/*.svg
+            plantuml-v17-svg/*.png
           if-no-files-found: warn
           retention-days: 14
