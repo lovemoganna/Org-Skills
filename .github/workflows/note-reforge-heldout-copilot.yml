@@ -1,0 +1,109 @@
+name: note-reforge Held-out Copilot Eval
+
+on:
+  push:
+    branches:
+      - "eval/note-reforge-heldout-*"
+    paths:
+      - "skills/note-reforge/evals/heldout_copilot_eval.py"
+      - ".github/workflows/note-reforge-heldout-copilot.yml"
+
+permissions:
+  contents: write
+  copilot-requests: write
+
+jobs:
+  heldout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install "PyYAML>=6,<7"
+          npm install -g @github/copilot
+
+      - name: Prepare sealed prompts
+        run: python skills/note-reforge/evals/heldout_copilot_eval.py prepare
+
+      - name: Execute isolated baseline and Skill subjects
+        id: subjects
+        continue-on-error: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          OUT="$GITHUB_WORKSPACE/skills/note-reforge/evals/runs/heldout_copilot_20261020"
+          cases=(
+            case_06_heldout_keep_sql_blind_cases
+            case_14_heldout_patch_thinking_reconstruction
+            case_18_heldout_reforge_xianxia_talismans
+            case_20_heldout_block_irreconcilable_contradiction
+          )
+          for case_id in "${cases[@]}"; do
+            for arm in arm_a_baseline arm_b_skill; do
+              prompt="$OUT/$case_id/$arm/prompt.txt"
+              output="$OUT/$case_id/$arm/output.md"
+              export COPILOT_HOME="$RUNNER_TEMP/copilot-$case_id-$arm"
+              work="$RUNNER_TEMP/work-$case_id-$arm"
+              mkdir -p "$COPILOT_HOME" "$work"
+              echo "=== $case_id / $arm ==="
+              (
+                cd "$work"
+                timeout 360s copilot -p "$(cat "$prompt")" --max-ai-credits 60 --no-ask-user -s > "$output"
+              )
+              test -s "$output"
+            done
+          done
+
+      - name: Summarize deterministic L1 evidence
+        id: summarize
+        continue-on-error: true
+        run: python skills/note-reforge/evals/heldout_copilot_eval.py summarize
+
+      - name: Record Copilot CLI version
+        if: always()
+        run: |
+          copilot --version > skills/note-reforge/evals/runs/heldout_copilot_20261020/copilot-version.txt || true
+
+      - name: Commit evidence to evaluation branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/note-reforge/evals/runs/heldout_copilot_20261020
+          if git diff --cached --quiet; then
+            echo "No evidence changes."
+          else
+            git commit -m "eval(note-reforge): record Copilot held-out evidence"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: note-reforge-heldout-copilot-evidence
+          path: skills/note-reforge/evals/runs/heldout_copilot_20261020/
+          retention-days: 30
+
+      - name: Enforce completed subject run
+        if: always()
+        run: |
+          if [ "${{ steps.subjects.outcome }}" != "success" ] || [ "${{ steps.summarize.outcome }}" != "success" ]; then
+            echo "Held-out Copilot evaluation did not complete successfully."
+            exit 1
+          fi
