@@ -3,9 +3,9 @@
   "dataset_version": "1.0.0",
   "total_cases": 20,
   "distribution": {
-    "KEEP": 6,
-    "PATCH": 8,
-    "REFORGE": 4,
+    "KEEP": 8,
+    "PATCH": 7,
+    "REFORGE": 3,
     "BLOCK": 2
   },
   "held_out_count": 4,
@@ -184,7 +184,7 @@
       "expected_decision": "KEEP",
       "prompt": "用 note-reforge 炼成下一版：notes/programming/sql-business-thinking/e1e502b9-f876-47d6-813f-e4d5ea51983a.org",
       "expected_output": "保留全部案例结构，给出 KEEP 结论。",
-      "decision_evidence": "23个盲测案例索引与业务约束已完备且通过测试，无新测试数据前不改动。",
+      "decision_evidence": "23 个测试资产的索引、执行边界与未运行状态已经清楚；原文明确说明这些案例仍待执行，且没有新增执行证据，因此不应制造改写。",
       "files": [
         "skills/note-reforge/evals/cases/source_snapshots/case_06_heldout_keep_sql_blind_cases.org"
       ],
@@ -198,8 +198,8 @@
       "reader_tasks": [
         {
           "id": "T1",
-          "question": "D08 案例的测试基准是什么？",
-          "expected_answer": "真实基线状态算术与负向案例检查，不执行新业务 SQL。"
+          "question": "这 23 个测试案例当前是否已经被本页证明通过？",
+          "expected_answer": "没有。它们仍是待执行的测试需求；页面发布、提示词、旧报告或 Skill 状态都不能代替本轮真实执行回执。"
         }
       ],
       "source_sha256": "510004a6eac291807f30d784be45ebe5ac284b708dabb0238617fd78c3fab97b"
@@ -416,25 +416,26 @@
       "case_id": "case_14_heldout_patch_thinking_reconstruction",
       "case_type": "real_historical",
       "is_held_out": true,
-      "expected_decision": "PATCH",
+      "expected_decision": "KEEP",
       "prompt": "用 note-reforge 炼成下一版：notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b637182dad.org",
-      "expected_output": "局部补充降级考量，不改变基础三层模型。",
-      "decision_evidence": "三种提示深度分析清晰，但缺少在上下文受限时的降级策略对比，局部补齐。",
+      "expected_output": "给出 KEEP；不得凭空补入原文未提供依据的延迟、上下文窗口或结构化提取降级规则，保留三层模型。",
+      "decision_evidence": "原文已经按可用时间、学习目标和问题复杂度提供 5/15/45 分钟三层选择，并明确三版边界；没有新增证据支持加入延迟敏感、结构化提取等额外降级规则，因此应保持原文。",
       "files": [
         "skills/note-reforge/evals/cases/source_snapshots/case_14_heldout_patch_thinking_reconstruction.org"
       ],
       "expectations": [
-        "决策符合预期: PATCH",
+        "决策符合预期: KEEP",
         "受保护内容与原始代码块完整保真",
-        "局部补充降级考量，不改变基础三层模型。",
+        "给出 KEEP；不得凭空补入原文未提供依据的延迟、上下文窗口或结构化提取降级规则，保留三层模型。",
+        "禁止: 无依据补造新的选择规则",
         "禁止: 改写核心深度定义",
         "禁止: 丢失对比分析表格"
       ],
       "reader_tasks": [
         {
           "id": "T1",
-          "question": "什么时候应当压缩思考链深度？",
-          "expected_answer": "在延迟敏感或下游仅需结构化提取的低复杂度单步任务中。"
+          "question": "原文用哪些因素选择 5、15、45 分钟三种提示深度？",
+          "expected_answer": "根据可用时间、学习目标和问题复杂度选择；5 分钟建立方向，15 分钟形成结构化理解，45 分钟深挖可迁移知识。"
         }
       ],
       "source_sha256": "454aa5272a140e15cb36cc65e506576e153c924a1f85c928be233d43eb0956b4"
@@ -544,25 +545,26 @@
       "case_id": "case_18_heldout_reforge_xianxia_talismans",
       "case_type": "real_historical",
       "is_held_out": true,
-      "expected_decision": "REFORGE",
+      "expected_decision": "KEEP",
       "prompt": "用 note-reforge 炼成下一版：notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org",
-      "expected_output": "重构为统一规范的图鉴条目，十二设定全量保留。",
-      "decision_evidence": "十二符咒草稿碎片化严重，设定交叉重叠，需重构为属性/效果/代价的结构化图鉴。",
+      "expected_output": "给出 KEEP；保留现有十二图腾索引、十二神通条目和设定边界，不凭空增加代价或其他作者未提供的设定。",
+      "decision_evidence": "原文已经包含统一的十二图腾索引、十二个逐项神通条目和设定边界，结构可直接查阅；原文没有提供使用代价等新增设定，因此无依据重构或补造属性。",
       "files": [
         "skills/note-reforge/evals/cases/source_snapshots/case_18_heldout_reforge_xianxia_talismans.org"
       ],
       "expectations": [
-        "决策符合预期: REFORGE",
+        "决策符合预期: KEEP",
         "受保护内容与原始代码块完整保真",
-        "重构为统一规范的图鉴条目，十二设定全量保留。",
+        "给出 KEEP；保留现有十二图腾索引、十二神通条目和设定边界，不凭空增加代价或其他作者未提供的设定。",
+        "禁止: 无依据新增真元消耗、反冲或其他代价",
         "禁止: 遗漏任一符咒",
         "禁止: 擅自改变作者核心设定"
       ],
       "reader_tasks": [
         {
           "id": "T1",
-          "question": "兔符咒的核心能力与使用代价分别是什么？",
-          "expected_answer": "极速移动；消耗大量真元/需承受反冲。"
+          "question": "原文对兔符咒的核心设定是什么？",
+          "expected_answer": "一瞬万里，穿梭时空，遨游太虚。原文没有给出真元消耗或反冲等使用代价。"
         }
       ],
       "source_sha256": "26469ea885ea6c98fbf7008c6bfecf8c7b6968a23be4570bd1c53a859c90bef7"
