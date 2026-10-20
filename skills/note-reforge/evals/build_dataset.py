@@ -22,7 +22,7 @@ ORG_NOTES_ROOT = REPO_ROOT.parent / "org-notes"
 SOURCE_COMMIT = "fd5e79c5586a11cb000f80f911ef1152cb90c847"
 
 CASES_DEF = [
-    # --- KEEP (6 cases: 5 real, 1 held-out real) ---
+    # --- KEEP (8 cases: 8 real, 3 held-out real after source audit) ---
     {
         "case_id": "case_01_keep_recursive_discovery",
         "source_repo": "lovemoganna/org-notes",
@@ -129,7 +129,7 @@ CASES_DEF = [
         "hard_fail_conditions": ["删减案例", "引入未实测结论"]
     },
 
-    # --- PATCH (8 cases: 7 real, 1 held-out real) ---
+    # --- PATCH (7 cases: 7 real; no validated held-out case yet) ---
     {
         "case_id": "case_07_patch_project_operations",
         "source_repo": "lovemoganna/org-notes",
@@ -261,7 +261,7 @@ CASES_DEF = [
         "hard_fail_conditions": ["无依据补造新的选择规则", "改写核心深度定义", "丢失对比分析表格"]
     },
 
-    # --- REFORGE (4 cases: 3 real, 1 held-out real) ---
+    # --- REFORGE (3 cases: 3 real; no validated held-out case yet) ---
     {
         "case_id": "case_15_reforge_agent_automations",
         "source_repo": "lovemoganna/org-notes",
