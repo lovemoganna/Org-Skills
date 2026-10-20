@@ -5,15 +5,15 @@ case_type: real_historical
 is_held_out: true
 task: 用 note-reforge 炼成下一版：notes/programming/sql-business-thinking/e1e502b9-f876-47d6-813f-e4d5ea51983a.org
 expected_decision: KEEP
-decision_evidence: 23个盲测案例索引与业务约束已完备且通过测试，无新测试数据前不改动。
+decision_evidence: 23 个测试资产的索引、执行边界与未运行状态已经清楚；原文明确说明这些案例仍待执行，且没有新增执行证据，因此不应制造改写。
 protected_content:
 - 23个案例列表
 - DuckDB测试边界
 - '#+WIKI_ID'
 reader_tasks:
 - id: T1
-  question: D08 案例的测试基准是什么？
-  expected_answer: 真实基线状态算术与负向案例检查，不执行新业务 SQL。
+  question: 这 23 个测试案例当前是否已经被本页证明通过？
+  expected_answer: 没有。它们仍是待执行的测试需求；页面发布、提示词、旧报告或 Skill 状态都不能代替本轮真实执行回执。
 acceptance_criteria: 保留全部案例结构，给出 KEEP 结论。
 hard_fail_conditions:
 - 删减案例
