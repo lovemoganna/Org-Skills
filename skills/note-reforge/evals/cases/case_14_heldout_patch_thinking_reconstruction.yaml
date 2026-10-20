@@ -4,17 +4,18 @@ source_path: notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b
 case_type: real_historical
 is_held_out: true
 task: 用 note-reforge 炼成下一版：notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b637182dad.org
-expected_decision: PATCH
-decision_evidence: 三种提示深度分析清晰，但缺少在上下文受限时的降级策略对比，局部补齐。
+expected_decision: KEEP
+decision_evidence: 原文已经按可用时间、学习目标和问题复杂度提供 5/15/45 分钟三层选择，并明确三版边界；没有新增证据支持加入延迟敏感、结构化提取等额外降级规则，因此应保持原文。
 protected_content:
 - 三种深度层级对照
 - '#+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b637182dad'
 reader_tasks:
 - id: T1
-  question: 什么时候应当压缩思考链深度？
-  expected_answer: 在延迟敏感或下游仅需结构化提取的低复杂度单步任务中。
-acceptance_criteria: 局部补充降级考量，不改变基础三层模型。
+  question: 原文用哪些因素选择 5、15、45 分钟三种提示深度？
+  expected_answer: 根据可用时间、学习目标和问题复杂度选择；5 分钟建立方向，15 分钟形成结构化理解，45 分钟深挖可迁移知识。
+acceptance_criteria: 给出 KEEP；不得凭空补入原文未提供依据的延迟、上下文窗口或结构化提取降级规则，保留三层模型。
 hard_fail_conditions:
+- 无依据补造新的选择规则
 - 改写核心深度定义
 - 丢失对比分析表格
 snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_14_heldout_patch_thinking_reconstruction.org
