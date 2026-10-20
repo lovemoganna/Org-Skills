@@ -22,4 +22,5 @@ hard_fail_conditions:
 - 把局部导航缺口升级成全篇重构
 - 改写三种深度的核心定义
 - 新增原文不存在的第四种深度
+snapshot_file: skills/note-reforge/evals/cases/source_snapshots/case_21_heldout_patch_missing_navigation_mutation.org
 source_blob_sha: 8fba81eefc3867f7450bd941ee8d996bf30e3e8b
