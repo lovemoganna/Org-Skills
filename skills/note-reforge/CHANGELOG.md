@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-10-20 — structural REFORGE precedence after held-out false negative
+
+- A source-grounded held-out mutation preserved all twelve talisman facts but flattened the primary twelve-record section into one dense paragraph. The current Skill chose `KEEP`, while the independently inspected task required structural `REFORGE`.
+- Root cause: “no evidence-backed new judgment” could be read as sufficient for KEEP even when the existing information architecture itself blocked lookup.
+- Narrow fix: absence of new facts no longer forces KEEP. A collapsed primary structure that materially blocks lookup/comparison/judgment/execution may be REFORGEd using existing facts only; local navigation/mapping gaps remain PATCH.
+- Guardrail: structural REFORGE may reorder existing facts but must not invent missing attributes, conclusions, costs, levels, or author experience.
+- Evidence: supplemental held-out run `39368407816`, artifact `12240268458`, adjudication `evals/runs/supplemental_heldout_copilot_20261020/adjudication_20261020.json`.
+- Production change is limited to the decision protocol; no other writing, publishing, or fidelity rules were broadened.
+
 ## 2026-10-17 — published-title protection and real-task acceptance
 
 - Publish failures were not missing checks in the publisher. The GitHub connector write route skipped the publisher's pre-submit protection. Added a runnable Org update preflight and made it mandatory before any GitHub write.
