@@ -74,6 +74,29 @@ assert "延迟敏感或下游仅需结构化提取" not in case14
 assert "expected_decision: KEEP" in case18
 assert "消耗大量真元" not in case18 and "需承受反冲" not in case18
 
+# Supplemental source-grounded PATCH/REFORGE mutations and adjudication.
+case21 = (SKILL_ROOT / "evals" / "cases" / "case_21_heldout_patch_missing_navigation_mutation.yaml").read_text(encoding="utf-8")
+case22 = (SKILL_ROOT / "evals" / "cases" / "case_22_heldout_reforge_flattened_atlas_mutation.yaml").read_text(encoding="utf-8")
+source21 = (SKILL_ROOT / "evals" / "cases" / "source_snapshots" / "case_21_heldout_patch_missing_navigation_mutation.org").read_text(encoding="utf-8")
+source22 = (SKILL_ROOT / "evals" / "cases" / "source_snapshots" / "case_22_heldout_reforge_flattened_atlas_mutation.org").read_text(encoding="utf-8")
+assert "expected_decision: PATCH" in case21 and "EFFORT 为 15min" in case21
+assert "| 15 分钟，形成结构化理解 |" not in source21
+assert "* 整合平衡版（推荐使用）" in source21 and ":EFFORT: 15min" in source21
+assert "expected_decision: REFORGE" in case22 and "* 十二神通原始记录" in source22
+assert "** 兔 · 一瞬万里" not in source22
+for _fact in ("鼠，化静为动", "兔，一瞬万里", "猪，神目冲虚"):
+    assert _fact in source22, ("supplemental reforge fact lost", _fact)
+assert "真元" not in source22 and "反冲" not in source22
+_supp = json.loads((
+    SKILL_ROOT / "evals" / "runs" / "supplemental_heldout_copilot_20261020" / "adjudication_20261020.json"
+).read_text(encoding="utf-8"))
+assert _supp["subject_requests_completed"] == 4
+assert _supp["cases"][0]["skill"]["detected_decision"] == "PATCH"
+assert _supp["cases"][0]["skill"]["delivery_verdict"] == "PASS"
+assert _supp["cases"][1]["skill"]["detected_decision"] == "KEEP"
+assert _supp["cases"][1]["skill"]["decision_verdict"] == "FAIL"
+assert _supp["defect_found"]["name"] == "REFORGE false negative caused by KEEP precedence"
+
 # KEEP produces no replacement document: the unchanged source is the effective artifact.
 from importlib.util import module_from_spec as _eval_module_from_spec, spec_from_file_location as _eval_spec_from_file_location
 _l1_spec = _eval_spec_from_file_location("note_reforge_l1", SKILL_ROOT / "evals" / "validators" / "l1_deterministic.py")

@@ -158,16 +158,38 @@ GitHub Actions Run `39367285662` 完成 4 个案例 × Baseline/Skill 两组，�
 
 ---
 
+### 2026-10-20 Supplemental Held-out：补齐 PATCH / REFORGE
+
+原 4 个 held-out 经答案键审计后只剩有效 KEEP/BLOCK 覆盖，因此新增两个**真实文档的确定性变异样本**。变异只制造一个可反查的缺陷，不增加新事实：
+
+- `case_21` PATCH：从真实“三种提示深度”文章的导航表中只删除 15 分钟入口；正文仍保留“整合平衡版”与 `EFFORT: 15min`。
+- `case_22` REFORGE：保留真实十二符咒的全部事实、图片与边界，只把十二个独立条目压成一个连续段落。
+
+GitHub Actions Run `39368407816` 完成 2 案例 × 2 Arm，共 **4/4 次真实 Subject 调用**。原始输出保存在 Actions artifact `12240268458`，digest 为 `sha256:208726d2be1a693b05320de8ad1605c1ba24d3ffe959b4ecfa4f7912a3684c59`。
+
+| Case | Baseline | 当前 Skill | 裁决 |
+|---|---|---|---|
+| PATCH 局部导航缺口 | 决策 PATCH；仅交付替换片段，未形成完整下一版 | **PATCH；完整保留原文并补回导航** | Skill PASS；Baseline 交付不完整 |
+| REFORGE 主结构压平 | **REFORGE；将十二条恢复为独立可检索记录** | KEEP | **Skill FAIL：REFORGE false negative** |
+
+这次发现的是生产 Skill 的真实缺陷：当前规则同时写着“无新增判断时 KEEP”和“结构阻碍查找时 REFORGE”。在“事实完整、但主结构失效”的输入上，前者压过了后者。
+
+**最小修复目标**：没有新事实不能单独触发 KEEP。若现有结构本身已阻碍主要对象的查找、比较或执行，并且修复需要重组核心内容，则允许只基于已有事实执行 REFORGE；单一映射、单一导航或单点缺口仍保持 PATCH。
+
+证据记录：`runs/supplemental_heldout_copilot_20261020/adjudication_20261020.json`。
+
+---
+
 ## 六、下一步最小改进建议
 
 依据真实执行证据，对 `note-reforge` 提出如下最小演进建议（**未经用户授权暂不实施**）：
 
 1. **当前生产版保持锁定（LOCK）**：
    - 4 个 smoke case 中，当前 Skill 的决策分类、L1 与 L2 均表现良好；修正 L3 伪负例后，保存的 reader answers 在 9 个下游任务上为 9/9。生产 `SKILL.md` 本轮不修改。
-2. **下一步只补 PATCH / REFORGE 的干净盲测，不做精简版**：
-   - 当前 corrected held-out 已证明 KEEP/BLOCK 和 no-op discipline，但原 PATCH/REFORGE 样本答案键失真。
-   - 新样本必须先完成“冻结快照 → 标签逐项反查 → reader task 可由快照直接回答”三步，再开放给 Subject；禁止先定标签再找证据。
-   - PATCH / REFORGE 各取得至少一个无污染真实或可追溯变异样本后，再讨论 `candidate_lean_skill.md` 或生产 Skill 修改。
+2. **只修 REFORGE false negative，不做精简版**：
+   - supplemental PATCH 已验证当前 Skill 能识别局部缺口并完整交付。
+   - supplemental REFORGE 暴露“事实完整就 KEEP”压过“结构失效需重构”的优先级冲突。
+   - 下一轮只修这个冲突，并同时回归 corrected KEEP/BLOCK、PATCH 和 REFORGE；无回归后再讨论任何精简或其他生产改动。
 
 ---
 
