@@ -1,6 +1,6 @@
 {
   "run_id": "heldout_openai_20261020",
-  "started_at": "2026-10-20T03:53:13.033809+00:00",
+  "started_at": "2026-10-20T03:53:58.740193+00:00",
   "mode": "sealed_heldout_subject_ab",
   "cases": [
     "case_06_heldout_keep_sql_blind_cases",
