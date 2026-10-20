@@ -1,32 +1,32 @@
 @startuml
-' Case B: 顺序、条件与有限次回修（继承专家 v0.1）
+' 兼容新版 PlantUML：隐私分支跳过公开服务，不在未闭合条件块中提前 stop
 !include ../styles/style-ink-and-signal.puml
 title PlantUML 在线 PNG 交付流程
 start
 :接收需求、来源与边界;
 :选择图类型并保留关键关系;
 :生成 PlantUML 源码;
-repeat
-  if (含敏感信息或未经公开授权？) then (是)
-    #FEE2E2:禁止生成公共图片 URL;
-    :使用本地渲染;
-    stop
-  endif
-  #DBEAFE:编码生成在线 PNG URL;
-  if (具备联网验证条件？) then (是)
-    :访问在线图片服务;
-    if (返回有效图片？) then (是)
-      #CCFBF1:检查字体、布局及语义;
+if (含敏感信息或未经公开授权？) then (是)
+  #FEE2E2:禁止生成公共图片 URL;
+  :使用本地渲染;
+else (否)
+  repeat
+    #DBEAFE:编码生成在线 PNG URL;
+    if (具备联网验证条件？) then (是)
+      :访问在线图片服务;
+      if (返回有效图片？) then (是)
+        #CCFBF1:检查字体、布局及语义;
+      else (否)
+        #FEF3C7:记录响应问题;
+      endif
     else (否)
-      #FEF3C7:记录响应问题;
+      #FEF3C7:保留链接并标记未联网验证;
     endif
-  else (否)
-    #FEF3C7:保留链接并标记未联网验证;
-  endif
-  if (发现可修复缺陷？) then (是)
-    :按证据最小修复源码;
-  endif
-repeat while (仍需修复且少于两轮？) is (是) not (否)
-#CCFBF1:返回在线 PNG 链接与验证状态;
+    if (发现可修复缺陷？) then (是)
+      :按证据最小修复源码;
+    endif
+  repeat while (仍需修复且少于两轮？) is (是) not (否)
+  #CCFBF1:返回在线 PNG 链接与验证状态;
+endif
 stop
 @enduml
