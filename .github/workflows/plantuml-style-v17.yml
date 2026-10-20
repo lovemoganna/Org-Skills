@@ -50,7 +50,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           from xml.etree import ElementTree as ET
-          for file in sorted(Path("../../../plantuml-v17-svg").glob("*.svg")):
+          for file in sorted(Path("../../plantuml-v17-svg").glob("*.svg")):
               root=ET.parse(file).getroot()
               ts=[(x.text or "") for x in root.iter() if x.tag.endswith("text")]
               issues=[x for x in ts if "error" in x.lower() or "syntax" in x.lower()]
@@ -61,14 +61,14 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           from xml.etree import ElementTree as ET
-          files=list(Path("../../../plantuml-v17-svg").glob("*.svg"))
+          files=list(Path("../../plantuml-v17-svg").glob("*.svg"))
           assert len(files)==14, f"Expected 14 SVGs; found {len(files)}"
           for file in files:
               root=ET.parse(file).getroot()
               assert root.tag.endswith("svg"), file
               txt=file.read_text(encoding="utf-8")
               assert "Syntax Error" not in txt and "Error line" not in txt, file
-              normalized=" ".join(t.replace("\\u00a0"," ") for t in root.itertext())
+              normalized=" ".join(t.replace(chr(160)," ") for t in root.itertext())
               for msg in ("Please use CSS style instead of skinparam padding","This syntax is deprecated","Cannot find if"):
                   assert msg not in normalized, (file, msg)
               assert len(txt)>500, file
