@@ -1,6 +1,6 @@
 {
   "skill_name": "note-reforge",
-  "dataset_version": "1.0.0",
+  "dataset_version": "1.0.1",
   "total_cases": 20,
   "distribution": {
     "KEEP": 8,
