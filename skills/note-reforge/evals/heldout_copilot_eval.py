@@ -19,7 +19,7 @@ import yaml
 EVALS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EVALS_DIR.parents[2]
 SKILL_PATH = EVALS_DIR.parent / "SKILL.md"
-OUT_DIR = EVALS_DIR / "runs" / "heldout_copilot_20261020"
+OUT_DIR = EVALS_DIR / "runs" / "candidate_6case_copilot_20261020"
 if str(EVALS_DIR) not in sys.path:
     sys.path.insert(0, str(EVALS_DIR))
 
@@ -30,6 +30,8 @@ CASES = [
     "case_14_heldout_patch_thinking_reconstruction",
     "case_18_heldout_reforge_xianxia_talismans",
     "case_20_heldout_block_irreconcilable_contradiction",
+    "case_21_heldout_patch_missing_navigation_mutation",
+    "case_22_heldout_reforge_flattened_atlas_mutation",
 ]
 
 BASELINE_RULES = """你是一个严谨的 AI 助手。请根据用户任务和原始文档执行任务。
@@ -78,7 +80,7 @@ def prepare() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     skill = SKILL_PATH.read_text(encoding="utf-8")
     run = {
-        "run_id": "heldout_copilot_20261020",
+        "run_id": "candidate_6case_copilot_20261020",
         "prepared_at": datetime.now(timezone.utc).isoformat(),
         "mode": "sealed_heldout_subject_ab",
         "executor": "GitHub Copilot CLI",
