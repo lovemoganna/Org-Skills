@@ -17,7 +17,6 @@ import json
 from pathlib import Path
 import re
 import sys
-import yaml
 
 HEADER_RE = re.compile(r"(?im)^\s*#\+([A-Z0-9_-]+):(.*)$")
 SRC_BLOCK_RE = re.compile(r"(?ims)^\s*#\+begin_src\b[^\n]*\n.*?^\s*#\+end_src[^\n]*$")
@@ -128,6 +127,8 @@ def validate_l1(source_text: str, output_text: str, case_meta: dict) -> dict:
     return results
 
 def main():
+    import yaml
+
     parser = argparse.ArgumentParser(description="L1 Deterministic Validator")
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
