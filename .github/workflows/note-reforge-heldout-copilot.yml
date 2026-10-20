@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   heldout:
+    if: contains(github.event.head_commit.message, '[candidate-run]')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -46,12 +47,14 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          OUT="$GITHUB_WORKSPACE/skills/note-reforge/evals/runs/heldout_copilot_20261020"
+          OUT="$GITHUB_WORKSPACE/skills/note-reforge/evals/runs/candidate_6case_copilot_20261020"
           cases=(
             case_06_heldout_keep_sql_blind_cases
             case_14_heldout_patch_thinking_reconstruction
             case_18_heldout_reforge_xianxia_talismans
             case_20_heldout_block_irreconcilable_contradiction
+            case_21_heldout_patch_missing_navigation_mutation
+            case_22_heldout_reforge_flattened_atlas_mutation
           )
           run_one() {
             local case_id="$1"
@@ -100,14 +103,14 @@ jobs:
       - name: Record Copilot CLI version
         if: always()
         run: |
-          copilot --version > skills/note-reforge/evals/runs/heldout_copilot_20261020/copilot-version.txt || true
+          copilot --version > skills/note-reforge/evals/runs/candidate_6case_copilot_20261020/copilot-version.txt || true
 
       - name: Commit evidence to evaluation branch
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add skills/note-reforge/evals/runs/heldout_copilot_20261020
+          git add skills/note-reforge/evals/runs/candidate_6case_copilot_20261020
           if git diff --cached --quiet; then
             echo "No evidence changes."
           else
@@ -119,8 +122,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: note-reforge-heldout-copilot-evidence
-          path: skills/note-reforge/evals/runs/heldout_copilot_20261020/
+          name: note-reforge-candidate-6case-evidence
+          path: skills/note-reforge/evals/runs/candidate_6case_copilot_20261020/
           retention-days: 30
 
       - name: Enforce completed subject run
