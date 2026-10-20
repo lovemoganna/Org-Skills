@@ -138,6 +138,14 @@ assert rejudge["aggregate"]["delta"]["pooled_task_accuracy"] == 0.111
 assert CALL in canonical, "canonical fixed invocation missing"
 assert "不要求用户重复粘贴 Skill、解释规则或确认默认流程" in canonical
 assert CANONICAL in canonical and "唯一 canonical Skill" in canonical
+for clause in (
+    "“没有新事实/新判断”不是 KEEP 的充分条件",
+    "主结构失效且必须重组核心内容时选 REFORGE",
+    "单点缺口可局部修复时选 PATCH",
+    "不得把标题润色、局部排版、单个导航或单点映射缺口升级成 REFORGE",
+    "结构修复只能重排已有事实",
+):
+    assert clause in canonical, ("structural decision precedence missing", clause)
 
 assert "这是调用入口，不是规则副本" in bootstrap
 assert CANONICAL in bootstrap
