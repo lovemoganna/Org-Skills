@@ -27,3 +27,15 @@ Actions: https://github.com/lovemoganna/Org-Skills/actions/workflows/plantuml-st
 - 初次运行五个新例均可解析，但 SVG 显示全局 `skinparam padding` 废弃提示；浅色活动图使用旧着色语法时还出现警告与文本串行。
 - 原有 `examples/02_activity.puml` 在 PlantUML v1.2026.8 的原提前停止分支中触发 `Cannot find if`；已重排条件分支，保留敏感数据只允许本地渲染的语义。
 - v17.1 移除全局废弃 padding 并将活动图填色改为现代语法；后续以工作流实际验收结果为准。
+
+## 已完成的真实验收（2026-10-20）
+
+- **成功的 GitHub Actions 运行**：https://github.com/lovemoganna/Org-Skills/actions/runs/39405660663
+- **运行对应代码**：`d1d1bca45eb5a7d2f064498843e74880fc70e096`。
+- **PlantUML 引擎**：v1.2026.8，JAR SHA-256 为 `5e1ecfa8ecd32c90b03bbf3b1eb6f020943f98ab0fcf4032be31a0002ee2c462`。
+- **渲染**：5/5 个新案例 + 9/9 个原有示例，共 14/14 张有效 SVG，14/14 张 PNG，`-checkonly` 无错误；检查无已知废弃警告文案。
+- **现有功能单元测试**：29/29 通过，包括私有内容保护、CJK 编码往返和 `!include` 内联。
+- **人工查看预览（新增五图）**：Activity、Sequence、Component、State、Gantt 均能显示中文和语义颜色；发现组件图箭头文本拥挤后使用 `skinparam ranksep 140` 扩大间距，并在该成功运行中完成复验。结论限制为上述五张实际预览，不外推到未经测试的其他图型或终端。
+- **回归问题**：旧活动图原有分支结构曾触发 `Cannot find if`，现代化活动图填色语法及分支调整后解除；旧 `skinparam padding` 曾显示废弃警告，已从 v17.1 基线移除。
+
+最终状态：`14/14 RENDER_VALIDATED`；新增五图 `VISUALLY_REVIEWED`（已检查文字和明显重叠，未进行跨设备无障碍专项审计）。
