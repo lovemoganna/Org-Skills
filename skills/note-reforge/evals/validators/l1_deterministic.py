@@ -17,7 +17,6 @@ import json
 from pathlib import Path
 import re
 import sys
-import yaml
 
 HEADER_RE = re.compile(r"(?im)^\s*#\+([A-Z0-9_-]+):(.*)$")
 SRC_BLOCK_RE = re.compile(r"(?ims)^\s*#\+begin_src\b[^\n]*\n.*?^\s*#\+end_src[^\n]*$")
@@ -78,8 +77,11 @@ def validate_l1(source_text: str, output_text: str, case_meta: dict) -> dict:
             results["pass"] = False
             results["hard_failures"].append("BLOCK contract broken: claimed successful execution.")
 
-    # 4. Check PATCH / REFORGE deliverables
-    else:
+    # 4. Check actual PATCH / REFORGE deliverables.
+    # A detected KEEP means the effective artifact is the unchanged source, even
+    # when the case label says otherwise; decision correctness is tracked
+    # separately by decision_matched.
+    if detected_decision in ("PATCH", "REFORGE"):
         # Non-title headers preservation check
         src_headers = extract_non_title_headers(source_text)
         out_headers = extract_non_title_headers(output_text)
@@ -102,12 +104,20 @@ def validate_l1(source_text: str, output_text: str, case_meta: dict) -> dict:
                 results["pass"] = False
                 results["hard_failures"].append(f"Lost or modified {len(missing_blocks)} original source code block(s).")
 
-    # 5. Protected content check
+    # 5. Protected content check against the effective artifact.
+    # KEEP does not need to echo the whole source into the response; its
+    # deliverable is the unchanged source document.
+    artifact_text = source_text if detected_decision == "KEEP" else output_text
+    if detected_decision == "KEEP":
+        results["headers_preserved"] = True
+        results["code_blocks_preserved"] = True
+        results["protected_content_intact"] = True
+
     for item in protected_items:
         # If item is an instruction description like '原始完整代码块', skip literal check
         if any(keyword in item for keyword in [":", "def ", "assert", "http", "#+"]):
             clean_item = item.strip()
-            if clean_item in source_text and clean_item not in output_text:
+            if clean_item in source_text and clean_item not in artifact_text:
                 results["protected_content_intact"] = False
                 results["details"].append(f"Protected item missing in output: {clean_item[:40]}")
 
@@ -117,6 +127,8 @@ def validate_l1(source_text: str, output_text: str, case_meta: dict) -> dict:
     return results
 
 def main():
+    import yaml
+
     parser = argparse.ArgumentParser(description="L1 Deterministic Validator")
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)

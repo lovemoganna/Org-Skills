@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "decision_detected": "KEEP",
+  "decision_matched": false,
+  "headers_preserved": false,
+  "code_blocks_preserved": true,
+  "protected_content_intact": false,
+  "no_source_overwrite": true,
+  "hard_failures": [],
+  "details": [
+    "Decision mismatch: expected REFORGE, detected KEEP",
+    "Missing original headers: ['#+ATTR_HTML::width 660px :style min-width:0;width:100%;max-width:660px;table-layout:fixed;margin:auto', '#+CATEGORY:仙侠设定', '#+DATE:2026-10-11']",
+    "Protected item missing in output: #+WIKI_ID: 9e15fa89-5e58-47a9-aebf-57842"
+  ]
+}

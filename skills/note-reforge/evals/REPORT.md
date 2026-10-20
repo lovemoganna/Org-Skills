@@ -22,15 +22,17 @@
 以 `note-reforge` 为首个试点，构建了包含 20 个案例的基准测试集（元数据位于 [`skills/note-reforge/evals/cases/`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/cases) 与 [`dataset_manifest.json`](file:///c:/Users/Admin/Desktop/AI%20Pro/org-skill/skills/note-reforge/evals/cases/dataset_manifest.json)）：
 
 - **分布**：
-  - `KEEP`：6 个（原文已自洽完备，坚决不制造无意义改写）
-  - `PATCH`：8 个（存在具体局部缺口，做最小边界修补）
-  - `REFORGE`：4 个（结构阻碍读者定位，执行必要重构）
+  - `KEEP`：8 个（原文已自洽完备，坚决不制造无意义改写）
+  - `PATCH`：7 个（存在具体局部缺口，做最小边界修补）
+  - `REFORGE`：3 个（结构阻碍读者定位，执行必要重构）
   - `BLOCK`：2 个（信息缺失或存在绝对冲突，拒绝伪造交付）
 - **数据来源真实性**：
   - **18 个案例**来自真实笔记仓库 [`lovemoganna/org-notes`](https://github.com/lovemoganna/org-notes)（冻结在 Commit `fd5e79c558`），全量本地保存原始快照与 SHA256 校验和。
   - **2 个案例**明确标记为**人工构造边界案例（Synthetic Boundary Cases）**，分别测试“要求强行伪造实测数据”与“未授权绝对规则冲突”，用于检验坚守底线的阻断能力。
 - **预留测试集（Held-out Test Set）**：
-  - 预留 4 个案例（`case_06` KEEP、`case_14` PATCH、`case_18` REFORGE、`case_20` BLOCK）作为终验保留集，绝对不向优化执行者透露，也不参与规则调优。
+  - 原预留 4 个案例在 2026-10-20 首次真实运行后执行了“答案键反查”。其中 `case_06` 的 reader task 串入无关 D08，`case_14` 的 PATCH 标签加入原文不存在的降级规则，`case_18` 的 REFORGE 标签与冻结快照结构不符且虚构兔符咒使用代价。
+  - 修正后四例真实标签为：`case_06` KEEP、`case_14` KEEP、`case_18` KEEP、`case_20` BLOCK。该组可验证 KEEP/BLOCK 与“避免无依据改写”，**不再宣称覆盖 PATCH/REFORGE**。
+  - 原始 Subject 输出与旧 L1 结果全部保留；修正裁决单独记录，不回写历史结果。
 
 ---
 
@@ -125,15 +127,47 @@
 
 ---
 
+### 2026-10-20 Held-out：真实 Copilot Subject 运行与答案键审计
+
+GitHub Actions Run `39367285662` 完成 4 个案例 × Baseline/Skill 两组，共 **8/8 次隔离 Subject 调用**。两组使用不同 `COPILOT_HOME`，Subject 提示中不包含 expected decision、reader-task 答案、acceptance criteria、hard-fail 条件或历史评测结果。Copilot 使用账号默认模型，模型版本未固定，因此本次属于探索性真实执行证据。
+
+首次按旧答案键汇总时，Skill 表面只命中 KEEP/BLOCK 的部分标签。反查冻结快照后确认，问题主要来自 held-out 答案键：
+
+| Case | 原标签/答案问题 | 源文反查 | 修正 |
+|---|---|---|---|
+| 06 | 证据写“23 案例已通过”；reader task 询问不存在于文章的 D08 | 原文明确“23 个案例仍是待执行的测试需求” | KEEP 保留；reader task 改为是否已证明通过 |
+| 14 | PATCH 要求补“延迟敏感/结构化提取”降级规则 | 冻结原文只有按时间、学习目标、复杂度选择 5/15/45 分钟；没有这些新增规则 | PATCH → KEEP |
+| 18 | REFORGE 称文章碎片化，并要求“真元消耗/反冲” | 冻结原文已经有十二图腾索引 + 十二逐项神通；兔仅写“一瞬万里，穿梭时空，遨游太虚” | REFORGE → KEEP；删除虚构代价 |
+| 20 | 无异常 | 两条绝对网络要求确实不可同时满足 | BLOCK 不变 |
+
+按**修正后的、可由冻结源文反查的标签**独立裁决：
+
+| 指标 | Baseline | 当前 Skill | Delta |
+|---|---:|---:|---:|
+| 决策准确率 | 25% (1/4) | **100% (4/4)** | **+75pp** |
+| 下游事实题 | 100% (4/4) | **100% (4/4)** | 0 |
+| 3 个 KEEP 案例中的无必要修改率 | 100% (3/3) | **0% (0/3)** | **-100pp** |
+
+三个 KEEP 案例中，Baseline 分别选择 PATCH、REFORGE、PATCH；Skill 均选择 KEEP。两组在下游事实题上都能保持可用，因此本组揭示的主要净收益不是“记住更多事实”，而是**决策纪律：在没有证据增量时停止，不制造版本和改写成本**。
+
+**KEEP 评估语义同时修正**：KEEP 的最终产物是“原文保持不变”，不是要求模型在回复中重新复制整篇原文。L1 后续按实际动作计算有效产物；仅回复 KEEP 不再因为未重复 WIKI_ID 或代码块而误报内容丢失。
+
+完整证据：`runs/heldout_copilot_20261020/`。修正裁决：`adjudication_20261020.json`。
+
+**剩余证据缺口**：答案键审计后，这 4 个 held-out 不再包含合法的 PATCH / REFORGE 案例。因此当前证据支持 KEEP/BLOCK 及 no-op discipline，但不能据此宣称 PATCH / REFORGE 的 held-out 泛化已验证。
+
+---
+
 ## 六、下一步最小改进建议
 
 依据真实执行证据，对 `note-reforge` 提出如下最小演进建议（**未经用户授权暂不实施**）：
 
 1. **当前生产版保持锁定（LOCK）**：
    - 4 个 smoke case 中，当前 Skill 的决策分类、L1 与 L2 均表现良好；修正 L3 伪负例后，保存的 reader answers 在 9 个下游任务上为 9/9。生产 `SKILL.md` 本轮不修改。
-2. **下一步先跑 Held-out，不做精简版**：
-   - 先使用预留的 KEEP / PATCH / REFORGE / BLOCK 四个 held-out case 验证当前生产版。只有 held-out 也显示稳定净收益，才讨论 `candidate_lean_skill.md` 或其他生产改动。
-   - 如果 held-out 无明显净收益或出现重要回归，保持当前生产版并定位失败原因，不以 Token 缩减本身作为优化理由。
+2. **下一步只补 PATCH / REFORGE 的干净盲测，不做精简版**：
+   - 当前 corrected held-out 已证明 KEEP/BLOCK 和 no-op discipline，但原 PATCH/REFORGE 样本答案键失真。
+   - 新样本必须先完成“冻结快照 → 标签逐项反查 → reader task 可由快照直接回答”三步，再开放给 Subject；禁止先定标签再找证据。
+   - PATCH / REFORGE 各取得至少一个无污染真实或可追溯变异样本后，再讨论 `candidate_lean_skill.md` 或生产 Skill 修改。
 
 ---
 

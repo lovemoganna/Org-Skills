@@ -1,0 +1,186 @@
+{
+  "run_id": "heldout_copilot_20261020",
+  "prepared_at": "2026-10-20T04:00:55.040109+00:00",
+  "mode": "sealed_heldout_subject_ab",
+  "executor": "GitHub Copilot CLI",
+  "model": "ACCOUNT_DEFAULT_UNPINNED",
+  "cases": [
+    "case_06_heldout_keep_sql_blind_cases",
+    "case_14_heldout_patch_thinking_reconstruction",
+    "case_18_heldout_reforge_xianxia_talismans",
+    "case_20_heldout_block_irreconcilable_contradiction"
+  ],
+  "subject_requests_expected": 8,
+  "subject_requests_completed": 8,
+  "status": "EXECUTED_L1_ONLY",
+  "limitations": [
+    "Copilot account default model is not pinned or independently identified.",
+    "Baseline and Skill arms use separate COPILOT_HOME sessions.",
+    "Held-out answer keys and acceptance metadata are excluded from subject prompts.",
+    "Semantic/L3 judging is separate from subject generation."
+  ],
+  "results": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 1617,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected PATCH"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 175,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": false,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Protected item missing in output: #+WIKI_ID"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 9054,
+          "l1": {
+            "pass": true,
+            "decision_detected": "REFORGE",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected PATCH, detected REFORGE"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 180,
+          "l1": {
+            "pass": false,
+            "decision_detected": "KEEP",
+            "decision_matched": false,
+            "headers_preserved": false,
+            "code_blocks_preserved": false,
+            "protected_content_intact": false,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Lost or modified 1 original source code block(s)."
+            ],
+            "details": [
+              "Decision mismatch: expected PATCH, detected KEEP",
+              "Missing original headers: ['#+ATTR_HTML::width 100% :style display:block;max-width:100%;height:auto;margin:0 auto', '#+AUTHOR:Claude', '#+CAPTION:三种提示深度：5 分钟、15 分钟与 45 分钟的选择']",
+              "Protected item missing in output: #+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b63"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 2706,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected REFORGE, detected PATCH"
+            ]
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 206,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": false,
+            "headers_preserved": false,
+            "code_blocks_preserved": true,
+            "protected_content_intact": false,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected REFORGE, detected KEEP",
+              "Missing original headers: ['#+ATTR_HTML::width 660px :style min-width:0;width:100%;max-width:660px;table-layout:fixed;margin:auto', '#+CATEGORY:仙侠设定', '#+DATE:2026-10-11']",
+              "Protected item missing in output: #+WIKI_ID: 9e15fa89-5e58-47a9-aebf-57842"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "arms": {
+        "arm_a_baseline": {
+          "status": "EXECUTED",
+          "output_chars": 150,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_skill": {
+          "status": "EXECUTED",
+          "output_chars": 215,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    }
+  ],
+  "completed_at": "2026-10-20T04:01:53.772441+00:00",
+  "errors": []
+}

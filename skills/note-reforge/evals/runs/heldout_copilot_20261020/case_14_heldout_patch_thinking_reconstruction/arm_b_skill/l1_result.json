@@ -1,0 +1,17 @@
+{
+  "pass": false,
+  "decision_detected": "KEEP",
+  "decision_matched": false,
+  "headers_preserved": false,
+  "code_blocks_preserved": false,
+  "protected_content_intact": false,
+  "no_source_overwrite": true,
+  "hard_failures": [
+    "Lost or modified 1 original source code block(s)."
+  ],
+  "details": [
+    "Decision mismatch: expected PATCH, detected KEEP",
+    "Missing original headers: ['#+ATTR_HTML::width 100% :style display:block;max-width:100%;height:auto;margin:0 auto', '#+AUTHOR:Claude', '#+CAPTION:三种提示深度：5 分钟、15 分钟与 45 分钟的选择']",
+    "Protected item missing in output: #+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b63"
+  ]
+}

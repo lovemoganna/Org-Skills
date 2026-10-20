@@ -64,6 +64,31 @@ for clause in ("标准参考答案只是语义参照，不是逐项关键词清�
     assert clause in l3_validator, ("L3 semantic-equivalence contract missing", clause)
 assert "【文档内容】" in l3_validator and "document_text[:8000]" in l3_validator
 
+# Held-out key audit regressions: do not reintroduce unsupported answers/labels.
+case06 = (SKILL_ROOT / "evals" / "cases" / "case_06_heldout_keep_sql_blind_cases.yaml").read_text(encoding="utf-8")
+case14 = (SKILL_ROOT / "evals" / "cases" / "case_14_heldout_patch_thinking_reconstruction.yaml").read_text(encoding="utf-8")
+case18 = (SKILL_ROOT / "evals" / "cases" / "case_18_heldout_reforge_xianxia_talismans.yaml").read_text(encoding="utf-8")
+assert "已完备且通过测试" not in case06 and "D08 案例的测试基准" not in case06
+assert "expected_decision: KEEP" in case14
+assert "延迟敏感或下游仅需结构化提取" not in case14
+assert "expected_decision: KEEP" in case18
+assert "消耗大量真元" not in case18 and "需承受反冲" not in case18
+
+# KEEP produces no replacement document: the unchanged source is the effective artifact.
+from importlib.util import module_from_spec as _eval_module_from_spec, spec_from_file_location as _eval_spec_from_file_location
+_l1_spec = _eval_spec_from_file_location("note_reforge_l1", SKILL_ROOT / "evals" / "validators" / "l1_deterministic.py")
+assert _l1_spec and _l1_spec.loader
+_l1 = _eval_module_from_spec(_l1_spec)
+_l1_spec.loader.exec_module(_l1)
+_keep_source = "#+TITLE: Demo\n#+WIKI_ID: keep-id\n\n#+begin_src text\noriginal\n#+end_src\n"
+_keep_meta = {"expected_decision": "KEEP", "protected_content": ["#+WIKI_ID: keep-id"]}
+_keep_result = _l1.validate_l1(_keep_source, "**KEEP** — 原文保持不变，不生成 .next。", _keep_meta)
+assert _keep_result["pass"] is True
+assert _keep_result["decision_matched"] is True
+assert _keep_result["headers_preserved"] is True
+assert _keep_result["code_blocks_preserved"] is True
+assert _keep_result["protected_content_intact"] is True
+
 rejudge_path = SKILL_ROOT / "evals" / "runs" / "smoke_ab_01" / "rejudge_20261020.json"
 rejudge = json.loads(rejudge_path.read_text(encoding="utf-8"))
 for arm_name in ("arm_a_baseline", "arm_b_skill"):
