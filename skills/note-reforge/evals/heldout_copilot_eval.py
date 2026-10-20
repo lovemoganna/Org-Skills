@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Trigger: held-out Copilot run 2026-10-20.
 """Prepare and summarize sealed note-reforge held-out A/B runs via Copilot CLI.
 
 The subject prompts intentionally exclude expected decisions, reader-task answers,
