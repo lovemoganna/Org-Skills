@@ -22,4 +22,5 @@ hard_fail_conditions:
 - 只做措辞润色而仍保留单段堆叠结构
 - 遗漏任一生肖或核心设定
 - 编造真元消耗、反冲、等级等原文不存在的属性
+snapshot_file: skills/note-reforge/evals/cases/source_snapshots/case_22_heldout_reforge_flattened_atlas_mutation.org
 source_blob_sha: ccb90513f5a0cf3c6c629de3ac9c0a2dbc06e9a7
