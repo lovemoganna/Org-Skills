@@ -1,0 +1,18 @@
+@startuml
+' v17 / ortho routing / semantic risk stereotypes
+!$LINETYPE = "ortho"
+!include ../../styles/style-ink-and-signal.puml
+title 交易风控：调查系统组件
+left to right direction
+package "调查服务" {
+  component "告警接入" as Intake <<low>>
+  component "证据归集" as Collect
+  component "风险研判" as Risk <<mid>>
+  component "复核队列" as Review <<high>>
+}
+database "案件存储" as Store <<ok>>
+Intake --> Collect : 告警详情
+Collect --> Risk : 证据
+Risk --> Review : 待复核案件
+Review --> Store : 处置记录
+@enduml

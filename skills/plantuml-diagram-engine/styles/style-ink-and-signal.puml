@@ -1,12 +1,14 @@
 ' ═══════════════════════════════════════════════════════════════
-' PlantUML Style · Ink & Signal  (v7)
-' 设计语言：暖纸底 + 靛蓝墨色 + 信号黄；无阴影、发丝线边框、语义色只用于风险
+' PlantUML Style · Ink & Signal  (v17)
+' 设计语言：暖纸底 + 靛蓝墨色 + 信号黄；无阴影、1px 发丝线、宽松留白、语义色只用于风险
 ' 用法：!include 本文件
 '   深色主题     !include 之前写  !$THEME = "dark"
 '   正交连线     !include 之前写  !$LINETYPE = "ortho"      （默认 polyline）
 '   状态图紧凑   !include 之前写  !$STATE_COMPACT = %true()  （会写入 hide empty description，
 '                                                             该指令在甘特图等类型下非法，故默认关闭）
 '   语义色       元素后加 <<low>> <<mid>> <<high>> <<ok>>；活动图可用 COLOR_RISK_HIGH_BG 等常量
+'   Salt 线框   Salt 的文字/边框是硬编码黑色，样式无法改。深色主题下请在该图内加一行
+'                skinparam backgroundColor #FAF8F3   （让它落在浅色底上）
 '   SVG 嵌入     输出 SVG 已去掉固定宽高，页面里请用 CSS：width:100%; height:auto
 '                （PlantUML 固定输出 preserveAspectRatio="none"，容器若同时限定宽高会被拉伸）
 ' ═══════════════════════════════════════════════════════════════
@@ -108,14 +110,13 @@ skinparam shadowing false
 skinparam dpi 160
 skinparam svgDimensionStyle false
 skinparam minClassWidth 90
-skinparam nodesep 44
-skinparam ranksep 56
+skinparam nodesep 56
+skinparam ranksep 68
 skinparam padding 6
 skinparam linetype $LINETYPE
 skinparam componentStyle rectangle
 skinparam actorStyle awesome
 skinparam packageStyle rectangle
-skinparam defaultTextAlignment center
 skinparam wrapWidth 220
 skinparam maxMessageSize 220
 !pragma svginteractive true
@@ -161,7 +162,7 @@ skinparam note {
 ' 3.3 箭头
 skinparam arrow {
   Color $ARROW
-  Thickness 1.25
+  Thickness 1
   FontColor $INK
   FontSize 12
 }
@@ -170,7 +171,7 @@ skinparam arrow {
 skinparam entity {
   BackgroundColor $SURFACE
   BorderColor $ACCENT
-  BorderThickness 1.25
+  BorderThickness 1
 }
 skinparam package {
   BackgroundColor $GROUP
@@ -191,7 +192,7 @@ skinparam activity {
   BarColor $ACCENT
   BackgroundColor $SURFACE
   BorderColor $ACCENT
-  BorderThickness 1.25
+  BorderThickness 1
   ArrowColor $ARROW
   FontColor $INK
 }
@@ -225,11 +226,11 @@ skinparam swimlane {
 skinparam class {
   BackgroundColor $SURFACE
   BorderColor $ACCENT
-  BorderThickness 1.25
+  BorderThickness 1
   ArrowColor $ARROW
   HeaderBackgroundColor $SURFACE2
   AttributeFontColor $INK
-  AttributeIconSize 9
+  AttributeIconSize 0
   FontStyle bold
 }
 skinparam circledCharacterFontColor $INK
@@ -248,7 +249,7 @@ skinparam stereotypeABorderColor $NOTE_LINE
 skinparam usecase {
   BackgroundColor $SURFACE
   BorderColor $ACCENT
-  BorderThickness 1.25
+  BorderThickness 1
   ArrowColor $ARROW
 }
 skinparam actor {
@@ -261,7 +262,7 @@ skinparam actor {
 skinparam state {
   BackgroundColor $SURFACE
   BorderColor $ACCENT
-  BorderThickness 1.25
+  BorderThickness 1
   StartColor $SIGNAL
   EndColor $INK
   ArrowColor $ARROW
@@ -274,13 +275,13 @@ skinparam state {
 ' 4.5 时序图
 skinparam sequence {
   ArrowColor $ARROW
-  ArrowThickness 1.25
+  ArrowThickness 1
   ArrowFontColor $INK
   ActorBackgroundColor $SURFACE
   ActorBorderColor $ACCENT
   ParticipantBackgroundColor $SURFACE
   ParticipantBorderColor $ACCENT
-  ParticipantBorderThickness 1.25
+  ParticipantBorderThickness 1
   ParticipantFontColor $INK
   ParticipantPadding 24
   LifeLineBorderColor $BORDER
@@ -306,7 +307,7 @@ skinparam sequence {
   skinparam $name {
     BackgroundColor $bg
     BorderColor $line
-    BorderThickness 1.25
+    BorderThickness 1
     ArrowColor $ARROW
     FontSize $fontsize
     FontColor $fontcolor
@@ -360,35 +361,117 @@ skinparam sequence {
   %invoke_procedure("$semantic", $item)
 !endfor
 skinparam stereotypeFontColor $MUTED
+skinparam archimateFontColor #1B1836
+skinparam archimateStereotypeFontColor #4B4570
 
 ' ───────────────────────────────────────────────────────────────
 ' 七、style 精修（skinparam 无法表达的部分）
 ' ───────────────────────────────────────────────────────────────
 <style>
+' 全局兜底：只设文字色与链接色。
+' 注意：不要在 root 里设 LineColor / BackGroundColor —— 它们会压过起止节点、类表头、分组容器等
+' 更具体的 skinparam 配色（v9~v12 曾因此回退）。
+root {
+  FontColor $INK
+  HyperLinkColor $ACCENT
+}
 document {
+  ' 底部留白：甘特图等类型的最后一行文字会贴边被裁（引擎自身行为，放大字号后更明显）
+  Margin 8 8 18 8
   title {
     FontName $FONT_TITLE
     FontSize 26
     FontStyle bold
     FontColor $INK
     Margin 4 0 18 0
+    LineColor transparent
+    BackGroundColor transparent
   }
   header {
     HorizontalAlignment left
     FontSize 11
     FontColor $MUTED
+    LineColor transparent
+    BackGroundColor transparent
   }
   footer {
     HorizontalAlignment right
     FontSize 10
     FontColor $MUTED
+    LineColor transparent
+    BackGroundColor transparent
+  }
+  caption {
+    FontSize 11
+    FontColor $MUTED
+    LineColor transparent
+    BackGroundColor transparent
   }
 }
 document {
   BackgroundColor $BG
 }
+' 描述类图（组件 / 部署 ...）中各类元素的文字居中，按类型逐个列出。
+' 不能用 skinparam defaultTextAlignment center，也不能用 element { ... }，
+' 更不能在顶层写 node { ... }：WBS / 思维导图的节点也叫 node，会被一并居中而溢出（已三次复现）。
 rectangle {
   HorizontalAlignment center
+}
+component {
+  HorizontalAlignment center
+}
+database {
+  HorizontalAlignment center
+}
+cloud {
+  HorizontalAlignment center
+}
+queue {
+  HorizontalAlignment center
+}
+card {
+  HorizontalAlignment center
+}
+storage {
+  HorizontalAlignment center
+}
+artifact {
+  HorizontalAlignment center
+}
+agent {
+  HorizontalAlignment center
+}
+hexagon {
+  HorizontalAlignment center
+}
+stack {
+  HorizontalAlignment center
+}
+file {
+  HorizontalAlignment center
+}
+label {
+  HorizontalAlignment center
+}
+collections {
+  HorizontalAlignment center
+}
+control {
+  HorizontalAlignment center
+}
+boundary {
+  HorizontalAlignment center
+}
+folder {
+  HorizontalAlignment center
+}
+frame {
+  HorizontalAlignment center
+}
+componentDiagram {
+  node {
+    HorizontalAlignment center
+  }
 }
 
 ' 思维导图 / WBS：根节点实心，一级浅底，叶子白底
@@ -396,7 +479,7 @@ mindmapDiagram {
   node {
     BackgroundColor $SURFACE
     LineColor $ACCENT
-    LineThickness 1.25
+    LineThickness 1
     FontColor $INK
     RoundCorner 12
     Padding 8
@@ -415,14 +498,14 @@ mindmapDiagram {
   }
   arrow {
     LineColor $ARROW
-    LineThickness 1.25
+    LineThickness 1
   }
 }
 wbsDiagram {
   node {
     BackgroundColor $SURFACE
     LineColor $ACCENT
-    LineThickness 1.25
+    LineThickness 1
     FontColor $INK
     RoundCorner 10
     Padding 8
@@ -439,7 +522,7 @@ wbsDiagram {
   }
   arrow {
     LineColor $ARROW
-    LineThickness 1.25
+    LineThickness 1
   }
 }
 
@@ -450,14 +533,14 @@ ganttDiagram {
   task {
     BackgroundColor $LOW_BG
     LineColor $LOW_LINE
-    LineThickness 1.25
+    LineThickness 1
     FontColor $INK
     RoundCorner 6
   }
   milestone {
     BackgroundColor $SIGNAL
     LineColor $INK
-    LineThickness 1.25
+    LineThickness 1
   }
   timeline {
     BackgroundColor $SURFACE2
@@ -484,7 +567,7 @@ jsonDiagram {
   node {
     BackgroundColor $SURFACE
     LineColor $ACCENT
-    LineThickness 1.25
+    LineThickness 1
     FontColor $INK
     RoundCorner 6
     Padding 4
@@ -502,7 +585,7 @@ yamlDiagram {
   node {
     BackgroundColor $SURFACE
     LineColor $ACCENT
-    LineThickness 1.25
+    LineThickness 1
     FontColor $INK
     RoundCorner 6
   }
@@ -510,6 +593,128 @@ yamlDiagram {
     BackgroundColor $NOTE_BG
     FontColor $NOTE_INK
     FontStyle bold
+  }
+  arrow {
+    LineColor $ARROW
+  }
+}
+
+' ArchiMate：元素填充色是引擎写死的浅色，文字必须是深色（深色主题下 root.FontColor 为浅色会不可读）
+archimate {
+  FontColor #1B1836
+}
+
+' 时序图分组 / 引用：新样式引擎默认黑线灰底；标题条用强调色底 + 反色文字，外框同色
+sequenceDiagram {
+  group {
+    LineColor $ACCENT
+    LineThickness 1
+  }
+  groupHeader {
+    BackGroundColor $ACCENT
+    LineColor $ACCENT
+    LineThickness 1
+    FontColor $ON_ACCENT
+  }
+  reference {
+    LineColor $BORDER
+    LineThickness 1
+  }
+  referenceHeader {
+    BackGroundColor $SURFACE2
+    LineColor $BORDER
+    LineThickness 1
+    FontColor $INK
+  }
+}
+
+' 起止节点：引擎默认写死 #222（深色主题下终点几乎不可见），且不受 EndColor 控制
+activityDiagram {
+  circle {
+    start {
+      BackgroundColor $SIGNAL
+      LineColor $INK
+    }
+    stop {
+      BackgroundColor $INK
+      LineColor $INK
+    }
+    end {
+      BackgroundColor $INK
+      LineColor $INK
+    }
+  }
+}
+stateDiagram {
+  circle {
+    start {
+      BackgroundColor $SIGNAL
+      LineColor $INK
+    }
+    stop {
+      BackgroundColor $INK
+      LineColor $INK
+    }
+    end {
+      BackgroundColor $INK
+      LineColor $INK
+    }
+  }
+}
+
+' 时序（Timing）
+timingDiagram {
+  LineColor $ACCENT
+  FontColor $INK
+  timeline {
+    FontColor $MUTED
+    LineColor $BORDER
+  }
+  clock {
+    LineColor $ACCENT
+  }
+  concise {
+    LineColor $ACCENT
+    BackgroundColor $SURFACE2
+  }
+  robust {
+    LineColor $ACCENT
+    BackgroundColor $SURFACE2
+  }
+  binary {
+    LineColor $ACCENT
+  }
+  arrow {
+    FontName $FONT_BODY
+    FontColor $ARROW
+    LineColor $ARROW
+  }
+  constraintArrow {
+    FontName $FONT_BODY
+    FontColor $HIGH_LINE
+    LineColor $HIGH_LINE
+  }
+  highlight {
+    BackgroundColor $NOTE_BG
+    LineColor $NOTE_LINE
+  }
+}
+
+' 网络拓扑（nwdiag）
+nwdiagDiagram {
+  network {
+    BackgroundColor $SURFACE2
+    LineColor $BORDER
+    FontColor $INK
+  }
+  server {
+    BackgroundColor $SURFACE
+    LineColor $ACCENT
+    FontColor $INK
+  }
+  group {
+    BackgroundColor $GROUP
+    LineColor $BORDER
   }
   arrow {
     LineColor $ARROW

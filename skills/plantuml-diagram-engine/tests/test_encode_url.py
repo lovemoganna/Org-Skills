@@ -209,7 +209,7 @@ class TestMerge(unittest.TestCase):
         style_path = ROOT / 'styles/style-ink-and-signal.puml'
         self.assertTrue(style_path.exists(), 'styles/style-ink-and-signal.puml must exist')
         content = style_path.read_text(encoding='utf-8')
-        for token in ('PlantUML Style · Ink & Signal  (v7)', '!$THEME', '!$BG', '!$INK',
+        for token in ('PlantUML Style · Ink & Signal  (v17)', '!$THEME', '!$BG', '!$INK',
                       'skinparam backgroundColor $BG', 'skinparam defaultFontName $FONT_BODY',
                       'COLOR_RISK_LOW_BG', 'COLOR_RISK_HIGH_BG',
                       '<style>', 'mindmapDiagram', 'wbsDiagram', 'ganttDiagram'):
@@ -220,7 +220,7 @@ class TestMerge(unittest.TestCase):
         expanded = resolve_includes(sample, base_dir=ROOT)
         # Verify no active !include directive remains in the code
         self.assertFalse(any(l.strip().startswith('!include ') for l in expanded.splitlines()))
-        self.assertIn('Ink & Signal  (v7)', expanded)
+        self.assertIn('Ink & Signal  (v17)', expanded)
         self.assertIn('class User', expanded)
 
     def test_resolve_includes_via_main(self):
@@ -235,7 +235,7 @@ class TestMerge(unittest.TestCase):
             token = data['urls']['plantuml'].split('/')[-1]
             decoded = plantuml_decode(token)
             self.assertFalse(any(l.strip().startswith('!include ') for l in decoded.splitlines()))
-            self.assertIn('Ink & Signal  (v7)', decoded)
+            self.assertIn('Ink & Signal  (v17)', decoded)
             self.assertIn('class Demo', decoded)
 
 

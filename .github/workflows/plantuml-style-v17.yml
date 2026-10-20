@@ -1,0 +1,68 @@
+name: PlantUML v17 style regression
+on:
+  push:
+    paths:
+      - 'skills/plantuml-diagram-engine/**'
+      - '.github/workflows/plantuml-style-v17.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-style:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install renderer and CJK fonts
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq graphviz fonts-noto-cjk
+          curl -fL --retry 3 -o "$RUNNER_TEMP/plantuml.jar" "https://github.com/plantuml/plantuml/releases/download/v1.2026.8/plantuml-1.2026.8.jar"
+          echo "5e1ecfa8ecd32c90b03bbf3b1eb6f020943f98ab0fcf4032be31a0002ee2c462  $RUNNER_TEMP/plantuml.jar" | sha256sum -c -
+          java -jar "$RUNNER_TEMP/plantuml.jar" -version
+      - name: Syntax and SVG render (5 new + 9 existing)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd skills/plantuml-diagram-engine
+          mkdir -p "$GITHUB_WORKSPACE/plantuml-v17-svg"
+          shopt -s nullglob
+          files=(tests/style-v17/*.puml examples/*.puml)
+          test "${#files[@]}" -eq 14
+          for fixture in "${files[@]}"; do
+            echo "::group::${fixture}"
+            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -checkonly "${fixture}"
+            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -tsvg -o "$GITHUB_WORKSPACE/plantuml-v17-svg" "${fixture}"
+            echo "::endgroup::"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          files=list(Path("../../../plantuml-v17-svg").glob("*.svg"))
+          assert len(files)==14, f"Expected 14 SVGs; found {len(files)}"
+          for file in files:
+              root=ET.parse(file).getroot()
+              assert root.tag.endswith("svg"), file
+              txt=file.read_text(encoding="utf-8")
+              assert "Syntax Error" not in txt and "Error line" not in txt, file
+              assert len(txt)>500, file
+              print(f"PASS {file.name} ({len(txt)} bytes)")
+          PY
+      - name: Unit regression
+        shell: bash
+        run: |
+          python3 -m unittest discover -s skills/plantuml-diagram-engine/tests -p 'test_encode_url.py' -v
+      - name: Upload SVG previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plantuml-v17-svg-previews
+          path: plantuml-v17-svg/*.svg
+          if-no-files-found: warn
+          retention-days: 14

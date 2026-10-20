@@ -3,7 +3,7 @@ name: plantuml-diagram-engine
 description: 将文字、代码、业务流程或本体模型转为 PlantUML，按语义选择 WBS、活动图、时序图、组件图、状态图、类图、部署图、甘特图或思维导图，设计清晰统一的图形样式，并默认返回可直接打开的在线 PNG 图片 URL。适用于用户要求 PlantUML、图解、流程图、结构图、类图、架构部署图、排期甘特图、思维导图、在线渲染图片链接或优化已有 .puml；不默认下载文件。
 ---
 
-# PlantUML Diagram Engine v1.0
+# PlantUML Diagram Engine v1.4
 
 ## 唯一交付目标
 **默认直接返还在线 PNG 图片直链**：`https://www.plantuml.com/plantuml/png/{TOKEN}`；同时允许附上 Kroki 备用 PNG 图片直链。不要把编辑器网址、`sandbox:`、PNG 附件、ZIP 或源代码当作主交付。仅在用户主动要求下载或本地渲染时保存文件。
@@ -20,11 +20,11 @@ description: 将文字、代码、业务流程或本体模型转为 PlantUML，�
 4. **语义映射**：关键对象、关系、条件必须在源码中可追溯；图型不可表达的关系用说明补足，不新增虚构关联。已给 `.puml` 时执行最小差异修改。
 5. **输出源码**：编写一份完整的 UTF-8 `.puml`，确保 `@startuml`/`@enduml` 等匹配。不要把未经运行的代码称作“验证通过”。
 
-## 默认视觉方案：Ink & Signal (v7)（默认生图必须加载）
+## 默认视觉方案：Ink & Signal (v17)（默认生图必须加载）
 所有生成的 PlantUML 图必须加载通用样式规范 `styles/style-ink-and-signal.puml`（通过 `!include styles/style-ink-and-signal.puml` 加载，或在单文件独立交付时完整内联注入）。`scripts/encode_url.py` 原生支持 `!include` 预处理内联，生成可直接在公网 PlantUML / Kroki 渲染的有效直链。
 
 ### 1. 设计语言与色彩规范
-- **设计基调**：暖纸底 `#FAF8F3`（深色 `#13111F`）+ 靛蓝墨色 `#1B1836`（深色 `#EEEAFB`）+ 信号黄 `#FFCD00`。无阴影（`shadowing false`）、发丝线边框（1.25px）、圆角统一（10px）。
+- **设计基调**：暖纸底 `#FAF8F3`（深色 `#13111F`）+ 靛蓝墨色 `#1B1836`（深色 `#EEEAFB`）+ 信号黄 `#FFCD00`。无阴影（`shadowing false`）、发丝线边框（1px）、圆角统一（10px）。
 - **语义色只用于风险与状态**：
   - 极低/安全：构造型 `<<ok>>` 或常量 `COLOR_RISK_OK_BG`（`#EBF0D6`，边框 `#5F7600`）
   - 低风险：构造型 `<<low>>` 或常量 `COLOR_RISK_LOW_BG`（`#E3F2F3`，边框 `#2E7F85`）
@@ -79,3 +79,11 @@ description: 将文字、代码、业务流程或本体模型转为 PlantUML，�
 - Case Security & Offline: 默认离线 URL 生成不发起网络；明确 `--private` 必须阻断公共直链；未授权的 `--check-online` / `--download` 必须失败；语法错误不盲目降级。
 
 参考文档：<https://plantuml.com/server> · <https://plantuml.com/text-encoding> · <https://plantuml.com/wbs-diagram> · <https://plantuml.com/activity-diagram-beta> · <https://docs.kroki.io/kroki/setup/usage>
+
+
+## v17 样式回归与兼容性门禁（2026-10-20）
+- 通用配置唯一来源：`styles/style-ink-and-signal.puml`。所有示例和新图必须通过 `!include` 加载；不得在业务图中复制第二套全局配色或强制覆盖样式。深色、正交连线、紧凑状态图参数必须在 `!include` 之前声明。
+- v17 兼容矩阵：浅色活动图、深色时序图、正交组件图、紧凑状态图、甘特图；可复现源码见 `tests/style-v17/`。同时保留并回归 `examples/` 现有九类基准图，不允许以新增样例取代历史回归。
+- 自动渲染：`.github/workflows/plantuml-style-v17.yml` 使用固定版本 PlantUML 和 SHA-256 校验，先 `-checkonly` 再输出 SVG，检查 SVG 格式并上传预览工件。源码解析通过不等于视觉已检查；图形实际被查看前不得标为 `VISUALLY_REVIEWED`。
+- 稳定性检查：兼容常量与 `<<low>> / <<mid>> / <<high>> / <<ok>>` 需保留；禁止用 `root.LineColor` 或 `root.BackGroundColor` 覆盖子元素语义色；脑图/WBS 不得被组件图的全局居中规则污染。默认 `$STATE_COMPACT=%false()`，防止甘特图解析异常。
+- 失败时保持最近一版有效源码、失败图型、错误日志及修复差异；不能将未运行的 fixture 或 URL 生成称为渲染通过。
