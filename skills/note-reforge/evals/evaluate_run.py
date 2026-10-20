@@ -116,6 +116,12 @@ def evaluate_run(run_id: str):
     b_l2 = round(sum(r["arm_b_skill"]["l2_total_score"] for r in results) / n, 2)
     a_l3 = round(sum(r["arm_a_baseline"]["l3_accuracy"] for r in results) / n, 3)
     b_l3 = round(sum(r["arm_b_skill"]["l3_accuracy"] for r in results) / n, 3)
+    a_l3_passed = sum(r["arm_a_baseline"]["l3_passed"] for r in results)
+    a_l3_total = sum(r["arm_a_baseline"]["l3_total"] for r in results)
+    b_l3_passed = sum(r["arm_b_skill"]["l3_passed"] for r in results)
+    b_l3_total = sum(r["arm_b_skill"]["l3_total"] for r in results)
+    a_pooled_l3 = round(a_l3_passed / a_l3_total, 3) if a_l3_total else 0
+    b_pooled_l3 = round(b_l3_passed / b_l3_total, 3) if b_l3_total else 0
 
     summary = {
         "run_id": run_id,
@@ -125,19 +131,24 @@ def evaluate_run(run_id: str):
             "l1_pass_rate": f"{a_l1}/{n} ({a_l1/n*100:.1f}%)",
             "decision_accuracy": f"{a_dec}/{n} ({a_dec/n*100:.1f}%)",
             "avg_l2_score": a_l2,
-            "avg_l3_accuracy": a_l3
+            "avg_l3_accuracy": a_l3,
+            "pooled_l3_task_accuracy": a_pooled_l3,
+            "l3_tasks": f"{a_l3_passed}/{a_l3_total}"
         },
         "arm_b_skill": {
             "l1_pass_rate": f"{b_l1}/{n} ({b_l1/n*100:.1f}%)",
             "decision_accuracy": f"{b_dec}/{n} ({b_dec/n*100:.1f}%)",
             "avg_l2_score": b_l2,
-            "avg_l3_accuracy": b_l3
+            "avg_l3_accuracy": b_l3,
+            "pooled_l3_task_accuracy": b_pooled_l3,
+            "l3_tasks": f"{b_l3_passed}/{b_l3_total}"
         },
         "deltas": {
             "l1_pass_diff": f"{(b_l1 - a_l1):+d}",
             "decision_accuracy_diff": f"{(b_dec - a_dec):+d}",
             "l2_score_gain": round(b_l2 - a_l2, 2),
-            "l3_accuracy_gain": round(b_l3 - a_l3, 3)
+            "l3_accuracy_gain": round(b_l3 - a_l3, 3),
+            "l3_pooled_task_accuracy_gain": round(b_pooled_l3 - a_pooled_l3, 3)
         },
         "case_summaries": results
     }
@@ -146,9 +157,9 @@ def evaluate_run(run_id: str):
     summary_file.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n==================================================")
     print(f"Summary for Run {run_id}:")
-    print(f"Arm A Baseline: Decision Acc {summary['arm_a_baseline']['decision_accuracy']}, L1 {summary['arm_a_baseline']['l1_pass_rate']}, L2 {a_l2}/10, L3 Acc {a_l3*100:.1f}%")
-    print(f"Arm B Skill   : Decision Acc {summary['arm_b_skill']['decision_accuracy']}, L1 {summary['arm_b_skill']['l1_pass_rate']}, L2 {b_l2}/10, L3 Acc {b_l3*100:.1f}%")
-    print(f"Net Gain      : L3 Acc Gain: {summary['deltas']['l3_accuracy_gain']*100:+.1f}%, L2 Gain: {summary['deltas']['l2_score_gain']:+.2f}")
+    print(f"Arm A Baseline: Decision Acc {summary['arm_a_baseline']['decision_accuracy']}, L1 {summary['arm_a_baseline']['l1_pass_rate']}, L2 {a_l2}/10, L3 Macro {a_l3*100:.1f}%, L3 Pooled {a_pooled_l3*100:.1f}% ({a_l3_passed}/{a_l3_total})")
+    print(f"Arm B Skill   : Decision Acc {summary['arm_b_skill']['decision_accuracy']}, L1 {summary['arm_b_skill']['l1_pass_rate']}, L2 {b_l2}/10, L3 Macro {b_l3*100:.1f}%, L3 Pooled {b_pooled_l3*100:.1f}% ({b_l3_passed}/{b_l3_total})")
+    print(f"Net Gain      : L3 Macro {summary['deltas']['l3_accuracy_gain']*100:+.1f}%, L3 Pooled {summary['deltas']['l3_pooled_task_accuracy_gain']*100:+.1f}%, L2 Gain: {summary['deltas']['l2_score_gain']:+.2f}")
     print(f"==================================================")
     return summary
 

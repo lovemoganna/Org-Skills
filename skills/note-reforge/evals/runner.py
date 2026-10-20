@@ -193,6 +193,12 @@ def main():
     b_avg_l2 = round(sum(r["arm_b_skill"]["l2_total_score"] for r in results) / len(results), 2) if results else 0
     a_avg_l3 = round(sum(r["arm_a_baseline"]["l3_accuracy"] for r in results) / len(results), 3) if results else 0
     b_avg_l3 = round(sum(r["arm_b_skill"]["l3_accuracy"] for r in results) / len(results), 3) if results else 0
+    a_l3_passed = sum(r["arm_a_baseline"]["l3_passed"] for r in results)
+    a_l3_total = sum(r["arm_a_baseline"]["l3_total"] for r in results)
+    b_l3_passed = sum(r["arm_b_skill"]["l3_passed"] for r in results)
+    b_l3_total = sum(r["arm_b_skill"]["l3_total"] for r in results)
+    a_pooled_l3 = round(a_l3_passed / a_l3_total, 3) if a_l3_total else 0
+    b_pooled_l3 = round(b_l3_passed / b_l3_total, 3) if b_l3_total else 0
     a_avg_tokens = round(sum(r["arm_a_baseline"]["tokens"]["total"] for r in results) / len(results)) if results else 0
     b_avg_tokens = round(sum(r["arm_b_skill"]["tokens"]["total"] for r in results) / len(results)) if results else 0
 
@@ -208,6 +214,8 @@ def main():
                 "decision_accuracy": f"{a_dec_matches}/{len(results)} ({a_dec_matches/len(results)*100:.1f}%)" if results else 0,
                 "avg_l2_score": a_avg_l2,
                 "avg_l3_accuracy": a_avg_l3,
+                "pooled_l3_task_accuracy": a_pooled_l3,
+                "l3_tasks": f"{a_l3_passed}/{a_l3_total}",
                 "avg_tokens": a_avg_tokens
             },
             "arm_b_skill": {
@@ -215,11 +223,14 @@ def main():
                 "decision_accuracy": f"{b_dec_matches}/{len(results)} ({b_dec_matches/len(results)*100:.1f}%)" if results else 0,
                 "avg_l2_score": b_avg_l2,
                 "avg_l3_accuracy": b_avg_l3,
+                "pooled_l3_task_accuracy": b_pooled_l3,
+                "l3_tasks": f"{b_l3_passed}/{b_l3_total}",
                 "avg_tokens": b_avg_tokens
             },
             "deltas": {
                 "l2_score_gain": round(b_avg_l2 - a_avg_l2, 2),
                 "l3_accuracy_gain": round(b_avg_l3 - a_avg_l3, 3),
+                "l3_pooled_task_accuracy_gain": round(b_pooled_l3 - a_pooled_l3, 3),
                 "token_increase_pct": f"{((b_avg_tokens - a_avg_tokens) / a_avg_tokens * 100):.1f}%" if a_avg_tokens else "N/A"
             }
         },
@@ -229,9 +240,9 @@ def main():
     summary_file = run_dir / "summary.json"
     summary_file.write_text(json.dumps(run_summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n=== Run Completed! Summary saved to {summary_file} ===")
-    print(f"Arm A Baseline: Decision Acc {run_summary['aggregate_metrics']['arm_a_baseline']['decision_accuracy']}, L3 Acc {a_avg_l3*100:.1f}%, Tokens {a_avg_tokens}")
-    print(f"Arm B Skill   : Decision Acc {run_summary['aggregate_metrics']['arm_b_skill']['decision_accuracy']}, L3 Acc {b_avg_l3*100:.1f}%, Tokens {b_avg_tokens}")
-    print(f"Delta: L3 Gain: {run_summary['aggregate_metrics']['deltas']['l3_accuracy_gain']*100:+.1f}%, Token Overhead: {run_summary['aggregate_metrics']['deltas']['token_increase_pct']}")
+    print(f"Arm A Baseline: Decision Acc {run_summary['aggregate_metrics']['arm_a_baseline']['decision_accuracy']}, L3 Macro {a_avg_l3*100:.1f}%, L3 Pooled {a_pooled_l3*100:.1f}% ({a_l3_passed}/{a_l3_total}), Tokens {a_avg_tokens}")
+    print(f"Arm B Skill   : Decision Acc {run_summary['aggregate_metrics']['arm_b_skill']['decision_accuracy']}, L3 Macro {b_avg_l3*100:.1f}%, L3 Pooled {b_pooled_l3*100:.1f}% ({b_l3_passed}/{b_l3_total}), Tokens {b_avg_tokens}")
+    print(f"Delta: L3 Macro {run_summary['aggregate_metrics']['deltas']['l3_accuracy_gain']*100:+.1f}%, L3 Pooled {run_summary['aggregate_metrics']['deltas']['l3_pooled_task_accuracy_gain']*100:+.1f}%, Token Overhead: {run_summary['aggregate_metrics']['deltas']['token_increase_pct']}")
 
 if __name__ == "__main__":
     main()

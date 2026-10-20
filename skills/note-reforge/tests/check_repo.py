@@ -54,6 +54,15 @@ shapes = (SKILL_ROOT / "references" / "shapes.md").read_text(encoding="utf-8")
 CALL = "用 note-reforge 炼成下一版：<文件 / 目录>"
 CANONICAL = "skills/note-reforge/SKILL.md"
 
+# Evaluation regression: references stay within source/question scope and L3 is semantic.
+case01_eval = (SKILL_ROOT / "evals" / "cases" / "case_01_keep_recursive_discovery.yaml").read_text(encoding="utf-8")
+l3_validator = (SKILL_ROOT / "evals" / "validators" / "l3_task_transfer.py").read_text(encoding="utf-8")
+assert "触发去重阈值" not in case01_eval, "Case 01 reference invents a stop condition not supported by the frozen source"
+assert "不允许编造种子账号或预估频率" not in case01_eval, "T2 reference exceeds the question scope"
+for clause in ("标准参考答案只是语义参照，不是逐项关键词清单", "语义等价表达应视为等价", "以文档事实和问题范围为准"):
+    assert clause in l3_validator, ("L3 semantic-equivalence contract missing", clause)
+assert "【文档内容】" in l3_validator and "document_text[:8000]" in l3_validator
+
 assert CALL in canonical, "canonical fixed invocation missing"
 assert "不要求用户重复粘贴 Skill、解释规则或确认默认流程" in canonical
 assert CANONICAL in canonical and "唯一 canonical Skill" in canonical

@@ -13,10 +13,10 @@ protected_content:
 reader_tasks:
 - id: T1
   question: 系统的递归扩展停止条件是什么？
-  expected_answer: 到达最大深度或无新发现有效账号/触发去重阈值。
+  expected_answer: 没有有效新增，或达到已设置的搜索限制（如最大搜索深度）时结束本轮任务。
 - id: T2
   question: 当未提供实测数据时，是否允许新增种子账号列表？
-  expected_answer: 不允许编造种子账号或预估频率。
+  expected_answer: 不允许。初始种子账号未定义时应标记为待确认，不得自行编造。
 - id: T3
   question: 若原文判断已充分，正确的交付动作是什么？
   expected_answer: 裁决 KEEP，原样保留，不生成无实质增量的 .next 文件。
