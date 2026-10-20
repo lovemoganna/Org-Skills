@@ -1,4 +1,5 @@
 import os
+import json
 import subprocess
 from pathlib import Path
 
@@ -62,6 +63,29 @@ assert "不允许编造种子账号或预估频率" not in case01_eval, "T2 refe
 for clause in ("标准参考答案只是语义参照，不是逐项关键词清单", "语义等价表达应视为等价", "以文档事实和问题范围为准"):
     assert clause in l3_validator, ("L3 semantic-equivalence contract missing", clause)
 assert "【文档内容】" in l3_validator and "document_text[:8000]" in l3_validator
+
+rejudge_path = SKILL_ROOT / "evals" / "runs" / "smoke_ab_01" / "rejudge_20261020.json"
+rejudge = json.loads(rejudge_path.read_text(encoding="utf-8"))
+for arm_name in ("arm_a_baseline", "arm_b_skill"):
+    case_acc = []
+    passed = 0
+    total = 0
+    for item in rejudge["cases"]:
+        tasks = item[arm_name]["tasks"]
+        task_passed = sum(1 for task in tasks if task["verdict"] == "PASS")
+        passed += task_passed
+        total += len(tasks)
+        case_acc.append(task_passed / len(tasks))
+    macro = round(sum(case_acc) / len(case_acc), 3)
+    pooled = round(passed / total, 3)
+    reported = rejudge["aggregate"][arm_name]
+    assert reported["passed_tasks"] == passed and reported["total_tasks"] == total
+    assert reported["macro_case_accuracy"] == macro, (arm_name, macro, reported)
+    assert reported["pooled_task_accuracy"] == pooled, (arm_name, pooled, reported)
+assert rejudge["aggregate"]["arm_a_baseline"]["passed_tasks"] == 8
+assert rejudge["aggregate"]["arm_b_skill"]["passed_tasks"] == 9
+assert rejudge["aggregate"]["delta"]["macro_case_accuracy"] == 0.125
+assert rejudge["aggregate"]["delta"]["pooled_task_accuracy"] == 0.111
 
 assert CALL in canonical, "canonical fixed invocation missing"
 assert "不要求用户重复粘贴 Skill、解释规则或确认默认流程" in canonical
