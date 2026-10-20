@@ -35,12 +35,28 @@ jobs:
           shopt -s nullglob
           files=(tests/style-v17/*.puml examples/*.puml)
           test "${#files[@]}" -eq 14
+          failures=0
           for fixture in "${files[@]}"; do
             echo "::group::${fixture}"
-            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -checkonly "${fixture}"
-            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -tsvg -o "$GITHUB_WORKSPACE/plantuml-v17-svg" "${fixture}"
+            if ! java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -checkonly "${fixture}"; then
+              echo "::error::PlantUML failed: ${fixture}"
+              failures=$((failures+1))
+            fi
+            java -Djava.awt.headless=true -jar "$RUNNER_TEMP/plantuml.jar" -tsvg -o "$GITHUB_WORKSPACE/plantuml-v17-svg" "${fixture}" || true
             echo "::endgroup::"
           done
+          echo "Check-only failures: $failures"
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          for file in sorted(Path("../../../plantuml-v17-svg").glob("*.svg")):
+              root=ET.parse(file).getroot()
+              ts=[(x.text or "") for x in root.iter() if x.tag.endswith("text")]
+              issues=[x for x in ts if "error" in x.lower() or "syntax" in x.lower()]
+              if issues:
+                  print(f"SVG_ERROR {file.name} :: {' | '.join(ts)[-2200:]}")
+          PY
+          test "$failures" -eq 0
           python3 - <<'PY'
           from pathlib import Path
           from xml.etree import ElementTree as ET
