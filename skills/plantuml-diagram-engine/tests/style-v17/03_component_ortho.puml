@@ -4,6 +4,7 @@
 !include ../../styles/style-ink-and-signal.puml
 title 交易风控：调查系统组件
 left to right direction
+skinparam ranksep 140
 package "调查服务" {
   component "告警接入" as Intake <<low>>
   component "证据归集" as Collect

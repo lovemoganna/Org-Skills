@@ -79,6 +79,7 @@ jobs:
       - name: Unit regression
         shell: bash
         run: |
+          python3 -m pip install --disable-pip-version-check Pillow==11.3.0
           python3 -m unittest discover -s skills/plantuml-diagram-engine/tests -p 'test_encode_url.py' -v
       - name: Upload SVG previews
         if: always()
