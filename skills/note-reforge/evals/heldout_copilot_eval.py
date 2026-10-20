@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Supplemental retry after snapshot metadata fix.
 # Trigger: held-out Copilot run 2026-10-20.
 """Prepare and summarize sealed note-reforge held-out A/B runs via Copilot CLI.
 
