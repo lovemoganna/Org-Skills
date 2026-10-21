@@ -1,0 +1,156 @@
+name: note-reforge Candidate Six-case Regression
+
+on:
+  push:
+    branches:
+      - "candidate/note-reforge-keep-reforge-priority-20261021"
+    paths:
+      - "skills/note-reforge/SKILL.md"
+      - "skills/note-reforge/evals/candidate_sixcase_copilot_eval.py"
+      - ".github/workflows/note-reforge-candidate-sixcase.yml"
+
+permissions:
+  contents: write
+  copilot-requests: write
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout candidate with production history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install "PyYAML>=6,<7"
+          npm install -g @github/copilot
+
+      - name: Static note-reforge regression
+        run: python skills/note-reforge/tests/check_repo.py
+
+      - name: Prepare sealed production-vs-candidate prompts
+        run: python skills/note-reforge/evals/candidate_sixcase_copilot_eval.py prepare
+
+      - name: Execute 12 isolated real subject calls
+        id: subjects
+        continue-on-error: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          OUT="$GITHUB_WORKSPACE/skills/note-reforge/evals/runs/candidate_keep_reforge_20261021"
+          cases=(
+            case_06_heldout_keep_sql_blind_cases
+            case_14_heldout_patch_thinking_reconstruction
+            case_18_heldout_reforge_xianxia_talismans
+            case_20_heldout_block_irreconcilable_contradiction
+            case_21_heldout_patch_missing_navigation_mutation
+            case_22_heldout_reforge_flattened_atlas_mutation
+          )
+          arms=(arm_a_production arm_b_candidate)
+
+          run_one() {
+            local case_id="$1"
+            local arm="$2"
+            local prompt="$OUT/$case_id/$arm/prompt.txt"
+            local output="$OUT/$case_id/$arm/output.md"
+            local log="$OUT/$case_id/$arm/runner.log"
+            local home="$RUNNER_TEMP/copilot-$case_id-$arm"
+            local work="$RUNNER_TEMP/work-$case_id-$arm"
+            mkdir -p "$home" "$work"
+            (
+              export COPILOT_HOME="$home"
+              cd "$work"
+              timeout 360s copilot -p "$(cat "$prompt")" --max-ai-credits 60 --no-ask-user -s > "$output" 2> "$log"
+              test -s "$output"
+            )
+          }
+
+          failed=0
+          labels=()
+          pids=()
+
+          flush_wave() {
+            local i
+            for i in "${!pids[@]}"; do
+              if wait "${pids[$i]}"; then
+                echo "PASS ${labels[$i]}"
+              else
+                echo "FAIL ${labels[$i]}"
+                failed=1
+              fi
+            done
+            pids=()
+            labels=()
+          }
+
+          count=0
+          for case_id in "${cases[@]}"; do
+            for arm in "${arms[@]}"; do
+              echo "START $case_id / $arm"
+              run_one "$case_id" "$arm" &
+              pids+=("$!")
+              labels+=("$case_id/$arm")
+              count=$((count + 1))
+              if [ $((count % 6)) -eq 0 ]; then
+                flush_wave
+              fi
+            done
+          done
+          if [ "${#pids[@]}" -gt 0 ]; then
+            flush_wave
+          fi
+          exit "$failed"
+
+      - name: Summarize deterministic evidence
+        id: summarize
+        continue-on-error: true
+        run: python skills/note-reforge/evals/candidate_sixcase_copilot_eval.py summarize
+
+      - name: Record Copilot CLI version
+        if: always()
+        run: |
+          copilot --version > skills/note-reforge/evals/runs/candidate_keep_reforge_20261021/copilot-version.txt || true
+
+      - name: Commit raw evidence to candidate branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/note-reforge/evals/runs/candidate_keep_reforge_20261021
+          if git diff --cached --quiet; then
+            echo "No evidence changes."
+          else
+            git commit -m "eval(note-reforge): record six-case candidate evidence"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
+
+      - name: Upload immutable raw evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: note-reforge-candidate-sixcase-evidence
+          path: skills/note-reforge/evals/runs/candidate_keep_reforge_20261021/
+          retention-days: 30
+
+      - name: Enforce completed subject run
+        if: always()
+        run: |
+          if [ "${{ steps.subjects.outcome }}" != "success" ] || [ "${{ steps.summarize.outcome }}" != "success" ]; then
+            echo "Six-case candidate regression did not complete successfully."
+            exit 1
+          fi
