@@ -1,0 +1,8 @@
+{
+  "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+  "arm": "arm_b_candidate",
+  "source_path": "skills/note-reforge/evals/cases/source_snapshots/case_20_contradictory_spec.org",
+  "source_sha256": "cf756dd5e09ca1d722f0020e5141a07430490b03a77fee82170c2fdd3bb18040",
+  "skill_sha256": "5c07717d4d0fb862797f106610c00ddc67a377be6932f8f22ff08fd50e19b1c6",
+  "expected_decision_hidden_from_subject": true
+}

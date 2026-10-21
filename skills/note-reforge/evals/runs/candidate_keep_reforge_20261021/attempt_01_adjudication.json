@@ -1,0 +1,73 @@
+{
+  "run_id": "candidate_keep_reforge_20261021_attempt_01",
+  "github_actions_run_id": 39535846785,
+  "artifact": {
+    "id": 12316914622,
+    "name": "note-reforge-candidate-sixcase-evidence",
+    "digest": "sha256:8d82771e84398ed97e501facec9b2cff4198516eb912e2889811112baf8dd833",
+    "expires_at": "2026-11-20T02:59:31Z"
+  },
+  "production_commit": "7674cf109ecfd69b59f8aeb3843742a3d9897db5",
+  "subject_executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "subject_requests_completed": 12,
+  "raw_outputs_preserved_in_artifact": true,
+  "cases": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "KEEP",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "expected": "KEEP",
+      "production": "PATCH",
+      "candidate": "PATCH",
+      "candidate_verdict": "FAIL",
+      "reason": "Both arms manufacture a generic usage/preparation patch although the frozen source already provides the supported 5/15/45-minute selection model; no source-grounded task-blocking gap was identified."
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "BLOCK",
+      "candidate_verdict": "FAIL",
+      "reason": "Candidate incorrectly treats the repository path as unreadable even though the sealed prompt supplies the complete frozen document. This is an execution-environment ambiguity, not a source defect."
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "expected": "BLOCK",
+      "production": "BLOCK",
+      "candidate": "BLOCK",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected": "PATCH",
+      "production": "PATCH",
+      "candidate": "PATCH",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected": "REFORGE",
+      "production": "KEEP",
+      "candidate": "PATCH",
+      "candidate_verdict": "FAIL",
+      "reason": "Candidate recognizes a defect and reconstructs scannable records, but still classifies the core-record structural repair as PATCH rather than REFORGE."
+    }
+  ],
+  "aggregate": {
+    "production_decision_accuracy": "4/6",
+    "candidate_decision_accuracy": "3/6",
+    "candidate_gate": "FAIL"
+  },
+  "correction_target": [
+    "Leaving KEEP requires a concrete source-grounded defect that affects the target task; generic optional enhancements do not qualify.",
+    "Rebuilding the organization/boundaries of a primary collection of peer objects is REFORGE even if the edits occur inside one section.",
+    "The sealed harness must state that the supplied full text is the readable input so filesystem-path absence is not mistaken for BLOCK."
+  ],
+  "production_merge_allowed": false
+}
