@@ -8,6 +8,12 @@ on:
       - "skills/note-reforge/SKILL.md"
       - "skills/note-reforge/evals/candidate_sixcase_copilot_eval.py"
       - ".github/workflows/note-reforge-candidate-sixcase.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "skills/note-reforge/SKILL.md"
+      - "skills/note-reforge/evals/candidate_sixcase_copilot_eval.py"
+      - ".github/workflows/note-reforge-candidate-sixcase.yml"
 
 permissions:
   contents: write
@@ -136,7 +142,7 @@ jobs:
             echo "No evidence changes."
           else
             git commit -m "eval(note-reforge): record six-case candidate evidence"
-            git push origin HEAD:${GITHUB_REF_NAME}
+            git push origin HEAD:candidate/note-reforge-keep-reforge-priority-20261021
           fi
 
       - name: Upload immutable raw evidence
