@@ -19,6 +19,10 @@ permissions:
   contents: write
   copilot-requests: write
 
+concurrency:
+  group: note-reforge-candidate-sixcase-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   regression:
     runs-on: ubuntu-latest
@@ -27,6 +31,7 @@ jobs:
       - name: Checkout candidate with production history
         uses: actions/checkout@v4
         with:
+          ref: candidate/note-reforge-keep-reforge-priority-20261021
           fetch-depth: 0
 
       - name: Set up Python
