@@ -1,0 +1,8 @@
+{
+  "case_id": "case_14_heldout_patch_thinking_reconstruction",
+  "arm": "arm_a_production",
+  "source_path": "skills/note-reforge/evals/cases/source_snapshots/case_14_heldout_patch_thinking_reconstruction.org",
+  "source_sha256": "b1d0d1748ca250ffb0efc1766d50184548e18e5eb15ed10d084ddd1785122b4f",
+  "skill_sha256": "abb0e6b4f0af4bb4f05e10da6fe732a6a405bb9b69edc7fc1182d49faaa73aad",
+  "expected_decision_hidden_from_subject": true
+}
