@@ -22,7 +22,7 @@ import yaml
 EVALS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EVALS_DIR.parents[2]
 SKILL_PATH = EVALS_DIR.parent / "SKILL.md"
-OUT_DIR = EVALS_DIR / "runs" / "candidate_keep_reforge_20261021_attempt02"
+OUT_DIR = EVALS_DIR / "runs" / "candidate_keep_reforge_20261021_attempt03"
 PRODUCTION_COMMIT = "7674cf109ecfd69b59f8aeb3843742a3d9897db5"
 PRODUCTION_SKILL_PATH = "skills/note-reforge/SKILL.md"
 
@@ -106,7 +106,7 @@ def prepare() -> int:
         raise RuntimeError("CANDIDATE_EQUALS_PRODUCTION")
 
     run = {
-        "run_id": "candidate_keep_reforge_20261021_attempt02",
+        "run_id": "candidate_keep_reforge_20261021_attempt03",
         "prepared_at": datetime.now(timezone.utc).isoformat(),
         "mode": "sealed_production_vs_candidate_six_case_regression",
         "executor": "GitHub Copilot CLI",
@@ -185,12 +185,22 @@ def summarize() -> int:
             detected = decisions[0].upper() if decisions else "UNKNOWN"
             l1 = validate_l1(source, output, meta)
             write_json(arm_dir / "l1_result.json", l1)
+            decision_match = detected == str(meta.get("expected_decision", "")).upper()
+            strict_delivery = bool(
+                l1.get("pass")
+                and l1.get("headers_preserved")
+                and l1.get("code_blocks_preserved")
+                and l1.get("protected_content_intact")
+                and l1.get("no_source_overwrite")
+            )
             case_record["arms"][arm] = {
                 "status": "EXECUTED",
                 "output_chars": len(output),
                 "output_sha256": sha256_text(output),
                 "detected_decision": detected,
-                "decision_matches_expected": detected == str(meta.get("expected_decision", "")).upper(),
+                "decision_matches_expected": decision_match,
+                "strict_delivery_pass": strict_delivery,
+                "full_case_gate_pass": bool(decision_match and strict_delivery),
                 "l1": l1,
             }
             completed += 1
@@ -212,6 +222,14 @@ def summarize() -> int:
                 1
                 for case in results
                 if case["arms"].get(arm, {}).get("decision_matches_expected")
+            )
+            for arm in ARMS
+        },
+        "full_case_gate_passes": {
+            arm: sum(
+                1
+                for case in results
+                if case["arms"].get(arm, {}).get("full_case_gate_pass")
             )
             for arm in ARMS
         },
