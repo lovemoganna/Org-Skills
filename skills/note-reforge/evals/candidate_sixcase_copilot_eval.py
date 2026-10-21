@@ -22,7 +22,7 @@ import yaml
 EVALS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EVALS_DIR.parents[2]
 SKILL_PATH = EVALS_DIR.parent / "SKILL.md"
-OUT_DIR = EVALS_DIR / "runs" / "candidate_keep_reforge_20261021"
+OUT_DIR = EVALS_DIR / "runs" / "candidate_keep_reforge_20261021_attempt02"
 PRODUCTION_COMMIT = "7674cf109ecfd69b59f8aeb3843742a3d9897db5"
 PRODUCTION_SKILL_PATH = "skills/note-reforge/SKILL.md"
 
@@ -91,6 +91,7 @@ def subject_prompt(skill: str, task: str, source: str) -> str:
 ```
 
 请独立完成任务。
+本次是封闭文本评测：上方【输入文档全文】就是本次可读目标内容，无需访问原路径或实际写盘；不得仅因工作区中找不到原路径而 BLOCK。
 禁止假设存在隐藏答案、隐藏评测标准、历史裁决或额外事实。
 必须明确给出决策（KEEP / PATCH / REFORGE / BLOCK）以及相应最终产物或阻塞理由。
 只输出最终结果，不输出自我评价、测试分数或 A/B 对照分析。
@@ -105,7 +106,7 @@ def prepare() -> int:
         raise RuntimeError("CANDIDATE_EQUALS_PRODUCTION")
 
     run = {
-        "run_id": "candidate_keep_reforge_20261021",
+        "run_id": "candidate_keep_reforge_20261021_attempt02",
         "prepared_at": datetime.now(timezone.utc).isoformat(),
         "mode": "sealed_production_vs_candidate_six_case_regression",
         "executor": "GitHub Copilot CLI",
