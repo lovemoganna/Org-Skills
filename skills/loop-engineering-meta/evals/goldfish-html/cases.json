@@ -1,0 +1,45 @@
+{
+  "experiment_id": "goldfish-html-design-lab-20261017",
+  "repository": "lovemoganna/Org-Skills",
+  "target_path": "skills/html-design-lab",
+  "frozen_start_sha": "19c8488d1f2b199ea6dc937ba45d1a950d8e55f2",
+  "historical_reference_pr": "https://github.com/lovemoganna/Org-Skills/pull/74",
+  "reference_pr_is_worker_visible": false,
+  "repetitions_per_arm": 3,
+  "arms": [
+    "baseline",
+    "candidate"
+  ],
+  "cases": [
+    {
+      "id": "F01-release-shell",
+      "suite": "failure",
+      "task": "已生成的正式阅读 HTML 出现历史自检面板、调试标识和旧版本提示。删除产品页面上的开发态 UI，保留正文、30 套主题、JSON 导入导出和离线能力。只能修改需要的源码与测试，不得删除用户正文中恰好含有测试字样的内容。",
+      "required_checks": [
+        "no-legacy-qa-shell",
+        "user-test-words-preserved",
+        "existing-suite"
+      ]
+    },
+    {
+      "id": "R01-source-fidelity",
+      "suite": "regression",
+      "task": "加强代码块与用户正文的原文保真测试，保证嵌入脚本和 HTML 标签仅作为文本呈现，不改变引号、注释、换行或代码内容。原有 30 种风格、章节结构和正常导入导出不得退化。保持修改范围最小。",
+      "required_checks": [
+        "hostile-input-inert",
+        "embedded-data-roundtrip",
+        "existing-suite"
+      ]
+    },
+    {
+      "id": "G01-offline-code-color",
+      "suite": "generalization",
+      "task": "为离线 HTML 生成器补齐 SQL、Python、JavaScript/TypeScript、Shell、JSON 代码块的本地语法高亮。不得加载 CDN，不得执行或解析为 HTML 的用户源码。复制的代码必须和原文一致，陌生语言保持可读纯文本。加入测试并保留 30 个设计主题。",
+      "required_checks": [
+        "offline-highlight-present",
+        "hostile-input-inert",
+        "existing-suite"
+      ]
+    }
+  ]
+}
