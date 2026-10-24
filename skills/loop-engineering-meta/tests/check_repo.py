@@ -128,4 +128,8 @@ paired = subprocess.run(
 assert paired.returncode == 0, (paired.returncode, paired.stdout, paired.stderr)
 checks.append(("成对试验比较器的模拟契约与反例", "退出状态=0"))
 
+contract_proc = subprocess.run([sys.executable, str(ROOT / "tests/intent_metamorphic_contract.py")], capture_output=True, text=True)
+assert contract_proc.returncode == 0, (contract_proc.returncode, contract_proc.stdout, contract_proc.stderr)
+checks.append(("跨领域图契约变形及拒绝反例", contract_proc.stdout.strip()))
+
 print(json.dumps({"结论": "回归通过", "案例数": len(checks), "检查": checks}, ensure_ascii=False, indent=2))
