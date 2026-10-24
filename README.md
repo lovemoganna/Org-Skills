@@ -7,7 +7,7 @@
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
-| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
+| 从模糊目标理解真实意图、按需编排提示链，并对任务结果做闭环验证 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 将结构、业务流程或代码转换为 PlantUML，并获得在线 PNG 图片直链 | `plantuml-diagram-engine` | skills/plantuml-diagram-engine/SKILL.md |
@@ -41,9 +41,10 @@
 
 ### Skill 速查与闭环工程
 - `skill-quick-reference`：读取真实 `SKILL.md`，输出用途、适用场景、核心能力和自然语言调用示例；不执行目标 Skill。
-- `loop-engineering-meta`：基线 → 执行轨迹 → 根因诊断 → 最小修复 → 独立回放 → 门禁与回归 → 固化经验；高风险动作须遵守授权。
+- `loop-engineering-meta`：意图还原 → 直接执行或最小提示链 → ChatGPT 执行 → 结果验收 → 根因修复/回归 → 经验证的能力固化。高风险动作须遵守授权。
 - 固定调用：`用 skill-quick-reference 简要介绍这个 Skill：<SKILL.md 或仓库路径>`。
 - 闭环调用：`使用 loop-engineering-meta 检查并修复当前任务：<任务与失败样本>`。
+- 意图编排调用：`使用 loop-engineering-meta 理解我的目标，自主选择是否编排提示链，执行并验证：<真实任务>`。
 
 ### 文学编程
 - `org-literate-engineering`：编程材料 → 逆向与参数化 → 最小 Org/Babel 结构 → 真实执行 → Eval / Repair / Regression → 干净的文学编程产物。
@@ -72,7 +73,7 @@
 | Skill | 一句话能力 | Canonical path | 状态 |
 |---|---|---|---|
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
-| `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
+| `loop-engineering-meta` | 意图还原、最小提示链编排、执行验收和证据化修复/回归/固化 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
 | `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
 | `llm-wiki-maintainer` | 证据驱动的持续 Org Wiki 维护、问答与质检 | `skills/llm-wiki-maintainer/SKILL.md` | Audit/plan CI + live 21-page audit passed; real-source T17 pending |

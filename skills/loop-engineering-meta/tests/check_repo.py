@@ -17,6 +17,10 @@ os.environ["PYTHONUTF8"] = "1"
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
 for required in (
+    "### 5.2-intent Intent → Task Model → Autonomous Orchestration",
+    "D0 DIRECT", "D1 SINGLE", "D2 CHAIN", "D3 CONDITIONAL/PARALLEL",
+    "Strict separation of prompt and route",
+    "self-grading is not independent quality evaluation",
     "### 5.2a Skill / Prompt 调试专用：任务适配审查",
     "### 5.2b Skill / Prompt 调试专用：内容质量独立验收",
     "测试设计无效", "同一执行者的自评不能冒充独立质量合格证明",

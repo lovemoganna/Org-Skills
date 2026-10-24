@@ -1,6 +1,6 @@
 ---
 name: loop-engineering-meta
-description: Convert ambiguous, repeatable, high-value, or failure-prone work into a traceable improvement loop; diagnose the earliest root failure, apply one minimal harness change, replay under controlled conditions, evaluate with evidence, and compile stable knowledge into reusable child skills. Use for research, writing, coding, analytics, ontology modeling, operations, workflow repair, prompt/agent improvement, and quality control.
+description: Recover real intent from ambiguous goals, choose direct execution or minimal prompt orchestration, execute and verify outcomes, diagnose the earliest failure, and compile proven improvements into reusable Skills. Use for vague goals, complex requests, prompt chaining, operations, research, writing, coding, analytics, and workflow repair.
 ---
 
 # Loop Engineering Meta Skill
@@ -170,6 +170,60 @@ stop_conditions:
 ```
 
 Reject or repair false premises before execution.
+
+### 5.2-intent Intent → Task Model → Autonomous Orchestration
+
+This is the front door of the existing Loop, NOT another agent, a prompt database, or a replacement for decision-first-agent. Apply when the user provides a vague goal, under-specified problem, or asks for independent prompt orchestration. Skip it for clear single-step requests and use the Fast Path.
+
+**1. Reconstruct the intended outcome, without mind-reading**
+
+- Read the current request, accessible prior user decisions, the actual source material, and the execution context. The current user's explicit instructions take precedence. Prior habits can inform interpretation but NEVER authorize an external action.
+- Keep four distinct categories: EXPLICIT (user stated), EVIDENCED (supported by source/context), HYPOTHESIS (plausible but falsifiable), UNKNOWN (not supported). Do not upgrade HYPOTHESIS into the user's true hidden motive.
+- Form one concise intended-outcome sentence: what changes for whom, what artifact is useful, and which constraints must hold. If a missing decision changes the goal, authorization, or irreversible risk, ask one narrow question; otherwise proceed with a reversible, labeled default.
+
+**2. Convert intent to a minimal TaskSpec**
+
+Use first principles to identify necessary conditions for success, not generic why-questions. Use MECE to separate TASK RESPONSIBILITIES, not to pretend real-world objects never overlap.
+
+Internally map outcome, user/audience, known facts, hypotheses, scope, explicit non-goals, constraints, permissions, needed evidence, task dependencies, acceptance observations, and critical unknowns to the existing TaskSpec. Do not require the user to complete a form or expose this internal packet by default.
+
+**3. Select the SHALLOWEST sufficient route**
+
+- D0 DIRECT: clear input, measurable outcome, one safe step. Answer/act without a prompt chain. Default choice.
+- D1 SINGLE: one focused existing Skill or atomic prompt produces the artifact. Do not relabel this as a chain.
+- D2 CHAIN: two or three different cognitive tasks, with a real dependency and an intermediate output that reduces a material error. Each step has a distinct responsibility. Do not split merely because the request is long.
+- D3 CONDITIONAL/PARALLEL: genuinely independent sources or subproblems and observable net value justify coordination; avoid multi-agent by default.
+- STOP/ASK/ESCALATE: a fatal unknown, false premise, missing tool, or risky unauthorised action blocks only the affected part. Risk/authority gates belong to decision-first-agent; orchestration cannot grant permission.
+
+Before adding a node, ask whether removing it would lose necessary evidence, semantic correctness or delivery value. If not, delete it.
+
+**4. Strict separation of prompt and route**
+
+An atomic prompt contains ONLY its own input, task, output contract and limits. No model selection, router policy, stage numbering, retry budget, grading logic, Git/Org actions, or self-awarded authority inside prompt text.
+
+The orchestration plan belongs OUTSIDE prompts: node ID, input source, raw output reference, next dependency, why the split is necessary, stopping condition. Example: A extracts facts/goal/constraints/unknowns from original input; B receives the SAME original input and the COMPLETE UNMODIFIED A output to produce an actionable artifact. Never silently summarize A before B. Revision to route and revision to prompt are separately recorded.
+
+**5. ChatGPT executes and checks the real user outcome**
+
+Use available AI and authorized tools directly; do not require the user to run a local model, relay AI messages, or configure Emacs. Org may store the source prompt, input, outputs and evidence; Git may version them; publishing only occurs when authorised and tool-verifiable. Lack of a write path is a declared limitation, not fake persistence.
+
+Deliver the actual result FIRST. Verify goal match, explicit restrictions, usable artifact and evidence at the boundary of each claim. Keep run input, each original output, model identity if available, source version, observed errors and user interventions. A same-conversation A→B generation is not two independent API runs, and self-grading is not independent quality evaluation.
+
+Outcome measures (when actually observable): task acceptance, user correction count, handoff count, repeated failures, evidence coverage and cost/latency. Number of generated prompts is never a success metric. No invented savings or precision.
+
+**6. Repair the EARLIEST mistake and stop**
+
+- Wrong objective: fix intent/evidence and TaskSpec, NOT Prompt B verbosity.
+- Correct objective but duplicated/missing steps: fix route and handoff, NOT the atomic prompt.
+- Correct route but failing transformation: fix that one prompt/input.
+- Artifact exists but outcome lacks external evidence: report CONDITIONAL/BLOCKED, obtain evidence; do not declare PASS.
+- Each retry tests one falsifiable change under existing Loop budget; do not endlessly polish.
+
+**7. Promote only proven capabilities**
+
+A successful run is a case record, not a production Skill. Candidate reusable modules must survive different real tasks, a counterexample, regression and a fresh-context replay; Section 11 governs child-Skill promotion and 5.8a governs non-deterministic A/B validation. Preserve failed runs. Do not update production from one same-model self-assessment.
+
+Default user-facing result: the completed task, concise evidence, and only decisions the user truly must make. Do not expose internal planning packets or ceremonial Loop logs.
 
 ### 5.2a Skill / Prompt 调试专用：任务适配审查（执行前强制）
 
