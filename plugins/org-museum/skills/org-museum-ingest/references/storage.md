@@ -21,9 +21,11 @@ SOURCE 不能编造 URL；用户只粘贴材料则写“用户提供，原始出
 已有 Org 元数据保留，只有存储契约必需字段由入口补齐；原有 WIKI_ID 不符合
 当前新建格式时不要擅自更改旧笔记，报告兼容缺口。
 
-附件放 note-assets/<note-id>/<filename>，允许 png/jpg/jpeg/webp/gif/pdf/csv/json/txt/sql/py/sh，
+附件放 note-assets/<note-id>/<filename>，允许 png/jpg/jpeg/webp/gif/mp3/pdf/csv/json/txt/sql/py/sh，
 单文件不超过 20 MiB。不要自动把整段聊天或原始文件作为附件上传。
 file: 链接必须指向 notes/ 或 note-assets/ 中真实存在的文件，不能越出仓库。
+MP3 以 =audio/mpeg= 交给站点原生音频播放器（支持试听和下载）；必须确认附件实际上传成功，
+并在发布后核对页面音频源 HTTP 可访问、文件大小及 SHA-256。不能把站点渲染支持等同于文件已托管。
 站内标题链接用真实 CUSTOM_ID；wiki: 链接只能指向已存在或同批提交的 ID。
 
 公开检查：密钥、token、密码、私钥、带凭证的 URL、用户电脑绝对路径、UNC 和
