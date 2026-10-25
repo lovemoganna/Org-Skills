@@ -9,7 +9,7 @@ description: Convert ambiguous, repeatable, high-value, or failure-prone work in
 
 Turn a one-off task or unstable workflow into a repeatable, testable, evidence-backed operating system.
 
-This is a meta-skill. It does not replace domain expertise. It creates a domain-specific loop instance, supervises execution, identifies the earliest failure, repairs the surrounding harness, reruns the task, and promotes proven improvements into reusable assets or child skills.
+This is a meta-skill for **already-running workflow reliability and repair**, not a second intent router. For ambiguous new goals or direct/chain selection, use `skills/loop/SKILL.md`; keep deep root-cause analysis, paired replay and evidence-based recovery here. It does not replace domain expertise.
 
 A valid loop must improve at least one of the following:
 
@@ -436,6 +436,7 @@ Pass when:
 Pass when:
 
 - for Skill/Prompt tests, **structural/execution acceptance and semantic/use-value acceptance are separate** with traceable evidence; an unchecked content verdict cannot be promoted by a passing lint or syntax test;
+- the user-facing result is understandable, useful and in the reader's language; clarity is a quality gate, not a reason to delete essential constraints;
 
 - all hard constraints are satisfied;
 - the actual objective is met;
@@ -635,41 +636,18 @@ A child `SKILL.md` must state:
 
 Do not copy the entire meta-skill into every child skill. Keep only domain-specific instructions and link to shared references where the runtime permits.
 
-## 12. Output Contract
+## 12. Output Contract — Reader First
 
-For normal use, return this compact report:
+**Internally work precisely; externally speak normally.** Keep the detailed TaskSpec, failed runs, evidence, permissions and replay logs for audits. They are not the default user-facing answer.
 
-```markdown
-# Result
-[Primary usable result]
+- **Result first.** Answer what the user asked. A request for an external prompt gets a *standalone, ready-to-copy prompt*, not a report about how you composed it.
+- **Use the reader's language.** Prefer concrete, familiar words; avoid Loop jargon (TaskSpec, D2, MECE, QA gates, node routing, A→B) unless the user requests the engineering details.
+- **Cut ceremony, not meaning.** Omit repeated context, fixed stage headings, long tables, framework introductions and self-praise. Preserve the goal, important restrictions, what the AI should actually do, how success is checked, who may authorize changes, and honest uncertainty.
+- **Check once before sending:** Can someone act on this after one read? Is any sentence just explaining the assistant's internal workflow? Did shortening delete a safety condition, execution instruction, critical test or failure? Rewrite only when an answer genuinely becomes clearer.
 
-# Evidence
-[Material evidence and verification]
+A brief result with the material evidence and outstanding limits is the normal format. If the user explicitly asks for a full audit, technical design or structured record, provide one. High-impact decisions must include the necessary risks and permission conditions even when the answer gets longer.
 
-# Loop QA
-- Verdict: PASS / CONDITIONAL PASS / FAIL / ESCALATE
-- Earliest defect:
-- Root cause:
-- Patch tested:
-- Replay result:
-- Gates:
-- Regressions:
-
-# Consolidation
-- Kept:
-- Reverted:
-- Reusable assets:
-- Residual risks:
-- Stop reason:
-```
-
-When the target is Skill/Prompt maintenance, state test fitness separately from target quality, state content-quality evidence and its review independence, and render decision labels in Chinese (e.g., 测试设计无效 / 有条件通过 / 测试失败 / 测试通过 / 证据不足). Do not label a Skill defective because the evaluator chose an out-of-scope case.
-
-For multi-step repair, include only principle audit records with a real decision change and replay evidence (Section 5.6a), inside `Loop QA` rather than a separate ceremonial list. Omit this entirely for unused principles and Fast Path tasks.
-
-For repeatable Skill / Agent A/B, attach baseline/candidate trial counts, checked outcomes, evaluator independence, measured cost (if available), negative runs, and any unverified evidence. Do not equate a passing comparison record with a proven deployment or statistically significant gain.
-
-For simple tasks, collapse the report to the primary result plus one concise QA note. Do not expose private chain-of-thought. Report observable reasoning, evidence, decisions, and test results.
+For Skill/Prompt repairs, retain scope fitness, content quality, reviewer independence, actual trials, negative results and rollback in the inspectable audit record. A good-looking answer or static validator is **not** evidence of independent model behavior.
 
 ## 13. Fast Path
 

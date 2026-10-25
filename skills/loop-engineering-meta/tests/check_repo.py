@@ -17,6 +17,11 @@ os.environ["PYTHONUTF8"] = "1"
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
 for required in (
+    "## 12. Output Contract — Reader First",
+    "standalone, ready-to-copy prompt",
+    "clarity is a quality gate",
+    "skills/loop/SKILL.md",
+    "Cut ceremony, not meaning",
     "### 5.2a Skill / Prompt 调试专用：任务适配审查",
     "### 5.2b Skill / Prompt 调试专用：内容质量独立验收",
     "测试设计无效", "同一执行者的自评不能冒充独立质量合格证明",
