@@ -1,6 +1,6 @@
 ---
 name: loop-engineering-meta
-description: Recover real intent from ambiguous goals, choose direct execution or minimal prompt orchestration, execute and verify outcomes, diagnose the earliest failure, and compile proven improvements into reusable Skills. Use for vague goals, complex requests, prompt chaining, operations, research, writing, coding, analytics, and workflow repair.
+description: Convert ambiguous, repeatable, high-value, or failure-prone work into a traceable improvement loop; diagnose the earliest root failure, apply one minimal harness change, replay under controlled conditions, evaluate with evidence, and compile stable knowledge into reusable child skills. Use for research, writing, coding, analytics, ontology modeling, operations, workflow repair, prompt/agent improvement, and quality control.
 ---
 
 # Loop Engineering Meta Skill
@@ -9,7 +9,7 @@ description: Recover real intent from ambiguous goals, choose direct execution o
 
 Turn a one-off task or unstable workflow into a repeatable, testable, evidence-backed operating system.
 
-This is a meta-skill. It does not replace domain expertise. It creates a domain-specific loop instance, supervises execution, identifies the earliest failure, repairs the surrounding harness, reruns the task, and promotes proven improvements into reusable assets or child skills.
+This is a meta-skill for **already-running workflow reliability and repair**, not a second intent router. For ambiguous new goals or direct/chain selection, use `skills/loop/SKILL.md`; keep deep root-cause analysis, paired replay and evidence-based recovery here. It does not replace domain expertise.
 
 A valid loop must improve at least one of the following:
 
@@ -149,32 +149,6 @@ Collect or infer:
 - time, cost, or iteration budget.
 
 Infer reversible details when safe. Mark them as assumptions. Do not invent critical facts.
-
-### 5.1a Intent and orchestration gate (before FRAME)
-
-Run this only for vague goals or explicit orchestration requests. For clear one-step tasks use Fast Path. Populate the EXISTING TaskSpec in 5.2; do not add a second planning framework.
-
-**Intent:** distinguish EXPLICIT request, EVIDENCED context, HYPOTHESIS and UNKNOWN. Define the user-valued result and an observable acceptance condition. Current instructions outrank historical examples. Resolve references such as "above" against actual materials; if a decisive referent, goal or authority is missing, ASK or block only the dependent action. Do not guess at hidden motives. Separate PLAN/REVIEW from EXECUTE/CHANGE; old permissions are not new authorization. First principles specify necessary evidence; MECE separates responsibilities, not naturally overlapping objects.
-
-**Choose the shallowest adequate route:**
-- D0 DIRECT: complete one safe, clear task without a chain.
-- D1 SINGLE: one existing Skill or atomic prompt suffices.
-- D2 DEPENDENCY: at least two distinct dependent tasks, as many nodes as actually required; the length of the user's message does not determine this.
-- D3 BRANCH/COMPARE: independent work, frozen-baseline A/B comparison, conditional gates, or bounded repair feedback demonstrably adds value. A graph does NOT require multiple agents.
-- STOP/ASK/ESCALATE: needed source or permission is absent; continue unrelated authorized work.
-
-**Typed orchestration outside atomic prompts:** the final instructions intended for humans or another AI must also be written in plain, self-contained language; internal routing does not belong in the user's copy-ready prompt. Atomic prompts contain only their own input, transformation, output and constraints; routing, model choice, feedback, persistence and permission checks stay in a separate graph. Each node records its input/output identity, dependency, owner, gate and evidence. Keep the source prompt unchanged when comparing alternatives.
-
-Three rules distinguish graph relations:
-- DEPENDENCY: preserve provenance and the exact upstream output when required; never silently summarize. If full transfer is impossible, mark the limitation rather than claiming verbatim reuse.
-- COMPARISON: separate arms must use equivalent frozen inputs and isolated contexts. A is NOT fed to B; shared-context runs are not independent A/B.
-- GATED ACTION/REPLAY: do not implement/publish without authorization, data and runnable environment; do not call a plan implementation. Limited patches, broader quality reviews and independent tests stay separate. Only a verified defect justifies a bounded retry.
-
-**Execute/verify:** ChatGPT runs the route with available authorized tools; do not ask the user to run local AI or manually shuttle prompts. Save exact inputs/outputs, source revision, tool evidence, errors and user corrections where permitted; Org/Git are optional record systems, not substitutes for execution. Verify graph correctness, actual artifact, user outcome and authority SEPARATELY. The same-model self-assessment is NOT independent evaluation. Compare with a direct D0/D1 baseline before claiming the chain adds value; never optimize prompt count.
-
-**Generalization check:** use historical chains only as topology seeds. Change domain, surface wording, source availability, dependencies, side-effect intent and authorization: unchanged goals should preserve route semantics, material changes must change decisions. Structural graph tests cannot prove model behavior; require isolated real-task replay and independent outcome evidence for promotion.
-
-Repair the earliest verified failure: wrong goal → intent; wrong handoff or contaminated arms → graph; failed atomic task → that prompt; absent boundary evidence → CONDITIONAL/BLOCKED. Apply existing Loop repair budget, rollback and Section 11 promotion gate. One good run is a case record, not a production Skill.
 
 ### 5.2 FRAME
 
@@ -393,7 +367,7 @@ Store the learning at the lowest stable layer:
 
 ### 5.11 EXIT
 
-Keep the following information available for audit; this is **not** a required seven-part user-facing report:
+Return:
 
 1. primary result;
 2. evidence and verification;
@@ -461,9 +435,8 @@ Pass when:
 
 Pass when:
 
-- **the user-facing result is understandable and usable by its intended reader**: plain language when the user asks for plain language, a standalone copy-ready instruction when the user asks for a prompt, and technical depth only when needed or requested; don't turn internal Loop phases into visible ceremony;
-
 - for Skill/Prompt tests, **structural/execution acceptance and semantic/use-value acceptance are separate** with traceable evidence; an unchecked content verdict cannot be promoted by a passing lint or syntax test;
+- the user-facing result is understandable, useful and in the reader's language; clarity is a quality gate, not a reason to delete essential constraints;
 
 - all hard constraints are satisfied;
 - the actual objective is met;
@@ -663,24 +636,18 @@ A child `SKILL.md` must state:
 
 Do not copy the entire meta-skill into every child skill. Keep only domain-specific instructions and link to shared references where the runtime permits.
 
-## 12. Output Contract — say it like a person
+## 12. Output Contract — Reader First
 
-**Two separate layers:** Loop may maintain a detailed TaskSpec, route, evidence log, failed checks and audit trail internally. That does **not** make those structures the user's answer. The default user-facing response should describe the useful result in ordinary language, in the user's own language.
+**Internally work precisely; externally speak normally.** Keep the detailed TaskSpec, failed runs, evidence, permissions and replay logs for audits. They are not the default user-facing answer.
 
-**Plain-language gate (mandatory before delivering user-facing prose, copy-ready prompts, executive summaries or change reports):**
+- **Result first.** Answer what the user asked. A request for an external prompt gets a *standalone, ready-to-copy prompt*, not a report about how you composed it.
+- **Use the reader's language.** Prefer concrete, familiar words; avoid Loop jargon (TaskSpec, D2, MECE, QA gates, node routing, A→B) unless the user requests the engineering details.
+- **Cut ceremony, not meaning.** Omit repeated context, fixed stage headings, long tables, framework introductions and self-praise. Preserve the goal, important restrictions, what the AI should actually do, how success is checked, who may authorize changes, and honest uncertainty.
+- **Check once before sending:** Can someone act on this after one read? Is any sentence just explaining the assistant's internal workflow? Did shortening delete a safety condition, execution instruction, critical test or failure? Rewrite only when an answer genuinely becomes clearer.
 
-1. **Lead with what the user actually wanted.** Give the useful answer, revised text or completed artifact first. If the user wants a prompt to paste into another AI, give the **standalone prompt**, not your notes about how the prompt was constructed.
-2. **Write for the reader, not the harness.** Use everyday words, concrete verbs and familiar subjects. Don't make users read “意图建模、MECE、D2、原子提示、质量门禁、回归矩阵、证据边界、Loop QA” unless they explicitly want the engineering explanation. The task's real technical names may remain if necessary for accuracy.
-3. **Remove ceremony and repetition.** No default headings such as “Result / Evidence / Loop QA / Consolidation”; no obligatory stages, tables, scores, verbose context recap, agent role play, or long lists. Organize only when it makes the output easier to use. Write one or two natural paragraphs for small tasks; use more space only when material complexity truly requires it.
-4. **Keep essential meaning.** Shortening must not lose the user's objective, explicit restrictions, who actually performs the action, what is expected as a deliverable, or required verification. Preserve safety and authorization constraints, honest failure/unknown status and any source/evidence needed for trust. Don't turn “do the task” into “make a plan”.
-5. **Speak in the user's voice when drafting something for them.** For external Coding Agent prompts, normally say what product to improve, why, how the AI should work on its own, what not to damage, how to test, and what concise result to report—without revealing Loop's internal plan, node names, evaluator contracts or Skill design.
-6. **Self-check the reader-facing text, not just technical validity.** Ask: “Could the intended reader say what to do after one read? Which sentence is jargon, redundant or written for an auditor? Did simplification erase an important instruction or hide a failure?” Rewrite once if needed, then deliver. Do not trigger an endless language-polishing loop.
+A brief result with the material evidence and outstanding limits is the normal format. If the user explicitly asks for a full audit, technical design or structured record, provide one. High-impact decisions must include the necessary risks and permission conditions even when the answer gets longer.
 
-**Visible default:** useful result, followed only when needed by a brief statement of what was verified and what remains uncertain. If no tool evidence is available, do not claim execution. Keep audit detail in actual saved records/links rather than flooding the main response.
-
-**Exceptions:** if the user explicitly requests an engineering report, trace, detailed review, structured output or full audit, provide it. High-impact decisions also need adequate evidence and limitations; these can be a short separate section or linked appendix. For Skill/Prompt maintenance, preserve separate fitness and content-quality verdicts and independent-review boundaries in the audit record. For repeatable A/B, retain counts, trials, negative results, reviewer independence and known limits; do not force them into an ordinary-user answer.
-
-**Example — user wants an external prompt:** Prefer “请检查现有产品，找出最影响新手使用的问题，选一两个实际修复，并用真实操作验证。已有功能别重做，有用的说明别盲删。改动放独立分支，最后告诉我改了什么、测试结果和未解决的问题。” over a long meta-instruction enumerating Loop phases. This example is illustrative, not a mandatory template or a fixed cap on length.
+For Skill/Prompt repairs, retain scope fitness, content quality, reviewer independence, actual trials, negative results and rollback in the inspectable audit record. A good-looking answer or static validator is **not** evidence of independent model behavior.
 
 ## 13. Fast Path
 

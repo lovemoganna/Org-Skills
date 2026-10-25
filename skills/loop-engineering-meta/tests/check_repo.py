@@ -17,17 +17,11 @@ os.environ["PYTHONUTF8"] = "1"
 ROOT = Path(__file__).resolve().parents[1]
 skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
 for required in (
-    "### 5.1a Intent and orchestration gate",
-    "D0 DIRECT", "D1 SINGLE", "D2 DEPENDENCY", "D3 BRANCH/COMPARE",
-    "Typed orchestration outside atomic prompts",
-    "The same-model self-assessment is NOT independent evaluation",
-    "Generalization check",
-    "## 12. Output Contract — say it like a person",
-    "Plain-language gate (mandatory",
-    "standalone prompt",
-    "Keep essential meaning",
-    "Self-check the reader-facing text",
-    "understandable and usable by its intended reader",
+    "## 12. Output Contract — Reader First",
+    "standalone, ready-to-copy prompt",
+    "clarity is a quality gate",
+    "skills/loop/SKILL.md",
+    "Cut ceremony, not meaning",
     "### 5.2a Skill / Prompt 调试专用：任务适配审查",
     "### 5.2b Skill / Prompt 调试专用：内容质量独立验收",
     "测试设计无效", "同一执行者的自评不能冒充独立质量合格证明",
@@ -133,9 +127,5 @@ paired = subprocess.run(
 )
 assert paired.returncode == 0, (paired.returncode, paired.stdout, paired.stderr)
 checks.append(("成对试验比较器的模拟契约与反例", "退出状态=0"))
-
-contract_proc = subprocess.run([sys.executable, str(ROOT / "tests/intent_metamorphic_contract.py")], capture_output=True, text=True)
-assert contract_proc.returncode == 0, (contract_proc.returncode, contract_proc.stdout, contract_proc.stderr)
-checks.append(("跨领域图契约变形及拒绝反例", contract_proc.stdout.strip()))
 
 print(json.dumps({"结论": "回归通过", "案例数": len(checks), "检查": checks}, ensure_ascii=False, indent=2))
