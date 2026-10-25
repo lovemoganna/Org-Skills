@@ -26,7 +26,7 @@ def validate(case):
 for case in data["cases"]:
     assert validate(case)=="OK",(case["id"],validate(case))
     bad=deepcopy(case)
-    bad["output"]=bad["output"].replace(bad["required"][0],"",1)
+    bad["output"]=bad["output"].replace(bad["required"][0],"")
     assert validate(bad)=="MISSING_ESSENTIAL",(case["id"],"loss of meaning")
     bad=deepcopy(case)
     bad["output"]+=" 废话" * (case["limit"]+1)
