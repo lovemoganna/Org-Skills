@@ -10,6 +10,7 @@
 | 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
+| 创作或迭代 Suno 原创华语歌曲，设计曲风、双语歌词与 1000 字符内 Style Prompt | `suno-songwriting` | skills/suno-songwriting/SKILL.md |
 | 将结构、业务流程或代码转换为 PlantUML，并获得在线 PNG 图片直链 | `plantuml-diagram-engine` | skills/plantuml-diagram-engine/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
@@ -88,6 +89,7 @@
 | `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
 | `plantuml-diagram-engine` | 按语义将业务/系统结构转为 9 类 PlantUML，加载 Ink & Signal v7 样式并交付在线 PNG 直链 | `skills/plantuml-diagram-engine/SKILL.md` | Active; 9 diagram types verified |
 | `sketchnote-generator` | 把真实材料制成复古手绘中文知识信息图，需具备图片工具 | `skills/sketchnote-generator/SKILL.md` | Packaged; image E2E pending |
+| `suno-songwriting` | 原创华语歌曲、Suno 曲风参数、双语歌词、迭代与文本 QA | `skills/suno-songwriting/SKILL.md` | Candidate; 8 local unit tests passed; audio E2E pending |
 
 ## 目录约定
 
