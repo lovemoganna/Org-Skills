@@ -163,7 +163,7 @@ Run this only for vague goals or explicit orchestration requests. For clear one-
 - D3 BRANCH/COMPARE: independent work, frozen-baseline A/B comparison, conditional gates, or bounded repair feedback demonstrably adds value. A graph does NOT require multiple agents.
 - STOP/ASK/ESCALATE: needed source or permission is absent; continue unrelated authorized work.
 
-**Typed orchestration outside atomic prompts:** prompts contain only their own input, transformation, output and constraints; routing, model choice, feedback, persistence and permission checks stay in a separate graph. Each node records its input/output identity, dependency, owner, gate and evidence. Keep the source prompt unchanged when comparing alternatives.
+**Typed orchestration outside atomic prompts:** the final instructions intended for humans or another AI must also be written in plain, self-contained language; internal routing does not belong in the user's copy-ready prompt. Atomic prompts contain only their own input, transformation, output and constraints; routing, model choice, feedback, persistence and permission checks stay in a separate graph. Each node records its input/output identity, dependency, owner, gate and evidence. Keep the source prompt unchanged when comparing alternatives.
 
 Three rules distinguish graph relations:
 - DEPENDENCY: preserve provenance and the exact upstream output when required; never silently summarize. If full transfer is impossible, mark the limitation rather than claiming verbatim reuse.
@@ -393,7 +393,7 @@ Store the learning at the lowest stable layer:
 
 ### 5.11 EXIT
 
-Return:
+Keep the following information available for audit; this is **not** a required seven-part user-facing report:
 
 1. primary result;
 2. evidence and verification;
@@ -460,6 +460,8 @@ Pass when:
 ### G3 — Result Acceptance
 
 Pass when:
+
+- **the user-facing result is understandable and usable by its intended reader**: plain language when the user asks for plain language, a standalone copy-ready instruction when the user asks for a prompt, and technical depth only when needed or requested; don't turn internal Loop phases into visible ceremony;
 
 - for Skill/Prompt tests, **structural/execution acceptance and semantic/use-value acceptance are separate** with traceable evidence; an unchecked content verdict cannot be promoted by a passing lint or syntax test;
 
@@ -661,41 +663,24 @@ A child `SKILL.md` must state:
 
 Do not copy the entire meta-skill into every child skill. Keep only domain-specific instructions and link to shared references where the runtime permits.
 
-## 12. Output Contract
+## 12. Output Contract — say it like a person
 
-For normal use, return this compact report:
+**Two separate layers:** Loop may maintain a detailed TaskSpec, route, evidence log, failed checks and audit trail internally. That does **not** make those structures the user's answer. The default user-facing response should describe the useful result in ordinary language, in the user's own language.
 
-```markdown
-# Result
-[Primary usable result]
+**Plain-language gate (mandatory before delivering user-facing prose, copy-ready prompts, executive summaries or change reports):**
 
-# Evidence
-[Material evidence and verification]
+1. **Lead with what the user actually wanted.** Give the useful answer, revised text or completed artifact first. If the user wants a prompt to paste into another AI, give the **standalone prompt**, not your notes about how the prompt was constructed.
+2. **Write for the reader, not the harness.** Use everyday words, concrete verbs and familiar subjects. Don't make users read “意图建模、MECE、D2、原子提示、质量门禁、回归矩阵、证据边界、Loop QA” unless they explicitly want the engineering explanation. The task's real technical names may remain if necessary for accuracy.
+3. **Remove ceremony and repetition.** No default headings such as “Result / Evidence / Loop QA / Consolidation”; no obligatory stages, tables, scores, verbose context recap, agent role play, or long lists. Organize only when it makes the output easier to use. Write one or two natural paragraphs for small tasks; use more space only when material complexity truly requires it.
+4. **Keep essential meaning.** Shortening must not lose the user's objective, explicit restrictions, who actually performs the action, what is expected as a deliverable, or required verification. Preserve safety and authorization constraints, honest failure/unknown status and any source/evidence needed for trust. Don't turn “do the task” into “make a plan”.
+5. **Speak in the user's voice when drafting something for them.** For external Coding Agent prompts, normally say what product to improve, why, how the AI should work on its own, what not to damage, how to test, and what concise result to report—without revealing Loop's internal plan, node names, evaluator contracts or Skill design.
+6. **Self-check the reader-facing text, not just technical validity.** Ask: “Could the intended reader say what to do after one read? Which sentence is jargon, redundant or written for an auditor? Did simplification erase an important instruction or hide a failure?” Rewrite once if needed, then deliver. Do not trigger an endless language-polishing loop.
 
-# Loop QA
-- Verdict: PASS / CONDITIONAL PASS / FAIL / ESCALATE
-- Earliest defect:
-- Root cause:
-- Patch tested:
-- Replay result:
-- Gates:
-- Regressions:
+**Visible default:** useful result, followed only when needed by a brief statement of what was verified and what remains uncertain. If no tool evidence is available, do not claim execution. Keep audit detail in actual saved records/links rather than flooding the main response.
 
-# Consolidation
-- Kept:
-- Reverted:
-- Reusable assets:
-- Residual risks:
-- Stop reason:
-```
+**Exceptions:** if the user explicitly requests an engineering report, trace, detailed review, structured output or full audit, provide it. High-impact decisions also need adequate evidence and limitations; these can be a short separate section or linked appendix. For Skill/Prompt maintenance, preserve separate fitness and content-quality verdicts and independent-review boundaries in the audit record. For repeatable A/B, retain counts, trials, negative results, reviewer independence and known limits; do not force them into an ordinary-user answer.
 
-When the target is Skill/Prompt maintenance, state test fitness separately from target quality, state content-quality evidence and its review independence, and render decision labels in Chinese (e.g., 测试设计无效 / 有条件通过 / 测试失败 / 测试通过 / 证据不足). Do not label a Skill defective because the evaluator chose an out-of-scope case.
-
-For multi-step repair, include only principle audit records with a real decision change and replay evidence (Section 5.6a), inside `Loop QA` rather than a separate ceremonial list. Omit this entirely for unused principles and Fast Path tasks.
-
-For repeatable Skill / Agent A/B, attach baseline/candidate trial counts, checked outcomes, evaluator independence, measured cost (if available), negative runs, and any unverified evidence. Do not equate a passing comparison record with a proven deployment or statistically significant gain.
-
-For simple tasks, collapse the report to the primary result plus one concise QA note. Do not expose private chain-of-thought. Report observable reasoning, evidence, decisions, and test results.
+**Example — user wants an external prompt:** Prefer “请检查现有产品，找出最影响新手使用的问题，选一两个实际修复，并用真实操作验证。已有功能别重做，有用的说明别盲删。改动放独立分支，最后告诉我改了什么、测试结果和未解决的问题。” over a long meta-instruction enumerating Loop phases. This example is illustrative, not a mandatory template or a fixed cap on length.
 
 ## 13. Fast Path
 
