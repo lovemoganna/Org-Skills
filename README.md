@@ -15,6 +15,7 @@
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
 | 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
+| 将课程字幕、讲义和练习炼成可追溯的长期笔记，按授权发布 | `learning-knowledge-meta` | skills/learning-knowledge-meta/SKILL.md |
 | 读取公开 X/Twitter 帖文并核验正文 | `x-link-reader` | skills/x-link-reader/SKILL.md |
 | 从突发经营事件或业务目标提炼值得决策的分析任务 | `business-owner` | skills/business-owner/SKILL.md |
 | 面对陌生数据集，从业务问题推导数据逻辑与 SQL | `sql-business-thinking` | skills/sql-business-thinking/ |
@@ -53,6 +54,7 @@
 - `llm-wiki-maintainer`：对已有 Org Wiki 执行增量摄入、索引优先问答、证据冲突处理、跨页关系维护及健康检查；复用已有内容炼化和发布机制。
 - 固定调用：`用 llm-wiki-maintainer 维护知识库：<来源 / 主题>`；只读问答：`用 llm-wiki-maintainer 回答：<问题>`。
 - `note-reforge`：已有 Org / Markdown → 保留独有经验与证据 → 补判断、边界、默认建议与检索入口 → 生成长期可用的下一版知识资产。
+- `learning-knowledge-meta`：课程字幕/讲义/代码/练习 → 来源范围和关键论断定位 → 跨章节整合 → 按需调用 Org 知识库收录与发布（只有明确授权才写入）。
 - `x-link-reader`：公开 X URL → 多源读取 → 完整性/来源核验 → `note-reforge` 源材料。
 - 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
 
@@ -78,6 +80,7 @@
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
 | `llm-wiki-maintainer` | 证据驱动的持续 Org Wiki 维护、问答与质检 | `skills/llm-wiki-maintainer/SKILL.md` | Audit/plan CI + live 21-page audit passed; real-source T17 pending |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
+| `learning-knowledge-meta` | 课程材料的可追溯知识炼化、跨章节整合和授权发布编排 | `skills/learning-knowledge-meta/SKILL.md` | Candidate; static checks passed; independent E2E pending |
 | `x-link-reader` | 公开 X/Twitter 内容只读获取与来源核验 | `skills/x-link-reader/SKILL.md` | Network E2E pending |
 | `business-owner` | 从真实业务事件/经营目标制定决策挑战并验收分析价值 | `skills/business-owner/SKILL.md` | Active; decision framing |
 | `business-reasoning` | 复现业务负责人 SQL 思维：从目的和结果表反推业务问题与候选 SQL | `skills/business-reasoning/SKILL.md` | Active; reasoning only |
