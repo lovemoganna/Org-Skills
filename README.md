@@ -6,6 +6,7 @@
 
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
+| 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
 | 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
@@ -30,6 +31,13 @@
 - 固定调用：`用 bprd-plus 根据以下材料写 BRD：<材料>`
 - 自检：`用 bprd-plus 自检这份 BRD`
 - 定向修改：`用 bprd-plus 按下面的反馈修改 BRD：<反馈>`
+
+## 知识视频制作
+
+- `video-production-loop`：需求 → VideoSpec → 配音/音乐 → 预览 → 实际渲染 → 技术与视听检查 → 最小修订 → 交付。
+- 附带 Remotion 起点、初始化和媒体验收脚本；用户音乐和本机路径不随包发布。
+- 调用：`使用 video-production-loop，将这些主题制作成视频，完成渲染、质检和交付。`
+- [制作 SOP](skills/video-production-loop/references/sop.md) · [已运行的验证](skills/video-production-loop/references/validation.md)；批量协议尚未进行大规模压测。
 
 ## 视觉知识图解
 
@@ -72,6 +80,7 @@
 
 | Skill | 一句话能力 | Canonical path | 状态 |
 |---|---|---|---|
+| `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
 | `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |

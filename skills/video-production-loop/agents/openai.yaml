@@ -1,0 +1,6 @@
+interface:
+  display_name: "视频制作 Loop"
+  short_description: "把选题、自然配音、音乐混音、渲染和质量反馈串成可复用的批量视频制作闭环"
+  default_prompt: "使用 $video-production-loop 将我的选题制作成视频，实际渲染、检查并迭代，交付成片和可复用工程。"
+policy:
+  allow_implicit_invocation: true
