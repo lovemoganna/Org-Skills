@@ -73,6 +73,7 @@ flowchart LR
 - `references/batch.md`：批量状态、缓存、重试和恢复。
 - `references/accepted-profile.md`：本次认可样片及证据边界。
 - `scripts/bootstrap.py`：复制模板到新目录，拒绝覆盖已有工程。
+- `scripts/package_project.py`：排除依赖缓存、拒绝自包含并校验源码 ZIP。
 - `scripts/verify_media.py`：媒体规格、全片解码、音频信号与抽帧。
 - `assets/remotion-starter/`：五种基础场景的可执行工程。
 - `assets/batch-plan.json`、`assets/run-record.json`：批量计划和单项状态模板。

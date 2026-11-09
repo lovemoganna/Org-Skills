@@ -1,0 +1,26 @@
+{
+  "source": "three-minute prompt-chain tutorial r004; local verified artifacts, media not distributed",
+  "video": {
+    "seconds": 180,
+    "frames": 5400,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "sha256": "acd6728dd0a02cd5f6f4c0e9264f4dbd6a8766de6d44e3db813b6bb2832cdcf4",
+    "technicalChecks": "pass",
+    "originalExamplesUnchanged": true,
+    "pageFramesInspected": 16,
+    "subjectiveListening": "not_checked"
+  },
+  "newTests": {
+    "archiveRegressionTests": 4,
+    "starterPackageFiles": 11,
+    "zipCRC": "pass",
+    "skillStructure": "pass"
+  },
+  "notMeasured": [
+    "token savings",
+    "cross-topic quality",
+    "large batch throughput"
+  ]
+}
