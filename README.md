@@ -8,7 +8,7 @@
 |---|---|---|
 | 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
-| 从已解决问题中捕获突破点、逆推原因、合并同类经验并封装复用 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
+| 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
 | 从日常工作与多个案例归纳可验证、可迁移的简历能力，并保留面试证据 | `career-evidence-loop` | skills/career-evidence-loop/SKILL.md |
 | 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
@@ -51,7 +51,7 @@
 ## Skill 能力地图
 
 ### Skill 速查与闭环工程
-- `keypoint-loop`：真实问题 → 关键突破点 → 逆向原因 → 同因同法归并 → 最小方法卡 → 新案例复测；证据不足标待验证。
+- `keypoint-loop`：真实问题 → 核对对象/反证/约束 → 找到改变决策的关键点 → 停止无信息重复 → 同机制归并、复测与存档；证据不足不升级。
 - 固定调用：`使用 keypoint-loop 处理以下材料，捕获关键点、同类归并并输出最短可执行方法卡：<问题与处理记录>`。
 - `career-evidence-loop`：工作记录/多个 Case → 事实与贡献核验 → 共性方法归并 → 适度抽象的岗位能力与成果 → 简历/面试证据双层输出；单案不证明全面能力。
 - 固定调用：`使用 career-evidence-loop 从这些工作记录生成简历能力，并保留代表案例供面试：<工作记录及目标岗位>`。
@@ -88,7 +88,7 @@
 |---|---|---|---|
 | `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
-| `keypoint-loop` | 捕获真实问题的关键突破点，逆推机制、同因同法归并并封装可复用方法 | `skills/keypoint-loop/SKILL.md` | Real-case manual smoke; independent behavioral eval pending |
+| `keypoint-loop` | 发现关键前提与决策突破点、打断无效重复，按具体机制归并可复用经验 | `skills/keypoint-loop/SKILL.md` | Exploratory multi-run replays; live transfer/long-term benefit pending |
 | `career-evidence-loop` | 从多条工作经历提炼通用能力、真实成果及可追溯面试案例 | `skills/career-evidence-loop/SKILL.md` | Manual real-case walkthrough; independent invocation pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
 | `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |
