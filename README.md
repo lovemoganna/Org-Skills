@@ -52,9 +52,9 @@
 
 ### Skill 速查与闭环工程
 - `keypoint-loop`：真实问题 → 关键突破点 → 逆向原因 → 同因同法归并 → 最小方法卡 → 新案例复测；证据不足标待验证。
+- 固定调用：`使用 keypoint-loop 处理以下材料，捕获关键点、同类归并并输出最短可执行方法卡：<问题与处理记录>`。
 - `career-evidence-loop`：工作记录/多个 Case → 事实与贡献核验 → 共性方法归并 → 适度抽象的岗位能力与成果 → 简历/面试证据双层输出；单案不证明全面能力。
 - 固定调用：`使用 career-evidence-loop 从这些工作记录生成简历能力，并保留代表案例供面试：<工作记录及目标岗位>`。
-- 固定调用：`使用 keypoint-loop 处理以下材料，捕获关键点、同类归并并输出最短可执行方法卡：<问题与处理记录>`。
 - `loop`：前端目标建模与按需编排（Intent → Model → Orchestrate → Verify → Evolve）；复杂故障复盘交给 `loop-engineering-meta`。\n- `skill-quick-reference`：读取真实 `SKILL.md`，输出用途、适用场景、核心能力和自然语言调用示例；不执行目标 Skill。
 - `loop-engineering-meta`：基线 → 执行轨迹 → 根因诊断 → 最小修复 → 独立回放 → 门禁与回归 → 固化经验；高风险动作须遵守授权。
 - 固定调用：`用 skill-quick-reference 简要介绍这个 Skill：<SKILL.md 或仓库路径>`。
