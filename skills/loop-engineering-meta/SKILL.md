@@ -222,6 +222,8 @@ During execution:
 
 Do not enter critique mode before producing or attempting the primary result.
 
+If an extra agent or independent reviewer is justified, apply [delegation context and handback rules](references/subagent-context-isolation.md) before launching it. Do not delegate just to imitate a multi-agent design.
+
 ### 5.5 INSPECT
 
 Inspect the result and trace separately.
@@ -319,6 +321,8 @@ For noisy or repeated Skill / Agent improvements, compare the current version (`
 6. `scripts/compare_trials.py <experiment.json>` validates the comparison **record contract** and summarizes observed outcomes. Input: `experiment_id`; `cases[]` with `id`, `suite` (`failure|regression|generalization`), and fixed `controls` (`model, task_input_hash, tools_hash, environment_hash, rubric_hash`); `trials.baseline[]` and `trials.candidate[]` containing `run_id, worker_id`, matching controls, `trace_ref, artifact_ref, outcome.passed, outcome.evidence_ref, outcome.verifier.kind/id`, and optionally `cost_usd`. Exit `0` means a **candidate gain in supplied records only**, `1` means no gain/regression, `2` means incomplete/invalid records. The tool cannot open external evidence or independently prove that runs occurred; manually inspect receipts and graders before any real promotion.
 
 If tools, money, human review, or test sessions are unavailable, stop at **unverified candidate / evidence gap**. Never transform simulated contract checks or historical receipts into a claim of a new real A/B experiment.
+
+For delegated or parallel trials, verify the context mode, actual isolation, reviewer/worker separation, blinded inputs and write isolation using [the delegation contract](references/subagent-context-isolation.md). A fresh reviewer is a necessary bias control when independent review is requested, but not proof of a successful outcome.
 
 ### 5.9 EVALUATE
 
