@@ -9,6 +9,7 @@
 | 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
 | 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
+| 从复杂现象识别因果、规则与可控突破口，并通过最小干预验证结果 | `causal-net-loop` | skills/causal-net-loop/SKILL.md |
 | 从日常工作与多个案例归纳可验证、可迁移的简历能力，并保留面试证据 | `career-evidence-loop` | skills/career-evidence-loop/SKILL.md |
 | 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
@@ -47,6 +48,10 @@
 
 - `sketchnote-generator`：材料核验 → 动态知识模块 → 复古笔记本式 Sketchnote → 图片生成 → 视觉与事实检查。需要实际可用的图像生成工具；纯 Claude 环境不能凭 Skill 生成插画。
 - 固定调用：`手绘图：<文章 / 案例 / 链接>`。
+
+### 因果与系统突破
+- `causal-net-loop`：事实/竞争因果 → 系统约束 → 可控杠杆 → 最小干预 → 验证/止损；与 `keypoint-loop` 的事后关键点复用分工明确。
+- 固定调用：`用 causal-net-loop 分析以下问题，找出可证伪的原因、真正的限制和一个最小破网动作：<材料>`。
 
 ## Skill 能力地图
 
