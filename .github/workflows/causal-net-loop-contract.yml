@@ -1,0 +1,27 @@
+name: Causal Net Loop Contract
+
+on:
+  pull_request:
+    paths:
+      - "skills/causal-net-loop/**"
+      - ".github/workflows/causal-net-loop-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/causal-net-loop/**"
+      - ".github/workflows/causal-net-loop-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify causal skill contract and T1-T10 registry
+        run: python skills/causal-net-loop/tests/check_contract.py
