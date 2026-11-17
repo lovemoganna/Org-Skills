@@ -25,3 +25,5 @@ jobs:
           python-version: "3.12"
       - name: Verify causal skill contract and T1-T10 registry
         run: python skills/causal-net-loop/tests/check_contract.py
+      - name: Verify cross-domain archived smoke metrics
+        run: python skills/causal-net-loop/evals/compare_smoke.py
