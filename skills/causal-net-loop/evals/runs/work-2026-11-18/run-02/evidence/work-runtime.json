@@ -1,0 +1,86 @@
+{
+  "initial_pr": {
+    "number": 115,
+    "url": "https://github.com/lovemoganna/Org-Skills/pull/115",
+    "head_ref": "candidate/causal-net-loop-system-guardrails-20261117",
+    "head_commit": "4c114b27233abd3b04d6bff47f51de4fe3921a13",
+    "base_ref": "main",
+    "base_commit": "aab429beef36ab173c0ce4bf7870bb7522fe1bee",
+    "draft": true
+  },
+  "frozen": {
+    "baseline_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+    "candidate_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+    "baseline_ref": "aab429beef36ab173c0ce4bf7870bb7522fe1bee",
+    "candidate_ref": "69a096640c7f571c026a72e04558cf6ec235163f",
+    "case_pack_blob": "d4ec6a9972a922968127b5fbb6d1d327f3cd1089",
+    "harness_blob": "048b24d5cf2dd1e509cbabc89b07795b45930556",
+    "work_execute_blob": "bb67fa181db8aec70affef60b0847890bbe9a2bc"
+  },
+  "runtime": {
+    "execution_surface": "Codex Work native collaboration",
+    "model_slug_requested": "gpt-6.2-sol",
+    "reasoning_effort_requested": "medium",
+    "model_api": "not called",
+    "fork_turns": "none",
+    "canonical_paths": {
+      "baseline": "/root/p7",
+      "candidate": "/root/q3",
+      "reviewer": "/root/r8"
+    },
+    "identity_check": "Platform-issued canonical task paths and final-message sender routes distinguish threads inside this run. Provider session UUIDs and independently exportable provider traces were unavailable.",
+    "provider_session_uuid": "NOT_VERIFIED",
+    "provider_runtime_model_attestation": "NOT_VERIFIED",
+    "provider_token_usage": "NOT_VERIFIED",
+    "provider_model_latency": "NOT_VERIFIED",
+    "filesystem": "shared workspace; explicit role-specific input paths, no file-system sandbox between roles",
+    "case_schedule": "N01-N12 in order in one final message per arm. All twelve prompts were present in each arm's bundle.",
+    "tool_condition": "One local read for input delivery per role; no tools authorized for task solving or rating.",
+    "reviewer_material": "review.json and score-template.json, with shared rubric definitions in the task instructions. No mapping or version identities supplied. Key archived only after lock."
+  },
+  "input_packet_sha256": {
+    "/root/p7": "f42066ee6ea4c9c59c64856144cfb97c20b70b30d9d047bfdf9ceb1c132722a3",
+    "/root/q3": "916e8552f41aee2935d2cef5b2d2cae38e4ee6a1b6baac7f6bd9593d485ec621"
+  },
+  "local_tool_receipts": {
+    "frozen_check_and_input": "1f607d",
+    "capture_p7": "3fdc93",
+    "capture_q3": "548804",
+    "package_verify_blind": "5c9eb0",
+    "local_regression": "a7fd38",
+    "score_lock": "34987f",
+    "score": "93d235"
+  },
+  "prior_head_ci": [
+    {
+      "id": 44291887151,
+      "name": "Causal Net Loop Contract",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 44291887137,
+      "name": "Skills Regression",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "score_lock_sha256": "6fd9c6c3614386db6624afb6342314c69f6186d3cd6e57ae6fc612e7021d79fb",
+  "phases": [
+    "check and fix inputs",
+    "spawn two no-history agents",
+    "receive two 12-answer final messages",
+    "verify 24 records",
+    "generate randomized reviewer pack and separate key",
+    "spawn fresh reviewer with anonymous pack only",
+    "receive reviewer final message",
+    "validate 24 exact quotes against blind pack and lock scores",
+    "copy key into archive and run score"
+  ],
+  "concurrent_pr_run": {
+    "parent_commit": "d711132afd6a5a8af35bbb236dc253bfb2e603f3",
+    "separate_archive_directory": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02",
+    "existing_score_recomputed_byte_identical": true,
+    "local_receipt": "e4a4d1"
+  }
+}

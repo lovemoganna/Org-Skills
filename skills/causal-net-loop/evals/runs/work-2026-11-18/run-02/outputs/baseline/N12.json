@@ -1,0 +1,11 @@
+{
+  "case_id": "N12",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "发现问题，先核查证据再决定。",
+  "evidence_ref": "evidence/p7-final.txt#N12 (Work final message received from /root/p7)",
+  "response_sha256": "b3556ced73fe3de1cc34dd7f0fe9e781f2e7a136b62fc4010fb62a1956b0653a"
+}

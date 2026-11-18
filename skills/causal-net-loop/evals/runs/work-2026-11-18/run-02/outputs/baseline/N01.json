@@ -1,0 +1,11 @@
+{
+  "case_id": "N01",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "现有信息只支持保留待核实的筛查命中。姓名音译近似提供了线索，出生年份不同是反向证据，身份仍未确认。\n\n最关键的一步是由合规人员用已核验的客户身份资料，比对名单原始记录中的唯一身份标识。若拿不到唯一标识，优先复核完整出生日期及冲突来源，并用国籍等独立字段交叉比对。冲突无法解释或信息仍不足时，保持待核实状态。",
+  "evidence_ref": "evidence/p7-final.txt#N01 (Work final message received from /root/p7)",
+  "response_sha256": "ce9f97e80c983faf022a994e74dfba7a25deb3bb3812896f930372501cde5fcd"
+}

@@ -1,0 +1,50 @@
+PASS: frontmatter, workflow, conditional modules, causal guardrails, routing, 10 eval cases
+{
+  "check": "PASS (archived text structure and length only)",
+  "cases": {
+    "H1": {
+      "baseline": 162,
+      "candidate_v1": 221,
+      "candidate_v2": 128
+    },
+    "H2": {
+      "baseline": 175,
+      "candidate_v1": 242,
+      "candidate_v2": 150
+    },
+    "H3": {
+      "baseline": 174,
+      "candidate_v1": 221,
+      "candidate_v2": 149
+    },
+    "H4": {
+      "baseline": 134,
+      "candidate_v1": 119,
+      "candidate_v2": 119
+    },
+    "H5": {
+      "baseline": 170,
+      "candidate_v1": 267,
+      "candidate_v2": 166
+    },
+    "H6": {
+      "baseline": 47,
+      "candidate_v1": 47,
+      "candidate_v2": 47
+    }
+  },
+  "totals": {
+    "baseline": 862,
+    "candidate_v1": 1117,
+    "candidate_v2": 759
+  },
+  "v2_vs_v1_pct": -32.1,
+  "v2_vs_baseline_pct": -11.9,
+  "not_verified": [
+    "model independence",
+    "blind evaluation",
+    "causal outcome",
+    "token or latency cost"
+  ]
+}
+PASS: two-arm synthetic harness: 24 records, shared thread rejected, shared executor rejected, model mismatch rejected

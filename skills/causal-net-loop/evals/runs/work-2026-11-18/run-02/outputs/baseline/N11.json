@@ -1,0 +1,11 @@
+{
+  "case_id": "N11",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "必要条件是某个结果成立时必须满足、但单独满足未必能使该结果成立的条件。",
+  "evidence_ref": "evidence/p7-final.txt#N11 (Work final message received from /root/p7)",
+  "response_sha256": "0e912e20068aedbbc10e21898e6b5f800fdd7bb7d833eb7a21e1187482012085"
+}

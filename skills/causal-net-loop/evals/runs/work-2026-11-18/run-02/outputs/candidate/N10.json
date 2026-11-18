@@ -1,0 +1,11 @@
+{
+  "case_id": "N10",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "最强反证是，未参加晨读的可比班级用同样两套试卷、按前后均在籍的学生计算，也出现近似的涨分。这会削弱「8分全由晨读带来」的判断，因为共同的试卷难度变化就可能解释涨幅。\n\n最低成本是复用两期成绩、试卷和学籍记录。若有可比的未晨读班级，就在固定学生样本上比较两组涨幅，优先使用两期共同题或已有等值题。若没有对照班，先看同一批学生在可比题上的变化。若校正后涨幅明显缩小，应撤回全额归因。即使仍有涨幅，缺少可比对照时也只能保留晨读可能有效的判断。",
+  "evidence_ref": "evidence/q3-final.txt#N10 (Work final message received from /root/q3)",
+  "response_sha256": "6d7e8828130d6d4864a0787d7eebbb2e2066ac0a2c80583f46414f1f85865d20"
+}

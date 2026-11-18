@@ -1,0 +1,11 @@
+{
+  "case_id": "N11",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "必要条件是结果成立时必须具备的条件，缺了它，结果就不能成立。",
+  "evidence_ref": "evidence/q3-final.txt#N11 (Work final message received from /root/q3)",
+  "response_sha256": "60c759788760390593f95f4f4071ce802bd5fff7807d2b7259450331bd264d3e"
+}

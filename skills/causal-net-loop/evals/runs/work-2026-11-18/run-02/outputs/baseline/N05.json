@@ -1,0 +1,11 @@
+{
+  "case_id": "N05",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "暂缓把TTL从10分钟延至1小时。P95下降说明请求整体更快，但价格每分钟变化一次。若没有主动失效机制，缓存命中可能返回旧价，延长TTL会扩大陈旧窗口。投诉增加也可能来自错误响应或请求构成变化，目前无法归因。\n\n先在现有TTL下对价格请求做小样本追踪，记录命中状态、缓存年龄、返回价格、同一时刻的源价格及可关联的投诉类型。若价格差异随缓存年龄增大，且价格投诉集中于高缓存年龄请求，优先验证缩短TTL或按价格更新失效。若新鲜响应同样集中出现投诉，转查对应的错误或请求类型。任何变更同时验收价格一致性和P95。",
+  "evidence_ref": "evidence/p7-final.txt#N05 (Work final message received from /root/p7)",
+  "response_sha256": "91e0ac96a75b1c4e36c3dd8f73eefd3ff6344dab54f156654bfa96e0fcb62292"
+}

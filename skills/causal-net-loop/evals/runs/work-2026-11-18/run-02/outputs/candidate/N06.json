@@ -1,0 +1,11 @@
+{
+  "case_id": "N06",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "保留审计模块，先在隔离环境做一次2×2对照。用同一任务、数据、负载和运行条件，重复测量旧驱动与新驱动各自在审计关闭、开启时的耗时，其他配置保持一致。\n\n若审计开关固定时，新驱动仍明显变慢，优先查驱动。若固定驱动后只有开启审计才变慢，优先查审计开销。若只有新驱动加新审计的组合变慢，就查两者交互。整包回滚只说明退化随这组变更一起消失。",
+  "evidence_ref": "evidence/q3-final.txt#N06 (Work final message received from /root/q3)",
+  "response_sha256": "092444fac8524513d47e7542a84302763be2eb2011370ae50ec9db0b02d3ddd9"
+}
