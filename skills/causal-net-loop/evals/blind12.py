@@ -9,6 +9,7 @@ Subcommands:
   score    Unblind human reviews, compute pre-registered gates. Never auto-merge.
 
 No model invocation, automatic grader, or self-reported quality claims occur here.
+One independent subagent thread per arm may answer 12 separate cases; 24 chats are NOT required.
 """
 import argparse
 import hashlib
@@ -95,7 +96,8 @@ def prepare(data, dest):
 
 def load_submitted(data, dest):
     outputs = {}
-    seen_sessions = set()
+    arm_sessions = {arm: set() for arm in ARMS}
+    arm_runners = {arm: set() for arm in ARMS}
     declared_models = set()
     declared_tools = set()
     for arm in ARMS:
@@ -116,10 +118,17 @@ def load_submitted(data, dest):
                 raise ValueError(f"{path}: no verifiable user-provided session/trace reference")
             declared_models.add(item["model"])
             declared_tools.add(item["tools"])
-            if item["session_id"] in seen_sessions or not item["session_id"]:
-                raise ValueError(f"{path}: not a distinct reported session ID")
-            seen_sessions.add(item["session_id"])
+            if not isinstance(item["session_id"], str) or not item["session_id"].strip():
+                raise ValueError(f"{path}: missing session/subagent thread ID")
+            if not isinstance(item["runner_id"], str) or not item["runner_id"].strip():
+                raise ValueError(f"{path}: missing arm executor ID")
+            arm_sessions[arm].add(item["session_id"])
+            arm_runners[arm].add(item["runner_id"])
             outputs[(arm, case["id"])] = item
+    if arm_sessions["baseline"] & arm_sessions["candidate"]:
+        raise ValueError("Contamination: a reported model thread is shared by both arms")
+    if arm_runners["baseline"] & arm_runners["candidate"]:
+        raise ValueError("Contamination: one reported executor authored both arms")
     if len(declared_models) != 1 or len(declared_tools) != 1 or declared_tools != {"none"}:
         raise ValueError(f"Conditions mismatch: models={declared_models}, tools={declared_tools}")
     if not next(iter(declared_models)).startswith("GPT-6"):
@@ -131,7 +140,7 @@ def verify(data, dest):
     rows = load_submitted(data, dest)
     print(json.dumps({
         "status": "PASS: all 24 submitted output files structurally valid",
-        "note": "Session IDs/model names/evidence refs are self-reported, NOT independently authenticated",
+        "note": "Two separate arm threads allowed (one per arm, 12 tasks per thread); thread IDs/models/evidence refs remain self-reported until independently audited",
         "cases": 12, "outputs": len(rows), "comparison": "NOT_GRADED",
     }, ensure_ascii=False, indent=2))
     return rows
