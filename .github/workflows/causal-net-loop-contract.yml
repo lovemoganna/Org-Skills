@@ -37,3 +37,9 @@ jobs:
           python skills/causal-net-loop/evals/blind12.py prepare --out "$RUNNER_TEMP/causal-blind12-prompts"
           [[ "$(find "$RUNNER_TEMP/causal-blind12-prompts" -type f | wc -l)" -eq 24 ]]
           echo "PASS: 24 frozen, single-case prompts generated; no model/API run made"
+      - name: Archive 24 fixed prompts (no model execution)
+        uses: actions/upload-artifact@v4
+        with:
+          name: causal-net-loop-blind12-fixed-prompts
+          path: ${{ runner.temp }}/causal-blind12-prompts/*.prompt.md
+          retention-days: 30
