@@ -1,0 +1,10 @@
+{
+  "case_id": "N08",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "61%是平均等候时间的降幅，急诊质量是否改善仍待验证。先核实等候计时起止和统计分母，按全部到诊患者重建前后队列，保留转院和未完成诊疗的人。按病情严重度、到诊时段及患者构成做同口径比较，追踪从首次到诊到获得诊疗的总时间、复诊和诊疗结果。若能取得同期可比医院的数据，再用它排查共同变化。若缩短主要来自转院患者退出分母，或计入转院后的总等待和结局变差，原先的质量提升主张就失去支撑。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N08"
+}

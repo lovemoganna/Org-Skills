@@ -1,0 +1,10 @@
+{
+  "case_id": "N11",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "如果没有某个条件，某个结果就不可能发生，那么这个条件就是该结果的必要条件。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N11"
+}

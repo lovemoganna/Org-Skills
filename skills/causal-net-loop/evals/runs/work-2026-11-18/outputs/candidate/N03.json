@@ -1,0 +1,10 @@
+{
+  "case_id": "N03",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先核对逐笔撮合和订单时间线，看这两个账户是否反复互为交易对手、谁主动成交，以及这些成交是否推高价格。若主要与第三方成交，对敲解释就应降级，集中买入仍可解释上涨。若确有反复互成交，再独立核验实名或受益所有人、设备和资金关联，判断是否由同一主体控制。公共云IP段只能作为线索，无法单凭它认定同人。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N03"
+}

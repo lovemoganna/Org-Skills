@@ -1,0 +1,10 @@
+{
+  "case_id": "N05",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "先保留10分钟TTL。P95从450ms降到120ms说明响应变快，投诉增加的原因仍不明。价格每分钟更新一次，若缓存命中后缺少及时失效机制，延至1小时会扩大返回旧价的窗口。先把投诉按类型关联到请求，补记缓存命中、响应价格版本和当时源价格，在同类请求中比较命中和未命中的旧价率及价格类投诉率。若问题集中在旧价命中，先修价格更新后的缓存失效并复测；若投诉与旧价无关，按主要投诉类型转查。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N05"
+}

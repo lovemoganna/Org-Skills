@@ -1,0 +1,65 @@
+{
+  "source_pr_head": "4c114b27233abd3b04d6bff47f51de4fe3921a13",
+  "platform": "ChatGPT Work / collaboration.spawn_agent",
+  "executors": {
+    "baseline": {
+      "spawn_receipt": {
+        "task_name": "/root/run_405a71cf"
+      },
+      "requested_model": "gpt-6.2-sol",
+      "requested_reasoning_effort": "medium",
+      "fork_turns": "none",
+      "input_sha256": "f42066ee6ea4c9c59c64856144cfb97c20b70b30d9d047bfdf9ceb1c132722a3",
+      "raw_response_sha256": "ed3e2606faaa910e97bcf03b7e3eddfa9689c722e0e58abe4edf4498db376418",
+      "backend_snapshot": "NOT_VERIFIED",
+      "provider_trace": "NOT_VERIFIED",
+      "token_usage_and_inference_latency": "NOT_VERIFIED",
+      "completed_receipt": "已写入 `/tmp/causal115-405a71cf/responses.json`，确认包含 N01–N12 共 12 条非空回答。"
+    },
+    "candidate": {
+      "spawn_receipt": {
+        "task_name": "/root/run_3d1e96b2"
+      },
+      "requested_model": "gpt-6.2-sol",
+      "requested_reasoning_effort": "medium",
+      "fork_turns": "none",
+      "input_sha256": "916e8552f41aee2935d2cef5b2d2cae38e4ee6a1b6baac7f6bd9593d485ec621",
+      "raw_response_sha256": "0213fa23cf2a1d406b3bdd61d730a180d2a873c2cce9ae2af0ed19a7fe24ff0a",
+      "backend_snapshot": "NOT_VERIFIED",
+      "provider_trace": "NOT_VERIFIED",
+      "token_usage_and_inference_latency": "NOT_VERIFIED",
+      "completed_receipt": "已写入 `responses.json`，并确认 N01–N12 均为非空字符串。"
+    }
+  },
+  "identifiers": "session_id 和 runner_id 使用本次 Work 协作工具返回的真实路由名，粒度为此次运行。平台未向主线程提供后端会话 UUID、可导出的调用轨迹或模型快照。",
+  "generation": "两条新线程各执行一批 N01–N12，按固定题序写入完整回答字符串。工具仅用于读取唯一输入包和保存结果。无外部查询、插件或 OpenAI API 调用。每臂共享自身上下文。",
+  "isolation": "执行者和评审均 fork_turns=none，各只收到本角色需要的输入。共享文件系统中的隔离依靠限定允许读取的文件，未实施操作系统权限隔离。输入与输出指纹供复核。",
+  "model_condition": "两臂由同一协作 API 显式指定 gpt-6.2-sol / medium，本轮不代表原 Chat GPT-6 Instant。无独立推理端遥测。",
+  "observation_utc": {
+    "before_spawn": "2026-11-18T11:37:34Z",
+    "baseline_output_written": "2026-11-18T11:38:51.264846696Z",
+    "candidate_output_written": "2026-11-18T11:38:47.040658818Z",
+    "blind_pack_checked": "2026-11-18T11:39:01Z",
+    "scores_hashed_before_unblind": "2026-11-18T11:41:13Z",
+    "observation_basis": "主线程时钟与文件写入时间。包含本地输入输出和调度时间，不能用来计算模型延迟。"
+  },
+  "reviewer": {
+    "spawn_receipt": {
+      "task_name": "/root/review_52e251c9"
+    },
+    "completed_receipt": "24 条盲评分已核验并锁定，保存至 `/tmp/causal115-review-52e251c9/locked-scores.json`。",
+    "requested_model": "gpt-6.2-sol",
+    "requested_reasoning_effort": "medium",
+    "fork_turns": "none",
+    "input_files": [
+      "review/review.json",
+      "review/score-template.json"
+    ],
+    "review_sha256_before_release": "70f637c5f26615d47da08aa6dddf61ffca8bf523a772471bc5cfe8bd49c731bf",
+    "template_sha256_before_release": "dd65b1b1303b88189fc15b14a5d2ea088f60127ee29dbeee70d2a405817bb567",
+    "key_sha256_before_review": "f4c895b23ce8de70d2a1b647da7fe389d89be0b292b23f4a8be183edcd738fe2",
+    "locked_scores_sha256_before_unblind": "9e1d834938a44dad174f8958dc93b76a554a10960723b2f96a65f0c8fbab2c54",
+    "key_handling": "原始密钥从共享文件系统转存主线程私有缓冲后才启动评审，收到独立评审的完成回执并锁定评分哈希后，原样回存并验签，再运行 score。",
+    "provider_trace": "NOT_VERIFIED"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "dataset_blob": "d4ec6a9972a922968127b5fbb6d1d327f3cd1089",
+  "assignments": {
+    "N01": {
+      "A": "candidate",
+      "B": "baseline"
+    },
+    "N02": {
+      "A": "candidate",
+      "B": "baseline"
+    },
+    "N03": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N04": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N05": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N06": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N07": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N08": {
+      "A": "candidate",
+      "B": "baseline"
+    },
+    "N09": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N10": {
+      "A": "candidate",
+      "B": "baseline"
+    },
+    "N11": {
+      "A": "baseline",
+      "B": "candidate"
+    },
+    "N12": {
+      "A": "candidate",
+      "B": "baseline"
+    }
+  },
+  "note": "Keep separate from reviewers until their locked scores are saved."
+}
