@@ -29,6 +29,8 @@ jobs:
         run: python skills/causal-net-loop/tests/check_contract.py
       - name: Verify cross-domain archived smoke metrics
         run: python skills/causal-net-loop/evals/compare_smoke.py
+      - name: Verify Work two-subagent isolation with synthetic fixtures
+        run: python skills/causal-net-loop/tests/test_blind12_isolation.py
       - name: Check frozen blind12 benchmark and create isolated prompt files
         shell: bash
         run: |
