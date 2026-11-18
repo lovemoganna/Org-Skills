@@ -1,0 +1,10 @@
+{
+  "case_id": "N09",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "先保留最后一个线下窗口。用匿名汇总核查两点。\n\n1. 按年龄段和渠道汇总从有办事需求到预约、到场、受理和办结的数量，纳入预约失败、未到场和被拒者。用前后同类事项的办结率与总办理时长对照。若老年人等群体办结率下降、积压或放弃增加，或未到场人群无法覆盖，保留窗口。若各群体办结无实质下降且总耗时改善，再结合第二项判断。\n2. 汇总拒办原因、线下窗口承接的线上失败量及最终办结量，并核查这些事项能否通过现有替代渠道实际办结。若窗口仍承接其他渠道无法完成的需求，继续保留。两项都显示各群体可用现有渠道完成办理，才考虑关闭。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N09"
+}

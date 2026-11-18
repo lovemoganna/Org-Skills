@@ -1,0 +1,10 @@
+{
+  "case_id": "N07",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "各取一笔典型投诉，用退款业务号串起状态事件、账务分录、付款请求与银行流水，核对金额、时间和外部交易号。\n\n- 显示成功、银行未见入账。查是谁把状态改为成功，并把支付渠道的受理、结算或失败回执与银行原始对账单核对。只有受理、仍待结算或已失败却显示成功，支持状态提前或映射错误。银行已确认入账而内部对账未匹配，转查对账导入或匹配。银行文件尚未覆盖应入账时段的，暂缓判定实际划款结果。\n- 账务出现两次。核对两条分录的科目、借贷方向、冲正和幂等标识。同一应记事项被重复过账而实际只结算一笔，处理账务重复。若确有两笔独立结算，升级为重复划款。正常对应分录或已冲正记录按净额核对。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N07"
+}

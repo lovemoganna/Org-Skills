@@ -1,0 +1,10 @@
+{
+  "case_id": "N06",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "在隔离环境用同一批曾返回空结果的查询、用户身份和文档快照，分别构建旧、新权限映射的索引版本。固定其余配置，各跑一次旧权限＋旧同义词、新权限＋旧同义词、旧权限＋新同义词、新权限＋新同义词。记录预期有权限的匹配结果数，以及查询扩展和权限过滤阶段的候选数。\n\n旧旧应复现正常，新新应复现故障。哪一项单独换新就重现空结果，哪一项在该样本上就足以触发故障。若两种单改都正常、仅双改失败，说明组合触发。若两种单改都失败，两项各自足以触发。基线或故障对照跑不出来时，先核对回放环境和样本，暂缓归因。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N06"
+}

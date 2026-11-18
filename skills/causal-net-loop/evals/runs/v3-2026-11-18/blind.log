@@ -1,0 +1,8 @@
+{
+  "status": "PASS: all 24 submitted output files structurally valid",
+  "note": "Two separate arm threads allowed (one per arm, 12 tasks per thread); thread IDs/models/evidence refs remain self-reported until independently audited",
+  "cases": 12,
+  "outputs": 24,
+  "comparison": "NOT_GRADED"
+}
+BLIND PACK READY. Score template requires a separate reviewer; NEVER share the key first.

@@ -1,0 +1,10 @@
+{
+  "case_id": "N05",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "1. 重复开票。发一笔开票请求，让服务已开票落库但客户端超时，再以同一业务请求重试。验收时两次调用归到同一张发票，持久记录与后续开票动作只有一次，重试可取回原结果。\n2. 跨月误计。在月界两侧各放一条记录，包含上月已作废票和本月有效票，在本月执行同一跨月回放两次。验收时按业务归属月份和作废状态统计，上月作废票对本月贡献为零，本月有效票计一次，重跑结果一致。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N05"
+}

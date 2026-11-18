@@ -1,0 +1,10 @@
+{
+  "case_id": "N12",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "请在周五前回复我，谢谢。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N12"
+}

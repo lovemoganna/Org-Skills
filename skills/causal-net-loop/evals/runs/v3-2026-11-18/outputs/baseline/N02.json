@@ -1,0 +1,10 @@
+{
+  "case_id": "N02",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "冻结原筛选快照、源表和筛选条件，挑两条独立漏项加一条正常入列对照。第一条只有标签晚生效，在原快照和首个覆盖生效时间的快照分别回放，预期原快照不入列，后者恰好入列一次，同时核对真实发现时间是否满足日常复审要求。第二条在原快照时已生效但同一 ID 有冲突风险值，交换源行顺序重放。修复后应按已确认的权威来源和生效规则稳定取值，同一账户只入列一次。无法判定时应显式转人工复核，避免静默漏掉。对照应继续正常入列。最后用相同口径回放 40 个账户，逐一解释应入列时点和处置结果，再据实际发现延迟决定是否需要提频。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N02"
+}

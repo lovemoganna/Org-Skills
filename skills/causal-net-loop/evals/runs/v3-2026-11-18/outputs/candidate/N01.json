@@ -1,0 +1,10 @@
+{
+  "case_id": "N01",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "初审将涉及的交易列为待核实。24 小时内向 12 个新地址分散转出和发票重号值得复核，商户申报仍需记录佐证。\n\n1. 逐笔用平台账本、链上交易记录及已有的收款地址备案，对照结算指令、收款方、金额和时间。能与真实结算义务勾稽的可解除该笔疑点；出现明确不符的，按权限升级相应交易；收款方无法确认的继续待核。\n2. 查两张发票原件、开具方、原始订单和核销记录。若是重复录入或已有凭证支持的更正，可解除重号疑点；若同一结算义务被重复核销，或票据与所申报交易实质不符，只升级对应交易。原件冲突且无法核实的继续待核。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N01"
+}

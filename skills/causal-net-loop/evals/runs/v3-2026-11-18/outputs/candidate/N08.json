@@ -1,0 +1,10 @@
+{
+  "case_id": "N08",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "把本市和邻镇的原始称重记录按同一垃圾类别、覆盖范围和收费前后可比时段重算，合并统计且去除转运重复，并核对已记录的跨界投放去向。若合计仍有可辨识的下降，且跨界转移和计量差异不足以解释，可保留总量下降的判断，收费的独立贡献仍待验证。若邻镇增量抵消本市降量，或统一口径后降幅消失，撤回减量成功的判断。去向或计量无法对齐时暂缓认定。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N08"
+}

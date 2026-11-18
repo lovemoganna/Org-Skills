@@ -1,0 +1,10 @@
+{
+  "case_id": "N04",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "维持现有试点范围，预先用现行合规标准约定误关、严重漏处置和回退条件，并确认能一键切回人工初审。选一个短观察窗，将同范围告警随机分给自动关闭组和人工初审组。统一记录每班处理时间、复查和返工耗时、待处理积压及申诉。\n\n由独立合规人员按同一规则盲审两组样本。对自动关闭件分层随机抽审，覆盖未申诉工单，按抽样比例估计误关及其不确定性。确认应处置的工单立即重开。出现达到预设停止条件的误关、严重漏处置或关键数据缺失时，切回人工并复核受影响批次。只有抽审能支持误关风险落在合规容忍范围、且计入返工后仍有节时收益，才考虑扩围。样本不足则维持当前范围。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N04"
+}

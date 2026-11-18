@@ -1,0 +1,58 @@
+{
+  "freeze_commit": "ffffc5bf8d37ad858f11797883ec8b8e6e7d8a14",
+  "dataset_blob": "1fae196b5a6d44a4b2eebe58db40af02635ae129",
+  "harness_wrapper_blob": "173752ab1cd4c457b146e96bcfca9d309fb09f66",
+  "authors": {
+    "baseline": {
+      "spawn_receipt": {
+        "task_name": "/root/v3_run_2b732a"
+      },
+      "input_sha256": "6e9e72bcd56568e1312bda6f0c09b9f5a81a7be27d1dea7bbdf0eb6710bf0b2e",
+      "responses_sha256": "88598559279f2927dcead5a1003135b959b092468d96ab53643152c30f20b0f4",
+      "completed_receipt": "已保存至 `/tmp/causalv3-2b732a/responses.json`，确认 12 题均按原顺序收录，正文均非空。"
+    },
+    "candidate": {
+      "spawn_receipt": {
+        "task_name": "/root/v3_run_3ac2e7"
+      },
+      "input_sha256": "a20915f42748173c16d264da0262e6f376cef37e5fefffb0eab42ee62cffdf0d",
+      "responses_sha256": "ebdccc2aabb90890dbf7f4842315f3a3db41357f7db1da50ac9ef6f1eab8bba6",
+      "completed_receipt": "已完成全部 12 题并保存至 `/tmp/causalv3-3ac2e7/responses.json`。已核对题号、顺序和正文非空。"
+    }
+  },
+  "model_and_reasoning_requested": [
+    "gpt-6.2-sol",
+    "medium"
+  ],
+  "fork_turns": "none",
+  "scope": "每臂独立线程按相同题序一批处理；只交付指定输入包。题面和冻结 Skill 字节均校验。工具仅进行本地输入输出。共享文件系统使用限定文件范围，未做操作系统权限隔离。",
+  "trace_and_cost": "NOT_VERIFIED: provider trace, provider session UUID, model snapshot, tokens, inference latency",
+  "timing_utc": {
+    "prelaunch": "2026-11-18T12:03:24Z",
+    "archive_written": "2026-11-18T12:08:02+00:00",
+    "baseline_output_file_mtime": "2026-11-18T12:04:57.492788277Z",
+    "candidate_output_file_mtime": "2026-11-18T12:05:18.343182475Z",
+    "blind_pack_hashed": "2026-11-18T12:05:29Z"
+  },
+  "review": {
+    "spawn_receipt": {
+      "task_name": "/root/v3_review_e89af4"
+    },
+    "reviewer_model_and_reasoning_requested": [
+      "gpt-6.2-sol",
+      "medium"
+    ],
+    "fork_turns": "none",
+    "input_files": [
+      "review/review.json",
+      "review/score-template.json"
+    ],
+    "review_sha256": "6b047b42372e1f9c6c62f03f87a964bb43447b0888e24f180b2e5ee0ecad7864",
+    "template_sha256": "dd65b1b1303b88189fc15b14a5d2ea088f60127ee29dbeee70d2a405817bb567",
+    "key_sha256_before_review": "da4daa294e5b18d364f4731a2a64239a170d59f865cff2bfc4d160961e40f8c2",
+    "locked_scores_sha256_before_unblind": "cdcaa8881dab5c9e13a140b63c63e70a050d65067bd3a6bf106e2bc893ac2f7f",
+    "lock_time_utc": "2026-11-18T12:07:52+00:00",
+    "completed_receipt": "已保存 `/tmp/causalv3-review-e89af4/locked-scores.json`，并核对全部 24 条评分的结构与逐字引用。",
+    "key_custody": "从共享文件系统移出密钥后启动盲评。收到评分完成回执并保存评分文件哈希后，恢复原密钥并检查预先计算的哈希。"
+  }
+}

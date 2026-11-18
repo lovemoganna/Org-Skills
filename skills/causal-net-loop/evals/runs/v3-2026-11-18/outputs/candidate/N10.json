@@ -1,0 +1,10 @@
+{
+  "case_id": "N10",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "1. 用现有种植与收成台账，比较同品种、相近条件下的单位面积产量，优先看未换品种户的前后变化，并用已有可比的未调整灌溉温室作对照。若增产集中在换品种户，保留原品种的可比样本没有增益，或与对照同步上升，搁置扩围。\n2. 核对升级前后原始湿度时间戳和采样设置，只用可对齐的时段与相同汇总方法重算。若有重叠记录，可用同一段数据回放两套采样规则。若统一口径后预期的湿度变化消失或反向，或关键夜间时段缺乏可比记录，搁置扩围。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N10"
+}

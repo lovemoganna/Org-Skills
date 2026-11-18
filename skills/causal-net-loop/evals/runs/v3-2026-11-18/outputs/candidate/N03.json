@@ -1,0 +1,10 @@
+{
+  "case_id": "N03",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "先保留奖励，暂缓批量取消。抽一组命中账户，用后台原始入金流水关联拆分前母单，再对照领用日志的开放时点和资格结果。若重复尾数可由固定面额拆分解释、集中领取也符合整点开放规则，且各笔资格有效，可关闭本组告警。若发现同一笔原始入金被多个账户重复计入资格，或存在其他明确违反活动规则的领取，只对关联奖励复核和处置。日志不足时维持待核。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N03"
+}

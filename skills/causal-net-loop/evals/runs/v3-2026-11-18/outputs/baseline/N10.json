@@ -1,0 +1,10 @@
+{
+  "case_id": "N10",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "1. 用现有种植和收获记录，按品种比较单位面积产量，优先看同一温室中未换种的地块，若有条件再匹配同期未调整灌溉的同品种记录。若用固定品种权重比较后增产消失，或增产只出现在换种地块，就搁置扩围。\n2. 从带时戳的湿度原始记录中只取升级前后共同覆盖的夜间时段，对齐采样频率、聚合方式和灌溉前后窗口，重算湿度响应。若统一口径后预期响应消失或反向，或没有共同采样时段可检验，也搁置扩围。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N10"
+}

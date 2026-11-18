@@ -1,0 +1,10 @@
+{
+  "case_id": "N01",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "初审列为待核实。24 小时内分散转往 12 个新地址、发票号码重复都值得核查，现有授权记录尚不足以将全部转账认定为异常转移。\n\n1. 逐笔用平台内的结算指令、订单、账务和转账记录核对金额、时间及收款方或地址的已有绑定。能闭环的按结算处理，仍与指令不符或无法对应的逐笔保留待核并升级复核。\n2. 用现有发票原件和核销记录核对开票方、发票标识、对应订单及是否被重复报销或核销。若为不同开票方的同号票，或同一票只是重复上传且仅核销一次，撤掉该疑点。若同一票被用于支撑多笔不相容的结算，升级关联款项。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N01"
+}

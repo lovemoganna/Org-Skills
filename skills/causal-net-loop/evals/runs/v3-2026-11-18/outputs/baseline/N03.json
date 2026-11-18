@@ -1,0 +1,10 @@
+{
+  "case_id": "N03",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "用现有支付流水和活动记录，抽查一组触发告警的账户，把拆分转账还原到原始支付单，核对是否出现同一原始支付凭证被多个账户用于领取、且违反活动规则的情形。若各账户对应独立合格的支付单，尾数和领取时间能由固定面额与整点开放解释，就解除该组告警。若确认复用或资格不符，仅升级关联奖励。现阶段保留告警待核，不批量取消奖励。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N03"
+}

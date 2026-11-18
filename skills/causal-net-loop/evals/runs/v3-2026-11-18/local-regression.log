@@ -1,0 +1,188 @@
+PASS: frontmatter, workflow, causal guardrails, skill routing, 5 eval cases
+==> python3 skills/analysis-verifier/tests/check_repo.py
+within_partial_scope: baseline=True patched=True expected=True
+foreign_currency: baseline=True patched=False expected=False
+status_as_settled: baseline=True patched=False expected=False
+different_run: baseline=True patched=False expected=False
+different_time: baseline=True patched=False expected=False
+unverified_metric: baseline=True patched=False expected=False
+missing_result: baseline=True patched=False expected=False
+stale_feedback: baseline=True patched=False expected=False
+qa_blocked: baseline=False patched=False expected=False
+invalid_qa_metrics: baseline=True patched=False expected=False
+SCOPE_HANDOFF_AB_PASS baseline=2/10 patched=10/10; synthetic controls only
+==> python3 skills/bprd-plus/tests/check_repo.py
+bprd-plus integrity checks passed (behavioral A/B needs independent execution)
+==> python3 skills/business-investigator/tests/check_repo.py
+PASS: business investigator routing, evidence, value and stop contracts (STRUCTURAL ONLY)
+==> python3 skills/business-owner/tests/check_repo.py
+BUSINESS_OWNER_SCENARIO_AND_BOUNDARY_PASS
+==> python3 skills/dataset-dashboard-builder/tests/check_repo.py
+OK: dataset-dashboard-builder repository integrity
+==> python3 skills/decision-first-agent/tests/check_repo.py
+{"verdict": "PASS", "cases": 35, "cli_cases": 4, "mutations": 1000}
+==> python3 skills/loop-engineering-meta/tests/check_repo.py
+{
+  "结论": "回归通过",
+  "案例数": 20,
+  "检查": [
+    [
+      "真实非代码历史样本：价值尚无独立证据",
+      "有条件通过"
+    ],
+    [
+      "代码教程误派",
+      "测试设计无效"
+    ],
+    [
+      "明确符合职责的代码可执行化",
+      "有条件通过"
+    ],
+    [
+      "结构通过、事实捏造",
+      "测试失败"
+    ],
+    [
+      "没有实际任务增量",
+      "测试失败"
+    ],
+    [
+      "生成者自审伪通过",
+      "有条件通过"
+    ],
+    [
+      "模拟独立验证的规则路径",
+      "测试通过"
+    ],
+    [
+      "未实际执行",
+      "执行证据不足"
+    ],
+    [
+      "结构验收失败",
+      "测试失败"
+    ],
+    [
+      "缺内容评价维度",
+      "内容验收缺失"
+    ],
+    [
+      "职责不确定",
+      "适配性待确认"
+    ],
+    [
+      "缺职责来源",
+      "测试准备不足"
+    ],
+    [
+      "历史有条件通过不可以自动发布",
+      "退出状态=2"
+    ],
+    [
+      "故意伪造结论必须拦截",
+      "退出状态=1"
+    ],
+    [
+      "模拟独立完整合格可以执行",
+      "退出状态=0"
+    ],
+    [
+      "不阻断的审计模式",
+      "退出状态=0"
+    ],
+    [
+      "顶层数组拒绝",
+      "退出状态=2"
+    ],
+    [
+      "scope 非对象拒绝",
+      "退出状态=2"
+    ],
+    [
+      "review 非对象拒绝",
+      "退出状态=2"
+    ],
+    [
+      "成对试验比较器的模拟契约与反例",
+      "退出状态=0"
+    ]
+  ]
+}
+==> python3 skills/loop/tests/check_repo.py
+{"result": "STRUCTURAL_PASS_ONLY", "checks": 15, "passed": ["frontmatter", "stage_files", "templates", "task_contract", "s2_task_contract", "chain_coverage", "stage_local_atoms", "independent_limit", "meta_boundary", "goldens", "atom_names_and_registry", "atom_draft", "no_route_in_atoms", "no_auto_verified", "no_fabricated_publish"], "model_goldens": "NOT_RUN"}
+==> python3 skills/note-reforge/tests/check_repo.py
+note-reforge published preflight and task-transfer evidence contracts: OK
+note-reforge finished-result perspective regression: OK
+note-reforge numbered-question visual hierarchy regression: OK
+note-reforge heading/editorial navigation regression: OK
+note-reforge contracts + 7 Org draft identity checks: OK
+note-reforge linked appendix regression: OK
+==> python3 skills/ontology-constrained-analysis/tests/check_repo.py
+test_bounded_plan_and_invalid_inputs (__main__.ModelEvalHarnessRegression.test_bounded_plan_and_invalid_inputs) ... ok
+test_real_model_call_receipt_preserves_usage_and_elapsed_time (__main__.ModelEvalHarnessRegression.test_real_model_call_receipt_preserves_usage_and_elapsed_time) ... ok
+test_runtime_cases_load_runtime_reference (__main__.ModelEvalHarnessRegression.test_runtime_cases_load_runtime_reference) ... ok
+test_eval_definition_integrity (__main__.SkillIntegrityTests.test_eval_definition_integrity) ... ok
+test_skill_structure (__main__.SkillIntegrityTests.test_skill_structure) ... ok
+test_failed_source_produces_three_audit_artifacts (__main__.SourceGateTests.test_failed_source_produces_three_audit_artifacts) ... ok
+test_git_blob_recovery (__main__.SourceGateTests.test_git_blob_recovery) ... ok
+test_github_file_fallback_if_blob_api_does_not_return_original_bytes (__main__.SourceGateTests.test_github_file_fallback_if_blob_api_does_not_return_original_bytes) ... ok
+test_pinned_hash_mismatch_is_rejected (__main__.SourceGateTests.test_pinned_hash_mismatch_is_rejected) ... ok
+test_raw_without_length_or_pinned_hash_is_not_accepted (__main__.SourceGateTests.test_raw_without_length_or_pinned_hash_is_not_accepted) ... ok
+test_truncated_or_html_bodies_are_rejected (__main__.SourceGateTests.test_truncated_or_html_bodies_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.117s
+
+OK
+sample.txt SOURCE_BYTES_UNAVAILABLE OSError: mock DNS error
+SOURCE_GATE: BLOCKED
+==> python3 skills/sql-business-thinking/tests/check_repo.py
+PASS: 9 synthetic D20/D21 handoff cases; no actual dataset findings verified
+PASS: D08 real-baseline status arithmetic + 8 negative cases + duplicate check
+NOTE: tests use DuckDB-Wasm verified counts as fixtures; D08 does not execute business SQL
+PASS: D09 selects one bounded exploratory question; 11 rejection/ambiguity checks
+NOTE: no directional SQL was executed; no observed direction difference is claimed
+PASS: D12 actual-result arithmetic, status-mix contrast, historical-state limitation
+PASS: 5 counterfactual/invalid result checks
+NOTE: recorded D11 source result reused; no new SQL executed, no cause inferred
+PASS: D13 1 bounded candidate, 11 negative signal/relationship/scope cases
+NOTE: no new SQL and no evidence that the two withdrawal records share a uid
+PASS: D14 competing user-distribution hypotheses, 2 synthetic outcomes, 6 invalid cases
+NOTE: no user-level D11 results and no causal conclusion
+PASS: D15 one bounded diagnostic; 2 simulated outcomes, 11 invalid cases
+NOTE: uid values above are synthetic. No D15 SQL or new business result.
+PASS: D16 evidence-bounded alternative denominator sensitivity design; 12 invalid cases
+NOTE: arithmetic derived from D11 aggregates; no new SQL or uid/cause evidence
+PASS: D17 two evidence-backed bounded findings, denominator reversal, 11 invalid/causal cases
+NOTE: D11 recorded Result reused, no fresh business SQL, no D15 uid evidence
+PASS: D18 1 bounded metric-interpretation decision; operational claims rejected
+PASS: D18 12 negative source/claim/goal tests; D17 aggregate reused, no fresh SQL
+PASS: D21 actual D20 content references, layout, units and read-only contract
+PASS: D21 11 negative provenance, scope and fabrication cases
+NOTE: no new SQL was run; D22 HTML rendering not executed
+PASS: D22 grounded HTML + five tamper regressions (report-only)
+PASS: D23 exact HTML digests + missing-SHA and tamper regressions
+PASS: trace contract, 10 independent negative mutations, honest descriptive downgrade
+PASS: D20 report-only Spec and measured D11 evidence invariants
+OK: sql-business-thinking repository integrity
+==> python3 skills/video-production-loop/tests/check_repo.py
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+OK
+==> python3 skills/analysis-verifier/tests/test_temporal_state_gate.py
+PASS: snapshot vs event-time distinction and three negative controls
+==> python3 plugins/org-museum/tests/check_package.py
+PASS: org-museum manifests, canonical locks and bootstrap routes
+==> python3 plugins/org-museum/tests/check_distribution.py
+PASS: ZIP integrity, 20 files, four Skills, manifests and Skills-only isolation
+==> python3 plugins/org-museum/tests/check_template_macros.py
+PASS: 8 macro-preflight regression cases and full note validation
+==> python3 plugins/org-museum/tests/check_portable_distribution.py
+PASS: v1.2.2 portable ZIP, required metadata, 4 valid skills, standalone note-reforge
+PASS: standalone alternate identity, four skills, and metadata
+==> python3 skills/sql-business-thinking/tests/check_native_contract.py
+PASS: d02 original contract + 10 mutation rejections
+PASS: d03 original contract + 9 mutation rejections
+PASS: 19 independent negative tests; no business data accessed

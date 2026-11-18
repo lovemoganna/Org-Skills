@@ -1,0 +1,10 @@
+{
+  "case_id": "N09",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "1. 按年龄段和办理渠道比较同类业务在相同窗口内的匿名汇总结果，把完成、到场被拒、预约未到及未能预约的人计入可覆盖的需求分母，同时看完成率和从尝试办理到完成的时间。若平均到场等待缩短，但整体或老年群体的完成率变差，保留窗口。若分母覆盖不足，暂缓关闭。\n2. 汇总窗口办理中无法通过线上完成的业务量及原因，尤其核查老年居民和需要线下协助的群体，并核对现有替代渠道是否已实际完成同类业务。只要窗口仍承接没有可用替代的需求，就保留。仅在两项核查都支持各群体能通过可用渠道完成办理时，再考虑关闭。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N09"
+}

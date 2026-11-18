@@ -1,0 +1,10 @@
+{
+  "case_id": "N05",
+  "skill_blob": "5309aa8ea35d684aad7cdaf067ac3ee79584266b",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_3ac2e7",
+  "runner_id": "/root/v3_run_3ac2e7",
+  "response": "1. 重试重复开票。提交一笔开票请求，让服务端成功提交后丢失响应或模拟响应超时，再用相同业务请求标识重试。修复验收时，两次请求对应同一个发票号，发票记录和下游开票事件均只产生一次，其他独立请求仍可正常开票。\n2. 跨月回放。构造一张按既有归属规则应留在上月的作废票和一张本月有效票，在跨月后回放同一批作业。修复验收时，上月作废票不计入本月，本月有效票按口径计一次，重复回放的月度结果一致。",
+  "evidence_ref": "execution-evidence.json#/authors/candidate; raw/candidate/responses.json#N05"
+}

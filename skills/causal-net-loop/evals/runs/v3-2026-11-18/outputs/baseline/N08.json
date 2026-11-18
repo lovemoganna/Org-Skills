@@ -1,0 +1,10 @@
+{
+  "case_id": "N08",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "做一次同口径的跨区域前后总量核验，把本市和受影响邻镇的重量换成相同覆盖范围和计量口径，纳入能核实的跨界投放及其他转移去向，并用可比同期或未受影响地区校正原有趋势。若合计重量仍有可信的下降，维持实际减量的判断。若邻镇或其他去向的新增量抵消降幅，或口径校正后无法确认净下降，撤回减量成功的认定。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N08"
+}

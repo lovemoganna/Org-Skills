@@ -1,0 +1,10 @@
+{
+  "case_id": "N04",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "暂缓扩围，现有试点仅在一个事先约定的短观察窗口内维持原范围，保留人工初审开关。对该窗口的自动关闭单做分层随机抽审，覆盖有无申诉的工单和各试点规则。由人工在不看自动结论的情况下按同一标准复核，分歧另行裁定，并让同一批工单走原人工流程作对照。记录确认误关、严重程度、抽样不确定性和两流程的处理工时，及时纠正确认误关。以既有合规容忍标准判定，达到回滚条件就切回人工。即使工时下降，若样本不足以排除不可接受的误关风险，继续暂停扩围。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N04"
+}

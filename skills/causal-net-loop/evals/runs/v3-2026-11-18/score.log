@@ -1,0 +1,18 @@
+{
+  "status": "PASS: all 24 submitted output files structurally valid",
+  "note": "Two separate arm threads allowed (one per arm, 12 tasks per thread); thread IDs/models/evidence refs remain self-reported until independently audited",
+  "cases": 12,
+  "outputs": 24,
+  "comparison": "NOT_GRADED"
+}
+{
+  "status": "DO_NOT_PROMOTE",
+  "not_proven": "Reviewer independence and model/session claims remain self-reported; scores are not a population estimate",
+  "wins_candidate": 4,
+  "losses_candidate": 0,
+  "mean_uplift_points": 3.5,
+  "median_length_ratio": 1.106,
+  "hard_gate_pass": true,
+  "negative_pass": true,
+  "reviewer": "/root/v3_review_e89af4"
+}

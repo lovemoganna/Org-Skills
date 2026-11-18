@@ -1,0 +1,10 @@
+{
+  "case_id": "N07",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "从两类投诉各抽一笔，以退款业务 ID、支付侧划款参考号和金额串起状态事件及触发来源、账务分录、实际划款回执与银行对账，逐一对齐时间。对未见入账的单，若界面在最终结算确认前就标成功，定位到状态语义或更新时机。若已发送但银行仍在约定结算期内，记为待对账。超出窗口仍缺最终回执或收到失败回执，追查划款或对账链路。对两条账务记录，先核对是否为合法冲销或不同会计分录。同一退款若有两条重复有效分录但只有一笔银行结算，定位到重复记账。银行确认两笔独立结算才支持实际重复划款。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N07"
+}

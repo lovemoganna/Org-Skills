@@ -1,0 +1,10 @@
+{
+  "case_id": "N06",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/v3_run_2b732a",
+  "runner_id": "/root/v3_run_2b732a",
+  "response": "在隔离环境固定文档快照、用户身份、受影响查询及已知应返回的文档，用同一批请求回放四种组合。先确认旧权限映射配旧同义词有结果，再测新映射配旧同义词、旧映射配新同义词，最后测两项都新。只有某个单改组能复现，就说明该改动在该基线下已足够，另一单改组也复现则两项分别都足够。只有双改组复现，支持两项交互。可同时记录权限过滤前后候选数量和查询改写结果定位空在哪一步。若双改组也无法复现，先查与线上回放条件的差异。",
+  "evidence_ref": "execution-evidence.json#/authors/baseline; raw/baseline/responses.json#N06"
+}
