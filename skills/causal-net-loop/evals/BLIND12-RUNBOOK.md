@@ -18,7 +18,7 @@ python skills/causal-net-loop/evals/blind12.py check
 python skills/causal-net-loop/evals/blind12.py prepare --out /tmp/causal-blind12-prompts
 ```
 
-产生 24 份完整、可直接复制的单案例 Prompt（12 题 × 两版），**不包含标准答案或评分门槛**。每次使用全新的 ChatGPT GPT-6 对话独立执行一份提示；不要把两份版本放入同一对话或让模型看到另一臂输出。维持工具禁用或不调用、相同模型配置；不要使用模型 API。单轮多题、先看两版再回答或同一会话自评**不满足**本轮隔离验收。
+产生 24 份完整单案例 Prompt（12 题 × 两版），**不包含标准答案或评分门槛**。推荐直接按 `WORK-EXECUTE.md` 在 ChatGPT Work 中派两个相互隔离的子代理：每个子代理固定一个 Skill 版本、独立线程内处理其 12 题；两臂不得看到对方版本或输出，模型与工具条件必须一致。**不需要 24 个独立对话**，但每一题仍须保存原始逐字回答和真实对应线程证据。不能隔离时说明限制；不要用同一会话左右互答后自评冒充独立实验。不使用模型 API。
 
 当前连接器能提交 GitHub 和运行 GitHub CI，但**无法直接创建 24 个独立 ChatGPT GPT-6 会话并获取其独立 trace**；因此未获得真实执行记录时必须标记 `NOT_VERIFIED`，不能用人工编写或同一会话模拟输出来冒充。
 
@@ -27,7 +27,7 @@ python skills/causal-net-loop/evals/blind12.py prepare --out /tmp/causal-blind12
 每个运行保存一个 `JSON`，文件路径：
 `/tmp/causal-blind12-outputs/{baseline|candidate}/N01.json` … `N12.json`。
 
-每份结构示例（所有字段都必须由实际运行记录提供）：
+每份结构示例（所有字段都必须由实际运行记录提供；**同一臂的 12 题可以使用同一个真实子代理线程 ID，但两个臂不能共享线程、执行者**）：
 
 ```json
 {
