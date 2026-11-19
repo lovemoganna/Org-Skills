@@ -1,0 +1,72 @@
+{
+  "experiment": "C01-KONGQIANG",
+  "label": "exploratory three-arm smoke test, NOT formal GPT-6 independent blind A/B",
+  "date_utc": "2026-11-18",
+  "prompts": {
+    "common": "【冻结的共同题面：C01 空枪双主体因果】\n仅根据下面给定剧情材料作答；禁止外部搜索，禁止补写未给情节。材料均指虚构电影角色，不等同现实人物证据。\n事实1：万梓强在与富商陈辉延的直接冲突前就参与抢劫，且在几次得手后风险行为持续升级。\n事实2：陈是房地产富商，公众亲民形象包括戴廉价表、与员工同乘电梯；影片呈现公摊利益争议、街头不满，并批判其人设与实际财富生活的反差。既有镜头不足以独立证明其违法犯罪。\n事实3：赛马场陈误把万当服务员、给20元小费；此后万将陈及其儿子作为目标，绑架儿子、索取赎金，并以富商剥削为自己辩护。\n事实4：万的多次侥幸成功强化了他对自己命运的过度自信；后来受追捕和惩罚。\n问题：请在不超过500个汉字内，分析《空枪》中劫匪与富商之恶的“纠缠因果”。必须同时分析双方的行为机制及交锋，区分事实与推断，提出至少两种能解释冲突的竞争机制，指出能改变首选判断的具体区分证据。不要以道德口号代替因果，不要为剧情没提供的事实编证据。",
+    "baseline_skill_sha": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+    "candidate_skill_sha": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+    "style": "three distinct Parallel web_research requests, effort=low, no browsing requested, not ChatGPT Work or GPT-6 A/B",
+    "order": [
+      "control",
+      "baseline",
+      "candidate_v2"
+    ]
+  },
+  "arms": {
+    "control": {
+      "title": "无 Skill",
+      "response_id": "resp_ce6de0fb-8e93-4b7b-81db-39244cec117c",
+      "status": "completed",
+      "effort": "low",
+      "output": "【事实层】万梓强在直接接触陈辉延之前已参与抢劫并多次得手,风险行为持续升级;多次侥幸成功强化其过度自信,最终被追捕惩罚。陈是房地产富商,亲民人设(戴廉价表、与员工同乘电梯)与公摊利益争议、街头不满并存,影片批判其人设与财富生活的反差,但既有镜头不足以独立证明其违法犯罪。赛马场上陈误把万当服务员、给20元小费,此后万绑架陈子、索取赎金,并以“富商剥削”自我辩护。以上均为材料给定事实。【推断层】两种竞争机制:其一,“结构性怨恨驱动”说——万的暴力主要是对贫富差距与公摊式剥削的报复性投射,陈是象征性靶子,若无社会不公则冲突未必发生;其二,“个人风险升级驱动”说——万的暴力路径始于抢劫的自我强化循环(侥幸成功→过度自信→升级),陈只是升级链条上 convenient 的目标,小费羞辱只是触发点而非根源。首选判断:后者解释力更强,因为万在接触陈之前已抢劫且升级,因果时间顺序不支持“剥削引发犯罪”。【可改变的区分证据】若材料能显示:万在抢劫前明确表达过针对陈或公摊的怨恨;或其赎金要求金额、对象选择与陈的实际违法(若有证据)直接对应;或影片给出陈确有犯罪实锤——则结构性说升级为首选。反之,若万对其他无剥削嫌疑的富商同样下手,则进一步支持个人升级说。结论(推断):双方之恶是“纠缠”而非互为因果——陈的恶(若有)主要是人设与财富的反差及制度性争议,属未证实层面;万的恶是已证实的暴力升级;陈的存在为万的暴力提供了叙事借口,但不构成其原因。",
+      "characters": 619,
+      "non_message_events": [],
+      "backend_model": "NOT_VERIFIED",
+      "server_session_uuid": "NOT_VERIFIED"
+    },
+    "baseline": {
+      "title": "Baseline",
+      "response_id": "resp_22e05c5e-c76c-4eb6-8a60-28fda9f5f0f4",
+      "status": "completed",
+      "effort": "low",
+      "output": "本质判断:材料证实两恶相互塑造,但机制需推断。\n\n事实O:万在冲突前已参与抢劫并升级;陈误付20元小费后,万绑架其子索赎金;陈有亲商人设与财富反差镜头,但无实证犯罪(事实2明确);万多次侥幸致过度自信,后被追捕惩罚。\n\n竞争机制:\n①怨恨投射(推断):万以'富商剥削'自我辩护(事实3),将自身抢劫升级合理化,小费事件只是触发符号——即使无陈,他仍会另寻目标,因其风险升级在冲突前已存在(事实1)。\n②双向激化(推断):陈的制度性剥削(候选,未证实)构成万'替天行道'叙事的土壤,交锋使万从随机劫匪转向定向复仇,陈由受害者变为叙事素材。\n\n网在哪里:万的过度自信(事实4)是其命运真正的约束,陈只是靶子;陈的违法与否因证据不足只能算候选约束。\n\n区分证据:若万在被捕后供述中选择目标的标准是'可赎金金额'而非'剥削程度',则机制①胜;若材料能补足陈违法的独立证据(如账目、受害者证词),机制②胜。\n\n验收:两种机制均可被万的目标选择逻辑与陈的实际行为证据证伪或支持;现判定为'怨恨自驱为主、剥削叙事为辩护'的条件性结论。",
+      "characters": 460,
+      "non_message_events": [],
+      "backend_model": "NOT_VERIFIED",
+      "server_session_uuid": "NOT_VERIFIED"
+    },
+    "candidate_v2": {
+      "title": "Candidate V2",
+      "response_id": "resp_029256d9-5377-4342-9ea8-d982a25c5e19",
+      "status": "completed",
+      "effort": "low",
+      "output": "本质判断:材料仅证实万的抢劫、绑架与升级,以及陈的亲民人设与公摊争议;陈违法只是推断,不成立为事实。\n\n事实O:万在冲突前已抢劫且得手后升级(事实1);陈误给20元小费,被万选定为目标,儿子遭绑架,万以\"富商剥削\"自辩(事实3);万屡次侥幸强化过度自信,终受惩罚(事实4)。影片呈现公摊争议与街头不满,镜头不足以独立证明陈违法(事实2)。\n\n竞争机制:H1 逐利升级机制——万的每次侥幸成功产生正反馈,目标选择与\"剥削\"说辞是事后的自我合理化,绑架由他自身冒险轨迹决定。H2 社会怨恨机制——公摊利益与街头不满塑造了\"富商皆剥削\"的环境叙事,万把它当正当化理由,将陈选为象征性靶子。两机制都能推出冲突,但因果方向不同:H1 中说辞是结果,H2 中说辞是原因。\n\n区分证据:材料中万是在\"几次得手后\"仍升级,且小费事件发生在冲突之前——若怨恨是主因,其目标应更早指向陈或富商群体;若得手反馈是主因,目标选择应随收益扩大。故现有时间线更支持 H1,H2 降为背景条件。陈一方:人设与财富反差是呈现的事实,\"违法\"属候选而非证实;他给20元小费的误认只是导火索,非冲突的充分原因。\n\n网与破网口:可证约束是\"侥幸未受惩罚\"这一反馈环;最早可检验的干预点在首次得手后的追责。验收:若出现万在成功前已长期针对富商的证据,则 H2 升为首选;否则维持 H1。",
+      "characters": 573,
+      "non_message_events": [],
+      "backend_model": "NOT_VERIFIED",
+      "server_session_uuid": "NOT_VERIFIED"
+    }
+  },
+  "review": {
+    "response_id": "resp_a8d89b2f-0061-4643-9f4c-54c1bdbe9932",
+    "status": "completed",
+    "text": "{\"scores\":{\"A\":{\"mechanism\":2,\"mechanism_issue\":\"两种因果机制及其方向差异清楚,能解释万的升级和陈成为目标。\",\"coverage\":2,\"coverage_issue\":\"分析万的行为、陈的形象与争议,并交代小费事件如何连接双方。\",\"evidence\":2,\"evidence_issue\":\"明确区分给定事实与陈违法的未证实推断,没有把争议直接当作犯罪证据。\",\"falsification\":2,\"falsification_issue\":\"提出万在成功前已长期针对富商这一可查证证据,能改变首选判断。\",\"concise\":1,\"concise_issue\":\"结构清晰但整体超过500字附近,且“网与破网口”等表达略显多余。\"},\"B\":{\"mechanism\":2,\"mechanism_issue\":\"对比结构性怨恨与个人风险升级两种机制,并说明各自的因果位置。\",\"coverage\":2,\"coverage_issue\":\"覆盖万的升级、陈的形象与争议,以及小费和绑架之间的交锋关系。\",\"evidence\":2,\"evidence_issue\":\"分层标示事实和推断,并保留陈违法未获证实的限定。\",\"falsification\":2,\"falsification_issue\":\"列出目标选择、赎金对应关系及独立犯罪证据等可区分解释的剧情证据。\",\"concise\":1,\"concise_issue\":\"内容明显长于500字附近,部分论证和结论有所重复。\"},\"C\":{\"mechanism\":1,\"mechanism_issue\":\"给出两种解释,但将“相互塑造”说成材料证实,且第二种机制依赖未证实的剥削前提。\",\"coverage\":2,\"coverage_issue\":\"涉及劫匪升级、富商形象及双方交锋,并说明陈如何成为目标与叙事素材。\",\"evidence\":1,\"evidence_issue\":\"虽标示部分推断和未证实事项,却把双方相互塑造误列为材料事实。\",\"falsification\":2,\"falsification_issue\":\"提出目标选择标准和陈违法的独立证据作为可查证区分材料。\",\"concise\":2,\"concise_issue\":\"篇幅接近500字,基本聚焦于评分要求。\"}}}",
+    "non_message_events": [],
+    "backend_model": "NOT_VERIFIED",
+    "mapping_hidden_until_scoring": "A=candidate_v2, B=control, C=baseline"
+  },
+  "known_limits": [
+    "Prior conversation already discussed/assessed this case, so it is not a pristine held-out sample for this Chat session.",
+    "Three separate Parallel web_research calls, backend model/version not disclosed; requested low reasoning effort, direct GPT-6 Work equivalence NOT_VERIFIED.",
+    "External browsing forbidden by input; check non_message_events for violations.",
+    "One sampled answer per arm in this recorded repeat; no repeated-run significance.",
+    "Fourth call blind content rating only; scorer backend independence NOT_VERIFIED.",
+    "No OpenAI API called directly, no source Skill modified, no main merge."
+  ],
+  "source_urls": [
+    "https://www3.xinhuanet.com/ent/20260902/b40afc5f3ed548d38eb18652a138a528/c.html",
+    "https://ent.sina.cn/2026-09-04/detail-iniqryes4023542.d.html",
+    "https://finance.sina.com.cn/wm/2026-09-08/doc-inirceww4642320.shtml"
+  ]
+}
