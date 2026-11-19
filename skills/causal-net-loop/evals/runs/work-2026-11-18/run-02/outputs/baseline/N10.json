@@ -1,0 +1,11 @@
+{
+  "case_id": "N10",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "最强反证是：在相同难度、构成可比的学生中，没有晨读的班级也出现了相近的提分。这会直接削弱“8分全部来自晨读”的判断。\n\n最低成本是复用现有答题和学籍记录，先用两期共有题或难度可比的题比较前后都在校学生的成绩。若有未实施晨读的可比班级，再按同一口径比较两组增幅。若校正后提分大幅缩小，或两组增幅相近，就不能把8分全归给晨读。若缺少可比试题或对照班级，现有均分无法单独估计晨读贡献。",
+  "evidence_ref": "evidence/p7-final.txt#N10 (Work final message received from /root/p7)",
+  "response_sha256": "bcc1776850b672d0c6d50d574a9be14f0d2d77382deb629bccd6e0878428b808"
+}

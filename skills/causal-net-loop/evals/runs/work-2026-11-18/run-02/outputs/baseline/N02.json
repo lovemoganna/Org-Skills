@@ -1,0 +1,11 @@
+{
+  "case_id": "N02",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "暂不全量上线。已知接管损失发生在新设备登录后30分钟，处于现有4小时冷静期内。先回放这些损失的提现记录，确认是否触发冷静期、是否实际被拦截，以及损失通过哪条路径发生。若现有规则未覆盖该路径，延长期限无法修复覆盖缺口。\n\n若回放显示确有风险提现发生在第4至48小时，再做小范围随机对照，4小时为对照组，48小时为试验组，对日内结算商户单独分层。按相同口径比较确认的接管净损失与合法提现延迟、商户错过结算的情况，并观察到试验组解禁后，区分挽损和损失延后。若看不到额外挽损，或商户影响触及事先约定的止损线，停止扩量。",
+  "evidence_ref": "evidence/p7-final.txt#N02 (Work final message received from /root/p7)",
+  "response_sha256": "1661bd5c2693a342b87b2dee791d54328b5793cd38fcf78cbb2f8e581c5569b0"
+}

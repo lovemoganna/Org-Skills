@@ -1,0 +1,11 @@
+{
+  "case_id": "N07",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "先用四次实际失败建一组导出回归用例，通过现有导出入口运行。分别用原始样例复现两次CSV转义故障，验证导出后能读回原字段。权限用例同时验证授权用户能导出、无权用户被正确拒绝。时区用例验证导出值按约定时区表达同一时刻。\n\n按用例修复对应环节，把这组检查放进现有发布流程。验收看用例能否在修复前捕捉故障、修复后通过，以及后续同类失败是否减少。若权限失败源于配置或授权交接，就修该流程。只有发现多类故障受同一架构约束、局部修复仍反复失效时，再评估重写。",
+  "evidence_ref": "evidence/p7-final.txt#N07 (Work final message received from /root/p7)",
+  "response_sha256": "0d2851d082d5e2175414fa0aeb10bd389fa5c9a4e9fcec970274e11009f640b1"
+}

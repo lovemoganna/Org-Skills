@@ -1,0 +1,11 @@
+{
+  "case_id": "N05",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "先维持10分钟TTL。P95从450ms降到120ms，说明接口更快了。后台价格每分钟变化，缓存命中时可能返回旧价，延长到1小时会扩大这个风险。投诉增加是否与旧价有关，目前未知。\n\n让团队抽取上线后的投诉请求，按类别标注，并把价格相关请求的缓存命中、实际返回价格和请求当时的源价格对齐，再与同期同类无投诉请求比较。若旧价明显集中于价格投诉，先验证能否缩短价格缓存或在价格更新时失效，同时跟踪旧价率与P95。若投诉主要发生在未命中请求，或返回价格正确，就转查其他原因，暂缓调整TTL。",
+  "evidence_ref": "evidence/q3-final.txt#N05 (Work final message received from /root/q3)",
+  "response_sha256": "ec58e250b537659d26e9b3bd1bf5c342247eb3dc25c3ceae45ffb5cc763c1501"
+}

@@ -1,0 +1,11 @@
+{
+  "case_id": "N01",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "现有信息不足以认定该用户是受制裁对象，应保留为待核实命中。姓名音译近似只能提示可能同名，出生年份不同是反向证据，国籍和唯一身份标识仍缺失。最关键的一步是由合规人员将用户经核验的身份证明与名单原始条目逐项比对，优先查唯一身份标识，并核实出生年份差异是否来自录入错误或名单别名记录。缺乏能确认同一人的证据时，不作确认命中。",
+  "evidence_ref": "evidence/q3-final.txt#N01 (Work final message received from /root/q3)",
+  "response_sha256": "6a3e7d800a4c8725eb33a05c3c61cd46c2edaf991b0eef2a9fdbbd159d7aa452"
+}

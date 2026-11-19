@@ -1,0 +1,10 @@
+{
+  "case_id": "N04",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先用复审记录重放三案，暂缓增加100项检查。让复审负责人用各案作出原结论时可获得的材料，核对当时的证据要求、关键缺口是否可见，以及有缺口的结论为何仍能提交。三案的直接问题不同，目前无法归因于调查员不细心。若至少两案确有同一把关缺口，只试行一项针对性检查，由复审负责人用原案重放验证它能拦住错误结论，再跟踪同类案件的推翻率和审查耗时。若未发现共同机制，分别处理各类缺口。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N04"
+}

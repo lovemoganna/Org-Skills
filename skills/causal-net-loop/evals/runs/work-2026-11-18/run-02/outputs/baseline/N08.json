@@ -1,0 +1,11 @@
+{
+  "case_id": "N08",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "61%对应的是平均等候时间的降幅。要验证急诊质量，先确认这个均值纳入了谁，以及转院患者从首次到院到实际接受诊疗等了多久。\n\n以所有首次到院的急诊患者为分母，追踪本院就诊和转院两条路径。按病情严重程度和到诊时段对齐前后人群，比较到首次有效诊疗的时间、转院率、非计划复诊和关键临床结局。有条件时加入同期可比医院，检查季节或区域就诊量变化。若本院队列缩短，但转院患者的总等待抵消了改善，或同等病情患者结局恶化，质量提升的判断需要修正。转院去向或结局缺失时，质量变化仍待验证。",
+  "evidence_ref": "evidence/p7-final.txt#N08 (Work final message received from /root/p7)",
+  "response_sha256": "40b2e02e0401051480c6c835c84e88997798de52aa50906839db9e45bbadf6c9"
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "N02",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "暂缓全量上线。已知损失发生在登录后30分钟，需要先核实该提现是否触发并受现有4小时规则约束。把冻结延至48小时，只会额外拦住登录后第4至48小时的提现。先用近期提现与接管记录做一轮影子回放，核对30分钟案例的规则覆盖，再按已确认的接管和合法日内结算分别统计这个新增窗口内会被延迟的笔数、金额及结算超时情况。若新增窗口出现值得验证的挽损空间，再用小范围对照试点衡量实际挽损、欺诈延后和商户损失。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N02"
+}

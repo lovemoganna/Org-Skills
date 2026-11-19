@@ -1,0 +1,11 @@
+{
+  "case_id": "N02",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "先不全量上线。已知接管损失发生在登录后30分钟，落在现行4小时冷静期内。首先需要查清这笔提现是如何发生的。延长到48小时的新增作用只可能出现在第4至48小时，日内结算商户也会在这个窗口受到影响。\n\n让风控用同一批历史新设备登录记录回放两套规则。先核对30分钟案例是否命中现行规则、是否有例外放行，再分别统计第4至48小时内本可被新增拦截的确认盗提，以及会被延迟、错过结算的合法商户提现。把盗提延迟与确认挽损分开。若原案例源于规则执行缺口，先修复缺口。若回放显示新增拦截机会，再在可回退的小范围试点里验证实际挽损和结算影响。",
+  "evidence_ref": "evidence/q3-final.txt#N02 (Work final message received from /root/q3)",
+  "response_sha256": "873d0a5d3e987a6f8de7d2e6ae28548275a238d9259ee03b4d77eb3cd41cf262"
+}

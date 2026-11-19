@@ -1,0 +1,11 @@
+{
+  "case_id": "N06",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "在可控环境用相同数据、负载和资源重复跑四组：旧驱动关审计、旧驱动开审计、新驱动关审计、新驱动开审计。记录总耗时及数据库等待、日志写入耗时，尽量统一缓存状态，避免运行顺序干扰。\n\n只有更换驱动就变慢，优先定位驱动。只有开启审计就变慢，优先定位日志链路。只有两项同时启用才变慢，查交互。整包回滚只确认两个部署组合的耗时不同，先保留审计模块，等单变量对照结果。",
+  "evidence_ref": "evidence/p7-final.txt#N06 (Work final message received from /root/p7)",
+  "response_sha256": "e4879b8a5df1c21403d11a5750964871663177f41cc8e4ce04af937d2a28608d"
+}

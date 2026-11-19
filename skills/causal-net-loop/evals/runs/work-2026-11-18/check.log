@@ -1,0 +1,9 @@
+{
+  "status": "PASS: dataset and frozen Skill blobs",
+  "cases": 12,
+  "blobs": {
+    "baseline": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+    "candidate": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6"
+  },
+  "model_runs": "NOT_VERIFIED"
+}

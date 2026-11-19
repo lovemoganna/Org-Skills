@@ -1,0 +1,10 @@
+{
+  "case_id": "N09",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "最可能改变试点决定的一条链是，机动车收费促使一部分高峰出行转向公交，关键线路若已接近满载，就会出现滞留和延误，削弱试点的可行性。先在拟试点范围按时段统计关键线路的实际剩余运力，用进城车辆的出行调查估算转乘需求区间，按线路和时段对照。若即使较低的转乘量也会超出余量，先缩小范围或补运力。若较高估计仍能承接，再考虑限时试点，用满载率和乘客滞留核验。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N09"
+}

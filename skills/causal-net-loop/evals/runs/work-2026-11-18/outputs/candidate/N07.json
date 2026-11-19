@@ -1,0 +1,10 @@
+{
+  "case_id": "N07",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先防住已重复的CSV转义故障，暂缓重写。由导出维护者重放两次失败输入，对齐版本、字段和值，确认是否触发同一转义缺陷。若确认同一机制，就在对应的CSV生成路径修复，并把两次输入加入该路径变更时的回归测试。验收看原版本能否复现、修复后导出再读回是否保留原字段和值。权限与时区各发生一次，分别保留复现样例，按各自证据跟进。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N07"
+}

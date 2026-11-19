@@ -1,0 +1,205 @@
+{
+  "status": "DO_NOT_PROMOTE",
+  "not_proven": "Reviewer independence and model/session claims remain self-reported; scores are not a population estimate",
+  "wins_candidate": 2,
+  "losses_candidate": 2,
+  "mean_uplift_points": -0.75,
+  "median_length_ratio": 1.044,
+  "hard_gate_pass": true,
+  "negative_pass": true,
+  "reviewer": "/root/r8",
+  "results": [
+    {
+      "id": "N01",
+      "domain": "crypto-risk",
+      "baseline": {
+        "score": 92.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 153
+      },
+      "candidate": {
+        "score": 92.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 159
+      }
+    },
+    {
+      "id": "N02",
+      "domain": "crypto-risk",
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 255
+      },
+      "candidate": {
+        "score": 92.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 261
+      }
+    },
+    {
+      "id": "N03",
+      "domain": "crypto-risk",
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 307
+      },
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 246
+      }
+    },
+    {
+      "id": "N04",
+      "domain": "crypto-risk",
+      "baseline": {
+        "score": 87.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 262
+      },
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 275
+      }
+    },
+    {
+      "id": "N05",
+      "domain": "software",
+      "candidate": {
+        "score": 92.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 241
+      },
+      "baseline": {
+        "score": 92.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 253
+      }
+    },
+    {
+      "id": "N06",
+      "domain": "software",
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 177
+      },
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 166
+      }
+    },
+    {
+      "id": "N07",
+      "domain": "software",
+      "candidate": {
+        "score": 80.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 209
+      },
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 222
+      }
+    },
+    {
+      "id": "N08",
+      "domain": "public-policy",
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 287
+      },
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 234
+      }
+    },
+    {
+      "id": "N09",
+      "domain": "public-policy",
+      "candidate": {
+        "score": 72.5,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 234
+      },
+      "baseline": {
+        "score": 65.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 216
+      }
+    },
+    {
+      "id": "N10",
+      "domain": "public-policy",
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 189
+      },
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": null,
+        "characters": 218
+      }
+    },
+    {
+      "id": "N11",
+      "domain": "negative-control",
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": true,
+        "characters": 35
+      },
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": true,
+        "characters": 30
+      }
+    },
+    {
+      "id": "N12",
+      "domain": "negative-control",
+      "candidate": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": true,
+        "characters": 14
+      },
+      "baseline": {
+        "score": 100.0,
+        "hard_fail": false,
+        "negative_pass": true,
+        "characters": 14
+      }
+    }
+  ]
+}
