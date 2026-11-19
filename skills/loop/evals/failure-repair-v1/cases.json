@@ -1,0 +1,37 @@
+{
+  "cases": [
+    {
+      "id": "ML-001",
+      "title": "MetaLoop hourly PLANNED_NOT_RUN without model execution",
+      "failure_code": "F6",
+      "symptom": "Scheduler emits plans and inventory reports, but no authorized model executor or independent task-result receipt",
+      "evidence_urls": ["https://github.com/lovemoganna/AgentComponent/blob/main/systems/metaloop/lifecycle.py", "https://github.com/lovemoganna/AgentComponent/blob/main/systems/metaloop/README.md"],
+      "complexity_signals": [1, 2, 3],
+      "causal_ambiguity": false,
+      "executor_available": false,
+      "recorded_status": "BLOCKED"
+    },
+    {
+      "id": "AB-002",
+      "title": "MetaLoop PR 6 paired evaluation preregistered but not executed",
+      "failure_code": "F4",
+      "symptom": "The submitted PR had preregistration and deterministic checks but no real model pairs, independent grading, or verified runtime receipts",
+      "evidence_urls": ["https://github.com/lovemoganna/AgentComponent/pull/6"],
+      "complexity_signals": [1, 2, 5],
+      "causal_ambiguity": false,
+      "executor_available": false,
+      "recorded_status": "BLOCKED"
+    },
+    {
+      "id": "HTML-003",
+      "title": "HTML Design Lab PR 73 initially missing runnable sources",
+      "failure_code": "F6",
+      "symptom": "Original Draft PR lacked generator, browser script, tests and input contract; later added and CI tested",
+      "evidence_urls": ["https://github.com/lovemoganna/Org-Skills/pull/73", "https://github.com/lovemoganna/Org-Skills/actions/runs/38245481920"],
+      "complexity_signals": [1, 2, 3],
+      "causal_ambiguity": false,
+      "executor_available": true,
+      "recorded_status": "HISTORICALLY_REPAIRED"
+    }
+  ]
+}
