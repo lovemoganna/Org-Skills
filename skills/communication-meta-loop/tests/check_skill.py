@@ -23,7 +23,7 @@ else:
         description = re.search(r"(?m)^description:\s*(.+)$", fm)
         if not description or len(description.group(1).strip().strip('"')) > 1024:
             errors.append("invalid description")
-    for phrase in ("FRAME", "RESPOND", "VERIFY", "REPAIR", "NOT_VERIFIED", "无新证据"):
+    for phrase in ("FRAME", "RESPOND", "VERIFY", "REPAIR", "NOT_VERIFIED", "没有新证据"):
         if phrase not in body:
             errors.append("missing core phrase: " + phrase)
 
