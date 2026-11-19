@@ -74,10 +74,14 @@ def plan_case(c):
               "steps": []}
     # An old closed case is not a new failure. Review the old receipt first.
     if c["recorded_status"] == "HISTORICALLY_REPAIRED" and not c["reopen_evidence_url"]:
-        result.update(status="HISTORICAL_CLOSURE_FOR_REVIEW",
-                      steps=[node("review_closure", "read-only-source-check",
-                                  "case.closure_evidence_url", "closure_assessment",
-                                  "check historical result; do not claim current environment verified")])
+        result["status"] = "HISTORICAL_CLOSURE_FOR_REVIEW"
+        if result["mode"] == "direct":
+            # S3 direct has coverage but no chain steps.
+            result["coverage"]["closure_review"] = "read case.closure_evidence_url; no new run"
+        else:
+            result["steps"] = [node("review_closure", "read-only-source-check",
+                                    "case.closure_evidence_url", "closure_assessment",
+                                    "check historical result; do not claim current environment verified")]
         return result
     if result["mode"] == "direct":
         result["status"] = "DIRECT_NOT_EXECUTED"
@@ -150,6 +154,12 @@ class ContractTests(unittest.TestCase):
                           "HISTORICAL_CLOSURE_FOR_REVIEW"])
         self.assertEqual([len(p["steps"]) for p in routes], [1, 1, 1])
         self.assertTrue(all(p["mode"] == "chain" for p in routes))
+
+    def test_historical_direct_does_not_invent_chain_steps(self):
+        p = plan_case(dict(self.cases[2], complexity_signals=[2]))
+        self.assertEqual(p["mode"], "direct")
+        self.assertEqual(p["steps"], [])
+        self.assertIn("closure_review", p["coverage"])
 
     def test_reopen_requires_new_evidence_then_capability_check(self):
         c = dict(self.cases[2], reopen_evidence_url="https://github.com/example/repo/issues/123")
