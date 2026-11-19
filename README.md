@@ -11,7 +11,8 @@
 | 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
 | 从复杂现象识别因果、规则与可控突破口，并通过最小干预验证结果 | `causal-net-loop` | skills/causal-net-loop/SKILL.md |
 | 从日常工作与多个案例归纳可验证、可迁移的简历能力，并保留面试证据 | `career-evidence-loop` | skills/career-evidence-loop/SKILL.md |
-| 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
+| 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |
+| 将模糊/跑偏的 AI 沟通变成可理解、可核验的回答或可复制 Prompt | `communication-meta-loop` | skills/communication-meta-loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 创作或迭代 Suno 原创华语歌曲，设计曲风、双语歌词与 1000 字符内 Style Prompt | `suno-songwriting` | skills/suno-songwriting/SKILL.md |
