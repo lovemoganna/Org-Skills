@@ -1,0 +1,23 @@
+name: failure-repair-v1 contract
+on:
+  pull_request:
+    paths:
+      - 'skills/loop/evals/failure-repair-v1/**'
+      - '.github/workflows/failure-repair-contract.yml'
+  workflow_dispatch:
+jobs:
+  deterministic-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check deterministic route contract
+        run: python3 skills/loop/evals/failure-repair-v1/route.py --self-test
+      - name: Generate only a routing preview (not agent execution)
+        run: |
+          python3 skills/loop/evals/failure-repair-v1/route.py --cases skills/loop/evals/failure-repair-v1/cases.json > /tmp/routing-preview.json
+          python3 -m json.tool /tmp/routing-preview.json > /dev/null
