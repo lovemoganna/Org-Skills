@@ -15,7 +15,7 @@ def validate_case(c):
     required = {"id", "title", "failure_code", "symptom", "evidence_urls",
                 "complexity_signals", "recorded_status", "executor_state",
                 "executor_evidence_url", "causal_state", "diagnosis_evidence_url",
-                "closure_evidence_url", "reopen_evidence_url"}
+                "closure_evidence_url", "reopen_evidence_url", "acceptance"}
     if not isinstance(c, dict) or required - c.keys():
         raise ValueError("case missing required fields")
     if not isinstance(c["id"], str) or not c["id"].strip():
@@ -55,6 +55,12 @@ def validate_case(c):
         raise ValueError("unassessed diagnosis cannot claim evidence")
     if c["recorded_status"] == "HISTORICALLY_REPAIRED" and not c["closure_evidence_url"]:
         raise ValueError("historical closure must cite a real completion source")
+    accept = c["acceptance"]
+    if not isinstance(accept, list) or not accept or any(
+        not isinstance(x, str) or len(x) > 80 or not x or
+        not x[0].islower() or not x.replace("_", "").isalnum() for x in accept
+    ) or len(accept) != len(set(accept)):
+        raise ValueError("unique nonempty acceptance ids required")
     # URL syntax and non-empty fields do not authenticate source claims.
     return c
 
@@ -64,12 +70,23 @@ def node(node_id, atom, source, output, gate):
             "check": gate, "on_fail": "stop"}
 
 
+def finish_route(result):
+    """Coverage is a required checklist, not a claim of real test execution."""
+    ids = {step["id"] for step in result["steps"]}
+    check_step = ("verify" if "verify" in ids else
+                  "review_closure" if "review_closure" in ids else None)
+    for entry in result["coverage"].values():
+        entry["planned_check_step"] = check_step
+    return result
+
+
 def plan_case(c):
     c = validate_case(c)
     signals = c["complexity_signals"]
     result = {"case_id": c["id"], "mode": "chain" if len(signals) >= 2 else "direct",
               "reason": signals,
-              "coverage": {"actual_result": "requires independent external result evidence; NOT checked by this planner"},
+              "coverage": {criterion: {"status": "NOT_VERIFIED", "evidence_ref": None}
+                           for criterion in c["acceptance"]},
               "status": "PLANNED_NOT_RUN", "historical_status": c["recorded_status"],
               "steps": []}
     # An old closed case is not a new failure. Review the old receipt first.
@@ -77,29 +94,29 @@ def plan_case(c):
         result["status"] = "HISTORICAL_CLOSURE_FOR_REVIEW"
         if result["mode"] == "direct":
             # S3 direct has coverage but no chain steps.
-            result["coverage"]["closure_review"] = "read case.closure_evidence_url; no new run"
+            result["coverage_note"] = "historical closure receipt requires source review; no new run"
         else:
             result["steps"] = [node("review_closure", "read-only-source-check",
                                     "case.closure_evidence_url", "closure_assessment",
                                     "check historical result; do not claim current environment verified")]
-        return result
+        return finish_route(result)
     if result["mode"] == "direct":
         result["status"] = "DIRECT_NOT_EXECUTED"
-        return result
+        return finish_route(result)
     steps = [node("baseline", META, "case.evidence_urls", "diagnosis",
                   "trace and earliest observed failure; no unsupported root-cause claims")]
     if c["executor_state"] == "unknown":
         result.update(status="NEEDS_RUNTIME_CAPABILITY_EVIDENCE", steps=steps,
                       resume_when="record current authorized executor and its source; do not infer absence")
-        return result
+        return finish_route(result)
     if c["executor_state"] == "reported_unavailable":
         result.update(status="BLOCKED_EXECUTOR_REPORTED_UNAVAILABLE", steps=steps,
                       resume_when="new evidence that a real executor is available")
-        return result
+        return finish_route(result)
     if c["causal_state"] == "unassessed":
         result.update(status="NEEDS_DIAGNOSIS_RESULT", steps=steps,
                       resume_when="actual traced baseline diagnosis or counterevidence")
-        return result
+        return finish_route(result)
     if c["causal_state"] == "contested":
         steps.append(node("cause", CAUSAL, "diagnosis", "hypotheses",
                           "competing explanations, falsifiers, and evidence gaps"))
@@ -117,7 +134,7 @@ def plan_case(c):
     if len(steps) > 6:
         raise AssertionError("violates loop S3 <=6 steps")
     result["steps"] = steps
-    return result
+    return finish_route(result)
 
 
 def verify_run(report):
@@ -146,20 +163,22 @@ class ContractTests(unittest.TestCase):
                     executor_evidence_url="https://github.com/example/repo/actions/runs/1")
 
     def test_history_does_not_imply_current_capability(self):
-        self.assertEqual([x["id"] for x in self.cases], ["ML-001", "AB-002", "HTML-003"])
+        self.assertEqual([x["id"] for x in self.cases], ["ML-001", "AB-002", "HTML-003", "N07-004"])
         routes = [plan_case(x) for x in self.cases]
         self.assertEqual([p["status"] for p in routes],
                          ["NEEDS_RUNTIME_CAPABILITY_EVIDENCE",
                           "NEEDS_RUNTIME_CAPABILITY_EVIDENCE",
-                          "HISTORICAL_CLOSURE_FOR_REVIEW"])
-        self.assertEqual([len(p["steps"]) for p in routes], [1, 1, 1])
+                          "HISTORICAL_CLOSURE_FOR_REVIEW",
+                          "NEEDS_RUNTIME_CAPABILITY_EVIDENCE"])
+        self.assertEqual([len(p["steps"]) for p in routes], [1, 1, 1, 1])
         self.assertTrue(all(p["mode"] == "chain" for p in routes))
 
     def test_historical_direct_does_not_invent_chain_steps(self):
         p = plan_case(dict(self.cases[2], complexity_signals=[2]))
         self.assertEqual(p["mode"], "direct")
         self.assertEqual(p["steps"], [])
-        self.assertIn("closure_review", p["coverage"])
+        self.assertIn("coverage_note", p)
+        self.assertTrue(all(entry["planned_check_step"] is None for entry in p["coverage"].values()))
 
     def test_reopen_requires_new_evidence_then_capability_check(self):
         c = dict(self.cases[2], reopen_evidence_url="https://github.com/example/repo/issues/123")
@@ -221,6 +240,39 @@ class ContractTests(unittest.TestCase):
                         "raw_trace_ref": "t", "verifier_independent": False,
                         "goal_met": True, "regression_ok": True})
         self.assertEqual(verify_run({"status": "NOT_RUN"}), "NOT_PROMOTABLE")
+
+    def test_n07_preserves_all_source_failure_classes(self):
+        case = self.cases[3]
+        self.assertEqual(case["id"], "N07-004")
+        p = plan_case(case)
+        self.assertEqual(p["status"], "NEEDS_RUNTIME_CAPABILITY_EVIDENCE")
+        self.assertEqual(set(p["coverage"]), {
+            "csv_roundtrip_regression",
+            "permission_allow_deny_regression",
+            "timezone_instant_regression",
+            "avoid_unjustified_platform_rewrite"})
+        self.assertTrue(all(x["status"] == "NOT_VERIFIED" for x in p["coverage"].values()))
+
+    def test_verifier_step_covers_each_acceptance_without_claiming_success(self):
+        case = self.with_available_executor(self.cases[3])
+        case.update(causal_state="contested",
+                    diagnosis_evidence_url="https://github.com/example/repo/issues/7")
+        p = plan_case(case)
+        self.assertEqual(len(p["steps"]), 6)
+        self.assertEqual(
+            {key: value["planned_check_step"] for key, value in p["coverage"].items()},
+            {key: "verify" for key in case["acceptance"]})
+        self.assertTrue(all(x["status"] == "NOT_VERIFIED" for x in p["coverage"].values()))
+
+    def test_empty_duplicate_or_missing_acceptance_is_rejected(self):
+        for bad_acceptance in ([], ["csv_regression", "csv_regression"], None, [""]):
+            with self.subTest(bad_acceptance=bad_acceptance):
+                with self.assertRaises(ValueError):
+                    plan_case(dict(self.cases[3], acceptance=bad_acceptance))
+        c = dict(self.cases[3])
+        del c["acceptance"]
+        with self.assertRaises(ValueError):
+            plan_case(c)
 
     def test_receipt_fields_not_authentication(self):
         v = verify_run({"status": "PASS", "run_id": "r", "case_id": "HTML-003",
