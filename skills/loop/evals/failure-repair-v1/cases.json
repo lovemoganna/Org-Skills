@@ -20,7 +20,11 @@
       "causal_state": "unassessed",
       "diagnosis_evidence_url": null,
       "closure_evidence_url": null,
-      "reopen_evidence_url": null
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "real_execution_receipt",
+        "independent_result_verification"
+      ]
     },
     {
       "id": "AB-002",
@@ -41,7 +45,11 @@
       "causal_state": "unassessed",
       "diagnosis_evidence_url": null,
       "closure_evidence_url": null,
-      "reopen_evidence_url": null
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "isolated_baseline_candidate_outputs",
+        "blind_review_receipt"
+      ]
     },
     {
       "id": "HTML-003",
@@ -63,7 +71,42 @@
       "causal_state": "settled",
       "diagnosis_evidence_url": "https://github.com/lovemoganna/Org-Skills/pull/73",
       "closure_evidence_url": "https://github.com/lovemoganna/Org-Skills/actions/runs/38245481920",
-      "reopen_evidence_url": null
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "runnable_repository_sources",
+        "github_ci_regression"
+      ]
+    },
+    {
+      "id": "N07-004",
+      "title": "Recorded Work model response regression: exporter failure-class coverage (not a production export incident)",
+      "failure_code": "F7",
+      "symptom": "PR115 independent Work judge recorded candidate N07 score 80 vs baseline 100: candidate tested CSV but omitted permission and timezone regression acceptance. Mechanism behind the answer difference unverified.",
+      "evidence_urls": [
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/REPORT.md",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/baseline/N07.json",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/candidate/N07.json",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/blind12-2026-11-18.json"
+      ],
+      "complexity_signals": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "recorded_status": "UNVERIFIED",
+      "executor_state": "unknown",
+      "executor_evidence_url": null,
+      "causal_state": "unassessed",
+      "diagnosis_evidence_url": null,
+      "closure_evidence_url": null,
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "csv_roundtrip_regression",
+        "permission_allow_deny_regression",
+        "timezone_instant_regression",
+        "avoid_unjustified_platform_rewrite"
+      ]
     }
   ]
 }
