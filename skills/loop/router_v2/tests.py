@@ -143,6 +143,30 @@ class RouterV2Tests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_task(t)
 
+    def test_blocked_run_cannot_recheck_as_success_even_if_file_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            (base / "workspace").mkdir()
+            t = fixture()
+            success = run(t, base / "workspace", base / "ok", authorize_write=True)
+            self.assertEqual(success["status"], "COMPLETED_UNVERIFIED")
+            blocked = run(t, base / "workspace", base / "blocked", authorize_write=False)
+            self.assertEqual(blocked["status"], "BLOCKED")
+            check = recheck(t, base / "workspace", blocked)
+            self.assertEqual(check["status"], "FAIL_LOCAL_RECHECK")
+            self.assertEqual(check["reason"], "RUN_NOT_COMPLETED")
+
+    def test_manifest_change_invalidates_execution_receipt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            (base / "workspace").mkdir()
+            t = fixture()
+            result = run(t, base / "workspace", base / "run", authorize_write=True)
+            changed = fixture()
+            changed["goal"] = "another goal"
+            with self.assertRaises(ValueError):
+                recheck(changed, base / "workspace", result)
+
     def test_no_self_promotion(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
