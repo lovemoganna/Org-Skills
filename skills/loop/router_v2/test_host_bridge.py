@@ -62,7 +62,7 @@ class HostProtocolTests(unittest.TestCase):
         self.assertEqual(first["pending_request"]["target"], "loop-engineering-meta")
         self.assertEqual(first["pending_request"]["executor_binding"], "NATIVE_HOST_MODEL_SKILL")
         last = record(self.session, self.result_for_current())
-        self.assertEqual(last["status"], "COMPLETED_UNVERIFIED")
+        self.assertEqual(last["status"], "RECEIPTS_RECORDED_UNVERIFIED")
         self.assertEqual(set(last["acceptance"]), {"source_receipt", "causal_boundary"})
         self.assertEqual(last["independence"], "self-check only")
         self.assertNotEqual(last["status"], "VERIFIED")
@@ -116,6 +116,12 @@ class HostProtocolTests(unittest.TestCase):
         self.assertEqual((failed["status"], failed["phase"]), ("FAILED", "HALTED_ON_STEP_FAILURE"))
         with self.assertRaises(ValueError):
             record(self.session, {"step_id": "diagnose", "status": "SUCCESS"})
+
+    def test_host_blocked_remains_blocked(self):
+        self.start()
+        blocked = record(self.session, self.result_for_current("BLOCKED"))
+        self.assertEqual(blocked["status"], "BLOCKED")
+        self.assertEqual(blocked["phase"], "HALTED_ON_STEP_BLOCK")
 
     def test_reject_unknown_tool(self):
         p = plan()
