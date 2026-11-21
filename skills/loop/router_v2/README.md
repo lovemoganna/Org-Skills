@@ -69,18 +69,8 @@ The returned request is **not executed** by these commands. After the authorized
 
     python3 skills/loop/router_v2/host_bridge.py record --session /tmp/router-v2-host --result /tmp/actual-host-result.json
 
-For a Skill step the host must actually apply that Skill to the evidence; merely selecting its name does not count as execution. The bridge only checks protocol consistency, not source authenticity. Steps are capped at six, forward dependencies are rejected, write capabilities require a separate authorization declaration, and any failed step halts the sequence. Tool types are an explicit, conservative GitHub allowlist; all other integrations need reviewed bindings.
+In Work code mode, load the versioned `work_host.js` from the checkout and call `workHost(tools, checkout)`. After `init(session, planPath)`, call `advance(session)` to execute GitHub reads and save original connector responses. At a Skill step the current model applies the selected Skill and calls `finishSkill(session, pendingRequest, output, source)` with its output and source revision. Call `advance` again to resume. Run one driver per session. The driver dispatches only GitHub reads. Mutations go through the trusted host's separate authorization.
 
-**Verified by CI:** 21 existing local-file/router tests, 19 new host protocol tests, two genuine GitHub Actions sandbox file runs, permission failure, and the repository's existing regression suite. Host protocol returns RECEIPTS_RECORDED_UNVERIFIED, not COMPLETED. Host protocol tests use **mocked receipts**; they cannot prove the model independently executed a Skill. The CI host demo deliberately stops at AWAITING_HOST_EXECUTION and does not forge a tool response.
+A failed GitHub file read can be resumed once via `retryRead(session, step, correctedPath, reason)` and then `advance(session)`. The original failure, request digest, repository and ref are retained. Other failures halt. A blocked step or write cannot be retried through this command.
 
-**Still missing for stable:** a supported, callable Work model/tool execution interface (none was provided to this Python process); actual independently checked multi-Skill end-to-end runs; frozen single/fixed/dynamic A/B. Do not imply that loading a SKILL.md automatically installs a Skill into a running ChatGPT environment.
-
-## Evidence, evaluation and promotion gate
-
-CI runs 21 tests plus two **distinct real local filesystem executions** (write-note and status-text transform), rechecks outputs, and uploads JSONL traces and reports as workflow artifacts. This proves sandbox file actions, not live business work or autonomous Skill execution.
-
-The frozen 12-task single/fixed/dynamic model study from the upgrade plan remains NOT_RUN until independent model workers and a blind evaluator are available. Record matched inputs, model/permissions, artifacts, independent scoring, costs and counterexamples. Do not turn contract PASS into a claimed improvement or score.
-
-Promotion to verified requires at least two different genuine tasks with independent, auditable outcomes and no key regression; completing two local fixture demos alone is **insufficient**. Keep this PR draft; do not merge main without new evidence.
-
-Rollback: close the candidate PR or delete this directory and its dedicated CI workflow. Existing stable Skills are unaffected.
+The [Work run records](evidence/work-2026-11-21/) contain live tool responses, model outputs and recovery evidence. CI separately checks deterministic behavior and local sandbox executions. The bridge records host reports as `RECEIPTS_RECORDED_UNVERIFIED`. Evaluate goal completion against original artifacts and an independent review before promotion.

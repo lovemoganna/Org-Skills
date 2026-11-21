@@ -5,8 +5,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,7 +40,14 @@ def now():
 
 
 def save_json(path, value):
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                     delete=False) as handle:
+        temporary = Path(handle.name)
+    try:
+        temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def read_json(path):
@@ -108,6 +117,7 @@ def init_session(folder, plan, skills_root, host_capabilities=None, authorized_w
         "skill_source_hashes": {s["target"]: skill_sources[s["target"]] for s in plan["steps"] if s["kind"] == "skill"},
         "host_declared_capabilities": caps,
         "host_write_authorization_declared": bool(authorized_writes),
+        "read_retries": {},
         "results": {},
         "started_at": now(),
     }
@@ -126,12 +136,15 @@ def load(folder):
 def next_step(state):
     results = state["results"]
     for step in state["plan"]["steps"]:
+        retry = state.get("read_retries", {}).get(step["id"])
         if step["id"] in results:
             if results[step["id"]]["status"] == "BLOCKED":
                 return None, "HALTED_ON_STEP_BLOCK"
             if results[step["id"]]["status"] != "SUCCESS":
-                return None, "HALTED_ON_STEP_FAILURE"
-            continue
+                if retry is None or results[step["id"]]["request_sha256"] != retry["failed_attempt"]["request_sha256"]:
+                    return None, "HALTED_ON_STEP_FAILURE"
+            else:
+                continue
         if any(results.get(dep, {}).get("status") != "SUCCESS" for dep in step.get("depends_on", [])):
             return None, "BLOCKED_DEPENDENCY"
         if step["kind"] == "tool":
@@ -148,6 +161,12 @@ def next_step(state):
             "executor_binding": binding, "side_effect_class": effect,
             "args": step["args"], "request_sha256": digest(step),
         }
+        if retry is not None:
+            request.update(args={**step["args"], "path": retry["path"]},
+                           attempt=2, request_sha256=digest({
+                               "plan_sha256": state["plan_sha256"],
+                               "step": step, "retry": retry,
+                           }))
         return request, "AWAITING_HOST_EXECUTION"
     return None, "ALL_STEPS_REPORTED"
 
@@ -155,7 +174,8 @@ def next_step(state):
 def status(state):
     request, phase = next_step(state)
     result = {"task_id": state["plan"]["id"], "phase": phase,
-              "completed_step_ids": list(state["results"]),
+              "completed_step_ids": [sid for sid, result in state["results"].items()
+                                     if result["status"] == "SUCCESS"],
               "pending_request": request,
               "evidence_trust": "HOST_REPORTED_NOT_INDEPENDENTLY_AUTHENTICATED"}
     if phase == "ALL_STEPS_REPORTED":
@@ -193,13 +213,37 @@ def record(folder, report):
         "step_id": request["step_id"], "request_sha256": request["request_sha256"],
         "status": report["status"], "receipt_ref": ref, "artifact_ref": report.get("artifact_ref"),
         "host_observation": report.get("observation", ""),
+        "error": report.get("error"),
         "recorded_at": now(),
     }
     # Receipt presence is only syntax validation, never authenticated execution.
     state["results"][request["step_id"]] = entry
     save_json(folder / "session.json", state)
     append_trace(folder, "HOST_RESULT_RECORDED", step_id=request["step_id"],
-                 status=entry["status"], receipt_ref=ref)
+                 status=entry["status"], receipt_ref=ref, attempt=request.get("attempt", 1),
+                 request_sha256=request["request_sha256"], artifact_ref=entry["artifact_ref"],
+                 error=entry["error"])
+    return status(state)
+
+
+def retry_read(folder, step_id, path, reason):
+    """Correct one failed GitHub file path without changing the repository, ref or authority."""
+    state = load(folder)
+    if next_step(state)[1] != "HALTED_ON_STEP_FAILURE":
+        raise ValueError("retry requires a halted failed step")
+    step = next((s for s in state["plan"]["steps"] if s["id"] == step_id), None)
+    failure = state["results"].get(step_id, {})
+    retries = state.setdefault("read_retries", {})
+    if (step is None or step["kind"] != "tool" or step["target"] != "github.fetch_file"
+            or failure.get("status") != "FAILED" or step_id in retries):
+        raise ValueError("only one corrected read is allowed for a failed GitHub file step")
+    if not path.strip() or path == step["args"].get("path") or not reason.strip():
+        raise ValueError("retry requires a changed path and a reason")
+    retry = {"path": path, "reason": reason, "failed_attempt": failure}
+    retries[step_id] = retry
+    save_json(folder / "session.json", state)
+    append_trace(folder, "READ_RETRY_REQUESTED", step_id=step_id, path=path, reason=reason,
+                 failed_request_sha256=failure["request_sha256"])
     return status(state)
 
 
@@ -217,6 +261,11 @@ def main():
     a = sub.add_parser("record")
     a.add_argument("--session", required=True, type=Path)
     a.add_argument("--result", required=True, type=Path)
+    a = sub.add_parser("retry-read")
+    a.add_argument("--session", required=True, type=Path)
+    a.add_argument("--step", required=True)
+    a.add_argument("--path", required=True)
+    a.add_argument("--reason", required=True)
     args = ap.parse_args()
     try:
         if args.cmd == "init":
@@ -225,6 +274,8 @@ def main():
                                  args.authorized_writes)
         elif args.cmd == "next":
             value = status(load(args.session))
+        elif args.cmd == "retry-read":
+            value = retry_read(args.session, args.step, args.path, args.reason)
         else:
             value = record(args.session, read_json(args.result))
         print(json.dumps(value, ensure_ascii=False, indent=2))

@@ -5,7 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from host_bridge import init_session, load, next_step, record, status, validate_plan, digest
+from host_bridge import init_session, load, next_step, record, retry_read, status
 
 HERE = Path(__file__).resolve().parent
 
@@ -122,6 +122,51 @@ class HostProtocolTests(unittest.TestCase):
         blocked = record(self.session, self.result_for_current("BLOCKED"))
         self.assertEqual(blocked["status"], "BLOCKED")
         self.assertEqual(blocked["phase"], "HALTED_ON_STEP_BLOCK")
+
+    def failed_read(self, outcome="FAILED"):
+        p = plan()
+        p["steps"][0].update(target="github.fetch_file", args={
+            "repository_full_name": "owner/repo", "path": "missing.md", "ref": "pinned"
+        })
+        self.start(p, ["github.fetch_file"])
+        first = self.result_for_current(outcome, error="not found")
+        record(self.session, first)
+        return first
+
+    def test_retry_keeps_failed_receipt_and_rejects_stale_response(self):
+        first = self.failed_read()
+        result = retry_read(self.session, "read_pr", "README.md", "corrected file path")
+        req = result["pending_request"]
+        self.assertEqual(result["completed_step_ids"], [])
+        self.assertEqual(req["args"], {
+            "repository_full_name": "owner/repo", "path": "README.md", "ref": "pinned"
+        })
+        self.assertNotEqual(req["request_sha256"], first["request_sha256"])
+        with self.assertRaisesRegex(ValueError, "mismatched"):
+            record(self.session, first)
+        self.assertEqual(record(self.session, self.result_for_current())["pending_request"]["step_id"], "diagnose")
+        self.assertEqual(load(self.session)["read_retries"]["read_pr"]["failed_attempt"]["error"], "not found")
+
+    def test_retry_failure_stays_failed_without_additional_attempt(self):
+        self.failed_read()
+        retry_read(self.session, "read_pr", "README.md", "corrected file path")
+        result = record(self.session, self.result_for_current("FAILED"))
+        self.assertEqual(result["phase"], "HALTED_ON_STEP_FAILURE")
+        with self.assertRaises(ValueError):
+            retry_read(self.session, "read_pr", "other.md", "second correction")
+
+    def test_blocked_step_cannot_be_retried(self):
+        self.failed_read("BLOCKED")
+        with self.assertRaises(ValueError):
+            retry_read(self.session, "read_pr", "README.md", "corrected file path")
+
+    def test_approved_write_failure_cannot_be_retried(self):
+        p = plan()
+        p["steps"][0]["target"] = "github.update_file"
+        self.start(p, ["github.update_file"], writes=True)
+        record(self.session, self.result_for_current("FAILED"))
+        with self.assertRaises(ValueError):
+            retry_read(self.session, "read_pr", "README.md", "corrected file path")
 
     def test_reject_unknown_tool(self):
         p = plan()
