@@ -1,0 +1,6 @@
+UTC start: 2026-11-21T01:29:57Z
+UTC end: 2026-11-21T01:31:12Z
+Tools: local shell (date, cat, printf) and in-memory JavaScript validation. No network.
+Errors: none
+Attempt count: 1
+Validation: 8 case IDs, exact I/R keys and 16 sections within 500 Unicode characters.

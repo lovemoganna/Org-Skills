@@ -1,0 +1,182 @@
+[
+  {
+    "id": "L04",
+    "category": "链上追踪",
+    "title": "Bitfinex 2016 失窃案",
+    "url": "https://www.justice.gov/archives/opa/pr/bitfinex-hacker-sentenced-money-laundering-conspiracy-involving-billions-stolen",
+    "locator": "DOJ 量刑公告 2024-11-14，案号 23-CR-239；判决公告与第三方程序说明",
+    "source_type": "DOJ公告，限于案卷转述与公告时点",
+    "excerpt": "there will be a formal process pursuant to Rule 32.2",
+    "evidence": [
+      "美国司法部根据法院文件称，2016 年超过 2,000 笔未授权交易将 119,754 BTC 从 Bitfinex 转到被告控制的钱包。公告开头概称约 120,000 BTC。",
+      "Lichtenstein 和 Morgan 于 2023-08-03 均就洗钱共谋认罪。DOJ 在 2024-11-14 宣布 Lichtenstein 获刑 5 年；公告对 Morgan 只列量刑安排。",
+      "公告称将有 Rule 32.2 下的第三方权利申报程序。题内未提供最终返还数额、收款对象核销或逐笔资产移交记录。"
+    ],
+    "investigate": "目前如何区分失窃规模、被告角色与返还状态？给出一项证据能导致的降级。",
+    "review": "复盘怎样把失窃量、被告角色、第三方权利和最终返还分开核验。",
+    "anchors": [
+      "119,754 BTC 为失窃详细口径，约120,000为同一规模",
+      "两人洗钱共谋认罪与谁控制首跳、谁被判处五年须分列",
+      "第三方申报流程、扣押/没收和最终返还分别核验，缺最终凭证",
+      "合并钱包账、法院令和保管/清偿流水；控制或权利不符时下调"
+    ]
+  },
+  {
+    "id": "L05",
+    "category": "链上追踪",
+    "title": "Georgia Richmond Hill 资产返还",
+    "url": "https://www.justice.gov/usao-sdga/pr/us-attorney-heap-announces-forfeiture-cryptocurrency-and-return-fraud-proceeds-victim",
+    "locator": "DOJ 2025-11-24 公告，民事没收与返还段",
+    "source_type": "DOJ公告，限于案卷转述与公告时点",
+    "excerpt": "forfeited, liquidated, and returned approximately $84,327.50",
+    "evidence": [
+      "据 DOJ 转述民事诉状，2024 年 10 月 Georgia 一居民报告其掌控地址出现未授权交易，估计失窃约 124,000 美元。联邦调查称追到大部分资产，发现涉及包括柬埔寨在内的境外行为人。",
+      "美国政府扣押部分追踪资产，经 Savannah 民事没收程序处置、变现，DOJ 确认约 84,327.50 美元净收益已经返还给受害者。",
+      "题内没有逐笔交易、估值时点和净额费用明细，也没有境外人员有罪判决。"
+    ],
+    "investigate": "这些材料支持何种金额和归属结论？差额归因失败时如何调整判断。",
+    "review": "给出一次从链上追踪到资金返还的逐级对账和最小验收。",
+    "anchors": [
+      "约124,000为案发估算，84,327.50为实际返还净额",
+      "不能把差额自动归因手续费或未找回余额，应查估值/数量/成交费/分配凭证",
+      "民事没收及已返还，与境外刑事责任、境外地址控制区别",
+      "核查交易时间、资产单位、变现及受害人收款，对差错处理有可核条件"
+    ]
+  },
+  {
+    "id": "A04",
+    "category": "AML与制裁",
+    "title": "KuCoin / Peken Global",
+    "url": "https://www.justice.gov/usao-sdny/pr/kucoin-pleads-guilty-unlicensed-money-transmission-charge-and-agrees-pay-penalties",
+    "locator": "SDNY DOJ 2025-01-27 认罪公告，U.S. customers、KYC、Peken 处理条款",
+    "source_type": "DOJ公告，限于案卷转述与公告时点",
+    "excerpt": "criminally forfeit $184.5 million",
+    "evidence": [
+      "DOJ 称 2017 年至 2024 年 3 月间 KuCoin 服务约 150 万位位于美国的注册用户、收取约 1.845 亿美元以上费用。经营主体至少到 2023 年 7 月尚未要求客户提供身份信息，监管指向美国注册和 AML 控制缺陷。",
+      "Peken 就经营无证汇款业务一项认罪，约定刑事没收 1.845 亿美元，另付约 1.129 亿美元刑事罚金；交易所承诺退出美国市场至少两年。",
+      "两位创始人各自另有约 270 万美元没收安排。DOJ 提到可疑交易和潜在犯罪收益范围，题内没有逐用户的犯罪认定或完整资金占比。"
+    ],
+    "investigate": "如何区分已认罪事项、被报道的控制缺陷和对客户资金的可疑判断？",
+    "review": "复盘美国业务暴露与控制失效，用一个可回放的法域覆盖测试核验整改。",
+    "anchors": [
+      "认罪对象为Peken、罪项仅无证汇款，定位美国业务时段",
+      "1.845亿没收和约1.129亿罚金分列，创始人各约270万另计",
+      "用户在美/费收入和可疑金额非某用户违法的证明",
+      "KYC和访问/支付地理分层、对照与明确何时撤销或上提"
+    ]
+  },
+  {
+    "id": "A05",
+    "category": "AML与制裁",
+    "title": "CoinList Markets OFAC 案",
+    "url": "https://ofac.treasury.gov/media/932406/download",
+    "locator": "OFAC 2023-12-13 执法公告，Apparent Violations、Penalty Factors 与 Remedial Measures",
+    "source_type": "OFAC执法公告",
+    "excerpt": "989 apparent violations",
+    "evidence": [
+      "OFAC 将 CLM 2020-04-19 至 2022-05-07 为通常居住在克里米亚的用户处理的 989 笔、价值 1,252,280 美元的交易列为表面违规。部分申请的国家字段与地址字段不能单独准确反映居地。",
+      "CLM 以 1,207,830 美元和解潜在民事责任。满足合规承诺的条件下其中 300,000 美元暂缓；另承诺补强控制投入 300,000 美元，作为部分履行。",
+      "监管公告列出按地区名称筛查、地址改进及 IP 地理限制等整改。题内未给全部地址与事后误拦截数据。"
+    ],
+    "investigate": "用哪些证据鉴别居住地错误与用户正常流动？限定目前法律与金额判断。",
+    "review": "复盘怎样回放国家、地区、地址和登录地冲突的筛查规则，分列和解金额几个口径。",
+    "anchors": [
+      "989笔/$1,252,280为表面违规交易价值，非民事罚金",
+      "$1,207,830和解额，30万暂缓与30万作为部分履行；不可额外相加",
+      "国家字段/IP和通常居住地不等同，应以多源和原法域时点核对",
+      "命中含克里米亚城市名的正例及非居住出差/无关同名负例，测漏报和误报"
+    ]
+  },
+  {
+    "id": "M04",
+    "category": "市场操纵",
+    "title": "Rainberry／TRX",
+    "url": "https://www.sec.gov/enforcement-litigation/litigation-releases/lr-26496",
+    "locator": "SEC LR-26496 与 LR-25676；SDNY 1:23-cv-02433，ECF 98",
+    "source_type": "SEC公告与法院签发终局民事判决",
+    "excerpt": "Rainberry shall pay a civil penalty in the amount of $ 10 million",
+    "evidence": [
+      "SEC 在 2023 年提出指控，称 2018 至 2019 年 TRX 在两个受共同控制的账户间发生超过 600,000 笔对敲，并称每日涉及约 450 万至 740 万枚 TRX。题内没有原始成交或受益所有权表。",
+      "2026-03-05 SEC 公告拟议和解。2026-03-09 联邦法院签发终局判决，Rainberry 按令支付 1,000 万美元民事罚款并受 §17(a)(3) 永久禁令。对和解之 Rainberry 指控，当事方不承认也不否认。",
+      "其余 Rainberry 请求与对另外三方的请求被有终局效力驳回。判决付款条件本身不证明钱款已经到账。"
+    ],
+    "investigate": "如何判定哪些是对敲指控、法院实际命令及仍未核证的事实？",
+    "review": "写出一套可移植的共同控制与订单对手核对办法，同时保留案件结局边界。",
+    "anchors": [
+      "600,000是被指控笔数，450–740万为每日TRX枚数",
+      "3月5拟议、3月9法院命令；1000万罚款对象仅Rainberry，未从该证据证明已缴",
+      "不承认不否认及其他请求撤回含义；不将个人当作刑事定罪",
+      "真实受益权变动、账户控制、逐笔唯一键和正常共享基础设施反例"
+    ],
+    "support": [
+      "https://www.courtlistener.com/docket/67071330/98/securities-and-exchange-commission-v-sun",
+      "https://www.sec.gov/enforcement-litigation/litigation-releases/lr-25676"
+    ]
+  },
+  {
+    "id": "M05",
+    "category": "市场操纵",
+    "title": "Gregg Smith 贵金属期货",
+    "url": "https://www.cftc.gov/media/12886/ENFSmithConsentOrder122225/download",
+    "locator": "N.D. Ill. 1:19-cv-06163，Doc. 121，2025-12-22，¶¶12、19、31 及处置部分",
+    "source_type": "联邦法院民事同意令",
+    "excerpt": "a relatively small resting order for precious metals futures",
+    "evidence": [
+      "联邦法院同意令记录的模式涉及贵金属期货。希望成交的真实挂单有时为冰山单；同期另一侧多个价格层出现拟成交前撤销的非冰山单。后者总量通常大于真实挂单的可见量。",
+      "同意令还记载了相关交易对话，并在结论中讨论下单时的撤销意图。就民事同意令而言，被告对诉状指控及事实法律结论不承认也不否认。",
+      "同意令有永久禁令等安排，并对该被告有终局效力地驳回第 II、III 项。题内没有全量订单、真实单隐藏量、正常撤单基线或跨市场完整记录。"
+    ],
+    "investigate": "怎样区分正常冰山报单与另一侧涉嫌诱骗的挂单？什么证据会让你撤销初判？",
+    "review": "复盘如何校验可见量、隐藏量和撤单意图，说明把指标用到加密盘口的范围。",
+    "anchors": [
+      "真实单可为冰山，大小比较仅相对可见部分；不能推算隐藏量",
+      "鉴别时序、同控制方向、撤单条件和交易对话；正常撤改单和风控取消是对照",
+      "同意令/不承认不否认与刑事有罪不混，II和III驳回",
+      "复盘分母、逐单生命周期和与加密规则的差异，反证触发降级"
+    ]
+  },
+  {
+    "id": "F04",
+    "category": "Fraud与账户安全",
+    "title": "Buchanan 账户失窃案",
+    "url": "https://www.justice.gov/usao-cdca/pr/british-national-sentenced-6-years-federal-prison-hacking-companies-and-stealing-least",
+    "locator": "CDCA DOJ 量刑公告 26-220，认罪协议、受害范围及 restitution hearing",
+    "source_type": "DOJ公告，限于案卷转述与公告时点",
+    "excerpt": "at least $11.6 million worth of virtual currency",
+    "evidence": [
+      "据 DOJ 转述认罪协议，2021 年 9 月至 2023 年 4 月，多家公司发生入侵，作案者使用所得数据识别并侵入部分个人虚拟币账户、钱包。受影响公司包括供应商与虚拟币公司。",
+      "公告称个人受害者虚拟币失窃总额至少 1,160 万美元。Buchanan 就电汇欺诈共谋及加重身份盗用认罪，获刑 72 个月。材料所述赔偿程序仍待举行听证。",
+      "题内没有每个用户的设备、身份验证或钱包流水，也没有确认哪家公司记录对应哪位受害者。"
+    ],
+    "investigate": "以防御调查视角，如何验证上游数据泄露与某一用户出金的关联，何时解除临时保护？",
+    "review": "复盘怎样用合法获取的记录验证关联，而不将供应商暴露直接定性为客户失窃。",
+    "anchors": [
+      "公司入侵、个人账户被接管、失窃三个事实链分层",
+      "至少1160万为全案失窃规模，判刑不等于已赔偿",
+      "公司数据暴露与每个用户出金需用时间/授权/账户记录匹配，保留独立原因",
+      "采取可逆保护并明确何时解除，迁移局限第三方数据与权限"
+    ]
+  },
+  {
+    "id": "F05",
+    "category": "Fraud与账户安全",
+    "title": "Block Bits Capital／Dillman",
+    "url": "https://www.justice.gov/usao-ndca/pr/founder-cryptocurrency-trading-fund-convicted-defrauding-investors",
+    "locator": "NDCA DOJ 2026-08-24 公告，jury verdict 与 Autotrader 部分",
+    "source_type": "DOJ公告，限于案卷转述与公告时点",
+    "excerpt": "this automated algorithm was not working",
+    "evidence": [
+      "据庭审证据，2017 年 6 月至 2018 年 8 月间被告等称自动化交易工具 Autotrader 已完成并能运作。Dillman 知道工具当时不能如宣传工作。",
+      "投资款被用于向关联人员付款及投机性外部项目。已发生亏损时投资者还收到了盈利陈述，影响超过 20 名投资者，金额近 100 万美元。",
+      "2026 年 8 月联邦陪审团裁定电汇欺诈与共谋罪成立。2026-12-08 听证为公告中日程，题内没有实际量刑、罚金或已追回金额。"
+    ],
+    "investigate": "如何区分软件表现差、投资风险和资金募集欺诈？最有力的证据对是什么？",
+    "review": "复盘怎样证实销售时点的技术能力、资金用途与实际投资结果。",
+    "anchors": [
+      "软件在推介时已知未能运作与投资亏损区分",
+      "投资款实际用途、投资者收到的陈述和出具时点须三方匹配",
+      "超过20人、近100万按公告范围；陪审团定罪与未来量刑/赔偿分开",
+      "历史版本回放、审计流水及当时对外披露，假阳性需对照诚实揭露的亏损"
+    ]
+  }
+]

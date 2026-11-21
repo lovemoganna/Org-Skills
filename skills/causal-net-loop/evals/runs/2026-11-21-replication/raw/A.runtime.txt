@@ -1,0 +1,6 @@
+UTC start: 2026-11-21T01:29:43Z
+UTC end: 2026-11-21T01:30:58Z
+Tools: local date/cat for UTC start and prompt read; in-memory JavaScript validation; local Python for writing answer and runtime record. No network.
+Errors: none
+Attempt count: 1
+Validation: all 8 case IDs present, exactly I and R per case, each at most 500 Unicode characters.
