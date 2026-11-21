@@ -57,7 +57,7 @@ Each JSON task includes id, goal, actions, acceptance and optionally required_sk
 
 ## Evidence, evaluation and promotion gate
 
-CI runs 19 tests plus two **distinct real local filesystem executions** (write-note and status-text transform), rechecks outputs, and uploads JSONL traces and reports as workflow artifacts. This proves sandbox file actions, not live business work or autonomous Skill execution.
+CI runs 21 tests plus two **distinct real local filesystem executions** (write-note and status-text transform), rechecks outputs, and uploads JSONL traces and reports as workflow artifacts. This proves sandbox file actions, not live business work or autonomous Skill execution.
 
 The frozen 12-task single/fixed/dynamic model study from the upgrade plan remains NOT_RUN until independent model workers and a blind evaluator are available. Record matched inputs, model/permissions, artifacts, independent scoring, costs and counterexamples. Do not turn contract PASS into a claimed improvement or score.
 
