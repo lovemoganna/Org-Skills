@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'skills/loop/router_v2/**'
+      - 'skills/skill-router/**'
       - '.github/workflows/skill-router-v2-candidate.yml'
   workflow_dispatch:
 permissions:
@@ -16,7 +17,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run deterministic and real-file tests
-        run: python3 skills/loop/router_v2/tests.py
+        run: |
+          python3 skills/loop/router_v2/tests.py
+          python3 skills/loop/router_v2/test_host_bridge.py
       - name: Execute two distinct local sandbox tasks and preserve receipts
         shell: bash
         run: |
@@ -26,6 +29,13 @@ jobs:
           OUT=/tmp/router-v2-artifacts
           mkdir -p "$OUT"/{case1,case2,blocked} "$RUNNER_TEMP"/{router-case1,router-case2,router-blocked}
           python3 "$ENGINE" discover --skills-root skills --query causal-net-loop > "$OUT/catalog.json"
+          python3 "$ENGINE" discover --skills-root skills --query skill-router > "$OUT/skill-router-catalog.json"
+          python3 skills/loop/router_v2/host_bridge.py init \
+            --plan "$BASE/host_demo.json" --skills-root skills \
+            --session "$OUT/host-protocol" \
+            --host-capabilities github.get_pr_info,github.fetch_file > "$OUT/host-init.json"
+          python3 skills/loop/router_v2/host_bridge.py next \
+            --session "$OUT/host-protocol" > "$OUT/host-next.json"
           python3 "$ENGINE" plan --task "$BASE/demo_write.json" > "$OUT/case1/plan.json"
           python3 "$ENGINE" run --task "$BASE/demo_write.json" \
             --workspace "$RUNNER_TEMP/router-case1" --run-dir "$OUT/case1/run" \
@@ -58,7 +68,11 @@ jobs:
           denied = json.loads((out / "blocked/result.json").read_text())
           assert denied["status"] == "BLOCKED", denied
           assert denied["reason"] == "WRITE_AUTHORIZATION_REQUIRED", denied
-          print("Two local-file executions passed; denied mutation blocked; independent model A/B NOT_RUN.")
+          host = json.loads((out / "host-next.json").read_text())
+          assert host["phase"] == "AWAITING_HOST_EXECUTION", host
+          assert host["status"] == "PLANNED_NOT_RUN", host
+          assert host["pending_request"]["executor_binding"] == "mcp__GitHub__get_pr_info"
+          print("Two local-file executions passed; denied mutation blocked; host protocol correctly stops before external tool; independent model A/B NOT_RUN.")
           PY
           cp "$RUNNER_TEMP/router-case1/cases/risk-note.md" "$OUT/case1/artifact.md"
           cp "$RUNNER_TEMP/router-case2/status.txt" "$OUT/case2/artifact.txt"
