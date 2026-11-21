@@ -1,0 +1,34 @@
+{
+  "id": "risk-note-write",
+  "goal": "Create a reviewable risk case note with no fabricated evidence",
+  "actions": [
+    {
+      "id": "write",
+      "operation": "write_text",
+      "path": "cases/risk-note.md",
+      "text": "# Risk case note\nObserved: alert was triggered.\nUnknown: actual counterparty relationship and fund source.\nNext action: inspect original order and transaction records.\nStatus: review required.\n"
+    },
+    {
+      "id": "check",
+      "operation": "assert_contains",
+      "path": "cases/risk-note.md",
+      "needle": "Unknown: actual counterparty relationship",
+      "depends_on": [
+        "write"
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "note_created",
+      "kind": "exists",
+      "path": "cases/risk-note.md"
+    },
+    {
+      "id": "unknown_preserved",
+      "kind": "contains",
+      "path": "cases/risk-note.md",
+      "value": "Unknown: actual counterparty relationship"
+    }
+  ]
+}
