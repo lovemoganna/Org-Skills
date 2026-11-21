@@ -55,6 +55,26 @@ Each JSON task includes id, goal, actions, acceptance and optionally required_sk
 - Existing failure-repair-v1: continues to own failure diagnosis with evidence gates. No model-based causal/keypoint steps are automatically executed here.
 - Do not add executable code to SKILL.md files or assume discovery grants permission. Add provider adapters only after tool/authorization contract testing.
 
+
+## Native host adapter (P0 candidate, not Work API integration)
+
+The thin natural-language host entrypoint is at [skills/skill-router/SKILL.md](../../skill-router/SKILL.md). When a ChatGPT/Work host is capable of reading that file, the **host model** interprets the user task, chooses existing Skills and actually calls its connected tools. The Python bridge is a deterministic step ledger; it has no model API client and no access to ChatGPT/Work's private runtime.
+
+Example (from repository root):
+
+    python3 skills/loop/router_v2/host_bridge.py init --plan skills/loop/router_v2/host_demo.json --skills-root skills --session /tmp/router-v2-host --host-capabilities github.get_pr_info,github.fetch_file
+    python3 skills/loop/router_v2/host_bridge.py next --session /tmp/router-v2-host
+
+The returned request is **not executed** by these commands. After the authorized host actually calls the named tool, it can record the response reference as a JSON object with step_id, request_sha256, status, receipt_ref and artifact_ref:
+
+    python3 skills/loop/router_v2/host_bridge.py record --session /tmp/router-v2-host --result /tmp/actual-host-result.json
+
+For a Skill step the host must actually apply that Skill to the evidence; merely selecting its name does not count as execution. The bridge only checks protocol consistency, not source authenticity. Steps are capped at six, forward dependencies are rejected, write capabilities require a separate authorization declaration, and any failed step halts the sequence. Tool types are an explicit, conservative GitHub allowlist; all other integrations need reviewed bindings.
+
+**Verified by CI:** 21 existing local-file/router tests, 18 new host protocol tests, two genuine GitHub Actions sandbox file runs, permission failure, and the repository's existing regression suite. Host protocol tests use **mocked receipts**; they cannot prove the model independently executed a Skill. The CI host demo deliberately stops at AWAITING_HOST_EXECUTION and does not forge a tool response.
+
+**Still missing for stable:** a supported, callable Work model/tool execution interface (none was provided to this Python process); actual independently checked multi-Skill end-to-end runs; frozen single/fixed/dynamic A/B. Do not imply that loading a SKILL.md automatically installs a Skill into a running ChatGPT environment.
+
 ## Evidence, evaluation and promotion gate
 
 CI runs 21 tests plus two **distinct real local filesystem executions** (write-note and status-text transform), rechecks outputs, and uploads JSONL traces and reports as workflow artifacts. This proves sandbox file actions, not live business work or autonomous Skill execution.
