@@ -71,7 +71,7 @@ The returned request is **not executed** by these commands. After the authorized
 
 For a Skill step the host must actually apply that Skill to the evidence; merely selecting its name does not count as execution. The bridge only checks protocol consistency, not source authenticity. Steps are capped at six, forward dependencies are rejected, write capabilities require a separate authorization declaration, and any failed step halts the sequence. Tool types are an explicit, conservative GitHub allowlist; all other integrations need reviewed bindings.
 
-**Verified by CI:** 21 existing local-file/router tests, 18 new host protocol tests, two genuine GitHub Actions sandbox file runs, permission failure, and the repository's existing regression suite. Host protocol tests use **mocked receipts**; they cannot prove the model independently executed a Skill. The CI host demo deliberately stops at AWAITING_HOST_EXECUTION and does not forge a tool response.
+**Verified by CI:** 21 existing local-file/router tests, 19 new host protocol tests, two genuine GitHub Actions sandbox file runs, permission failure, and the repository's existing regression suite. Host protocol returns RECEIPTS_RECORDED_UNVERIFIED, not COMPLETED. Host protocol tests use **mocked receipts**; they cannot prove the model independently executed a Skill. The CI host demo deliberately stops at AWAITING_HOST_EXECUTION and does not forge a tool response.
 
 **Still missing for stable:** a supported, callable Work model/tool execution interface (none was provided to this Python process); actual independently checked multi-Skill end-to-end runs; frozen single/fixed/dynamic A/B. Do not imply that loading a SKILL.md automatically installs a Skill into a running ChatGPT environment.
 
