@@ -20,7 +20,7 @@ jobs:
         run: |
           python3 skills/loop/router_v2/tests.py
           python3 skills/loop/router_v2/test_host_bridge.py
-          node --check skills/loop/router_v2/work_host.js
+          node skills/loop/router_v2/test_work_host.js
       - name: Execute two distinct local sandbox tasks and preserve receipts
         shell: bash
         run: |

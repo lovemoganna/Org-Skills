@@ -1,0 +1,2 @@
+{"at":"2026-11-21T03:47:12.457741+00:00","event":"INIT","plan_sha256":"042369a4bf6556404a6ccd709f508a120a3950c9655ae6e539c6ae1cbfb58fab","steps":1}
+{"artifact_ref":"card-skill-output.json","at":"2026-11-21T03:47:16.226248+00:00","attempt":1,"error":null,"event":"HOST_RESULT_RECORDED","receipt_ref":"card-skill-output.json","request_sha256":"0439b0586925df86c3722f24a5832f54b3bdf97f707c30bd2573a7ce2d639973","status":"SUCCESS","step_id":"card"}

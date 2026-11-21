@@ -6,6 +6,11 @@ function workHost(tools, checkout) {
     "github.fetch_file": "mcp__codex_apps__github_fetch_file",
     "github.fetch_workflow_run_jobs": "mcp__codex_apps__github_fetch_workflow_run_jobs",
   };
+  const validResult = {
+    "github.get_pr_info": (data, args) => data.number === args.pr_number && typeof data.url === "string",
+    "github.fetch_file": (data) => typeof data.content === "string" && /^[0-9a-f]{40}$/.test(data.sha),
+    "github.fetch_workflow_run_jobs": (data) => Array.isArray(data.jobs),
+  };
   const quote = (value) => "'" + value.replaceAll("'", "'\\''") + "'";
   const shell = (cmd) => tools.exec_command({ cmd, workdir: checkout, max_output_tokens: 24000 });
   const save = async (path, value) => {
@@ -45,10 +50,11 @@ function workHost(tools, checkout) {
       let error;
       try {
         response = await tools[name](request.args);
-        if (!response?.structuredContent || response.isError ||
-            response.structuredContent.error || response.structuredContent.error_code) {
-          error = response?.structuredContent?.error ?? response?.content ??
-            "Connector did not return structured content";
+        const data = response?.structuredContent;
+        if (!data || response.isError || data.error || data.error_code) {
+          error = data?.error ?? response?.content ?? "Connector did not return structured content";
+        } else if (!validResult[request.target](data, request.args)) {
+          error = "Connector returned incomplete data for " + request.target;
         }
       } catch (failure) {
         error = String(failure);
@@ -71,6 +77,23 @@ function workHost(tools, checkout) {
     if (pending?.kind !== "skill" || pending.step_id !== request.step_id ||
         pending.request_sha256 !== request.request_sha256 || pending.target !== request.target) {
       throw new Error("Skill output does not match the pending request");
+    }
+    if (!source || !/^[0-9a-f]{40}$/.test(source.ref) ||
+        !/^[0-9a-f]{40}$/.test(source.blob) ||
+        !/^skills\/(?:[a-zA-Z0-9_-]+\/)+SKILL\.md$/.test(source.path)) {
+      throw new Error("Skill output requires its versioned source path, commit and blob");
+    }
+    const sessionFile = await shell("cat -- " + quote(session + "/session.json"));
+    const sourceFile = quote(source.path);
+    const hashes = await shell("git hash-object -- " + sourceFile + " && git rev-parse " +
+      quote(source.ref + ":" + source.path) + " && sha256sum -- " + sourceFile);
+    if (sessionFile.exit_code !== 0 || hashes.exit_code !== 0) {
+      throw new Error("Cannot confirm the Skill source used for this session");
+    }
+    const expected = JSON.parse(sessionFile.output).skill_source_hashes[request.target];
+    const [blob, pinnedBlob, sha256] = hashes.output.trim().split(/\s+/);
+    if (blob !== source.blob || blob !== pinnedBlob || sha256 !== expected) {
+      throw new Error("Skill source does not match the cataloged bytes");
     }
     const filename = request.step_id + "-skill-output.json";
     await save(session + "/" + filename, {

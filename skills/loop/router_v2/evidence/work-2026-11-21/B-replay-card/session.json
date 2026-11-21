@@ -1,0 +1,57 @@
+{
+  "plan": {
+    "id": "B-replay-card",
+    "request": "在第一阶段找到可复用的验收覆盖缺口时，把它提炼成可直接使用的发布卡片。",
+    "goal": "Give a reusable evidence-linked release gate for N07",
+    "mode": "adaptive_continuation",
+    "route_decision": "Inspect the completed causal output first. It identified an actionable coverage handoff with observable evidence. Apply keypoint-loop to convert it into a release gate. If the diagnosis had not identified a reusable mechanism, stop after the causal report.",
+    "prior_artifact": {
+      "path": "B-replay-diagnosis/causes-skill-output.json",
+      "sha256": "1e1508bc2a20320dbd5a75f4b9d894b93a325e10ea6fd53b895d1114db3414af"
+    },
+    "steps": [
+      {
+        "id": "card",
+        "kind": "skill",
+        "target": "keypoint-loop",
+        "args": {
+          "from": "B-replay-diagnosis/causes-skill-output.json",
+          "sha256": "1e1508bc2a20320dbd5a75f4b9d894b93a325e10ea6fd53b895d1114db3414af"
+        }
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "card",
+        "criteria": "Three separately actionable checks, falsifiable release rule, evidence and boundaries",
+        "evidence_from": [
+          "card"
+        ]
+      }
+    ]
+  },
+  "plan_sha256": "042369a4bf6556404a6ccd709f508a120a3950c9655ae6e539c6ae1cbfb58fab",
+  "skill_source_hashes": {
+    "keypoint-loop": "43f656f69a09a6aa777e27722751f4a9ebaca7efac81b6b61f8c9acb3dc707d3"
+  },
+  "host_declared_capabilities": [
+    "github.fetch_file",
+    "github.fetch_workflow_run_jobs",
+    "github.get_pr_info"
+  ],
+  "host_write_authorization_declared": false,
+  "read_retries": {},
+  "results": {
+    "card": {
+      "step_id": "card",
+      "request_sha256": "0439b0586925df86c3722f24a5832f54b3bdf97f707c30bd2573a7ce2d639973",
+      "status": "SUCCESS",
+      "receipt_ref": "card-skill-output.json",
+      "artifact_ref": "card-skill-output.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:47:16.225740+00:00"
+    }
+  },
+  "started_at": "2026-11-21T03:47:12.457255+00:00"
+}
