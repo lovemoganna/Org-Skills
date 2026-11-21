@@ -24,6 +24,9 @@ def stamp():
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
+def task_fingerprint(t):
+    return sha(json.dumps(t, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+
 def discover(root):
     """Never execute SKILL.md. Metadata is evidence of existence, not tool binding."""
     root = root.resolve(strict=True)
@@ -236,7 +239,8 @@ def run(t, workspace, run_dir, authorize_write=False, catalog=None):
         except (ValueError, OSError, UnicodeError) as exc:
             state, reason = "FAILED", f"CHECK_ERROR: {exc}"
     log(state, failure=reason)
-    report = {"task_id": t["id"], "goal": t["goal"], "status": state,
+    report = {"task_id": t["id"], "task_sha256": task_fingerprint(t),
+              "goal": t["goal"], "status": state,
               "reason": reason, "mode": route["mode"], "plan": route,
               "receipts": receipts, "acceptance": verdicts,
               "goal_check": "NOT_INDEPENDENTLY_VERIFIED",
@@ -251,9 +255,18 @@ def recheck(t, root, report):
     validate_task(t)
     if t["id"] != report.get("task_id"):
         raise ValueError("task/report mismatch")
+    if report.get("status") != "COMPLETED_UNVERIFIED":
+        return {"task_id": t["id"], "status": "FAIL_LOCAL_RECHECK",
+                "reason": "RUN_NOT_COMPLETED", "independence": "self-check only"}
+    if report.get("task_sha256") != task_fingerprint(t):
+        raise ValueError("task manifest differs from executed version")
+    rs = report.get("receipts", [])
+    if [r.get("action_id") for r in rs] != [a["id"] for a in t["actions"]]:
+        return {"task_id": t["id"], "status": "FAIL_LOCAL_RECHECK",
+                "reason": "MISSING_OR_OUT_OF_ORDER_RECEIPTS",
+                "independence": "self-check only"}
     root = root.resolve(strict=True)
     verdicts = [check(root, c) for c in t["acceptance"]]
-    rs = report.get("receipts", [])
     last = {r["path"]: i for i, r in enumerate(rs)}
     integrity = []
     for i, r in enumerate(rs):
