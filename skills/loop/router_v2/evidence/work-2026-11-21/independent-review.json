@@ -1,0 +1,736 @@
+{
+  "scope": "Independent review of saved Work artifacts, source comparisons and local reproduction. No external service contacted by this reviewer.",
+  "execution_provenance": "The audited Work host produced the original connector and model artifacts. Local checks independently assess contents and consistency, not a signed API transcript, fresh GitHub retrieval, independent model execution, or external event authentication.",
+  "external_commands_executed": [],
+  "local_commands": [
+    {
+      "argv": [
+        "python3",
+        "/tmp/router-v2-check-live.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "role": "audit orchestration"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "cat-file",
+        "-t",
+        "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 128
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "rev-parse",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "show",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/evals/failure-repair-v1/route.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "rev-parse",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/evals/failure-repair-v1/route.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "show",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop-engineering-meta/SKILL.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "next",
+        "--session",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/A"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "show",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/causal-net-loop/SKILL.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "show",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/keypoint-loop/SKILL.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "next",
+        "--session",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/B"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "show",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/router_v2/README.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "rev-parse",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/router_v2/README.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "next",
+        "--session",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "rev-parse",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/router_v2/host_bridge.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "archive",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+        "skills"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "init",
+        "--plan",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/A-taskspec.json",
+        "--session",
+        "/tmp/router-review-baseline-69_o7v1e/baseline",
+        "--skills-root",
+        "skills",
+        "--host-capabilities",
+        "github.fetch_file,github.fetch_workflow_run_jobs,github.get_pr_info"
+      ],
+      "cwd": "/tmp/router-review-baseline-69_o7v1e/checkout",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "next",
+        "--session",
+        "/tmp/router-review-baseline-69_o7v1e/baseline"
+      ],
+      "cwd": "/tmp/router-review-baseline-69_o7v1e/checkout",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "cat-file",
+        "-e",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/router_v2/README.missing.md"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 128
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/tests.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/test_host_bridge.py"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/evals/failure-repair-v1/route.py",
+        "--self-test"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "skills/loop/router_v2/work_host.js"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/scratch/7b0baee69f08/checkout",
+        "cat-file",
+        "-e",
+        "06c23284dd275cf424eeecce6fd0b6faaee298e6:skills/loop/router_v2/work_host.js"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 128
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "init",
+        "--plan",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C-taskspec.json",
+        "--session",
+        "/tmp/router-review-retry-7pwn5ncw/retry",
+        "--skills-root",
+        "skills",
+        "--host-capabilities",
+        "github.fetch_file"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "record",
+        "--session",
+        "/tmp/router-review-retry-7pwn5ncw/retry",
+        "--result",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C/read-1-report.json"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 1
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "retry-read",
+        "--session",
+        "/tmp/router-review-retry-7pwn5ncw/retry",
+        "--step",
+        "read",
+        "--path",
+        "skills/loop/router_v2/README.md",
+        "--reason",
+        "Local protocol replay"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "record",
+        "--session",
+        "/tmp/router-review-retry-7pwn5ncw/retry",
+        "--result",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C/read-1-report.json"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 2
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "init",
+        "--plan",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C-taskspec.json",
+        "--session",
+        "/tmp/router-review-retry-h2ajahwd/retry",
+        "--skills-root",
+        "skills",
+        "--host-capabilities",
+        "github.fetch_file"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "record",
+        "--session",
+        "/tmp/router-review-retry-h2ajahwd/retry",
+        "--result",
+        "/workspace/scratch/7b0baee69f08/repo/skills/loop/router_v2/evidence/work-2026-11-21/C/read-1-report.json"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 1
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "retry-read",
+        "--session",
+        "/tmp/router-review-retry-h2ajahwd/retry",
+        "--step",
+        "read",
+        "--path",
+        "skills/loop/router_v2/README.md",
+        "--reason",
+        "Local protocol replay"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "skills/loop/router_v2/host_bridge.py",
+        "retry-read",
+        "--session",
+        "/tmp/router-review-retry-h2ajahwd/retry",
+        "--step",
+        "read",
+        "--path",
+        "skills/loop/router_v2/README.md",
+        "--reason",
+        "Duplicate retry"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08/repo",
+      "exit_code": 2
+    },
+    {
+      "argv": [
+        "node",
+        "/tmp/router-v2-check-live.js"
+      ],
+      "cwd": "/workspace/scratch/7b0baee69f08",
+      "exit_code": 0
+    }
+  ],
+  "tasks": {
+    "A": {
+      "mode": "single_skill",
+      "plan_sha256": "0fc71edfdff238c37b918468c43fbeaa4e04aa11d203fc1859415cb200deff6a",
+      "requests": [
+        {
+          "attempt": 1,
+          "step": "lifecycle",
+          "status": "SUCCESS",
+          "request_sha256": "6a765fe76ea11737b077ce310996ec9a9360f7779b5dea778ccdfa23c6aa5031",
+          "target": "github.fetch_file",
+          "receipt_ref": "lifecycle-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/AgentComponent",
+            "path": "systems/metaloop/lifecycle.py",
+            "ref": "main"
+          },
+          "computed_git_blob_sha1": "2bed77e69dc98b3d53cf8c9a8fb6ad57f5184b8b",
+          "reported_git_blob_sha1": "2bed77e69dc98b3d53cf8c9a8fb6ad57f5184b8b",
+          "utf8_size_bytes": 13710
+        },
+        {
+          "attempt": 1,
+          "step": "planner",
+          "status": "SUCCESS",
+          "request_sha256": "79eeeca22edb6c0e5a468146c0a72cc494774dbfe4b6f370a334aefff1766279",
+          "target": "github.fetch_file",
+          "receipt_ref": "planner-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/loop/evals/failure-repair-v1/route.py",
+            "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+          },
+          "computed_git_blob_sha1": "fd94f4ef6742c648229e9276f76ad4e76b7e8df3",
+          "reported_git_blob_sha1": "fd94f4ef6742c648229e9276f76ad4e76b7e8df3",
+          "utf8_size_bytes": 15847,
+          "matches_local_git_commit": true
+        },
+        {
+          "attempt": 1,
+          "step": "diagnosis",
+          "status": "SUCCESS",
+          "request_sha256": "2502b5878aa33e70de6c67cef3ecfefad6fe0eae0b0cf98f6e59cfa1f5441bee",
+          "target": "loop-engineering-meta",
+          "receipt_ref": "diagnosis-skill-output.json"
+        }
+      ],
+      "skill_sources": [
+        {
+          "target": "loop-engineering-meta",
+          "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+          "path": "skills/loop-engineering-meta/SKILL.md",
+          "blob": "421cc91c587380635fd23cff3cf25f74376cc94e",
+          "sha256": "0ee8b38f9cbb2d7b9da28d49db18f4f828d4b0fd054bdee640010bd9812005e2"
+        }
+      ],
+      "checks": [
+        {
+          "check": "cause",
+          "verdict": "PASS_SOURCE_BOUNDARY_ONLY",
+          "evidence": [
+            "lifecycle-1-receipt.json lines 162–167 and 192–203 show planner-only probe selection and PLANNED_NOT_RUN; lines 230–238 compose a report, not a runner.",
+            "planner-1-receipt.json lines 73–90 and 128–137 define planned coverage and execution/verification nodes, without executing them.",
+            "Pinned original bridge reproduced init/next yielding identical pending lifecycle read with zero results; that is intended ledger behavior without a driving host."
+          ]
+        },
+        {
+          "check": "historical_scheduler_failure",
+          "verdict": "UNVERIFIED",
+          "evidence": [
+            "lifecycle.py came from mutable main; its bytes and blob match but no historical commit, workflow configuration, scheduler invocation, runtime capability, run log or chronological failure trace was retained.",
+            "Evidence supports identifying the explicit source-level handoff and reproducing the candidate bridge baseline. It does not establish which boundary failed first in historical deployment."
+          ]
+        },
+        {
+          "check": "repair",
+          "verdict": "PASS_HOST_MEDIATED_CANDIDATE",
+          "evidence": [
+            "Candidate persisted the two read receipts, handed off to one host-model diagnosis and preserved output. The original baseline remained at the first tool request. Candidate tests reran locally.",
+            "work_host.js is absent from pinned baseline commit. Python alone still only issues and records requests. Candidate changes do not demonstrate AgentComponent scheduling work or independently authenticated automation."
+          ]
+        },
+        {
+          "check": "skill_necessity",
+          "verdict": "REASONABLE_SELECTION_NO_AB",
+          "evidence": [
+            "One loop-engineering-meta analysis aligns with the traced failure/repair task. There was no proven need to insert separate causal or keypoint Skills; their omission avoids ceremony. No mode comparison in these runs isolates the Skill contribution."
+          ]
+        }
+      ],
+      "writes_declared": false,
+      "candidate_status": "RECEIPTS_RECORDED_UNVERIFIED",
+      "baseline_replay": {
+        "bridge_blob": "c8dcdce26379174f4eac0159db3e8927193d147c",
+        "status": "PLANNED_NOT_RUN",
+        "phase": "AWAITING_HOST_EXECUTION",
+        "step": "lifecycle",
+        "tool_results": 0
+      }
+    },
+    "B": {
+      "mode": "dynamic_chain",
+      "plan_sha256": "fad739e69c87d016b42a86f294789c61dadfc29f1b39510b21097c596e6cffb5",
+      "requests": [
+        {
+          "attempt": 1,
+          "step": "review",
+          "status": "SUCCESS",
+          "request_sha256": "8f0098936f3f9dfe36d13239ecfaf4273852c2d64fc45940c0d1c3ea93518398",
+          "target": "github.fetch_file",
+          "receipt_ref": "review-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/REPORT.md",
+            "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+          },
+          "computed_git_blob_sha1": "8e105a80844fa1b017f430083bf7a8e4e44b52ce",
+          "reported_git_blob_sha1": "8e105a80844fa1b017f430083bf7a8e4e44b52ce",
+          "utf8_size_bytes": 4983
+        },
+        {
+          "attempt": 1,
+          "step": "baseline",
+          "status": "SUCCESS",
+          "request_sha256": "b3be2d3b56140abe8aea34c215a8ab7f52e7f03b1849255f0071ed6954eb0a3c",
+          "target": "github.fetch_file",
+          "receipt_ref": "baseline-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/baseline/N07.json",
+            "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+          },
+          "computed_git_blob_sha1": "7c149e5c7a6d28915bbda0cce22b1ce1c7e95bf8",
+          "reported_git_blob_sha1": "7c149e5c7a6d28915bbda0cce22b1ce1c7e95bf8",
+          "utf8_size_bytes": 1053
+        },
+        {
+          "attempt": 1,
+          "step": "candidate",
+          "status": "SUCCESS",
+          "request_sha256": "94623f2468cc14d1b9db481b3d3918c468daed24d0eab8e0d2542aca1702d86c",
+          "target": "github.fetch_file",
+          "receipt_ref": "candidate-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/candidate/N07.json",
+            "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+          },
+          "computed_git_blob_sha1": "adbdc5297ebdab3ad52f435b72f2801bc3a70bc0",
+          "reported_git_blob_sha1": "adbdc5297ebdab3ad52f435b72f2801bc3a70bc0",
+          "utf8_size_bytes": 1008
+        },
+        {
+          "attempt": 1,
+          "step": "causes",
+          "status": "SUCCESS",
+          "request_sha256": "2f368e20498c25cd7947a9a7d12aa612c38a8ff7b145b261636a903bdde78bba",
+          "target": "causal-net-loop",
+          "receipt_ref": "causes-skill-output.json"
+        },
+        {
+          "attempt": 1,
+          "step": "card",
+          "status": "SUCCESS",
+          "request_sha256": "a91ccbb5779cab62e84a4a6717e41282d9a13fad48200a0e1d655d21be1a3ce3",
+          "target": "keypoint-loop",
+          "receipt_ref": "card-skill-output.json"
+        }
+      ],
+      "skill_sources": [
+        {
+          "target": "causal-net-loop",
+          "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+          "path": "skills/causal-net-loop/SKILL.md",
+          "blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+          "sha256": "1d60c198baad6cb5cd7b02e8dd48619084559cb657f302e342f0c9983c07840c"
+        },
+        {
+          "target": "keypoint-loop",
+          "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+          "path": "skills/keypoint-loop/SKILL.md",
+          "blob": "c1594cf7eb3234fe75cd9e84c11fcaf1fc5e2940",
+          "sha256": "43f656f69a09a6aa777e27722751f4a9ebaca7efac81b6b61f8c9acb3dc707d3"
+        }
+      ],
+      "checks": [
+        {
+          "check": "compare",
+          "verdict": "PASS_ANSWER_COVERAGE",
+          "evidence": [
+            "review-1-receipt.json reports N07 baseline 100, candidate 80, largest decline, and the same omission.",
+            "Baseline: two CSV failures reproduced via existing export and original field read-back, allowed and denied authorization outcomes, timezone preserves the same instant. Candidate: CSV input/version/path/output replay, equivalence diagnosis, round-trip/row/column assertions and pre/post check; lists authorization and timezone as separate failure classes without giving executable checks for either.",
+            "Both restrict blanket rewrites. The 20-point loss is report-level evidence; the text coverage difference is independently observable, but point-by-point scoring was not reproduced."
+          ]
+        },
+        {
+          "check": "cause_limits",
+          "verdict": "PASS_WITH_LANGUAGE_CAVEAT",
+          "evidence": [
+            "Plausible observable mechanism is narrowing of executable gates to CSV. The artifact phrase '把…当成了' can read as attributing intent. Only the textual coverage and its alignment with the report are established.",
+            "Blind REPORT.md summarizes anonymous grading; raw rubric/locked scores/original judge output were not supplied. Pinned ad7ac6d commit object is absent locally. No score reproduction, production incident or causal effect of Skill text proved."
+          ]
+        },
+        {
+          "check": "card",
+          "verdict": "PASS_CANDIDATE",
+          "evidence": [
+            "Card contains three independently evaluated gate rows, evidence to preserve, pass/fail logic and hold if tests or evidence are missing. No production validation claimed.",
+            "Still missing reproducible pre-fix failure/post-fix success for the original histories, the baseline's follow-up recurrence observation and independent transfer to another case. Timezone and permission fixtures require product contract, expected timezone and authorized test context."
+          ]
+        },
+        {
+          "check": "dynamic_chain_necessity",
+          "verdict": "PLAUSIBLE_NOT_ESTABLISHED",
+          "evidence": [
+            "Evidence reconciliation and reusable gate creation are distinct outputs and give roles to causal-net-loop and keypoint-loop. The answer coverage can be resolved by direct source comparison and both outputs could be generated in one host pass.",
+            "The TaskSpec contains no explicit complexity signals or rerouting event; its fixed topology and current-model handoff substantiate a preplanned dependent chain, not a contrastive proof of dynamic Skill selection. B is compatible with dynamic construction by the original host, but the mode label alone cannot establish it."
+          ]
+        }
+      ],
+      "writes_declared": false,
+      "candidate_status": "RECEIPTS_RECORDED_UNVERIFIED",
+      "original_answer_sha256": {
+        "baseline": "0d2851d082d5e2175414fa0aeb10bd389fa5c9a4e9fcec970274e11009f640b1",
+        "candidate": "236c41652859cf55d7dc8720ee9b4e32c24c98628c01ee4ebad016b2f8b8012b"
+      }
+    },
+    "C": {
+      "mode": "direct",
+      "plan_sha256": "791c106ffdb8e196773cecc64fddd8966e64108e456a2cc88c46668e407cce47",
+      "requests": [
+        {
+          "attempt": 1,
+          "step": "read",
+          "status": "FAILED",
+          "request_sha256": "16374bfe2894d84353ebf11b0b961ee5b9edf2966790ac7516cc539684e307d5",
+          "target": "github.fetch_file",
+          "receipt_ref": "read-1-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/loop/router_v2/README.missing.md",
+            "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+          },
+          "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/contents#get-repository-content\",\"status\":\"404\"}"
+        },
+        {
+          "attempt": 2,
+          "step": "read",
+          "status": "SUCCESS",
+          "request_sha256": "d8bdf415a242c6df49c866eac1a7114cc832403752def9f2bdb01ec01c77a93d",
+          "target": "github.fetch_file",
+          "receipt_ref": "read-2-receipt.json",
+          "args": {
+            "repository_full_name": "lovemoganna/Org-Skills",
+            "path": "skills/loop/router_v2/README.md",
+            "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+          },
+          "computed_git_blob_sha1": "50baab758cafc35d9201c32a0829763080f1956a",
+          "reported_git_blob_sha1": "50baab758cafc35d9201c32a0829763080f1956a",
+          "utf8_size_bytes": 7951,
+          "matches_local_git_commit": true
+        }
+      ],
+      "skill_sources": [],
+      "checks": [
+        {
+          "check": "recovery",
+          "verdict": "PASS_CORRECTED_READ",
+          "evidence": [
+            "Host-provided first receipt is structured NOT_FOUND/404 with a provider error and no artifact; local Git tree independently corroborates that the injected path is absent.",
+            "Retry ledger preserves failure and hashes. Retry changed only path, retaining repository/ref/target. Exactly one retry succeeded. Recovered UTF-8 bytes match calculated and reported Git blob SHA and the pinned README in local Git."
+          ]
+        },
+        {
+          "check": "skill_necessity",
+          "verdict": "PASS_DIRECT",
+          "evidence": [
+            "No Skill invoked. The user requested one specific file and a controlled one-path recovery."
+          ]
+        },
+        {
+          "check": "local_retry_protocol",
+          "verdict": "PASS",
+          "evidence": [
+            "Replayed 404 in temporary session; candidate rejected stale response and duplicate retry commands."
+          ]
+        }
+      ],
+      "writes_declared": false,
+      "candidate_status": "RECEIPTS_RECORDED_UNVERIFIED",
+      "arg_diff": {
+        "path": [
+          "skills/loop/router_v2/README.missing.md",
+          "skills/loop/router_v2/README.md"
+        ]
+      }
+    }
+  },
+  "local_git_object_checks": {
+    "B_pinned_commit_available": false
+  },
+  "regression": {
+    "python3 skills/loop/router_v2/tests.py": {
+      "current_exit_code": 0,
+      "local_test_count": 21
+    },
+    "python3 skills/loop/router_v2/test_host_bridge.py": {
+      "current_exit_code": 0,
+      "local_test_count": 23
+    },
+    "python3 skills/loop/evals/failure-repair-v1/route.py --self-test": {
+      "current_exit_code": 0,
+      "local_test_count": 14
+    },
+    "node --check skills/loop/router_v2/work_host.js": {
+      "current_exit_code": 0,
+      "local_test_count": null
+    },
+    "scope": "Same candidate files available locally. 58 deterministic tests and JavaScript syntax passed. JS syntax and stored receipts do not by themselves validate a connector response or test a scheduler."
+  },
+  "cross_cutting_checks": [
+    {
+      "check": "authorization",
+      "verdict": "PASS_READ_ONLY_OBSERVED",
+      "evidence": [
+        "The recorded plans and requests dispatch only GitHub fetch_file, with false write authorization declaration and reader-only JS mapping. Separate local regression write tests use temporary sandbox files. No real remote write is evidenced.",
+        "Host authorization declaration, original repository/branch scope and whether remote publication happened are different claims. These artifact sessions cannot authorize or authenticate PR-write actions."
+      ]
+    },
+    {
+      "check": "false_success",
+      "verdict": "NO_VERIFIED_STATUS_WITH_STEP_LEVEL_GAP",
+      "evidence": [
+        "All three candidate statuses independently recomputed as RECEIPTS_RECORDED_UNVERIFIED; acceptance coverage says HOST_REPORTED and never evaluates criteria.",
+        "Local JS counterexample demonstrated that a connector {structuredContent:{}} is reported as SUCCESS and finishSkill accepts generic text with no source. Real retained artifacts passed stronger checks in this review, so these are acceptance/provenance gaps rather than proof the recorded runs falsely succeeded."
+      ]
+    },
+    {
+      "check": "evidence_independence",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "Independent evidence assessment, semantic comparison, blob computation, local pinned Git checks and deterministic regressions were performed here. No external authenticated retriever or independent Work model runner was used.",
+        "A.lifecycle and all B source blobs can be independently recomputed from bytes, but their mapping to GitHub refs cannot be independently validated from this checkout. A.planner/C.README and all three Skill sources match actual local pinned tree objects. Report and model source metadata remain host-originated."
+      ]
+    }
+  ],
+  "summary": "A passes the narrow Work handoff, source boundary and local regression criteria; historical scheduler execution and earliest failure remain unverified. B establishes the answer coverage gap with a reusable candidate card, with original blind scoring and transfer unverified. C passes the exact controlled read-recovery and content checks. Candidate integration evidence does not establish autonomous execution, remote write authority, promotion or production readiness."
+}
