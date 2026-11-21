@@ -1,0 +1,32 @@
+{
+  "id": "C",
+  "request": "从候选提交读取 Router README。先用错误路径制造一次可逆缺失，定位失败后只纠正路径，再核验原始内容。",
+  "goal": "Recover from a real missing GitHub source while retaining both tool receipts",
+  "mode": "direct",
+  "constraints": [
+    "Same GitHub repository and pinned ref",
+    "Read only",
+    "Retry once"
+  ],
+  "steps": [
+    {
+      "id": "read",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "path": "skills/loop/router_v2/README.missing.md",
+        "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "recovery",
+      "criteria": "Preserve not-found receipt and verify recovered README blob",
+      "evidence_from": [
+        "read"
+      ]
+    }
+  ]
+}

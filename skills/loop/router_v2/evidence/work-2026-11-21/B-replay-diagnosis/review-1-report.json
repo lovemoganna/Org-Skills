@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "review-1-receipt.json",
+  "artifact_ref": "review-1-receipt.json",
+  "error": null,
+  "step_id": "review",
+  "request_sha256": "8f0098936f3f9dfe36d13239ecfaf4273852c2d64fc45940c0d1c3ea93518398"
+}

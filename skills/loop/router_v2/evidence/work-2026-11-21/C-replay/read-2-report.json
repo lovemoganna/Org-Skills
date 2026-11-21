@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "read-2-receipt.json",
+  "artifact_ref": "read-2-receipt.json",
+  "error": null,
+  "step_id": "read",
+  "request_sha256": "0633593ab3e56b97b54da1f8e31347b329ea51e0084760feafda04b7f8a86598"
+}

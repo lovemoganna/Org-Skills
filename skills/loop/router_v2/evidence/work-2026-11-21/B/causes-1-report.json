@@ -1,0 +1,7 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "causes-skill-output.json",
+  "artifact_ref": "causes-skill-output.json",
+  "step_id": "causes",
+  "request_sha256": "2f368e20498c25cd7947a9a7d12aa612c38a8ff7b145b261636a903bdde78bba"
+}
