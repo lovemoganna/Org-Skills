@@ -1,0 +1,42 @@
+{
+  "repo_commit": "aab429beef36ab173c0ce4bf7870bb7522fe1bee",
+  "skill_files": {
+    "causal-net-loop": {
+      "path": "skills/causal-net-loop/SKILL.md",
+      "version": "No explicit version; use Git blob",
+      "blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c"
+    },
+    "keypoint-loop": {
+      "path": "skills/keypoint-loop/SKILL.md",
+      "version": "No explicit version; use Git blob",
+      "blob": "c1594cf7eb3234fe75cd9e84c11fcaf1fc5e2940"
+    }
+  },
+  "history_scan": {
+    "retrieved_confirmed_utc": "2026-11-21T01:02:53Z",
+    "term_scan": [
+      "Trade Propel",
+      "Tradepropel",
+      "Omokri",
+      "3:25-cv-1770",
+      "Paxos",
+      "Paxful",
+      "Exodus Movement",
+      "CLS Global",
+      "NexFundAI",
+      "Hydrogen Technology",
+      "Lebental",
+      "Kenneth Carter",
+      "Kimionte Bennett",
+      "Cred LLC",
+      "Moonwalkers",
+      "Qakbot",
+      "2:25-cv-04631",
+      "Gallyamov"
+    ],
+    "hit": "0 case-entity matches for final 12 across relevant tracked history and queried Sheet ranges",
+    "excluded": "SafeMoon: sheet S093/A0093; related DOJ market cases and overlap candidates screened"
+  },
+  "runtime": "Work native subagent per arm, no parent-turn fork, override unspecified; same inherited runtime parameters, exact deployed model ID and token visibility not provided by spawn interface; no external model API",
+  "reuse_scope": "Each arm can work only on its own prompt and write its own outputs; each arm solves all 12 cases in one session. Separate blinded graders each cover six cases."
+}

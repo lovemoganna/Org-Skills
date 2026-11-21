@@ -1,0 +1,38 @@
+{
+  "thread_ids": {
+    "A": "/root/exec_p",
+    "B": "/root/exec_q",
+    "C": "/root/exec_r",
+    "D": "/root/exec_s"
+  },
+  "launch": "fork_turns=none, same request structure, same inherited Work runtime; no override",
+  "exact_deployed_model_id": null,
+  "token_count": null,
+  "billing": null,
+  "runs": {
+    "A": {
+      "attempts": 1,
+      "raw_sha256": "09b6e2e900ec02165e648c608812aaa3c5faae11bc1b99f4d9cd33b568a57dd9",
+      "prompt_sha256": "7cbe9321efced3c3cc7116e409a3ce74d56db1225039d430b3f5bff366d8d39a",
+      "runtime": "UTC start: 2026-11-21T01:06:34Z\nUTC end: 2026-11-21T01:08:08Z\nActions: recorded UTC start and read only prompts/A.txt; checked all generated sections for the 500-Unicode-character limit in memory; wrote raw/A.json and raw/A.runtime.txt.\nErrors: none.\n"
+    },
+    "B": {
+      "attempts": 1,
+      "raw_sha256": "855b686ccc3d241c16c37dd92c2ca04e570ec6d32ab1f0e77869f36623790f9a",
+      "prompt_sha256": "31b4f43bd00baa08ff94ea00b44d02247f55baf98c6ad985d47d40927a08bfbd",
+      "runtime": "UTC start: 2026-11-21T01:06:40Z\nUTC end: 2026-11-21T01:08:16Z\nTool actions: recorded UTC start with date and read prompts/B.txt with cat. Validated answer keys and Unicode character limits in memory with Python, then wrote raw/B.json and this runtime record.\nErrors: none.\n"
+    },
+    "C": {
+      "attempts": 1,
+      "raw_sha256": "e75057d6873069aa0f8d1a9bb100a72204d6dd4f44b5866b8111153946a87435",
+      "prompt_sha256": "dcffa80d603bec5f912bbc883c8d18e7ef9f544ecaf3647d3a2383de3be2a7a9",
+      "runtime": "UTC start: 2026-11-21T01:06:46.858455+00:00\nAction: read prompts/C.txt\nAction: validated JSON schema and 500-character bounds in memory, then wrote raw/C.json\nErrors: none\nUTC end: 2026-11-21T01:08:22.987752+00:00\n"
+    },
+    "D": {
+      "attempts": 1,
+      "raw_sha256": "e995385230ecdca5fee0f70885d137151c2841a062951651ee2436fb00976038",
+      "prompt_sha256": "201367ab7648264f9f75db02b1f3681393f6bbe15121c6edcb766621f218f8a3",
+      "runtime": "UTC start: 2026-11-21T01:06:50Z\nUTC end: 2026-11-21T01:08:37Z\nRead prompts/D.txt.\nWrote raw/D.json after validating all 12 case IDs and both response lengths.\nErrors: none\n"
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "ranges": {
+    "分类字典": {
+      "range": "'分类字典'!A1:Z90",
+      "rows": 18,
+      "last_id": "来源类型"
+    },
+    "来源索引": {
+      "range": "'来源索引'!A1:Z90",
+      "rows": 90,
+      "last_id": "S089"
+    },
+    "来源索引2": {
+      "range": "'来源索引'!A91:Z260",
+      "rows": 12,
+      "last_id": "S101"
+    },
+    "语料原子": {
+      "range": "'语料原子'!A1:Z90",
+      "rows": 90,
+      "last_id": "A0089"
+    },
+    "语料原子2": {
+      "range": "'语料原子'!A91:Z260",
+      "rows": 12,
+      "last_id": "A0101"
+    },
+    "回归测试": {
+      "range": "'回归测试'!A1:Z90",
+      "rows": 58,
+      "last_id": "T0057"
+    },
+    "运行日志": {
+      "range": "'运行日志'!A1:Z90",
+      "rows": 90,
+      "last_id": "RUN-20261102T010428420Z"
+    },
+    "运行日志2": {
+      "range": "'运行日志'!A91:Z260",
+      "rows": 162,
+      "last_id": "RUN-20261108T170351164Z"
+    },
+    "logs": {
+      "range": "'运行日志'!A261:I500",
+      "rows": 133,
+      "last_id": "RUN-20261115T015625Z"
+    }
+  },
+  "counts": {
+    "test_statuses": {
+      "待回归": 56,
+      "BLOCKED": 1
+    },
+    "teaching_labeled": 57,
+    "regression_note_present": 57,
+    "log_rows": 379
+  },
+  "blocked_rows": [
+    [
+      "T0015",
+      "策略效果归因：峰值回落与前趋势功效 A/B（教学重构）",
+      "[2026-11-06T19:57:00Z 教学复核，非独立A/B] T0015/A0033,A0034：原题峰值日A800/B760、次日A500/B480、30日中位数A400/B390、上线前4天趋势检验p=0.18。A下降300(-37.5%)、B下降280(-36.8421%)；变化差-20条，不能视为策略因果效应；相对中位数次日A+100(+25%)、B+90(+23.08%)。扩展虚构账户告警、设备、资金及RFI用于5题教学，不属于Sheet原始记录。质检强调峰值选样均值回归、共同"
+    ]
+  ],
+  "revision_note": "Google Drive 返回首批 20 个修订记录，并将修改者标为同一账户；自动化可通过同一账号写入，依据修订身份无法判断某单元格是否手工编辑。运行日志 INIT 明称人工筛选种子。原表无覆盖性写入。",
+  "searches": {
+    "chain": "search_6a047a5dd321ce61b46161b98e8f373a",
+    "aml": "search_d87b92aabeb51bc3d0b428285841e400",
+    "market": "search_8414ea74434cc90bb6e3601e680dff51",
+    "fraud": "search_476101672364cb37507802be0e8d8866",
+    "s1": "search_73eae6a6f93c8a3b9cc07b99e5cff74f",
+    "s2": "search_c92d337c44b57ff5837329ee9d20b8b4",
+    "s3": "search_4ae66e67b6903c42117b0a138fba85e9"
+  },
+  "fetches": {
+    "fetchchain": "extract_697eadf345b7da56fd8c16e337a5ddf1",
+    "fetchaml": "extract_5117673bec8797cadafa21062d091899",
+    "fetchmarket": "extract_8f905e37ed5c1c5ae536dc8e21676052",
+    "fetchfraud": "extract_b501e7548ee5e506288a1f4d2ad6f805",
+    "s1f": "extract_684dc1f218ea33bf689bf34186d6cd9d",
+    "s2f": "extract_ee53b210ba673781cc2b72f0341badf1",
+    "chainAlt": "extract_f9dd81b2bfe95ed298bf746b3264b3b2"
+  }
+}
