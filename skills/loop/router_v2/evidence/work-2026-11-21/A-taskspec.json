@@ -1,0 +1,63 @@
+{
+  "id": "A",
+  "request": "调查 MetaLoop 为什么曾只生成计划。在候选入口修复执行缺口，运行回归并保留证据。",
+  "goal": "Trace plan-only behavior to its execution boundary and verify the candidate Work handoff",
+  "mode": "single_skill",
+  "constraints": [
+    "Read historical sources",
+    "Fix only PR #118",
+    "Use Work tools"
+  ],
+  "steps": [
+    {
+      "id": "lifecycle",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/AgentComponent",
+        "path": "systems/metaloop/lifecycle.py",
+        "ref": "main"
+      }
+    },
+    {
+      "id": "planner",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "path": "skills/loop/evals/failure-repair-v1/route.py",
+        "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+      }
+    },
+    {
+      "id": "diagnosis",
+      "kind": "skill",
+      "target": "loop-engineering-meta",
+      "depends_on": [
+        "lifecycle",
+        "planner"
+      ],
+      "args": {
+        "question": "Identify the earliest observed failure, distinguish scheduler history from the Work bridge, and validate only the candidate repair against real calls and regression tests."
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "cause",
+      "criteria": "Ground the historical boundary in real source",
+      "evidence_from": [
+        "lifecycle",
+        "planner",
+        "diagnosis"
+      ]
+    },
+    {
+      "id": "repair",
+      "criteria": "Demonstrate a candidate execution and run its regression",
+      "evidence_from": [
+        "diagnosis"
+      ]
+    }
+  ]
+}
