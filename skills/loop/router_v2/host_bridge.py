@@ -127,6 +127,8 @@ def next_step(state):
     results = state["results"]
     for step in state["plan"]["steps"]:
         if step["id"] in results:
+            if results[step["id"]]["status"] == "BLOCKED":
+                return None, "HALTED_ON_STEP_BLOCK"
             if results[step["id"]]["status"] != "SUCCESS":
                 return None, "HALTED_ON_STEP_FAILURE"
             continue
@@ -161,7 +163,7 @@ def status(state):
         coverage = {c["id"]: {"status": "HOST_REPORTED",
                                "receipt_refs": [results[s]["receipt_ref"] for s in c["evidence_from"]]}
                     for c in state["plan"]["acceptance"]}
-        result.update(status="COMPLETED_UNVERIFIED", acceptance=coverage)
+        result.update(status="RECEIPTS_RECORDED_UNVERIFIED", acceptance=coverage)
     elif phase == "AWAITING_HOST_EXECUTION":
         result["status"] = "RUNNING" if state["results"] else "PLANNED_NOT_RUN"
     else:
@@ -226,7 +228,7 @@ def main():
         else:
             value = record(args.session, read_json(args.result))
         print(json.dumps(value, ensure_ascii=False, indent=2))
-        return 0 if value["status"] in ("RUNNING", "PLANNED_NOT_RUN", "COMPLETED_UNVERIFIED") else 1
+        return 0 if value["status"] in ("RUNNING", "PLANNED_NOT_RUN", "RECEIPTS_RECORDED_UNVERIFIED") else 1
     except (ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "ERROR", "error": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2
