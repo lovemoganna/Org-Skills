@@ -49,8 +49,115 @@ test('bounded read retry preserves first failure evidence and resource identity'
  const h=legionHost({mcp__GitHub__fetch_file:async a=>{n++;return a.path==='correct'?{result:{content:'ok'}}:{result:{error:'not found'}}}});
  const failed=await h.advance(h.init(plan));assert.equal(failed.summary.status,'FAILED');
  await assert.rejects(()=>h.retryRead(failed.state,'s',{repository_full_name:'evil/repo'},'change repo'));
+ await assert.rejects(()=>h.retryRead(failed.state,'s',{repo_full_name:'other/repo'},'add repo alias'));
  const success=await h.retryRead(failed.state,'s',{path:'correct'},'wrong file path');
  assert.equal(success.summary.status,'COMPLETED_UNVERIFIED');assert.equal(n,2);
  assert.equal(success.state.retry_history.s.status,'FAILED');
  await assert.rejects(()=>h.retryRead(success.state,'s',{path:'other'},'again'));
+});
+
+test('Work connector names resolve for a three-provider plan', async () => {
+ const h = legionHost({
+  mcp__codex_apps__github_fetch_file: async () => ({ structuredContent: { content: 'skill' } }),
+  mcp__codex_apps__google_drive_get_spreadsheet_range: async () => ({ structuredContent: { values: [[1]] } }),
+  mcp__codex_apps__parallel_web_search: async () => ({ structuredContent: { results: [{ url: 'https://example.com' }] } }),
+ });
+ const plan = base();
+ plan.steps[0].target = 'github.fetch_file';
+ plan.steps[1].target = 'sheets.range';
+ plan.steps.splice(2, 0, { id: 'web', kind: 'tool', target: 'parallel.search', args: {}, depends_on: [] });
+ plan.steps[3].depends_on.push('web');
+ const run = await h.advance(h.init(plan));
+ assert.equal(run.summary.completed, 3);
+ assert.equal(run.summary.status, 'AWAITING_MODEL');
+});
+
+test('write receipt loss requires reconciliation after reload', async () => {
+ const plan = {
+  id: 'interrupted-write', goal: 'write a test file',
+  steps: [
+   { id: 'write', kind: 'tool', target: 'github.update_file', args: { branch: 'test/recovery' }, depends_on: [] },
+   { id: 'readback', kind: 'tool', target: 'github.fetch_file', args: {}, depends_on: ['write'] },
+  ],
+  acceptance: [{ id: 'proof', evidence_from: ['write', 'readback'] }],
+ };
+ let writes = 0;
+ let reads = 0;
+ let saved;
+ const tools = {
+  mcp__codex_apps__github_update_file: async () => {
+   writes++;
+   return { structuredContent: { commit_sha: 'abc' } };
+  },
+  mcp__codex_apps__github_fetch_file: async () => {
+   reads++;
+   return { structuredContent: { content: 'test' } };
+  },
+ };
+ const h = legionHost(tools, {
+  authorizeWrite: async () => true,
+  checkpoint: async state => {
+   if (writes) throw Error('checkpoint store interrupted');
+   saved = JSON.stringify(state);
+  },
+ });
+ await assert.rejects(() => h.advance(h.init(plan)), /checkpoint store interrupted/);
+ const resumedHost = legionHost(tools, { authorizeWrite: async () => true });
+ const resumed = await resumedHost.advance(JSON.parse(saved));
+ assert.equal(resumed.summary.status, 'BLOCKED');
+ assert.equal(resumed.state.results.write.error, 'WRITE_OUTCOME_UNKNOWN');
+ assert.equal(writes, 1);
+ assert.equal(reads, 0);
+ await assert.rejects(() => resumedHost.retryRead(resumed.state, 'write', {}, 'test retry'));
+ await assert.rejects(() => resumedHost.reconcileWrite(resumed.state), /trusted write verifier/);
+ const wrongProofHost = legionHost(tools, {
+  verifyWrite: async () => ({ confirmed: true, receipt: { commit_sha: 'abc' } }),
+ });
+ assert.equal((await wrongProofHost.reconcileWrite(resumed.state)).summary.status, 'BLOCKED');
+ const recoveredHost = legionHost(tools, {
+  verifyWrite: async request => {
+   assert.deepEqual(request, { id: 'write', target: 'github.update_file', args: { branch: 'test/recovery' } });
+   return { confirmed: true, receipt: { commit_sha: 'abc' }, evidence: { readback: 'abc' } };
+  },
+ });
+ const final = await recoveredHost.reconcileWrite(resumed.state);
+ assert.equal(final.summary.status, 'COMPLETED_UNVERIFIED');
+ assert.equal(final.state.results.write.reconciliation.prior.error, 'WRITE_OUTCOME_UNKNOWN');
+ assert.equal(final.state.results.write.reconciliation.evidence.readback, 'abc');
+ assert.equal(resumed.state.status, 'BLOCKED');
+ assert.equal(writes, 1);
+ assert.equal(reads, 1);
+ await assert.rejects(() => recoveredHost.reconcileWrite(final.state), /no uncertain write/);
+});
+
+test('approval errors fail closed and record a checkpoint', async () => {
+ const plan = {
+  id: 'approval-error', goal: 'write a test file',
+  steps: [{ id: 'write', kind: 'tool', target: 'github.update_file', args: {}, depends_on: [] }],
+  acceptance: [{ id: 'proof', evidence_from: ['write'] }],
+ };
+ const h = legionHost({ mcp__codex_apps__github_update_file: async () => assert.fail('unauthorized write') }, {
+  authorizeWrite: async () => { throw Error('approval unavailable'); },
+ });
+ const run = await h.advance(h.init(plan));
+ assert.equal(run.summary.status, 'BLOCKED');
+ assert.equal(run.state.results.write.error, 'WRITE_AUTHORIZATION_UNAVAILABLE');
+ assert.equal(run.state.write_in_flight, undefined);
+ await assert.rejects(() => h.reconcileWrite(run.state), /no uncertain write/);
+});
+
+test('provider response loss retains the failure and needs verification', async () => {
+ const plan = {
+  id: 'provider-response-loss', goal: 'write a test file',
+  steps: [{ id: 'write', kind: 'tool', target: 'github.update_file', args: {}, depends_on: [] }],
+  acceptance: [{ id: 'proof', evidence_from: ['write'] }],
+ };
+ const h = legionHost({ mcp__codex_apps__github_update_file: async () => { throw Error('response timeout'); } }, {
+  authorizeWrite: async () => true,
+  verifyWrite: async () => ({ confirmed: false }),
+ });
+ const run = await h.advance(h.init(plan));
+ assert.equal(run.summary.status, 'BLOCKED');
+ assert.match(run.state.results.write.prior.error, /response timeout/);
+ assert.equal((await h.reconcileWrite(run.state)).summary.status, 'BLOCKED');
 });

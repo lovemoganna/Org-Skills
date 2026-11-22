@@ -1,20 +1,20 @@
 /* Legion candidate: native-host tool orchestration. No LLM API and no blanket permission.
- * Evaluate this file in Work code mode and call legionHost(tools, {checkpoint, authorizeWrite}).
+ * Evaluate in Work code mode with trusted checkpoint, authorizeWrite, and verifyWrite callbacks.
  * The Work model supplies Plan and completes native Skill steps; this code does not invoke a model.
  */
 function legionHost(tools, options = {}) {
   const MAX_STEPS = 12;
   const MAX_PARALLEL = 3;
   const BUILTIN_REGISTRY = {
-    "github.get_repo": { names: ["mcp__GitHub__get_repo"], effect: "read", check: d => !!d?.repository_full_name },
+    "github.get_repo": { names: ["mcp__GitHub__get_repo", "mcp__codex_apps__github_get_repo"], effect: "read", check: d => !!(d?.repository_full_name || d?.full_name) },
     "github.fetch_file": { names: ["mcp__GitHub__fetch_file", "mcp__codex_apps__github_fetch_file"], effect: "read", check: d => typeof d?.content === "string" },
     "github.get_pr_info": { names: ["mcp__GitHub__get_pr_info", "mcp__codex_apps__github_get_pr_info"], effect: "read", check: d => !!(d?.number || d?.pr_number) },
-    "github.create_file": { names: ["mcp__GitHub__create_file"], effect: "write", check: d => typeof d?.commit_sha === "string" },
-    "github.update_file": { names: ["mcp__GitHub__update_file"], effect: "write", check: d => typeof d?.commit_sha === "string" },
-    "sheets.metadata": { names: ["mcp__Google_Drive__get_spreadsheet_metadata"], effect: "read", check: d => typeof d?.spreadsheetId === "string" },
-    "sheets.range": { names: ["mcp__Google_Drive__get_spreadsheet_range"], effect: "read", check: d => Array.isArray(d?.values) },
-    "sheets.batch_update": { names: ["mcp__Google_Drive__batch_update_spreadsheet"], effect: "write", check: d => !!(d && typeof d === "object" && (d.spreadsheetId || d.replies)) },
-    "parallel.search": { names: ["mcp__Parallel__web_search"], effect: "read", check: d => Array.isArray(d?.results) },
+    "github.create_file": { names: ["mcp__GitHub__create_file", "mcp__codex_apps__github_create_file"], effect: "write", check: d => typeof d?.commit_sha === "string" },
+    "github.update_file": { names: ["mcp__GitHub__update_file", "mcp__codex_apps__github_update_file"], effect: "write", check: d => typeof d?.commit_sha === "string" },
+    "sheets.metadata": { names: ["mcp__Google_Drive__get_spreadsheet_metadata", "mcp__codex_apps__google_drive_get_spreadsheet_metadata"], effect: "read", check: d => typeof d?.spreadsheetId === "string" },
+    "sheets.range": { names: ["mcp__Google_Drive__get_spreadsheet_range", "mcp__codex_apps__google_drive_get_spreadsheet_range"], effect: "read", check: d => Array.isArray(d?.values) },
+    "sheets.batch_update": { names: ["mcp__Google_Drive__batch_update_spreadsheet", "mcp__codex_apps__google_drive_batch_update_spreadsheet"], effect: "write", check: d => !!(d && typeof d === "object" && (d.spreadsheetId || d.replies)) },
+    "parallel.search": { names: ["mcp__Parallel__web_search", "mcp__codex_apps__parallel_web_search"], effect: "read", check: d => Array.isArray(d?.results) },
   };
   // Only the trusted host may inject reviewed adapters; never use Plan/Skill text as a registry.
   const extra = options.approvedAdapters ?? {};
@@ -35,7 +35,7 @@ function legionHost(tools, options = {}) {
     if (!Array.isArray(plan.acceptance) || !plan.acceptance.length) throw Error("acceptance evidence required");
     const ids = new Set();
     for (const step of plan.steps) {
-      if (!step || typeof step.id !== "string" || !/^[\w-]{1,80}$/.test(step.id) || ids.has(step.id)) throw Error("invalid/duplicate step id");
+      if (!step || typeof step.id !== "string" || !/^[\w-]{1,80}$/.test(step.id) || Object.hasOwn(Object.prototype, step.id) || ids.has(step.id)) throw Error("invalid/duplicate step id");
       if (!["tool", "skill"].includes(step.kind) || typeof step.target !== "string" || !step.target || !step.args || typeof step.args !== "object" || Array.isArray(step.args)) throw Error("invalid step");
       if (!Array.isArray(step.depends_on) || step.depends_on.some(id => !ids.has(id)) || new Set(step.depends_on).size !== step.depends_on.length) throw Error("invalid dependency order");
       if (step.kind === "tool" && !known(step.target)) throw Error("tool not allowlisted: " + step.target);
@@ -63,13 +63,21 @@ function legionHost(tools, options = {}) {
     return { task_id: state.plan.id, status: state.status, completed: success, total, acceptance, trust: state.trust, failed: Object.values(state.results).filter(r => r.status !== "SUCCESS").map(r => r.id), pending_model: state.pending_model ?? [] };
   }
   async function checkpoint(state) { if (typeof options.checkpoint === "function") await options.checkpoint(snapshot(state)); }
-  async function perform(step) {
+  const writeRequest = step => ({ id: step.id, target: step.target, args: snapshot(step.args) });
+  async function perform(step, beforeWrite) {
     const conf = REGISTRY[step.target], name = resolve(step.target);
     if (!name) return receipt(step, "BLOCKED", { error: "CAPABILITY_UNAVAILABLE" });
     if (conf.effect === "write") {
       // Approval must be given by trusted host, never inferred from task text or JSON.
-      const approved = typeof options.authorizeWrite === "function" ? await options.authorizeWrite({ id: step.id, target: step.target, args: snapshot(step.args) }) : false;
+      let approved = false;
+      try {
+        approved = typeof options.authorizeWrite === "function" &&
+          await options.authorizeWrite(writeRequest(step));
+      } catch {
+        return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_UNAVAILABLE" });
+      }
       if (approved !== true) return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_REQUIRED" });
+      await beforeWrite();
     }
     try {
       const raw = await tools[name](snapshot(step.args));
@@ -78,10 +86,27 @@ function legionHost(tools, options = {}) {
       return receipt(step, "SUCCESS", { provider: name, raw });
     } catch (err) { return receipt(step, "FAILED", { error: String(err), provider: name }); }
   }
+  function pendingWrite(state) {
+    const step = state.plan.steps.find(s => s.id === state.write_in_flight);
+    if (!step || step.kind !== "tool" || REGISTRY[step.target].effect !== "write" ||
+        !step.depends_on.every(id => state.results[id]?.status === "SUCCESS")) throw Error("invalid pending write");
+    return step;
+  }
+  async function blockUncertainWrite(state, step, prior) {
+    state.results[step.id] = receipt(step, "BLOCKED", { error: "WRITE_OUTCOME_UNKNOWN", ...(prior && { prior }) });
+    state.trace.push({ event: "WRITE_RECONCILIATION_REQUIRED", step: step.id, status: "BLOCKED" });
+    state.status = "BLOCKED";
+    state.pending_model = [];
+    await checkpoint(state);
+    return { state, summary: summary(state) };
+  }
   async function advance(state) {
     if (!state || state.version !== 1) throw Error("invalid legion state");
     validate(state.plan);
     if (["FAILED", "BLOCKED", "COMPLETED_UNVERIFIED"].includes(state.status)) return { state, summary: summary(state) };
+    if (state.write_in_flight) {
+      return blockUncertainWrite(state, pendingWrite(state));
+    }
     while (true) {
       const next = ready(state);
       if (!next.length) {
@@ -90,22 +115,29 @@ function legionHost(tools, options = {}) {
         await checkpoint(state);
         return { state, summary: summary(state) };
       }
-      const toolSteps = next.filter(s => s.kind === "tool").slice(0, MAX_PARALLEL);
+      const readyTools = next.filter(s => s.kind === "tool");
+      const reads = readyTools.filter(s => REGISTRY[s.target].effect === "read");
+      const toolSteps = (reads.length ? reads.slice(0, MAX_PARALLEL) : readyTools.slice(0, 1));
       if (toolSteps.length) {
-        // Independent tool calls run concurrently; result storage is serialized to avoid lost updates.
-        const responses = await Promise.all(toolSteps.map(perform));
+        const responses = await Promise.all(toolSteps.map(step => perform(step, async () => {
+          state.write_in_flight = step.id;
+          await checkpoint(state);
+        })));
         for (const r of responses) {
           state.results[r.id] = r;
           state.trace.push({ event: "EXECUTED", step: r.id, status: r.status, provider: r.provider ?? null });
-          await checkpoint(state);
         }
-        const halted = responses.find(r => r.status !== "SUCCESS");
+        if (state.write_in_flight && responses[0].status === "FAILED") {
+          return blockUncertainWrite(state, toolSteps[0], responses[0]);
+        }
+        delete state.write_in_flight;
+        const halted = responses.find(r => r.status === "FAILED") ?? responses.find(r => r.status === "BLOCKED");
         if (halted) {
           state.status = halted.status === "BLOCKED" ? "BLOCKED" : "FAILED";
           state.pending_model = [];
-          await checkpoint(state);
-          return { state, summary: summary(state) };
         }
+        await checkpoint(state);
+        if (halted) return { state, summary: summary(state) };
         continue;
       }
       const model = next.filter(s => s.kind === "skill");
@@ -114,6 +146,30 @@ function legionHost(tools, options = {}) {
       await checkpoint(state);
       return { state, summary: summary(state) };
     }
+  }
+  async function reconcileWrite(state) {
+    if (!state || state.version !== 1 || !state.write_in_flight) throw Error("no uncertain write to reconcile");
+    validate(state.plan);
+    const step = pendingWrite(state);
+    const prior = state.results[step.id];
+    if (state.status !== "BLOCKED" || prior?.error !== "WRITE_OUTCOME_UNKNOWN") throw Error("advance the interrupted checkpoint before reconciliation");
+    if (typeof options.verifyWrite !== "function") throw Error("trusted write verifier required");
+
+    const proof = await options.verifyWrite(writeRequest(step));
+    const observed = proof?.receipt;
+    if (proof?.confirmed !== true || !proof.evidence || typeof proof.evidence !== "object" ||
+        !Object.keys(proof.evidence).length || observed?.error || !REGISTRY[step.target].check(observed)) {
+      return { state, summary: summary(state) };
+    }
+    const resumed = snapshot(state);
+    resumed.results[step.id] = receipt(step, "SUCCESS", {
+      reconciliation: snapshot({ receipt: observed, evidence: proof.evidence, prior }),
+    });
+    resumed.trace.push({ event: "WRITE_RECONCILED", step: step.id, status: "SUCCESS" });
+    delete resumed.write_in_flight;
+    resumed.status = "RUNNING";
+    await checkpoint(resumed);
+    return advance(resumed);
   }
   async function finishSkill(state, id, output, source) {
     if (state.status !== "AWAITING_MODEL" || !state.pending_model?.some(s => s.id === id)) throw Error("skill step is not pending");
@@ -127,7 +183,7 @@ function legionHost(tools, options = {}) {
     return advance(state);
   }
   async function retryRead(state, id, correctedArgs, reason) {
-    if (!state || !["FAILED", "BLOCKED"].includes(state.status)) throw Error("retry requires failed or blocked state");
+    if (!state || state.write_in_flight || !["FAILED", "BLOCKED"].includes(state.status)) throw Error("retry requires failed or blocked state without an uncertain write");
     const step = state.plan.steps.find(s => s.id === id);
     const prior = state.results[id];
     if (!step || step.kind !== "tool" || REGISTRY[step.target].effect !== "read" ||
@@ -135,8 +191,8 @@ function legionHost(tools, options = {}) {
     if (!reason || typeof reason !== "string" || !reason.trim() ||
         !correctedArgs || typeof correctedArgs !== "object" || Array.isArray(correctedArgs)) throw Error("retry requires reason and corrected args object");
     const nextArgs = { ...step.args, ...snapshot(correctedArgs) };
-    for (const key of ["repository_full_name", "repository_id", "spreadsheet_id", "spreadsheet_url"]) {
-      if (key in step.args && nextArgs[key] !== step.args[key]) throw Error("retry cannot change resource identity: " + key);
+    for (const key of ["repository_full_name", "repo_full_name", "repository_id", "repository_url", "spreadsheet_id", "spreadsheet_url"]) {
+      if (nextArgs[key] !== step.args[key]) throw Error("retry cannot change resource identity: " + key);
     }
     state.retry_counts = { ...(state.retry_counts ?? {}), [id]: 1 };
     state.retry_history = { ...(state.retry_history ?? {}), [id]: prior };
@@ -147,6 +203,6 @@ function legionHost(tools, options = {}) {
     await checkpoint(state);
     return advance(state);
   }
-  return { init, advance, retryRead, finishSkill, capabilities, summary };
+  return { init, advance, retryRead, reconcileWrite, finishSkill, capabilities, summary };
 }
 if (typeof module !== "undefined") module.exports = { legionHost };
