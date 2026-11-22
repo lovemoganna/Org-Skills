@@ -5,6 +5,8 @@ on:
     paths:
       - 'skills/loop/router_v2/legion_host.js'
       - 'skills/loop/router_v2/tests/test_legion.js'
+      - 'skills/loop/router_v2/lease_fenced_host.js'
+      - 'skills/loop/router_v2/tests/test_lease_fenced_host.js'
       - 'skills/loop/router_v2/LEGION.md'
       - '.github/workflows/legion-contract.yml'
   workflow_dispatch:
@@ -25,5 +27,7 @@ jobs:
           python-version: '3.11'
       - name: Legion candidate mock provider contracts
         run: node --test skills/loop/router_v2/tests/test_legion.js
+      - name: T27-T29 durable lease, fencing and fault injection
+        run: node --test skills/loop/router_v2/tests/test_lease_fenced_host.js
       - name: Router V2 backward compatibility
         run: python3 skills/loop/router_v2/tests.py

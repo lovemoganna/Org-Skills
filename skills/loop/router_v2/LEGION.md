@@ -68,3 +68,31 @@ const first = await h.advance(h.init(p));
 - 原有回归：\`python3 skills/loop/router_v2/tests.py\`，确保 V2 稳定版没有被修改。
 - 真正的跨工具 Work 端到端、独立复核、定时运行目前**未验证**，不得将模拟器单测视为成功部署。
 - 只在 feature 分支提交候选，不覆盖 main。回滚：关闭 Legion 入口，继续使用原 \`work_host.js\` 和现有 V2。
+
+## T18 竞态最小修复：写入端原子性安全门禁（候选）
+
+T18 证明 authorizeWrite 成功和 provider commit 之间存在 TOCTOU 窗口：旧执行者可以持过期授权继续追加写入。**锁和 checkpoint 均不能替代目标存储写入时的原子约束。**
+
+此候选默认阻断不具备可识别写入端原子保证的操作，报 `BLOCKED / SINK_ATOMIC_WRITE_REQUIRED`；实际支持的狭义路径：
+- `github.create_file` 使用稳定、确定性的唯一文件路径，目标路径已存在时 provider 拒绝重复创建；在未知回执时仍必须独立回读内容。
+- `github.update_file` 必须带实际文件 `sha` 作为版本前提；该 API 的并发语义需要在独立 GitHub 实测验证，不能凭静态门禁宣布 exactly-once。
+- `sheets.batch_update` 只允许**同一 batch** 首先 `addSheet`（明确唯一 title 和 sheetId），其余操作限于对新建 sheet 的 `updateCells`；普通 `appendCells`、覆盖已有 sheet、混合目标批次即使已有授权也被阻断。
+- 可信宿主的 `approvedAdapters` 若声明 `sinkAtomic:true`，必须先独立审查该适配器的实际 provider 原子提交/幂等保证。这个标记本身只是宿主配置声明，不构成真实保证。任务 Plan 里的 `sinkAtomic` 字段没有效力。
+
+限制：本补丁是一项**安全门禁，不是通用分布式 fencing 或自动接管机制**。无原子保证时宁可 BLOCKED；旧任务中曾允许的非幂等直接写操作会在此候选上受阻。验证必须包括 T18 重现、T19 正例、崩溃/ACK 丢失、稳定版回归及真实隔离 provider 回读，不合并 main，不宣称生产稳定。
+
+
+## T27–T30：可信宿主 CAS 租约与单账本 Fencing（候选，不覆盖原版）
+
+新增 \`skills/loop/router_v2/lease_fenced_host.js\`，导出 \`leaseFencedHost(store,{clock,leaseMs,maxAttempts})\` 和 \`githubLeaseStore(tools,{repository,branch,prefix})\`。**这是宿主可选组件，并没有自动接入所有现有 Legion 工作流。**
+
+约束与执行逻辑：
+1. 租约、持有者、递增的 \`epoch\` 和“账本内业务效果”均存于同一个由可信宿主提供的 CAS 资源。持久化 read/CAS 必须保证版本比较与写入在存储端原子发生；\`read\` 错误不得猜成空记录。
+2. \`claim(task,owner)\` 在未过期时返回 \`BUSY\`，过期后通过 CAS 原子增加 epoch 并移交。持有者 ID 必须是可信宿主生成的每执行实例唯一标识；不能从任务文本自报身份。
+3. \`renew\` 和 \`commit\` 同时检查 owner、epoch、leaseUntil，并将效果在**同一份版本条件更新**中提交；旧执行者不能仅凭之前的授权写入。冲突后重新读取最多五次（默认三次）；提供商回执不明时返回 \`WRITE_OUTCOME_UNKNOWN\`，不能自动重放外部效果。
+4. \`operationId\` 作为可查重键，\`ALREADY_COMMITTED\` 不再发生重复账本效果，payload 不一致时返回 \`OPERATION_PAYLOAD_CONFLICT\`。
+5. 跨 Google Sheets 等**另一个**存储时，GitHub CAS 租约不能原子保护 Sheets 追加。必须由 Sheets 自身实施可复核的唯一业务操作（隔离测试用 \`addSheet + updateCells\` 同批原子操作）；在 ACK 丢失时先只读回查，再登记账本。此流程不是跨系统分布式事务，未实现无补偿窗口的 exactly-once。
+
+T27/T28 在隔离 GitHub 测试分支通过受控时间推进、持久化切换与旧版本 CAS 冲突。T29 通过 11 条故障注入/状态机测试（实际 Node 22 CI 结果另核），T30 在隔离 Sheets 工作簿产生一个唯一操作，读回结果 11，随后 GitHub 账本登记且同 operationId 重放查重。
+
+**未通过/未覆盖：** 真实墙钟驱动的自动唤醒与无人值守接管、跨账号/跨设备长期运行、跨 GitHub/Sheets 事务原子性、所有 provider 的条件更新语义、长期压力与时钟漂移、权限生命周期。此模块不能把 Legion 整体从候选晋升为稳定。若无法证明目标存储支持原子幂等/条件写入，继续 fail closed。
