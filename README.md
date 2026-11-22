@@ -94,6 +94,7 @@
 | `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
 | `skill-router` | 按任务选择 Skill，在 Work 内执行 GitHub 只读调用并核验回执 | `skills/skill-router/SKILL.md` | V2.0.0 · Stable for Work GitHub reads |
+| `skill-router/Legion Mode` | 通用跨工具任务军团（候选）：GitHub/Sheets/Parallel 路由、并行执行、模型交接、授权门禁 | `skills/loop/router_v2/LEGION.md` | Candidate · mock tests; Work cross-tool E2E pending |
 | `keypoint-loop` | 发现关键前提与决策突破点、打断无效重复，按具体机制归并可复用经验 | `skills/keypoint-loop/SKILL.md` | Exploratory multi-run replays; live transfer/long-term benefit pending |
 | `career-evidence-loop` | 从多条工作经历提炼通用能力、真实成果及可追溯面试案例 | `skills/career-evidence-loop/SKILL.md` | Manual real-case walkthrough; independent invocation pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
