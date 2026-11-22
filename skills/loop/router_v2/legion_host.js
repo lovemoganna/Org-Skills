@@ -5,7 +5,7 @@
 function legionHost(tools, options = {}) {
   const MAX_STEPS = 12;
   const MAX_PARALLEL = 3;
-  const REGISTRY = Object.freeze({
+  const BUILTIN_REGISTRY = {
     "github.get_repo": { names: ["mcp__GitHub__get_repo"], effect: "read", check: d => !!d?.repository_full_name },
     "github.fetch_file": { names: ["mcp__GitHub__fetch_file", "mcp__codex_apps__github_fetch_file"], effect: "read", check: d => typeof d?.content === "string" },
     "github.get_pr_info": { names: ["mcp__GitHub__get_pr_info", "mcp__codex_apps__github_get_pr_info"], effect: "read", check: d => !!(d?.number || d?.pr_number) },
@@ -15,7 +15,18 @@ function legionHost(tools, options = {}) {
     "sheets.range": { names: ["mcp__Google_Drive__get_spreadsheet_range"], effect: "read", check: d => Array.isArray(d?.values) },
     "sheets.batch_update": { names: ["mcp__Google_Drive__batch_update_spreadsheet"], effect: "write", check: d => !!(d && typeof d === "object" && (d.spreadsheetId || d.replies)) },
     "parallel.search": { names: ["mcp__Parallel__web_search"], effect: "read", check: d => Array.isArray(d?.results) },
-  });
+  };
+  // Only the trusted host may inject reviewed adapters; never use Plan/Skill text as a registry.
+  const extra = options.approvedAdapters ?? {};
+  if (!extra || typeof extra !== "object" || Array.isArray(extra)) throw Error("approvedAdapters must be a trusted host object");
+  for (const [id, binding] of Object.entries(extra)) {
+    if (!/^[a-z][a-z0-9_.-]{2,80}$/.test(id) || Object.prototype.hasOwnProperty.call(BUILTIN_REGISTRY,id) ||
+        !binding || !["read","write"].includes(binding.effect) ||
+        !Array.isArray(binding.names) || !binding.names.length ||
+        !binding.names.every(n => typeof n === "string" && /^mcp__[a-zA-Z0-9_]+$/.test(n)) ||
+        typeof binding.check !== "function") throw Error("unreviewed or invalid host adapter: " + id);
+  }
+  const REGISTRY = Object.freeze({ ...BUILTIN_REGISTRY, ...extra });
   const known = id => Object.prototype.hasOwnProperty.call(REGISTRY, id);
   const resolve = id => (REGISTRY[id]?.names || []).find(name => typeof tools[name] === "function");
   function validate(plan) {
@@ -40,7 +51,7 @@ function legionHost(tools, options = {}) {
   const snapshot = obj => JSON.parse(JSON.stringify(obj));
   const resultData = response => response?.result ?? response?.structuredContent?.result ?? response?.structuredContent ?? response;
   const receipt = (step, status, detail) => ({ id: step.id, target: step.target, kind: step.kind, status, ...detail });
-  function init(plan) { validate(plan); return { version: 1, plan: snapshot(plan), results: {}, trace: [], status: "PLANNED", trust: "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED" }; }
+  function init(plan) { validate(plan); return { version: 1, plan: snapshot(plan), original_plan: snapshot(plan), results: {}, trace: [], status: "PLANNED", trust: "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED" }; }
   const capabilities = () => Object.entries(REGISTRY).map(([id, config]) => ({ id, effect: config.effect, available: !!resolve(id) }));
   function ready(state) {
     return state.plan.steps.filter(s => !state.results[s.id] && s.depends_on.every(id => state.results[id]?.status === "SUCCESS"));
@@ -115,6 +126,27 @@ function legionHost(tools, options = {}) {
     await checkpoint(state);
     return advance(state);
   }
-  return { init, advance, finishSkill, capabilities, summary };
+  async function retryRead(state, id, correctedArgs, reason) {
+    if (!state || !["FAILED", "BLOCKED"].includes(state.status)) throw Error("retry requires failed or blocked state");
+    const step = state.plan.steps.find(s => s.id === id);
+    const prior = state.results[id];
+    if (!step || step.kind !== "tool" || REGISTRY[step.target].effect !== "read" ||
+        !prior || !["FAILED", "BLOCKED"].includes(prior.status) || state.retry_counts?.[id]) throw Error("only one retry of a failed read is allowed");
+    if (!reason || typeof reason !== "string" || !reason.trim() ||
+        !correctedArgs || typeof correctedArgs !== "object" || Array.isArray(correctedArgs)) throw Error("retry requires reason and corrected args object");
+    const nextArgs = { ...step.args, ...snapshot(correctedArgs) };
+    for (const key of ["repository_full_name", "repository_id", "spreadsheet_id", "spreadsheet_url"]) {
+      if (key in step.args && nextArgs[key] !== step.args[key]) throw Error("retry cannot change resource identity: " + key);
+    }
+    state.retry_counts = { ...(state.retry_counts ?? {}), [id]: 1 };
+    state.retry_history = { ...(state.retry_history ?? {}), [id]: prior };
+    state.trace.push({ event: "READ_RETRY_REQUESTED", step: id, reason, prior_status: prior.status });
+    step.args = nextArgs;
+    delete state.results[id];
+    state.status = "RUNNING";
+    await checkpoint(state);
+    return advance(state);
+  }
+  return { init, advance, retryRead, finishSkill, capabilities, summary };
 }
 if (typeof module !== "undefined") module.exports = { legionHost };
