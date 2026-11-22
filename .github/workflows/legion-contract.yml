@@ -1,0 +1,29 @@
+name: Legion Mode candidate contract
+
+on:
+  pull_request:
+    paths:
+      - 'skills/loop/router_v2/legion_host.js'
+      - 'skills/loop/router_v2/tests/test_legion.js'
+      - 'skills/loop/router_v2/LEGION.md'
+      - '.github/workflows/legion-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Legion candidate mock provider contracts
+        run: node --test skills/loop/router_v2/tests/test_legion.js
+      - name: Router V2 backward compatibility
+        run: python3 skills/loop/router_v2/tests.py
