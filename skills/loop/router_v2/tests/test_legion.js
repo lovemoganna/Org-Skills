@@ -149,7 +149,7 @@ test('approval errors fail closed and record a checkpoint', async () => {
 test('provider response loss retains the failure and needs verification', async () => {
  const plan = {
   id: 'provider-response-loss', goal: 'write a test file',
-  steps: [{ id: 'write', kind: 'tool', target: 'github.update_file', args: {}, depends_on: [] }],
+  steps: [{ id: 'write', kind: 'tool', target: 'github.update_file', args: { path:'evidence/timeout.txt', sha:'old-blob', content:'replacement' }, depends_on: [] }],
   acceptance: [{ id: 'proof', evidence_from: ['write'] }],
  };
  const h = legionHost({ mcp__codex_apps__github_update_file: async () => { throw Error('response timeout'); } }, {
