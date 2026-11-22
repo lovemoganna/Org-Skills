@@ -15,7 +15,7 @@ test('cross-domain real functions parallel, then native model handoff',async()=>
 });
 test('missing capability blocks and does not invent success',async()=>{ const host=legionHost({});const r=await host.advance(host.init(base()));assert.equal(r.summary.status,'BLOCKED');assert.equal(r.summary.completed,0); });
 test('write action requires trusted host authorization independent of plan',async()=>{
- let writes=0;const plan={id:'write',goal:'write with approval',steps:[{id:'w',kind:'tool',target:'github.create_file',args:{content:'secret'},depends_on:[]}],acceptance:[{id:'a',evidence_from:['w']}]};
+ let writes=0;const plan={id:'write',goal:'write with approval',steps:[{id:'w',kind:'tool',target:'github.create_file',args:{path:'evidence/unique-test.txt',content:'secret'},depends_on:[]}],acceptance:[{id:'a',evidence_from:['w']}]};
  const tools={mcp__GitHub__create_file:async()=>{writes++;return {result:{commit_sha:'abc'}}}};
  const r=await legionHost(tools).advance(legionHost(tools).init(plan));assert.equal(r.summary.status,'BLOCKED');assert.equal(writes,0);
  const h=legionHost(tools,{authorizeWrite:async()=>true});const yes=await h.advance(h.init(plan));assert.equal(yes.summary.status,'COMPLETED_UNVERIFIED');assert.equal(writes,1);
@@ -76,7 +76,7 @@ test('write receipt loss requires reconciliation after reload', async () => {
  const plan = {
   id: 'interrupted-write', goal: 'write a test file',
   steps: [
-   { id: 'write', kind: 'tool', target: 'github.update_file', args: { branch: 'test/recovery' }, depends_on: [] },
+   { id: 'write', kind: 'tool', target: 'github.update_file', args: { branch: 'test/recovery', path: 'evidence/recovery.txt', sha: 'old-blob', content: 'replacement' }, depends_on: [] },
    { id: 'readback', kind: 'tool', target: 'github.fetch_file', args: {}, depends_on: ['write'] },
   ],
   acceptance: [{ id: 'proof', evidence_from: ['write', 'readback'] }],
@@ -116,7 +116,7 @@ test('write receipt loss requires reconciliation after reload', async () => {
  assert.equal((await wrongProofHost.reconcileWrite(resumed.state)).summary.status, 'BLOCKED');
  const recoveredHost = legionHost(tools, {
   verifyWrite: async request => {
-   assert.deepEqual(request, { id: 'write', target: 'github.update_file', args: { branch: 'test/recovery' } });
+   assert.deepEqual(request, { id: 'write', target: 'github.update_file', args: { branch: 'test/recovery', path: 'evidence/recovery.txt', sha: 'old-blob', content: 'replacement' } });
    return { confirmed: true, receipt: { commit_sha: 'abc' }, evidence: { readback: 'abc' } };
   },
  });
@@ -160,4 +160,64 @@ test('provider response loss retains the failure and needs verification', async 
  assert.equal(run.summary.status, 'BLOCKED');
  assert.match(run.state.results.write.prior.error, /response timeout/);
  assert.equal((await h.reconcileWrite(run.state)).summary.status, 'BLOCKED');
+});
+
+test('T18 regression: a host lease/approval cannot authorize unsafe Sheets append', async()=>{
+ let effects=0, approvals=0;
+ const p={id:'T18-regression',goal:'no duplicate side effects',steps:[
+  {id:'write',kind:'tool',target:'sheets.batch_update',args:{
+    spreadsheet_id:'test-sandbox',
+    requests:[{appendCells:{sheetId:123,rows:[{values:[{userEnteredValue:{stringValue:'T18'}}]}],fields:'userEnteredValue'}}]
+  },depends_on:[]}
+ ],acceptance:[{id:'effect',evidence_from:['write']}]};
+ const mock={mcp__Google_Drive__batch_update_spreadsheet:async()=>{effects++;return {result:{spreadsheetId:'test-sandbox'}};}};
+ const run=()=>{const h=legionHost(mock,{authorizeWrite:async()=>{approvals++;return true;}});return h.advance(h.init(p));};
+ const [a,b]=await Promise.all([run(),run()]);
+ assert.equal(approvals,2);assert.equal(effects,0);
+ for(const x of [a,b]){assert.equal(x.summary.status,'BLOCKED');assert.equal(x.state.results.write.error,'SINK_ATOMIC_WRITE_REQUIRED');}
+});
+test('T19 regression: atomic unique addSheet/updateCells allows exactly one business effect', async()=>{
+ const seen=new Set();let attempts=0;
+ const sheetId=18721,operationId='T19-OP';
+ const p={id:'T19-regression',goal:'unique sink operation',steps:[
+  {id:'write',kind:'tool',target:'sheets.batch_update',args:{
+   spreadsheet_id:'test-sandbox',requests:[
+    {addSheet:{properties:{sheetId,title:operationId}}},
+    {updateCells:{start:{sheetId,rowIndex:0,columnIndex:0},
+      rows:[{values:[{userEnteredValue:{stringValue:operationId}}]}],fields:'userEnteredValue'}}
+   ]
+  },depends_on:[]}
+ ],acceptance:[{id:'effect',evidence_from:['write']}]};
+ const mock={mcp__Google_Drive__batch_update_spreadsheet:async a=>{
+   attempts++;const k=a.requests[0].addSheet.properties.title;
+   if(seen.has(k))throw Error('duplicate unique sheet');
+   seen.add(k);return {result:{spreadsheetId:'test-sandbox'}};
+ }};
+ const run=()=>{const h=legionHost(mock,{authorizeWrite:async()=>true});return h.advance(h.init(p));};
+ const [a,b]=await Promise.all([run(),run()]);
+ assert.equal(attempts,2);assert.equal(seen.size,1);
+ assert.equal([a.summary.status,b.summary.status].filter(s=>s==='COMPLETED_UNVERIFIED').length,1);
+ assert.equal([a.summary.status,b.summary.status].filter(s=>s==='BLOCKED').length,1);
+});
+test('reject a mixed batch that updates an existing sheet after creating another', async()=>{
+ let writes=0;
+ const p={id:'mixed-batch',goal:'reject unsafe mixed mutations',steps:[
+  {id:'write',kind:'tool',target:'sheets.batch_update',args:{spreadsheet_id:'test',
+   requests:[{addSheet:{properties:{sheetId:99,title:'unique-op'}}},
+             {updateCells:{start:{sheetId:7,rowIndex:0,columnIndex:0},rows:[],fields:'userEnteredValue'}}]
+  },depends_on:[]}
+ ],acceptance:[{id:'effect',evidence_from:['write']}]};
+ const h=legionHost({mcp__Google_Drive__batch_update_spreadsheet:async()=>{writes++;return {result:{spreadsheetId:'test'}};}},{authorizeWrite:async()=>true});
+ const r=await h.advance(h.init(p));
+ assert.equal(r.summary.status,'BLOCKED');assert.equal(r.state.results.write.error,'SINK_ATOMIC_WRITE_REQUIRED');assert.equal(writes,0);
+});
+test('Plan cannot assert sinkAtomic to bypass reviewed host binding', async()=>{
+ let writes=0;
+ const binding={'lab.write':{names:['mcp__Lab__write'],effect:'write',check:d=>d?.ok===true}};
+ const plan={id:'no-bypass',goal:'reject unguarded custom writes',steps:[
+  {id:'write',kind:'tool',target:'lab.write',args:{sinkAtomic:true,operation_id:'untrusted'},depends_on:[]}
+ ],acceptance:[{id:'effect',evidence_from:['write']}]};
+ const host=legionHost({mcp__Lab__write:async()=>{writes++;return {result:{ok:true}};}},{authorizeWrite:async()=>true,approvedAdapters:binding});
+ const r=await host.advance(host.init(plan));
+ assert.equal(r.summary.status,'BLOCKED');assert.equal(r.state.results.write.error,'SINK_ATOMIC_WRITE_REQUIRED');assert.equal(writes,0);
 });
