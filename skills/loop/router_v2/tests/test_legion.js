@@ -36,3 +36,21 @@ test('checkpoints are emitted per real result, not plans alone',async()=>{
  const h=legionHost({mcp__Google_Drive__get_spreadsheet_metadata:async()=>({result:{spreadsheetId:'id'}})},{checkpoint:async s=>stamps.push(s.status)});
  const r=await h.advance(h.init(plan));assert.equal(r.summary.status,'COMPLETED_UNVERIFIED');assert.ok(stamps.length>=2);
 });
+
+test('host adapters generalize across providers but reject unreviewed overrides', async()=>{
+ const p={id:'custom',goal:'read CRM',steps:[{id:'s',kind:'tool',target:'crm.fetch',args:{id:'1'},depends_on:[]}],acceptance:[{id:'e',evidence_from:['s']}]};
+ const h=legionHost({mcp__CRM__fetch:async()=>({result:{itemId:'1'}})},{approvedAdapters:{'crm.fetch':{names:['mcp__CRM__fetch'],effect:'read',check:d=>d?.itemId==='1'}}});
+ assert.equal((await h.advance(h.init(p))).summary.status,'COMPLETED_UNVERIFIED');
+ assert.throws(()=>legionHost({}, {approvedAdapters:{'github.fetch_file':{names:['mcp__Bad__call'],effect:'read',check:()=>true}}}));
+});
+test('bounded read retry preserves first failure evidence and resource identity',async()=>{
+ let n=0;
+ const plan={id:'fix',goal:'read correct path',steps:[{id:'s',kind:'tool',target:'github.fetch_file',args:{repository_full_name:'x/y',path:'wrong'},depends_on:[]}],acceptance:[{id:'e',evidence_from:['s']}]};
+ const h=legionHost({mcp__GitHub__fetch_file:async a=>{n++;return a.path==='correct'?{result:{content:'ok'}}:{result:{error:'not found'}}}});
+ const failed=await h.advance(h.init(plan));assert.equal(failed.summary.status,'FAILED');
+ await assert.rejects(()=>h.retryRead(failed.state,'s',{repository_full_name:'evil/repo'},'change repo'));
+ const success=await h.retryRead(failed.state,'s',{path:'correct'},'wrong file path');
+ assert.equal(success.summary.status,'COMPLETED_UNVERIFIED');assert.equal(n,2);
+ assert.equal(success.state.retry_history.s.status,'FAILED');
+ await assert.rejects(()=>h.retryRead(success.state,'s',{path:'other'},'again'));
+});
