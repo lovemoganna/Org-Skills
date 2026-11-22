@@ -63,6 +63,30 @@ function legionHost(tools, options = {}) {
     return { task_id: state.plan.id, status: state.status, completed: success, total, acceptance, trust: state.trust, failed: Object.values(state.results).filter(r => r.status !== "SUCCESS").map(r => r.id), pending_model: state.pending_model ?? [] };
   }
   async function checkpoint(state) { if (typeof options.checkpoint === "function") await options.checkpoint(snapshot(state)); }
+  // Pre-commit authorization/lease checks cannot fence a stale worker. Protect writes at the sink.
+  // This conservative gate recognizes sink-side unique creation / conditional update shapes.
+  function sinkAtomicWrite(step) {
+    const args=step.args, conf=REGISTRY[step.target];
+    if (conf.effect!=="write") return true;
+    if (step.target==="github.create_file") return typeof args.path==="string" && !!args.path.trim() && typeof args.content==="string";
+    if (step.target==="github.update_file") return typeof args.path==="string" && !!args.path.trim() &&
+      typeof args.sha==="string" && !!args.sha.trim() && typeof args.content==="string";
+    if (step.target==="sheets.batch_update") {
+      const reqs=args.requests;
+      if (!Array.isArray(reqs) || !reqs.length) return false;
+      const props=reqs[0]?.addSheet?.properties;
+      if (Object.keys(reqs[0]||{}).length!==1 || !props || !Number.isSafeInteger(props.sheetId) ||
+          props.sheetId<0 || typeof props.title!=="string" || !props.title.trim()) return false;
+      // The unique sheet and all its cells must be created by ONE atomic provider batch.
+      // Updating/appending to an existing sheet, even after a successful lease check, is unsafe.
+      return reqs.slice(1).every(r => Object.keys(r||{}).length===1 &&
+        r?.updateCells && (r.updateCells.start?.sheetId===props.sheetId ||
+          r.updateCells.range?.sheetId===props.sheetId) &&
+        Array.isArray(r.updateCells.rows) && typeof r.updateCells.fields==="string");
+    }
+    // The host must independently review the provider's atomic semantics; task args cannot set this flag.
+    return conf.sinkAtomic===true;
+  }
   const writeRequest = step => ({ id: step.id, target: step.target, args: snapshot(step.args) });
   async function perform(step, beforeWrite) {
     const conf = REGISTRY[step.target], name = resolve(step.target);
@@ -77,6 +101,7 @@ function legionHost(tools, options = {}) {
         return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_UNAVAILABLE" });
       }
       if (approved !== true) return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_REQUIRED" });
+      if (!sinkAtomicWrite(step)) return receipt(step, "BLOCKED", { error: "SINK_ATOMIC_WRITE_REQUIRED" });
       await beforeWrite();
     }
     try {
