@@ -68,3 +68,15 @@ const first = await h.advance(h.init(p));
 - 原有回归：\`python3 skills/loop/router_v2/tests.py\`，确保 V2 稳定版没有被修改。
 - 真正的跨工具 Work 端到端、独立复核、定时运行目前**未验证**，不得将模拟器单测视为成功部署。
 - 只在 feature 分支提交候选，不覆盖 main。回滚：关闭 Legion 入口，继续使用原 \`work_host.js\` 和现有 V2。
+
+## T18 竞态最小修复：写入端原子性安全门禁（候选）
+
+T18 证明 authorizeWrite 成功和 provider commit 之间存在 TOCTOU 窗口：旧执行者可以持过期授权继续追加写入。**锁和 checkpoint 均不能替代目标存储写入时的原子约束。**
+
+此候选默认阻断不具备可识别写入端原子保证的操作，报 `BLOCKED / SINK_ATOMIC_WRITE_REQUIRED`；实际支持的狭义路径：
+- `github.create_file` 使用稳定、确定性的唯一文件路径，目标路径已存在时 provider 拒绝重复创建；在未知回执时仍必须独立回读内容。
+- `github.update_file` 必须带实际文件 `sha` 作为版本前提；该 API 的并发语义需要在独立 GitHub 实测验证，不能凭静态门禁宣布 exactly-once。
+- `sheets.batch_update` 只允许**同一 batch** 首先 `addSheet`（明确唯一 title 和 sheetId），其余操作限于对新建 sheet 的 `updateCells`；普通 `appendCells`、覆盖已有 sheet、混合目标批次即使已有授权也被阻断。
+- 可信宿主的 `approvedAdapters` 若声明 `sinkAtomic:true`，必须先独立审查该适配器的实际 provider 原子提交/幂等保证。这个标记本身只是宿主配置声明，不构成真实保证。任务 Plan 里的 `sinkAtomic` 字段没有效力。
+
+限制：本补丁是一项**安全门禁，不是通用分布式 fencing 或自动接管机制**。无原子保证时宁可 BLOCKED；旧任务中曾允许的非幂等直接写操作会在此候选上受阻。验证必须包括 T18 重现、T19 正例、崩溃/ACK 丢失、稳定版回归及真实隔离 provider 回读，不合并 main，不宣称生产稳定。
