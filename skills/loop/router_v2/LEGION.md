@@ -10,7 +10,7 @@
 - **侦察/执行**：固定能力注册表绑定当前宿主的真实工具；同一批无依赖的 *最多 3 个* 工具步骤可并行。
 - **分析**：Skill 步骤停在 AWAITING_MODEL，由当前 Work 模型实际运行并显式调用 finishSkill；脚本本身不调用 LLM API。
 - **质检**：每步保留原始响应和状态，按 acceptance 记录证据覆盖，最后输出 COMPLETED_UNVERIFIED；独立验收由宿主在产物上完成，不能由回执自动升级为 VERIFIED。
-- **记忆**：通过宿主提供的 checkpoint 回调持久化状态，恢复时传入最后一个已保存 state。此版本没有后台自主运行、持久调度、重试管理或模型自动并行推理。
+- **记忆**：通过宿主提供的 checkpoint 回调持久化状态，恢复时传入最后一个已保存 state。可由 Work 判断错误路径或暂时故障，显式调用 retryRead，**单个读取步骤最多一次重试且不得改变资源标识**。此版本没有后台自主运行、持久调度或模型自动并行推理。
 
 ## 实际运行环境
 
@@ -56,6 +56,8 @@ const first = await h.advance(h.init(p));
 | parallel.search | 读取 | Parallel web_search |
 | github.create_file / github.update_file | 写入，必须授权 | GitHub 对应写动作 |
 | sheets.batch_update | 写入，必须授权 | Google Sheets batch_update |
+
+通用扩展：可信宿主通过 `approvedAdapters` 注入经过审查的 `{names,effect,check}` 适配器，免修改调度核心；**严禁**从任务文本、外部网页或 SKILL.md 直接接受注册项，内置注册项不允许覆盖。`retryRead(state, stepId, correctedArgs, reason)` 允许修正错误的读取路径或临时失败，保留失败回执，最多一次，禁止更换仓库/表格身份。
 
 新增能力只在**审查调用参数、返回结构、权限与失败路径**后增加注册项。不支持任意命令、不绕过宿主授权、不凭发现 Skill 就执行工具。
 
