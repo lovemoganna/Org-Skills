@@ -3,11 +3,8 @@ name: Legion Mode candidate contract
 on:
   pull_request:
     paths:
-      - 'skills/loop/router_v2/legion_host.js'
-      - 'skills/loop/router_v2/tests/test_legion.js'
-      - 'skills/loop/router_v2/lease_fenced_host.js'
-      - 'skills/loop/router_v2/tests/test_lease_fenced_host.js'
-      - 'skills/loop/router_v2/LEGION.md'
+      - 'skills/loop/router_v2/**'
+      - 'skills/skill-router/SKILL.md'
       - '.github/workflows/legion-contract.yml'
   workflow_dispatch:
 
@@ -25,9 +22,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Legion candidate mock provider contracts
-        run: node --test skills/loop/router_v2/tests/test_legion.js
-      - name: T27-T29 durable lease, fencing and fault injection
-        run: node --test skills/loop/router_v2/tests/test_lease_fenced_host.js
+      - name: Legion runtime, adapter and recovery contracts
+        run: |
+          node --test skills/loop/router_v2/tests/*.js
+          python3 -m unittest discover -s skills/loop/router_v2/tests -p 'test_*.py'
       - name: Router V2 backward compatibility
-        run: python3 skills/loop/router_v2/tests.py
+        run: |
+          python3 skills/loop/router_v2/tests.py
+          python3 skills/loop/router_v2/test_host_bridge.py
+          node --test skills/loop/router_v2/test_work_host.js

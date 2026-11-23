@@ -1,0 +1,58 @@
+{
+  "tool": "mcp__codex_apps__github_get_pr_info",
+  "repository": "lovemoganna/Org-Skills",
+  "fields": [
+    {
+      "url": "https://github.com/lovemoganna/Org-Skills/pull/118",
+      "number": 118,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merge_commit_sha": "16bdc5a6d2a24552cc21b60907af1f42b8a10512",
+      "head_sha": "e856e1443058ce65d199bdf4fec5af912fd3c547",
+      "commits": 22,
+      "changed_files": 72,
+      "additions": 4358,
+      "deletions": 0
+    },
+    {
+      "url": "https://github.com/lovemoganna/Org-Skills/pull/119",
+      "number": 119,
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "merge_commit_sha": "6777dc481487bc72cac219d4b58658009453bac1",
+      "head_sha": "cdc7ab87283f6adc8b08973a56391544edf21422",
+      "commits": 1,
+      "changed_files": 73,
+      "additions": 4358,
+      "deletions": 0
+    },
+    {
+      "url": "https://github.com/lovemoganna/Org-Skills/pull/120",
+      "number": 120,
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "merge_commit_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+      "head_sha": "afd45cb8421899058c72319be110655283667c68",
+      "commits": 11,
+      "changed_files": 7,
+      "additions": 514,
+      "deletions": 0
+    },
+    {
+      "url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+      "number": 121,
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "merge_commit_sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+      "head_sha": "832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+      "commits": 8,
+      "changed_files": 6,
+      "additions": 326,
+      "deletions": 4
+    }
+  ]
+}
