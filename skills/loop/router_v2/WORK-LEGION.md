@@ -50,3 +50,9 @@ The host may supply `githubEditScope` instead of an exact `githubGrant` when the
 At startup the launcher fetches the file at the immutable expected head and includes its text, blob SHA and exact coordinates in the native selection request. The model proposes the complete replacement there. The adapter rejects a changed resource, unexpected argument, oversized payload, invalid Unicode or unchanged file. Legion checkpoints the exact proposed bytes before provider dispatch. The same exact-grant adapter publishes and reconciles the commit. To permit only previously reviewed bytes, supply `githubGrant`. The host supplies exactly one of these grants.
 
 Reference run: [plain task and scoped grant](evidence/natural-host/e04-scoped/baseline.json), [prewrite checkpoint](evidence/natural-host/e04-scoped/prewrite-checkpoint.json), [independent result](evidence/natural-host/e04-scoped/result.json).
+
+### Excel 与招聘雷达
+
+- 可信宿主在启动时传入 `xlsxGrant: {source, destination}`，两项都是本地绝对 `.xlsx` 路径，且目标是新文件。安装 `openpyxl>=3.1,<4` 后，标准入口发现实际列名并暴露 `xlsx.holdings`。它按币对和成交顺序计算 FIFO，一份副本仅新增一张分析表和原生图表。时间可用 Excel 时间或 ISO 字符串，统一为 UTC；同一时刻以源表行顺序裁决。冲突的重复成交会阻断。无买入可配的卖出单独统计。授权只覆盖此副本，原工作簿仍是原始输入。带宏及外部链接的工作簿超出支持范围。正式验收需要复算副本。
+- 招聘默认使用 `parallel.search → ats.verify_greenhouse`，从搜索回执传递 `results`。当前即时核验覆盖 Greenhouse 职位链接。按招聘 API 核对官方记录 ID、招聘地点、职责证据和申请表字段。归档、响应失败、不在地域范围或无应用表单的职位会留下排除原因。职位数量不足时返回已取得证据，不写入。
+- 写入隔离雷达时，可信宿主传入 `radarGrant: {spreadsheet_id, sheetId, title, minRows, maxRows}`，后续调用 `ats.publish_radar` 并声明 ATS 核验为直接依赖。适配器只接受检查点中真实 ATS 工具回执，创建新标签并一次写入。不更新已有标签。继续通过 `sheets.range` 回读，独立比较内容和官方来源。写入回执丢失时，按授权标签 ID 和格值只读对账。

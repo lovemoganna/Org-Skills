@@ -53,6 +53,14 @@ function workLegion(tools, config) {
     const extraTools = {...config.extraTools};
     const adapters = {...config.approvedAdapters};
     const info = {...config.capabilityInfo};
+    const standard = await load("standard_tools.js","standardLegionTools");
+    const standardBindings = await standard(tools,config,call,shell);
+    for (const id of Object.keys(standardBindings.adapters)) {
+      if (Object.hasOwn(adapters,id)) throw Error("standard adapter cannot be overridden: " + id);
+    }
+    Object.assign(extraTools,standardBindings.toolBindings);
+    Object.assign(adapters,standardBindings.adapters);
+    Object.assign(info,standardBindings.details);
     const grants = [];
     if (!Object.hasOwn(adapters,"sql.query_rows")) {
       const name = "mcp__legion__query_rows";
@@ -105,12 +113,16 @@ function workLegion(tools, config) {
     const runtimeTools = new Proxy(extraTools, {
       get:(local, key) => Object.hasOwn(local,key) ? local[key] : tools[key]
     });
-    const authorizeWrite = async request => {
+    const authorizeWrite = async (request,state) => {
+      if (Object.hasOwn(standardBindings.writeGrants,request.target))
+        return standardBindings.writeGrants[request.target].authorizeWrite(request,state);
       const owned = grants.find(g => Object.hasOwn(g.approvedAdapters,request.target));
       if (owned) return owned.authorizeWrite(request);
       return config.authorizeWrite ? config.authorizeWrite(request) : false;
     };
-    const verifyWrite = async request => {
+    const verifyWrite = async (request,state) => {
+      if (Object.hasOwn(standardBindings.writeGrants,request.target))
+        return standardBindings.writeGrants[request.target].verifyWrite(request,state);
       const owned = grants.find(g => Object.hasOwn(g.approvedAdapters,request.target));
       if (owned && await owned.authorizeWrite(request)) return owned.verifyWrite(request);
       return config.verifyWrite ? config.verifyWrite(request) : {confirmed:false};

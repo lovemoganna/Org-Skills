@@ -88,7 +88,7 @@ function legionHost(tools, options = {}) {
     return conf.sinkAtomic===true;
   }
   const writeRequest = step => ({ id: step.id, target: step.target, args: snapshot(step.args) });
-  async function perform(step, beforeWrite) {
+  async function perform(step, beforeWrite, state) {
     const conf = REGISTRY[step.target], name = resolve(step.target);
     if (!name) return receipt(step, "BLOCKED", { error: "CAPABILITY_UNAVAILABLE" });
     if (conf.effect === "write") {
@@ -96,7 +96,7 @@ function legionHost(tools, options = {}) {
       let approved = false;
       try {
         approved = typeof options.authorizeWrite === "function" &&
-          await options.authorizeWrite(writeRequest(step));
+          await options.authorizeWrite(writeRequest(step), conf.requiresState ? snapshot(state) : undefined);
       } catch {
         return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_UNAVAILABLE" });
       }
@@ -105,7 +105,8 @@ function legionHost(tools, options = {}) {
       await beforeWrite();
     }
     try {
-      const raw = await tools[name](snapshot(step.args));
+      const args = snapshot(step.args);
+      const raw = conf.requiresState ? await tools[name](args, snapshot(state)) : await tools[name](args);
       const data = resultData(raw);
       if (raw?.isError || raw?.error || data?.error || !conf.check(data)) return receipt(step, "FAILED", { error: "PROVIDER_ERROR_OR_INVALID_RESPONSE", provider: name, raw });
       return receipt(step, "SUCCESS", { provider: name, raw });
@@ -170,7 +171,7 @@ function legionHost(tools, options = {}) {
         const responses = await Promise.all(toolSteps.map(step => perform(materialize(state, step), async () => {
           state.write_in_flight = step.id;
           await checkpoint(state);
-        })));
+        }, state)));
         for (const r of responses) {
           state.results[r.id] = r;
           state.trace.push({ event: "EXECUTED", step: r.id, status: r.status, provider: r.provider ?? null });
@@ -203,7 +204,7 @@ function legionHost(tools, options = {}) {
     if (state.status !== "BLOCKED" || prior?.error !== "WRITE_OUTCOME_UNKNOWN") throw Error("advance the interrupted checkpoint before reconciliation");
     if (typeof options.verifyWrite !== "function") throw Error("trusted write verifier required");
 
-    const proof = await options.verifyWrite(writeRequest(step));
+    const proof = await options.verifyWrite(writeRequest(step), REGISTRY[step.target].requiresState ? snapshot(state) : undefined);
     const observed = proof?.receipt;
     if (proof?.confirmed !== true || !proof.evidence || typeof proof.evidence !== "object" ||
         !Object.keys(proof.evidence).length || observed?.error || !REGISTRY[step.target].check(observed)) {
