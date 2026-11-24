@@ -88,7 +88,7 @@ function legionHost(tools, options = {}) {
     return conf.sinkAtomic===true;
   }
   const writeRequest = step => ({ id: step.id, target: step.target, args: snapshot(step.args) });
-  async function perform(step, beforeWrite) {
+  async function perform(step, beforeWrite, state) {
     const conf = REGISTRY[step.target], name = resolve(step.target);
     if (!name) return receipt(step, "BLOCKED", { error: "CAPABILITY_UNAVAILABLE" });
     if (conf.effect === "write") {
@@ -96,7 +96,7 @@ function legionHost(tools, options = {}) {
       let approved = false;
       try {
         approved = typeof options.authorizeWrite === "function" &&
-          await options.authorizeWrite(writeRequest(step));
+          await options.authorizeWrite(writeRequest(step), conf.requiresState ? snapshot(state) : undefined);
       } catch {
         return receipt(step, "BLOCKED", { error: "WRITE_AUTHORIZATION_UNAVAILABLE" });
       }
@@ -105,17 +105,41 @@ function legionHost(tools, options = {}) {
       await beforeWrite();
     }
     try {
-      const raw = await tools[name](snapshot(step.args));
+      const args = snapshot(step.args);
+      const raw = conf.requiresState ? await tools[name](args, snapshot(state)) : await tools[name](args);
       const data = resultData(raw);
       if (raw?.isError || raw?.error || data?.error || !conf.check(data)) return receipt(step, "FAILED", { error: "PROVIDER_ERROR_OR_INVALID_RESPONSE", provider: name, raw });
       return receipt(step, "SUCCESS", { provider: name, raw });
-    } catch (err) { return receipt(step, "FAILED", { error: String(err), provider: name }); }
+    } catch (err) { return receipt(step, "FAILED", { error: String(err), provider: name, ...(Number.isInteger(err?.status) && {http_status:err.status}) }); }
+  }
+  // Natural-entry DAGs can bind an argument to a successful predecessor's receipt.
+  // Legacy plans retain their literal JSON semantics.
+  function materialize(state, step) {
+    if (state.natural_entry !== 1) return step;
+    function resolveValue(value) {
+      if (!value || typeof value !== "object") return value;
+      if (Array.isArray(value)) return value.map(resolveValue);
+      if (Object.hasOwn(value, "$from")) {
+        if (Object.keys(value).length !== 2 || !Array.isArray(value.path) ||
+            !step.depends_on.includes(value.$from) || state.results[value.$from]?.status !== "SUCCESS")
+          throw Error("invalid predecessor reference");
+        let result = state.results[value.$from];
+        for (const key of value.path) {
+          if ((typeof key !== "string" && !Number.isSafeInteger(key)) || !result ||
+              typeof result !== "object" || !Object.hasOwn(result, key)) throw Error("missing receipt field");
+          result = result[key];
+        }
+        return snapshot(result);
+      }
+      return Object.fromEntries(Object.entries(value).map(([key,item]) => [key, resolveValue(item)]));
+    }
+    return {...step, args:resolveValue(step.args)};
   }
   function pendingWrite(state) {
     const step = state.plan.steps.find(s => s.id === state.write_in_flight);
     if (!step || step.kind !== "tool" || REGISTRY[step.target].effect !== "write" ||
         !step.depends_on.every(id => state.results[id]?.status === "SUCCESS")) throw Error("invalid pending write");
-    return step;
+    return materialize(state, step);
   }
   async function blockUncertainWrite(state, step, prior) {
     state.results[step.id] = receipt(step, "BLOCKED", { error: "WRITE_OUTCOME_UNKNOWN", ...(prior && { prior }) });
@@ -144,10 +168,10 @@ function legionHost(tools, options = {}) {
       const reads = readyTools.filter(s => REGISTRY[s.target].effect === "read");
       const toolSteps = (reads.length ? reads.slice(0, MAX_PARALLEL) : readyTools.slice(0, 1));
       if (toolSteps.length) {
-        const responses = await Promise.all(toolSteps.map(step => perform(step, async () => {
+        const responses = await Promise.all(toolSteps.map(step => perform(materialize(state, step), async () => {
           state.write_in_flight = step.id;
           await checkpoint(state);
-        })));
+        }, state)));
         for (const r of responses) {
           state.results[r.id] = r;
           state.trace.push({ event: "EXECUTED", step: r.id, status: r.status, provider: r.provider ?? null });
@@ -180,7 +204,7 @@ function legionHost(tools, options = {}) {
     if (state.status !== "BLOCKED" || prior?.error !== "WRITE_OUTCOME_UNKNOWN") throw Error("advance the interrupted checkpoint before reconciliation");
     if (typeof options.verifyWrite !== "function") throw Error("trusted write verifier required");
 
-    const proof = await options.verifyWrite(writeRequest(step));
+    const proof = await options.verifyWrite(writeRequest(step), REGISTRY[step.target].requiresState ? snapshot(state) : undefined);
     const observed = proof?.receipt;
     if (proof?.confirmed !== true || !proof.evidence || typeof proof.evidence !== "object" ||
         !Object.keys(proof.evidence).length || observed?.error || !REGISTRY[step.target].check(observed)) {
@@ -196,16 +220,26 @@ function legionHost(tools, options = {}) {
     await checkpoint(resumed);
     return advance(resumed);
   }
-  async function finishSkill(state, id, output, source) {
-    if (state.status !== "AWAITING_MODEL" || !state.pending_model?.some(s => s.id === id)) throw Error("skill step is not pending");
-    if (typeof output !== "string" || !output.trim() || typeof source !== "string" || !source.trim()) throw Error("nonempty model output and source required");
-    const step = state.plan.steps.find(s => s.id === id);
-    state.results[id] = receipt(step, "SUCCESS", { model_output: output, source, self_reported: true });
-    state.trace.push({ event: "MODEL_STEP_RECORDED", step: id, status: "SUCCESS" });
+  async function finishSkills(state, answers) {
+    if (state.status !== "AWAITING_MODEL" || !Array.isArray(answers) || !answers.length ||
+        new Set(answers.map(item => item.id)).size !== answers.length) throw Error("skill step is not pending");
+    for (const {id, output, source} of answers) {
+      if (!state.pending_model?.some(step => step.id === id)) throw Error("skill step is not pending");
+      if (typeof output !== "string" || !output.trim() || typeof source !== "string" || !source.trim())
+        throw Error("nonempty model output and source required");
+    }
+    for (const {id, output, source} of answers) {
+      const step = state.plan.steps.find(item => item.id === id);
+      state.results[id] = receipt(step, "SUCCESS", { model_output: output, source, self_reported: true });
+      state.trace.push({ event: "MODEL_STEP_RECORDED", step: id, status: "SUCCESS" });
+    }
     state.status = "RUNNING";
     state.pending_model = [];
     await checkpoint(state);
     return advance(state);
+  }
+  async function finishSkill(state, id, output, source) {
+    return finishSkills(state, [{id, output, source}]);
   }
   async function retryRead(state, id, correctedArgs, reason) {
     if (!state || state.write_in_flight || !["FAILED", "BLOCKED"].includes(state.status)) throw Error("retry requires failed or blocked state without an uncertain write");
@@ -228,6 +262,8 @@ function legionHost(tools, options = {}) {
     await checkpoint(state);
     return advance(state);
   }
-  return { init, advance, retryRead, reconcileWrite, finishSkill, capabilities, summary };
+  return { init, advance, retryRead, reconcileWrite, finishSkill, finishSkills, capabilities, summary, save: checkpoint,
+    hasCheckpoint: () => typeof options.checkpoint === "function",
+    hasWriteVerifier: () => typeof options.verifyWrite === "function" };
 }
 if (typeof module !== "undefined") module.exports = { legionHost };

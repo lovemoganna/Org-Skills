@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "spreadsheetId": "17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY",
+      "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY/edit",
+      "properties": {
+        "title": "Legion E02 final exclusive workbook fc3c6546",
+        "locale": "en_US",
+        "timeZone": "America/Los_Angeles"
+      },
+      "sheets": [
+        {
+          "properties": {
+            "sheetId": 47948041,
+            "title": "FormulaRepair",
+            "index": 0,
+            "sheetType": "GRID",
+            "gridProperties": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "rowGroupControlAfter": true,
+              "columnGroupControlAfter": true
+            }
+          }
+        }
+      ]
+    },
+    "isError": false
+  },
+  "cells": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "spreadsheetId": "17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY",
+      "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY/edit",
+      "properties": {
+        "title": "Legion E02 final exclusive workbook fc3c6546",
+        "locale": "en_US",
+        "timeZone": "America/Los_Angeles"
+      },
+      "sheets": [
+        {
+          "properties": {
+            "sheetId": 47948041,
+            "title": "FormulaRepair",
+            "index": 0,
+            "sheetType": "GRID",
+            "gridProperties": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "rowGroupControlAfter": true,
+              "columnGroupControlAfter": true
+            }
+          },
+          "data": [
+            {
+              "rowData": [
+                {
+                  "values": [
+                    {
+                      "formattedValue": "Units",
+                      "userEnteredValue": {
+                        "stringValue": "Units"
+                      },
+                      "effectiveValue": {
+                        "stringValue": "Units"
+                      }
+                    },
+                    {
+                      "formattedValue": "Unit price",
+                      "userEnteredValue": {
+                        "stringValue": "Unit price"
+                      },
+                      "effectiveValue": {
+                        "stringValue": "Unit price"
+                      }
+                    },
+                    {
+                      "formattedValue": "Total",
+                      "userEnteredValue": {
+                        "stringValue": "Total"
+                      },
+                      "effectiveValue": {
+                        "stringValue": "Total"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "values": [
+                    {
+                      "formattedValue": "7",
+                      "userEnteredValue": {
+                        "numberValue": 7
+                      },
+                      "effectiveValue": {
+                        "numberValue": 7
+                      }
+                    },
+                    {
+                      "formattedValue": "6",
+                      "userEnteredValue": {
+                        "numberValue": 6
+                      },
+                      "effectiveValue": {
+                        "numberValue": 6
+                      }
+                    },
+                    {
+                      "formattedValue": "13",
+                      "userEnteredValue": {
+                        "formulaValue": "=A2+B2"
+                      },
+                      "effectiveValue": {
+                        "numberValue": 13
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "isError": false
+  }
+}

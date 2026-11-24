@@ -1,0 +1,11 @@
+{
+  "scope": "One real, read-only diagnostic on the pinned Legion baseline",
+  "required": [
+    "The frozen natural language input does not name either requested Skill.",
+    "The router selects causal-net-loop and keypoint-loop from discovered entries; keypoint analysis receives the causal analysis as a dependency.",
+    "A fresh execution or exact-source read independently identifies the lines where advance returns AWAITING_MODEL, and a fresh baseline replay reproduces a ready Skill twice with no completed results.",
+    "The causal analysis distinguishes a pending model action from an unavailable tool and gives a falsifiable intervention with a concrete observable state.",
+    "The downstream method identifies the trigger, shortest action, success evidence and stopping/exception conditions, and limits its scope to this case.",
+    "The trace binds the actual outputs to each pending step. Final acceptance comes from a reviewer separate from the analyst."
+  ]
+}

@@ -1,0 +1,2 @@
+在同一隔离分支、同一模块追加 count 函数，[] 返回 0、[3,-1,5] 返回 3。在提交已生效时丢弃回执并中断进程，重载持久状态，独立核对提交后继续且只产生一次分支更新。
+授权范围 {"repository_full_name":"lovemoganna/Org-Skills","branch":"legion-e04-e05-26b4049-231139","path":"legion-test/sum.mjs","expected_head":"996b1f7f57fdb587e74940f362443d66a6d54a47","operation_id":"E05-26b4049","content":"export const sum = values => values.reduce((a, b) => a + b, 0);\nexport const count = values => values.length;\n"}

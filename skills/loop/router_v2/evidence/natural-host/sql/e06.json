@@ -1,0 +1,324 @@
+{
+  "task": "使用 Skill Router V2 的军团模式执行：从 GitHub 读取 lovemoganna/Org-Skills 的 #120 和 #121 两个 PR，送入 SQL 按代码变更行数（新增加删除）降序排名，同值按 PR 编号升序。交付 number 和 churn 两列，并通过 Git 对象核验。",
+  "route": "direct",
+  "plan": {
+    "id": "legion",
+    "goal": "使用 Skill Router V2 的军团模式执行：从 GitHub 读取 lovemoganna/Org-Skills 的 #120 和 #121 两个 PR，送入 SQL 按代码变更行数（新增加删除）降序排名，同值按 PR 编号升序。交付 number 和 churn 两列，并通过 Git 对象核验。",
+    "steps": [
+      {
+        "id": "pr120",
+        "kind": "tool",
+        "target": "github.get_pr_info",
+        "args": {
+          "pr_number": 120,
+          "repository_full_name": "lovemoganna/Org-Skills"
+        },
+        "depends_on": []
+      },
+      {
+        "id": "pr121",
+        "kind": "tool",
+        "target": "github.get_pr_info",
+        "args": {
+          "pr_number": 121,
+          "repository_full_name": "lovemoganna/Org-Skills"
+        },
+        "depends_on": []
+      },
+      {
+        "id": "query",
+        "kind": "tool",
+        "target": "sql.query_rows",
+        "args": {
+          "rows": [
+            {
+              "additions": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "additions"
+                ]
+              },
+              "deletions": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "deletions"
+                ]
+              },
+              "number": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "number"
+                ]
+              }
+            },
+            {
+              "additions": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "additions"
+                ]
+              },
+              "deletions": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "deletions"
+                ]
+              },
+              "number": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "number"
+                ]
+              }
+            }
+          ],
+          "sql": "SELECT number, additions + deletions AS churn FROM input_rows ORDER BY churn DESC, number ASC"
+        },
+        "depends_on": [
+          "pr120",
+          "pr121"
+        ]
+      }
+    ],
+    "acceptance": [
+      {
+        "evidence_from": [
+          "query"
+        ],
+        "id": "matches_git_diff"
+      }
+    ]
+  },
+  "trace": [
+    {
+      "event": "EXECUTED",
+      "step": "pr120",
+      "status": "SUCCESS",
+      "provider": "mcp__codex_apps__github_get_pr_info"
+    },
+    {
+      "event": "EXECUTED",
+      "step": "pr121",
+      "status": "SUCCESS",
+      "provider": "mcp__codex_apps__github_get_pr_info"
+    },
+    {
+      "event": "EXECUTED",
+      "step": "query",
+      "status": "SUCCESS",
+      "provider": "mcp__legion__query_rows"
+    }
+  ],
+  "actual_calls": [
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "args": {
+        "pr_number": 121,
+        "repository_full_name": "lovemoganna/Org-Skills"
+      },
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+          "number": 121,
+          "state": "closed",
+          "merged": true,
+          "mergeable": false,
+          "draft": false,
+          "body": "## Purpose\nFix the T18 demonstrated TOCTOU window: a worker may retain authorization after another worker becomes owner and append twice. Candidate only; **DO NOT MERGE / DO NOT PROMOTE** without independent regression and real sink evidence.\n\n## Scope\n- Fails closed with `SINK_ATOMIC_WRITE_REQUIRED` for unsupported non-idempotent writes.\n- Explicitly limits Sheets writes to one atomic batch creating a unique sheet and writing only that new sheet.\n- Requires deterministic path/version parameters for GitHub create/update.\n- Trusted host write adapters may opt in to sink atomic semantics; they must be separately reviewed.\n- Adds T18/T19 positive/negative tests plus documentation. No stable V2 path changes.\n\n## Evidence\n- Baseline: two independent old-engine unsafe appends caused two provider effects in controlled V8 fixture; historical T18 live test showed 2 matching rows.\n- Candidate V8 execution: 17/17 test callbacks passed; native Node 22 GitHub CI must be independently checked.\n- Real isolated Google Sheets sink-atomic patterns previously passed T19/T20; the new candidate code still needs fresh real connector verification.\n\n## Boundaries\nNo general exactly-once, fencing, lease takeover, or unrestricted arbitrary writes claim. Review potential backward compatibility impact: unguarded historical writes now intentionally BLOCKED. Do not merge main.",
+          "title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression",
+          "base": "main",
+          "base_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+          "head": "candidate/legion-t18-sink-atomic-20261122-r1",
+          "head_sha": "832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+          "head_repo_id": 1401137531,
+          "head_repo_full_name": "lovemoganna/Org-Skills",
+          "merge_commit_sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+          "user": {
+            "login": "lovemoganna",
+            "name": "lovemoganna",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+            "id": 31183446
+          },
+          "requested_reviewers": null,
+          "requested_team_reviewers": null,
+          "diff": null,
+          "comments": null,
+          "created_at": "2026-11-22T15:54:33Z",
+          "updated_at": "2026-11-22T20:58:36Z",
+          "closed_at": "2026-11-22T20:57:38Z",
+          "merged_at": "2026-11-22T20:57:38Z",
+          "commits": 8,
+          "changed_files": 6,
+          "additions": 326,
+          "deletions": 4,
+          "display_url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+          "display_title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression"
+        },
+        "isError": false
+      }
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "args": {
+        "pr_number": 120,
+        "repository_full_name": "lovemoganna/Org-Skills"
+      },
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "url": "https://github.com/lovemoganna/Org-Skills/pull/120",
+          "number": 120,
+          "state": "closed",
+          "merged": true,
+          "mergeable": false,
+          "draft": false,
+          "body": "## 目标 / Decision: ACCEPT\n在不覆盖稳定的 Skill Router V2.0.0 前提下，增加军团化跨工具执行候选：自然语言由 Work 宿主编译 Plan、独立工具步并行、Skill 步由原生模型执行并回填、每步回执与验收证据覆盖。\n\n## 实际修改\n- `skills/loop/router_v2/legion_host.js`：显式工具注册（GitHub、Google Sheets、Parallel），最多三路独立步骤并行，依赖门禁，写入审批回调，阶段性 checkpoint、错误阻断、原生 Skill 交接。\n- `skills/loop/router_v2/tests/test_legion.js`：7 个模拟适配器测试，含并行、跨域、模型步骤、失败、写权限与持久化回调。\n- `skills/loop/router_v2/LEGION.md`：调用协议、使用方法、边界和回滚。\n- `skills/skill-router/SKILL.md`、`README.md`：新增可选军团模式入口，不改动稳定路径。\n- `.github/workflows/legion-contract.yml`：候选与旧版回归 CI。\n\n## 验证\n- 本地 Node 22：7/7 mock contract tests 通过；不等于真实 Work E2E。\n- CI：已配置，等待 GitHub Actions 独立执行记录。\n- 真实 GitHub/Sheets connector 元数据：本次开发时分别完成读取，但**尚未使用 Legion 脚本驱动跨工具 Work E2E**。\n- 定时自动运行、自动故障恢复、跨模型自主调用：NOT_IMPLEMENTED / NOT_VERIFIED。\n\n## 兼容性、权限与剩余风险\n- 旧 V2 实现不改动。此 PR 不合并、不发布 Stable。\n- 主机实际授权、模型 Skill 输出真实性、checkpoint 安全存储由 Work 宿主负责。\n- 如需回滚：关闭军团模式，继续调用既有 `skills/loop/router_v2/work_host.js`。\n\n## 下一门槛\n运行真实同一 Work 会话中的 GitHub + Google Sheets 双适配器任务，保存原始回执并独立验收，再评估是否扩大可写工具与调度能力。\n\n## 新增实测（2026-11-22 UTC）\n- 在当前 Chat 代码宿主中从此分支取回 `legion_host.js`，校验固定 Git Blob SHA `4778905b6c53442f47210a3cd94dc1f850e96eb0` 后执行候选代码。\n- 同一任务并行调用两个**真实连接器**：GitHub 仓库元数据、Google Sheets 工作簿元数据；2/2 返回 SUCCESS，状态 `COMPLETED_UNVERIFIED`。\n- 通过直接重新读取相同资源，比对两处元数据字段，结果一致；这属于**同宿主自检**，不是独立评审，也不是 Work 原生模型 Skill 链 E2E。\n- 回执原文未写入公开仓库；控制台中的证据账本记录了执行结果和边界。当前演示的 checkpoint 为内存回调，不证明断点跨会话恢复。\n- 新增经审查的宿主适配器扩展和一次读取重试；本地 Node 9/9 测试通过，GitHub 最新 CI：Legion/Router/全仓均 success。\n",
+          "title": "feat(router): Legion Mode 通用跨工具编排候选",
+          "base": "main",
+          "base_sha": "6777dc481487bc72cac219d4b58658009453bac1",
+          "head": "feature/legion-mode-general-20261122",
+          "head_sha": "afd45cb8421899058c72319be110655283667c68",
+          "head_repo_id": 1401137531,
+          "head_repo_full_name": "lovemoganna/Org-Skills",
+          "merge_commit_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+          "user": {
+            "login": "lovemoganna",
+            "name": "lovemoganna",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+            "id": 31183446
+          },
+          "requested_reviewers": null,
+          "requested_team_reviewers": null,
+          "diff": null,
+          "comments": null,
+          "created_at": "2026-11-22T03:14:21Z",
+          "updated_at": "2026-11-22T15:17:39Z",
+          "closed_at": "2026-11-22T15:16:48Z",
+          "merged_at": "2026-11-22T15:16:48Z",
+          "commits": 11,
+          "changed_files": 7,
+          "additions": 514,
+          "deletions": 0,
+          "display_url": "https://github.com/lovemoganna/Org-Skills/pull/120",
+          "display_title": "feat(router): Legion Mode 通用跨工具编排候选"
+        },
+        "isError": false
+      }
+    },
+    {
+      "name": "mcp__legion__query_rows",
+      "args": {
+        "rows": [
+          {
+            "additions": 514,
+            "deletions": 0,
+            "number": 120
+          },
+          {
+            "additions": 326,
+            "deletions": 4,
+            "number": 121
+          }
+        ],
+        "sql": "SELECT number, additions + deletions AS churn FROM input_rows ORDER BY churn DESC, number ASC"
+      },
+      "result": {
+        "engine": "SQLite 3.53.1",
+        "input_count": 2,
+        "columns": [
+          "number",
+          "churn"
+        ],
+        "rows": [
+          {
+            "number": 120,
+            "churn": 514
+          },
+          {
+            "number": 121,
+            "churn": 330
+          }
+        ]
+      }
+    }
+  ],
+  "independent_git_reads": [
+    {
+      "number": 120,
+      "spec": "6777dc481487bc72cac219d4b58658009453bac1...afd45cb8421899058c72319be110655283667c68",
+      "raw": "29\t0\t.github/workflows/legion-contract.yml\n1\t0\tREADME.md\n70\t0\tskills/loop/router_v2/LEGION.md\n32\t0\tskills/loop/router_v2/evidence/recruitment-radar-repair-2026-11-22.md\n208\t0\tskills/loop/router_v2/legion_host.js\n163\t0\tskills/loop/router_v2/tests/test_legion.js\n11\t0\tskills/skill-router/SKILL.md\n",
+      "additions": 514,
+      "deletions": 0,
+      "changed_files": 7
+    },
+    {
+      "number": 121,
+      "spec": "041931bb2831508b29a1b7698b4600f33cde241c...832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+      "raw": "4\t0\t.github/workflows/legion-contract.yml\n28\t0\tskills/loop/router_v2/LEGION.md\n115\t0\tskills/loop/router_v2/lease_fenced_host.js\n25\t0\tskills/loop/router_v2/legion_host.js\n90\t0\tskills/loop/router_v2/tests/test_lease_fenced_host.js\n64\t4\tskills/loop/router_v2/tests/test_legion.js\n",
+      "additions": 326,
+      "deletions": 4,
+      "changed_files": 6
+    }
+  ],
+  "legion_status": "COMPLETED_UNVERIFIED",
+  "final_status": "VERIFIED",
+  "verification": {
+    "checks": [
+      {
+        "id": "matches_git_diff",
+        "passed": true,
+        "evidence": {
+          "expected": [
+            {
+              "number": 120,
+              "churn": 514
+            },
+            {
+              "number": 121,
+              "churn": 330
+            }
+          ],
+          "actual": [
+            {
+              "number": 120,
+              "churn": 514
+            },
+            {
+              "number": 121,
+              "churn": 330
+            }
+          ],
+          "refs": [
+            "6777dc481487bc72cac219d4b58658009453bac1...afd45cb8421899058c72319be110655283667c68",
+            "041931bb2831508b29a1b7698b4600f33cde241c...832ceedc67dbc89f1501a8ae92a9232c67e69c04"
+          ]
+        }
+      }
+    ]
+  }
+}
