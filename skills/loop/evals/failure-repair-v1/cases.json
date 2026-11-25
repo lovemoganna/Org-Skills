@@ -1,0 +1,112 @@
+{
+  "cases": [
+    {
+      "id": "ML-001",
+      "title": "MetaLoop hourly PLANNED_NOT_RUN without model execution",
+      "failure_code": "F6",
+      "symptom": "Scheduler emits plans and inventory reports, but no authorized model executor or independent task-result receipt",
+      "evidence_urls": [
+        "https://github.com/lovemoganna/AgentComponent/blob/main/systems/metaloop/lifecycle.py",
+        "https://github.com/lovemoganna/AgentComponent/blob/main/systems/metaloop/README.md"
+      ],
+      "complexity_signals": [
+        1,
+        2,
+        3
+      ],
+      "recorded_status": "BLOCKED",
+      "executor_state": "unknown",
+      "executor_evidence_url": null,
+      "causal_state": "unassessed",
+      "diagnosis_evidence_url": null,
+      "closure_evidence_url": null,
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "real_execution_receipt",
+        "independent_result_verification"
+      ]
+    },
+    {
+      "id": "AB-002",
+      "title": "MetaLoop PR 6 paired evaluation preregistered but not executed",
+      "failure_code": "F4",
+      "symptom": "The submitted PR had preregistration and deterministic checks but no real model pairs, independent grading, or verified runtime receipts",
+      "evidence_urls": [
+        "https://github.com/lovemoganna/AgentComponent/pull/6"
+      ],
+      "complexity_signals": [
+        1,
+        2,
+        5
+      ],
+      "recorded_status": "BLOCKED",
+      "executor_state": "unknown",
+      "executor_evidence_url": null,
+      "causal_state": "unassessed",
+      "diagnosis_evidence_url": null,
+      "closure_evidence_url": null,
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "isolated_baseline_candidate_outputs",
+        "blind_review_receipt"
+      ]
+    },
+    {
+      "id": "HTML-003",
+      "title": "HTML Design Lab PR 73 initially missing runnable sources",
+      "failure_code": "F6",
+      "symptom": "Original Draft PR lacked generator, browser script, tests and input contract; later added and CI tested",
+      "evidence_urls": [
+        "https://github.com/lovemoganna/Org-Skills/pull/73",
+        "https://github.com/lovemoganna/Org-Skills/actions/runs/38245481920"
+      ],
+      "complexity_signals": [
+        1,
+        2,
+        3
+      ],
+      "recorded_status": "HISTORICALLY_REPAIRED",
+      "executor_state": "unknown",
+      "executor_evidence_url": null,
+      "causal_state": "settled",
+      "diagnosis_evidence_url": "https://github.com/lovemoganna/Org-Skills/pull/73",
+      "closure_evidence_url": "https://github.com/lovemoganna/Org-Skills/actions/runs/38245481920",
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "runnable_repository_sources",
+        "github_ci_regression"
+      ]
+    },
+    {
+      "id": "N07-004",
+      "title": "Recorded Work model response regression: exporter failure-class coverage (not a production export incident)",
+      "failure_code": "F7",
+      "symptom": "PR115 independent Work judge recorded candidate N07 score 80 vs baseline 100: candidate tested CSV but omitted permission and timezone regression acceptance. Mechanism behind the answer difference unverified.",
+      "evidence_urls": [
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/REPORT.md",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/baseline/N07.json",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/candidate/N07.json",
+        "https://github.com/lovemoganna/Org-Skills/blob/ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750/skills/causal-net-loop/evals/blind12-2026-11-18.json"
+      ],
+      "complexity_signals": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "recorded_status": "UNVERIFIED",
+      "executor_state": "unknown",
+      "executor_evidence_url": null,
+      "causal_state": "unassessed",
+      "diagnosis_evidence_url": null,
+      "closure_evidence_url": null,
+      "reopen_evidence_url": null,
+      "acceptance": [
+        "csv_roundtrip_regression",
+        "permission_allow_deny_regression",
+        "timezone_instant_regression",
+        "avoid_unjustified_platform_rewrite"
+      ]
+    }
+  ]
+}
