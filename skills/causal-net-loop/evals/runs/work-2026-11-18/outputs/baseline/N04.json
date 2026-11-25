@@ -1,0 +1,10 @@
+{
+  "case_id": "N04",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "三次翻案各有直接原因，现有记录不足以归因于调查员不细心。先请复审负责人回放三案，按原结案时点重建可用证据，检查材料是否当时已失效、日期是否用了不同口径、地址归属结论是否超出证据置信度。每案只验证一个问题，即当时哪个可执行的核验能拦住翻案；若关键信息是后来变化的，就检查结案后的更新机制。把回放中确实能拦住错误的核验放进下一批案件试行，记录独立复审发现的同类漏项和新增耗时，再决定是否固化。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N04"
+}

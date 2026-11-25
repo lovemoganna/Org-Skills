@@ -1,0 +1,10 @@
+{
+  "case_id": "N10",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "最有力的反证是，同样经历试卷难度变化、没有实行晨读的可比班级，在固定学生构成后也获得相近涨幅。最低成本是先查现有成绩和学籍记录，用两期都在校的学生作同口径比较，并用共用试卷、锚题或已有等值分数比较可比班级的涨幅。若两组涨幅接近，就无法把8分全归给晨读。若没有可比班级或试卷无法等值，现有数据不足以分离晨读效应。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N10"
+}

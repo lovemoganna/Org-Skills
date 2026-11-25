@@ -1,0 +1,10 @@
+{
+  "case_id": "N07",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "先提升现有导出的回归覆盖，优先拦住已复发的CSV转义问题。用四次失败的匿名化输入和运行条件，在现有导出的正常入口重放。将能重现的故障写成对应的发布前检查，验证CSV往返保真、正确处理权限，以及时间格式符合约定。先确认这些检查能捕捉历史错误，再在下一批发布和导出中观察同类漏检与失败。现有四次记录支持针对性修复，平台重写需要额外证据，比如现架构确实无法落实关键校验。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N07"
+}

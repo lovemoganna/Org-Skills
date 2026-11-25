@@ -1,0 +1,10 @@
+{
+  "case_id": "N05",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先维持10分钟TTL。P95下降只说明响应更快。价格每分钟变化，缓存可能返回旧价格，延长到1小时可能放大这个问题。先由API团队在同一时段抽样关联请求、缓存命中与缓存年龄、响应时的后台价格和投诉类型。若价格投诉集中在返回旧价的命中请求，放弃延长TTL；若投诉与价格偏差无关，就转查占比最高的投诉类型。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N05"
+}

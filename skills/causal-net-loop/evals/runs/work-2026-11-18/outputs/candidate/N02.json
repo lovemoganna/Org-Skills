@@ -1,0 +1,10 @@
+{
+  "case_id": "N02",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先不全量上线。登录后30分钟处于现有4小时冷静期内。先核对该笔损失的实际提现时间、规则是否适用及是否执行。只有确认延长窗口可能带来额外挽损，再在小范围内将符合条件的新设备登录随机分配到4小时和48小时组，按是否为日内结算商户分层。用相同观察窗口比较实际接管提现损失和商户结算延误。若看不到额外挽损，或结算延误超出预先约定的限度，停止试点。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N02"
+}

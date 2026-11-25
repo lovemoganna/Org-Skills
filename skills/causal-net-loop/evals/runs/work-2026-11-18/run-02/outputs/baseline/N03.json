@@ -1,0 +1,11 @@
+{
+  "case_id": "N03",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/p7",
+  "runner_id": "/root/p7",
+  "response": "现有记录足以启动核查。公共云IP段的重合只能作为线索。\n\n1. 先查逐笔撮合，核对两账户是否互为买卖对手、是否反复成交、是否有循环回转。若没有直接互撮，可削弱“这两个账户彼此对敲”的判断。\n2. 再查是否由同一方控制。优先核对已验证的账户控制人、设备或API凭证使用记录、资金来源与去向。共享云服务商IP段的证据权重低。\n3. 最后查价格影响。按订单簿和成交时间线核对这些订单是否主动吃掉关键卖盘、领先于跳价，以及外部行情或其他买家订单能否解释涨幅。共同控制、实际互撮和价格贡献要分别有证据。",
+  "evidence_ref": "evidence/p7-final.txt#N03 (Work final message received from /root/p7)",
+  "response_sha256": "029264c88b4fada90303b779dd0ea5fdc549c0791f57a3fe1f556df11176e0dd"
+}

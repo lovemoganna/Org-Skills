@@ -1,0 +1,11 @@
+{
+  "case_id": "N04",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "response": "先复盘这3次推翻，暂缓增加100项固定检查。三例分别暴露了材料有效期、交易日期和地址归属可信度问题。要检验的共因是，首次审查时已有足够证据和清晰的决策标准却漏用了，还是复审时才出现新证据或采用了不同标准。\n\n由调查负责人和复审人用当时可见的材料重放三案，逐项记录证据何时可得、当时的判断口径，以及该缺口是否应让结论保持待核实。若重放显示共同问题是关键证据缺口未能阻止定案，就只加一道触发式复核，让调查员在缺口出现时明确标注并提交复审。再用三案和可正常结案的样例验证，确认它能拦住证据不足的定案，同时放行证据充分的案件。若三案原因各异，按各自机制修正。",
+  "evidence_ref": "evidence/q3-final.txt#N04 (Work final message received from /root/q3)",
+  "response_sha256": "a43a5b3824686dff95c0b3d63ba534e0a92096ff5eadc73db0067ceffddabf6c"
+}

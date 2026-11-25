@@ -1,0 +1,47 @@
+name: Causal Net Loop Contract
+
+on:
+  pull_request:
+    paths:
+      - "skills/causal-net-loop/**"
+      - ".github/workflows/causal-net-loop-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/causal-net-loop/**"
+      - ".github/workflows/causal-net-loop-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Frozen baseline is read by commit SHA
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify causal skill contract and T1-T10 registry
+        run: python skills/causal-net-loop/tests/check_contract.py
+      - name: Verify cross-domain archived smoke metrics
+        run: python skills/causal-net-loop/evals/compare_smoke.py
+      - name: Verify Work two-subagent isolation with synthetic fixtures
+        run: python skills/causal-net-loop/tests/test_blind12_isolation.py
+      - name: Check frozen blind12 benchmark and create isolated prompt files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python skills/causal-net-loop/evals/blind12.py check
+          python skills/causal-net-loop/evals/blind12.py prepare --out "$RUNNER_TEMP/causal-blind12-prompts"
+          [[ "$(find "$RUNNER_TEMP/causal-blind12-prompts" -type f | wc -l)" -eq 24 ]]
+          echo "PASS: 24 frozen, single-case prompts generated; no model/API run made"
+      - name: Archive 24 fixed prompts (no model execution)
+        uses: actions/upload-artifact@v4
+        with:
+          name: causal-net-loop-blind12-fixed-prompts
+          path: ${{ runner.temp }}/causal-blind12-prompts/*.prompt.md
+          retention-days: 30

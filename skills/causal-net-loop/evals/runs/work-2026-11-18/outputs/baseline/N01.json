@@ -1,0 +1,10 @@
+{
+  "case_id": "N01",
+  "skill_blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_405a71cf",
+  "runner_id": "/root/run_405a71cf",
+  "response": "现有信息只支持候选命中，无法确认用户是受制裁对象。姓名音译近似，出生年份却不同，国籍和唯一身份标识也缺失。最关键是由合规人员用经核验的身份证件与官方名单原始条目做身份比对，优先匹配唯一标识，并核实出生年份差异能否由名单列明的备选日期或有据可查的录入错误解释。若仍无法消除冲突，保留待核状态。",
+  "evidence_ref": "execution-evidence.json#/executors/baseline; raw/baseline.json#N01"
+}

@@ -1,0 +1,17 @@
+{
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "model_evidence": "Work spawn_agent model override accepted",
+  "reasoning_effort": "medium",
+  "session_id": "/root/q3",
+  "runner_id": "/root/q3",
+  "identifier_scope": "canonical Work collaboration task path returned by spawn_agent and attached as the final message sender; unique within this orchestration",
+  "backend_session_uuid": "NOT_VERIFIED",
+  "backend_model_trace": "NOT_VERIFIED",
+  "model_token_usage": "NOT_VERIFIED",
+  "model_latency": "NOT_VERIFIED",
+  "fork_turns": "none",
+  "task_solving_tools": "none",
+  "input_transport_tool_calls_instructed": 1,
+  "task_submission": "one final message with 12 answers in order"
+}

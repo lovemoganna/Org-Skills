@@ -1,0 +1,342 @@
+{
+  "reviewer_id": "",
+  "is_blind": true,
+  "scores": {
+    "N01": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N02": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N03": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N04": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N05": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N06": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N07": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N08": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N09": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N10": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N11": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    },
+    "N12": {
+      "A": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      },
+      "B": {
+        "metrics": {
+          "因果与竞争解释": null,
+          "关键约束与突破动作": null,
+          "事实可靠性与反证": null,
+          "可执行验证与止损": null,
+          "简洁与成本": null
+        },
+        "hard_fail": null,
+        "negative_control_pass": null,
+        "evidence": "",
+        "notes": ""
+      }
+    }
+  }
+}

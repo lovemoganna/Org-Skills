@@ -1,0 +1,10 @@
+{
+  "case_id": "N08",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "约61%是平均等候时间的降幅，急诊质量改善幅度尚无法估计。先以原院所有到诊患者为分母，把转院患者纳入，在前后同口径、相近病情分层下比较从首次到达到接受诊疗的总时间，并追踪同期转院、固定窗口内复诊及诊疗结果。有条件可用未实施同类变化的医院作同期对照。若总等待未缩短或转院患者结局变差，就撤回整体质量提升的结论。结局数据缺失时，质量变化待验证。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N08"
+}

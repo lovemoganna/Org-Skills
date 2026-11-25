@@ -1,0 +1,10 @@
+{
+  "case_id": "N11",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "必要条件是某个结果要成立就必须满足的条件，满足它却未必能让结果成立。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N11"
+}

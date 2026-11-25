@@ -1,0 +1,10 @@
+{
+  "case_id": "N06",
+  "skill_blob": "57581f87ba669cffe1900ad0b199a9fd24b0e6f6",
+  "model": "GPT-6.2 Sol (gpt-6.2-sol)",
+  "tools": "none",
+  "session_id": "/root/run_3d1e96b2",
+  "runner_id": "/root/run_3d1e96b2",
+  "response": "先保留审计模块，在隔离环境对同一任务和同一数据跑四组对照。旧驱动与新驱动分别在新审计日志关闭和开启时运行，其余条件保持一致，并重复测量。整体回滚只说明这次部署与耗时变化有关。若仅启用日志就出现退化，撤回对驱动的单独归因；若仅换驱动就出现退化，优先排查驱动；若只有两者同时启用才退化，查交互。",
+  "evidence_ref": "execution-evidence.json#/executors/candidate; raw/candidate.json#N06"
+}
