@@ -59,4 +59,18 @@ class TestDelta(unittest.TestCase):
     def test_wrong_spreadsheet_blocked(self):
         with self.assertRaises(ValueError):
             plan(input_data(spreadsheet_id="wrong"))
+    def test_official_first_publish_after_baseline_is_allowed(self):
+        c=candidate(newness_basis="official_first_published",
+                    first_published_source="official_ats",
+                    first_published="2026-11-25",
+                    historical_last_push_date="2026-11-24")
+        r=plan(input_data(candidates=[c]))
+        self.assertEqual(len(r["writes"]),1)
+    def test_official_first_publish_before_baseline_is_blocked(self):
+        c=candidate(newness_basis="official_first_published",
+                    first_published_source="official_ats",
+                    first_published="2026-11-20",
+                    historical_last_push_date="2026-11-24")
+        r=plan(input_data(candidates=[c]))
+        self.assertFalse(r["writes"])
 if __name__=="__main__":unittest.main()
