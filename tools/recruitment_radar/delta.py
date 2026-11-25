@@ -70,8 +70,14 @@ def plan(data):
                     changes.append({"row":rownum,"column":col,"old":old,"new":new,"label":label})
             if changes:events.append({"type":"CHANGE","key":oldkey,"changes":changes,"source":c["evidence_url"],"timestamp":c["checked_at_beijing"]})
             else:review.append({"key":key,"reason":"NO_VERIFIED_CHANGE"})
-        elif not complete or aliases & prior:
-            review.append({"key":key,"reason":"INCOMPLETE_HISTORY"})
+        elif aliases & prior or (not complete and not (
+            c.get("newness_basis")=="official_first_published"
+            and c.get("first_published_source")=="official_ats"
+            and bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}",str(c.get("first_published",""))))
+            and bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}",str(c.get("historical_last_push_date",""))))
+            and c["first_published"] > c["historical_last_push_date"]
+        )):
+            review.append({"key":key,"reason":"INCOMPLETE_HISTORY_OR_NO_AUTHORITATIVE_NEWNESS"})
         elif c.get("newness_basis") not in ("official_first_published","proven_absent_prior_snapshot") or not c.get("newness_evidence_url"):
             review.append({"key":key,"reason":"NEWNESS_UNVERIFIED"})
         else:
