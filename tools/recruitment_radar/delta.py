@@ -16,19 +16,19 @@ def url_clean(s):
     query=[(k,v) for k,v in parse_qsl(p.query,keep_blank_values=True) if not k.lower().startswith(("utm_","gh_src","trk","fbclid","gclid","referrer","source"))]
     return urlunsplit(("https",p.hostname.lower().removeprefix("www."),p.path.rstrip("/") or "/",urlencode(query),""))
 def job_key(c):
-    company=re.sub(r"[^\\w]+","",str(c.get("company","")).casefold())
+    company=re.sub(r"[^\w]+","",str(c.get("company","")).casefold())
     if not company: return None
     u=c.get("official_url")
     if not u: return None
     p=urlsplit(url_clean(u))
     if p.hostname in BOARDS:
-        m=re.fullmatch(r"/[A-Za-z0-9_-]+/jobs/(\\d+)",p.path)
+        m=re.fullmatch(r"/[A-Za-z0-9_-]+/jobs/(\d+)",p.path)
         if m:return company+"|"+m[1]
     if p.hostname=="jobs.lever.co":
         m=re.fullmatch(r"/[A-Za-z0-9_-]+/([a-fA-F0-9-]{36})",p.path)
         if m:return company+"|"+m[1].lower()
     stable=c.get("verified_job_id","")
-    if re.fullmatch(r"[\\w-]{5,100}",stable):return company+"|"+stable.lower()
+    if re.fullmatch(r"[\w-]{5,100}",stable):return company+"|"+stable.lower()
     return None
 def plan(data):
     if data.get("spreadsheet_id")!=SHEET_ID:raise ValueError("target spreadsheet mismatch")
