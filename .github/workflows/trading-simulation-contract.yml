@@ -1,0 +1,20 @@
+name: Trading Simulation Contract
+
+on:
+  pull_request:
+    paths:
+      - "skills/trading-simulation-coach/**"
+      - ".github/workflows/trading-simulation-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-policy-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node skills/trading-simulation-coach/tests/run_contract_regression.mjs
