@@ -6,6 +6,7 @@
 
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
+| 从真实买方需求发现可独立变现的机会，核验预算与入口并增量追踪 | `market-demand-sniffer` | skills/market-demand-sniffer/SKILL.md |
 | 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
 | 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
@@ -93,6 +94,7 @@
 
 | Skill | 一句话能力 | Canonical path | 状态 |
 |---|---|---|---|
+| `market-demand-sniffer` | 真实需求发现、原文核验、能力匹配和成交反馈 | `skills/market-demand-sniffer/SKILL.md` | Candidate; live exploratory scan; native host and recurring eval pending |
 | `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
 | `skill-router` | 按任务选择 Skill，在 Work 内执行 GitHub 只读调用并核验回执 | `skills/skill-router/SKILL.md` | V2.0.0 · Stable for Work GitHub reads |
