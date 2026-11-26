@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "planner-1-receipt.json",
+  "artifact_ref": "planner-1-receipt.json",
+  "error": null,
+  "step_id": "planner",
+  "request_sha256": "79eeeca22edb6c0e5a468146c0a72cc494774dbfe4b6f370a334aefff1766279"
+}

@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {VideoSpec} from '../src/schema.mjs';
+const spec=VideoSpec.parse(JSON.parse(fs.readFileSync(process.argv[2]||'specs/example.json','utf8')));
+const video=`renders/${spec.id}.mp4`;
+const probe=JSON.parse(execFileSync('ffprobe',['-v','error','-count_frames','-show_streams','-show_format','-of','json',video],{encoding:'utf8'}));
+const v=probe.streams.find(s=>s.codec_type==='video'),a=probe.streams.find(s=>s.codec_type==='audio');
+const seconds=spec.scenes.reduce((n,s)=>n+s.seconds,0);
+const checks={duration:Math.abs(Number(probe.format.duration)-seconds)<0.05,frames:Number(v.nb_read_frames)===Math.round(seconds*spec.fps),dimensions:v.width===spec.width&&v.height===spec.height,fps:v.r_frame_rate===`${spec.fps}/1`,h264:v.codec_name==='h264',aac:(spec.narrationEnabled!==false||spec.bgm)?a?.codec_name==='aac':true};
+execFileSync('ffmpeg',['-v','error','-i',video,'-f','null','-'],{stdio:'pipe'});
+checks.fullDecode=true;
+fs.mkdirSync('renders/frames',{recursive:true});
+let t=0;
+for(let i=0;i<spec.scenes.length;i++){const s=spec.scenes[i];execFileSync('ffmpeg',['-y','-v','error','-ss',String(t+s.seconds/2),'-i',video,'-frames:v','1',`renders/frames/scene-${i+1}.png`]);t+=s.seconds;}
+execFileSync('ffmpeg',['-y','-v','error','-framerate','1','-i','renders/frames/scene-%d.png','-vf',`scale=640:360,tile=${Math.min(3,spec.scenes.length)}x${Math.ceil(spec.scenes.length/3)}`,'-frames:v','1','renders/contact-sheet.jpg']);
+const report={checks,sha256:createHash('sha256').update(fs.readFileSync(video)).digest('hex'),bytes:fs.statSync(video).size,probe};
+fs.writeFileSync('renders/verification.json',JSON.stringify(report,null,2));
+console.log(JSON.stringify(checks,null,2));
+if(Object.values(checks).some(x=>!x))process.exitCode=1;

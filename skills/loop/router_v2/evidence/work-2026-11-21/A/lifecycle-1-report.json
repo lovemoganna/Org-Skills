@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "lifecycle-1-receipt.json",
+  "artifact_ref": "lifecycle-1-receipt.json",
+  "error": null,
+  "step_id": "lifecycle",
+  "request_sha256": "6a765fe76ea11737b077ce310996ec9a9360f7779b5dea778ccdfa23c6aa5031"
+}

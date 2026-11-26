@@ -1,0 +1,8 @@
+{
+  "status": "FAILED",
+  "receipt_ref": "read-1-receipt.json",
+  "artifact_ref": null,
+  "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/contents#get-repository-content\",\"status\":\"404\"}",
+  "step_id": "read",
+  "request_sha256": "16374bfe2894d84353ebf11b0b961ee5b9edf2966790ac7516cc539684e307d5"
+}

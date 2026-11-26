@@ -1,0 +1,127 @@
+{
+  "confirmed": true,
+  "receipt": {
+    "matched": true
+  },
+  "evidence": {
+    "audit": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "spreadsheetId": "17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY",
+        "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY/edit",
+        "properties": {
+          "title": "Legion E02 final exclusive workbook fc3c6546",
+          "locale": "en_US",
+          "timeZone": "America/Los_Angeles"
+        },
+        "sheets": [
+          {
+            "properties": {
+              "sheetId": 1652337012,
+              "title": "LegionReceipt_1652337012",
+              "index": 1,
+              "sheetType": "GRID",
+              "hidden": true,
+              "gridProperties": {
+                "rowCount": 3,
+                "columnCount": 3
+              }
+            },
+            "data": [
+              {
+                "startRow": 1,
+                "startColumn": 2,
+                "rowData": [
+                  {
+                    "values": [
+                      {
+                        "userEnteredValue": {
+                          "formulaValue": "=A2+B2"
+                        },
+                        "effectiveValue": {
+                          "numberValue": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "values": [
+                      {
+                        "userEnteredValue": {
+                          "stringValue": "[\"17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY\",47948041,\"FormulaRepair\",1,2,\"=A2+B2\",\"=A2*B2\",1652337012]"
+                        },
+                        "effectiveValue": {
+                          "stringValue": "[\"17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY\",47948041,\"FormulaRepair\",1,2,\"=A2+B2\",\"=A2*B2\",1652337012]"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "isError": false
+    },
+    "current": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "spreadsheetId": "17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY",
+        "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/17zbnSDzlBBklM96WpzON81ZCfiHjWPKmogoVRCGR6PY/edit",
+        "properties": {
+          "title": "Legion E02 final exclusive workbook fc3c6546",
+          "locale": "en_US",
+          "timeZone": "America/Los_Angeles"
+        },
+        "sheets": [
+          {
+            "properties": {
+              "sheetId": 47948041,
+              "title": "FormulaRepair",
+              "index": 0,
+              "sheetType": "GRID",
+              "gridProperties": {
+                "rowCount": 1000,
+                "columnCount": 26,
+                "rowGroupControlAfter": true,
+                "columnGroupControlAfter": true
+              }
+            },
+            "data": [
+              {
+                "startRow": 1,
+                "startColumn": 2,
+                "rowData": [
+                  {
+                    "values": [
+                      {
+                        "userEnteredValue": {
+                          "formulaValue": "=A2*B2"
+                        },
+                        "effectiveValue": {
+                          "numberValue": 42
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "isError": false
+    }
+  }
+}

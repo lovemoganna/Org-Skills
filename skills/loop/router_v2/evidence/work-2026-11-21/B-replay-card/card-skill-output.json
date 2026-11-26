@@ -1,0 +1,21 @@
+{
+  "request": {
+    "step_id": "card",
+    "kind": "skill",
+    "target": "keypoint-loop",
+    "executor_binding": "NATIVE_HOST_MODEL_SKILL",
+    "side_effect_class": "host",
+    "args": {
+      "from": "B-replay-diagnosis/causes-skill-output.json",
+      "sha256": "1e1508bc2a20320dbd5a75f4b9d894b93a325e10ea6fd53b895d1114db3414af"
+    },
+    "request_sha256": "0439b0586925df86c3722f24a5832f54b3bdf97f707c30bd2573a7ce2d639973"
+  },
+  "source": {
+    "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+    "path": "skills/keypoint-loop/SKILL.md",
+    "blob": "c1594cf7eb3234fe75cd9e84c11fcaf1fc5e2940"
+  },
+  "executor": "current Work model",
+  "output": "# 发布验收卡｜导出改动\n\n发布前先列清受影响的风险面，再按优先级调查。每一项都必须有同一构建、同一入口的命令或请求记录和可观察断言。\n\n1. CSV：重放两条历史转义样本。修复前应出现对应读回差异；修复后逐字段往返一致。两条都保留独立结果，机理不同时分开修。\n2. 权限：分别按授权主体、无权主体运行相同导出。授权方拿到有效文件，无权方被拒且无文件可取。保存主体权限、请求状态和文件或拒绝证据。\n3. 时区：选择已知时刻，以产品定义的目标时区导出。显示值符合预期，反解回源时刻。保存时区、输入时刻、输出和反解断言。\n\n验收缺项或断言失败即阻止本次放行。环境不含历史样本或服务时，把对应项标为待验并记录补证来源。共同机制或局部修复失效未被证实时，不扩大成平台重写。卡片来源是 N07 原始回答与复核差异；当前证据支持覆盖判断，业务系统上的迁移效果待验证。"
+}

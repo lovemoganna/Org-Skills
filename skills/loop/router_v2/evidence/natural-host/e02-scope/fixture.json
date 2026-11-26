@@ -1,0 +1,20 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "success": true,
+    "converted": true,
+    "fileId": "1DqNcWpRv5FOY0VBFqPo1FjN6lg3UfxzA98sugjWH0U8",
+    "title": "Legion scoped E02 settlement fc3c6546",
+    "mimeType": "application/vnd.google-apps.spreadsheet",
+    "url": "https://docs.google.com/spreadsheets/d/1DqNcWpRv5FOY0VBFqPo1FjN6lg3UfxzA98sugjWH0U8/edit?usp=drivesdk",
+    "spreadsheetId": "1DqNcWpRv5FOY0VBFqPo1FjN6lg3UfxzA98sugjWH0U8",
+    "parentId": "1Rw-ZJEzx-yxaJKO5sZ4CXcqjc0rBvhl8",
+    "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1DqNcWpRv5FOY0VBFqPo1FjN6lg3UfxzA98sugjWH0U8"
+  },
+  "isError": false
+}

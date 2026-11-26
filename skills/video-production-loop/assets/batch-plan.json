@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "batch_id": "knowledge-series",
+  "execution": {"render_jobs_at_once": 1, "render_concurrency_per_job": 2, "tts_retries": 2, "quality_revision_limit": 3},
+  "pilot_job": "effort-success",
+  "jobs": [
+    {"id":"effort-success","topic":"为什么努力不一定成功","brief":{"audience":"普通成年人","language":"zh-CN","duration_seconds":30,"duration_is_hard":true,"aspect_ratio":"16:9","narration":true,"music":"user-supplied-or-none"},"profile":"accepted-knowledge-example","project_dir":"jobs/effort-success/project","spec":"jobs/effort-success/project/specs/example.json","revisions_dir":"jobs/effort-success/revisions","sources":[],"status":"BRIEF"}
+  ]
+}

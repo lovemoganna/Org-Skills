@@ -1,0 +1,2 @@
+在已授权的隔离 GitHub 分支 legion-e04-e05-26b4049-231139 的 legion-test/sum.mjs 新增 sum 函数，使 [] 返回 0、[3,-1,5] 返回 7。提交后独立运行测试，核对父提交和文件内容。
+授权范围 {"repository_full_name":"lovemoganna/Org-Skills","branch":"legion-e04-e05-26b4049-231139","path":"legion-test/sum.mjs","expected_head":"26b4049ee110e2860243c095e5bf1a76cf7f6ae5","operation_id":"E04-26b4049","content":"export const sum = values => values.reduce((a, b) => a + b, 0);\n"}

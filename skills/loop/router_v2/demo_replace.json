@@ -1,0 +1,44 @@
+{
+  "id": "metaloop-status-rewrite",
+  "goal": "Update a local sample status record without claiming independent verification",
+  "actions": [
+    {
+      "id": "write",
+      "operation": "write_text",
+      "path": "status.txt",
+      "text": "state: PLANNED_NOT_RUN\n"
+    },
+    {
+      "id": "replace",
+      "operation": "replace_text",
+      "path": "status.txt",
+      "old": "PLANNED_NOT_RUN",
+      "new": "EXECUTED_LOCAL",
+      "depends_on": [
+        "write"
+      ]
+    },
+    {
+      "id": "confirm",
+      "operation": "assert_contains",
+      "path": "status.txt",
+      "needle": "EXECUTED_LOCAL",
+      "depends_on": [
+        "replace"
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "state_changed",
+      "kind": "equals",
+      "path": "status.txt",
+      "value": "state: EXECUTED_LOCAL\n"
+    },
+    {
+      "id": "status_file_exists",
+      "kind": "exists",
+      "path": "status.txt"
+    }
+  ]
+}
