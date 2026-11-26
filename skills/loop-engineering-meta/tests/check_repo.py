@@ -22,6 +22,7 @@ for required in (
     "clarity is a quality gate",
     "skills/loop/SKILL.md",
     "Cut ceremony, not meaning",
+    "trial counts by arm, checked outcomes, measured cost if available",
     "### 5.2a Skill / Prompt 调试专用：任务适配审查",
     "### 5.2b Skill / Prompt 调试专用：内容质量独立验收",
     "测试设计无效", "同一执行者的自评不能冒充独立质量合格证明",

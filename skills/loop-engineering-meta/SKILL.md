@@ -647,7 +647,7 @@ Do not copy the entire meta-skill into every child skill. Keep only domain-speci
 
 A brief result with the material evidence and outstanding limits is the normal format. If the user explicitly asks for a full audit, technical design or structured record, provide one. High-impact decisions must include the necessary risks and permission conditions even when the answer gets longer.
 
-For Skill/Prompt repairs, retain scope fitness, content quality, reviewer independence, actual trials, negative results and rollback in the inspectable audit record. A good-looking answer or static validator is **not** evidence of independent model behavior.
+For Skill/Prompt repairs, retain scope fitness, content quality, reviewer independence, actual trials, negative results and rollback in the inspectable audit record. For repeatable A/B runs, keep trial counts by arm, checked outcomes, measured cost if available, and unverified evidence in that record. A good-looking answer or static validator is **not** evidence of independent model behavior.
 
 ## 13. Fast Path
 
