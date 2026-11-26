@@ -1,0 +1,17 @@
+@startuml
+' 敏感信息检测：UID / 密码哈希 / API Key / 内部主机
+' 禁止生成公共 URL — 以下仅为结构占位（无真实值）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam class {
+  BackgroundColor #FEE2E2
+  BorderColor #FCA5A5
+  FontColor #334155
+}
+note as N
+  敏感内容已过滤
+  不生成公共可解码 URL
+  建议：先移除敏感字段，再使用本地 PlantUML 渲染
+end note
+@enduml

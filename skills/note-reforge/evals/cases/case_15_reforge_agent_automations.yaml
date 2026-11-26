@@ -1,0 +1,30 @@
+case_id: case_15_reforge_agent_automations
+source_repo: lovemoganna/org-notes
+source_path: notes/reading/agent-automations/263f253c-869b-44f1-8c18-d4be58d2141e.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/reading/agent-automations/263f253c-869b-44f1-8c18-d4be58d2141e.org
+expected_decision: REFORGE
+decision_evidence: 原文五个真实业务场景（静默处理、超时未知、单源故障、迟到数据、偏好追溯）混排在长篇叙述中，阻碍运维读者按故障现象快速定位，需按读者排查手册结构进行必要重构，但必须完整保留五个场景的所有细节与边界。
+protected_content:
+- 五大故障场景
+- Slack maybe posted 判定
+- '#+WIKI_ID: 263f253c-869b-44f1-8c18-d4be58d2141e'
+reader_tasks:
+- id: T1
+  question: Slack 发送请求超时时能否直接重试？
+  expected_answer: 不能直接重试，应记为 maybe posted 并核对频道回执，防止重复发送。
+- id: T2
+  question: 单源读取失败但其他源正常时，能否断言‘全量无新增’？
+  expected_answer: 不能，必须记录该源故障并保留其 bookmark，其他源正常处理。
+- id: T3
+  question: 如何处理不可补读的历史消息覆盖缺口？
+  expected_answer: 明确标注历史覆盖缺口，不可将当期 API 调用成功冒充全量完整性。
+acceptance_criteria: 重构为按症状与排查动作索引的结构，五大场景事实、条件、参数零遗漏，保留原始代码与发布标识。
+hard_fail_conditions:
+- 丢失任一业务场景
+- 将超时错误建议为盲目重试
+- 删除证据边界说明
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_15_reforge_agent_automations.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: fe062669c39d64f39d3ea7863b4c10b2e4dfd003bf913cdddd91406bdea55362

@@ -187,5 +187,29 @@ class ModelEvalHarnessRegression(unittest.TestCase):
         self.assertEqual(record["usage"]["total_tokens"], 21)
         self.assertGreaterEqual(record["elapsed_seconds"], 0)
 
+    def test_bounded_plan_and_invalid_inputs(self):
+        import json
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "plan.json"
+            cmd = [sys.executable, str(ROOT / "scripts" / "run_behavior_evals.py")]
+            ok = subprocess.run(
+                cmd + ["--ids", "runtime-contract-hard-boundary,ambiguous-schema",
+                       "--repeat", "2", "--output", str(target)],
+                capture_output=True, text=True, check=False
+            )
+            self.assertEqual(ok.returncode, 0, ok.stdout + ok.stderr)
+            saved = json.loads(target.read_text(encoding="utf-8"))
+            self.assertEqual(saved["status"]["mode"], "OFFLINE_PLAN_ONLY")
+            self.assertEqual(saved["status"]["cases"], 2)
+            self.assertEqual(saved["status"]["paired_requests"], 8)
+            self.assertEqual(saved["status"]["executed_subject_requests"], 0)
+            self.assertEqual(len(saved["plan"]), 4)
+            self.assertTrue(all("expected_output" not in p for p in saved["plan"]))
+            for flags in (["--ids", "not-a-real-case"], ["--repeat", "0"]):
+                bad = subprocess.run(cmd + flags + ["--output", str(target)],
+                                     capture_output=True, text=True, check=False)
+                self.assertNotEqual(bad.returncode, 0, flags)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

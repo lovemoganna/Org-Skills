@@ -1,0 +1,26 @@
+name: Carmen Four-Stage Review Regression
+on:
+  push:
+    branches: [main, refactor/carmen-four-stage-review-20261011]
+    paths:
+      - ".github/workflows/carmen-four-stage-review.yml"
+      - "skills/business-owner/**"
+      - "skills/business-reasoning/SKILL.md"
+      - "skills/analysis-verifier/SKILL.md"
+      - "README.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  four-stage-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Four stage ordering / review audience / negative controls
+        run: python3 skills/business-owner/tests/check_four_stage.py
+      - name: Preserve 3 role capability
+        run: |
+          python3 skills/business-owner/tests/check_repo.py
+          python3 skills/sql-business-thinking/tests/check_dual_split.py
+          python3 skills/sql-business-thinking/tests/check_repo.py
+          python3 skills/sql-business-thinking/tests/check_native_contract.py

@@ -11,6 +11,7 @@ assert len(skill.splitlines()) < 230, "SKILL.md regressed into a long monolith"
 for path in [
     ROOT / "references" / "risk-control.md",
     ROOT / "tests" / "regression-cases.md",
+    ROOT / "tests" / "ab-regression.md",
 ]:
     assert path.exists(), f"missing required file: {path}"
 
@@ -55,7 +56,13 @@ for case in [
     "非风控系统改造",
     "信息缺失但不阻塞",
     "Compactness 回归",
+    "多来源需求冲突",
+    "验收证据边界",
 ]:
     assert case in regression, f"missing regression case: {case}"
 
-print("bprd-plus integrity checks passed")
+ab = (ROOT / "tests" / "ab-regression.md").read_text(encoding="utf-8")
+for case in ["A1", "A2", "A3", "A4"]:
+    assert f"## {case}" in ab, f"missing A/B case: {case}"
+
+print("bprd-plus integrity checks passed (behavioral A/B needs independent execution)")

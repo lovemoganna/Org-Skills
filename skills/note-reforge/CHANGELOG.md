@@ -1,5 +1,86 @@
 # CHANGELOG
 
+## 2026-11-01 — reader retelling and condition-change transfer
+
+Problem:
+- The canonical Skill already required clarity, necessary evidence, mechanisms and a single real-task walkthrough. But it did not explicitly reject a draft that sounded clear yet could not be restated by the reader or applied when one critical condition changed.
+- Shortening text can also silently delete the denominator, scope, exception or causal link needed for a sound decision.
+
+Minimal change:
+- Strengthened the existing clear-language and one-round task-acceptance paragraphs; no new mandatory document sections or multi-run A/B process.
+- Reader must restate the conclusion, causal explanation and conditions in their own words, then decide whether a one-condition change preserves, changes or makes the conclusion unproven. Trace the basis and next action.
+- Correct misleading prose locally. Do not fabricate mechanisms to satisfy the test. KEEP remains valid when the original text already works.
+
+Regression:
+- `tests/regression/reader-retell-and-transfer.md` includes SQL LEFT JOIN condition transfer, alert denominator preservation, and KEEP-on-good-source cases.
+- `tests/check_repo.py` checks contract and fixture presence only. **These are static checks; no independent reader study or model A/B was run.** Actual effectiveness remains to be established through saved reader responses.
+
+
+## 2026-10-17 — published-title protection and real-task acceptance
+
+- Publish failures were not missing checks in the publisher. The GitHub connector write route skipped the publisher's pre-submit protection. Added a runnable Org update preflight and made it mandatory before any GitHub write.
+- Historical Org section title references must remain even if CUSTOM_ID is unchanged; verified both rename and revert-as-next-commit negatives.
+- Recorded failures `4a6beee` and `bc202707` and successful final publication `ec47b2c` / GitHub Actions `38928094246` in the real regression case.
+- Task-based A/B evidence is now evaluated using externally completed, source-linked answers and manual fact/decision/action judgments. Script validates evidence contract and detects regressions; it does not verify identities, judge text, or claim independent task effectiveness.
+- The real article's independent-reader verdict remains **pending**. No article text was changed by this Skill fix.
+
+## 2026-10-16 — cross-section exception coherence (real agent automation A/B)
+
+- Real article regression found one published edition that added a no-posting completion path while retaining unconditional Slack-confirmation requirements elsewhere.
+- Added a conditional cross-section reverse check: changes to exceptions or states must be propagated to workflows, summaries, tables, definitions, and acceptance cases, with existing branches preserved.
+- Recorded controlled pre/post source revisions and adversarial examples under `tests/regression/cross-section-condition-consistency.md`.
+- Static checks verify rule/fixture presence only; independently measured usability remains unverified.
+
+## 2026-10-16 — direct language without semantic loss
+
+- Adopted Anthropic's Writing density / mannered prose guidance as a targeted extension of the existing natural-expression pass; no new workflow or mandatory output section.
+- Prefer a precise literal phrase when decorative metaphor obstructs understanding; preserve explanatory metaphors, source quotations, author voice, and protected technical content.
+- Distinguish genuinely difficult long sentences from information-rich accurate passages; preserve useful structure and formatting rather than imposing a blanket ban.
+- Added semantic A/B regression cases for metaphor removal, condition-rich text, protected quotation, and navigational formatting. Structural checks only verify contracts and fixture presence, not editorial improvement.
+
+Source: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1#writing-density
+
+## 2026-10-14 — evidence-first mainline and linked appendix validation
+
+Problem:
+- A real published prompt-foundations note mixed its four-element lesson with verbose preservation notes and a full XML prompt optimizer; deleting the protected code would violate fidelity, while leaving it inline obscured the lesson.
+- The Org checker only accepted every original code block inside one draft file, so it could not validate a faithful split appendix.
+
+Change:
+- Added a conditional external-knowledge preflight based on the existing AgentComponent research prompt; evidence must resolve a real factual or judgment gap, not inflate the note.
+- Introduced mainline relevance filtering: delete empty/repeated process prose, retain essential knowledge, and split long protected source material only if it interrupts the main point.
+- Added repeatable `--appendix` validation: exact code-block multiset, real main-to-appendix file links, no duplicate publication identities, indexed-root isolation for all split artifacts.
+- Kept single-file validation and published-note updating rules backward compatible.
+
+Verification boundary:
+- Automated checks prove code/header preservation, appendix links and safe draft placement only when indexed root is provided. They do not prove editorial quality, off-page asset reachability or actual deployment.
+
+Reference case:
+- https://github.com/lovemoganna/org-notes/blob/main/notes/knowledge/prompt-foundations/1cda8367-e385-5232-83f6-fd1dbc3918da.org
+- https://github.com/lovemoganna/AgentComponent/blob/main/prompts/research/discover/research-concept-learning-materials.md
+
+## 2026-10-12 — natural expression pass (minimal adoption)
+
+Problem:
+- The canonical Skill already enforced accurate wording and result-first writing, but did not explicitly check mechanical parallelism, unsupported promotional emphasis, vague authority, and repetitive rhetorical patterns.
+- Copying a generic "AI detection evasion" prompt would duplicate existing rules and risk damaging author voice, technical content, and source fidelity.
+
+Change:
+- Added a single, optional-in-effect natural-expression pass after existing semantic and evidence work.
+- Explicitly disallowed keyword blacklists, compulsory first person, forced colloquial phrasing, and blanket bans on useful contrast, passive voice or technical terms.
+- Preserved protected quotations, exact code and commands, author identity, source attribution, and uncertainty.
+
+New regression:
+- `tests/regression/natural-voice-preservation.md` covers technical blog, AML investigation, concise high-quality note, Org tutorial, quote preservation, and non-absolute vocabulary.
+- `tests/check_repo.py` now checks the rule's presence and regression coverage.
+
+Verification:
+- Structural contract and GitHub CI are separate from independent semantic A/B tests. Do not claim naturalness improved merely because structural checks pass.
+
+External references:
+- https://developers.google.com/style/tone
+- https://learn.microsoft.com/en-us/style-guide/word-choice/use-simple-words-concise-sentences
+
 ## 2026-10-05 — controlled-language finishing pass
 
 Problem:

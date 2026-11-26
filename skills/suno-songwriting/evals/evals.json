@@ -1,0 +1,9 @@
+{
+  "skill_name": "suno-songwriting",
+  "evals": [
+    {"id": 1, "prompt": "写一首讽刺音乐工业化的国语男声歌，怀旧而克制，给可直接用的 Suno Prompt 和完整歌词。", "expected_output": "有真实场景隐喻、旋律型副歌、创作简介100–150汉字、完整分段歌词、Style≤1000字符；未把已生成效果说成事实。", "files": []},
+    {"id": 2, "prompt": "把《不喜欢》升级为 v1.1；保持核心立意，流行R&B，加强对情绪绩效化的讽刺，国语+英文，必须保留 I'm fine / Move on / I'm not fine 的叙事反转。", "expected_output": "歌名不变、版本v1.1、双语英文分工有递进、副歌 Hook 短且重复、Style≤1000字符；保留原意不擅自改主题。", "files": []},
+    {"id": 3, "prompt": "只把上面的 Suno Style Prompt 压缩至 1000 字符内，其他不要改。", "expected_output": "仅提供≤1000字符的 Style 文本；保留关键编曲、人声、节奏与双语 Hook；不凭空重写歌词。", "files": []},
+    {"id": 4, "prompt": "这是我上传的 Suno MP3，请核对真正唱出来的歌词与原始草稿差异，并发布到我的网站。", "expected_output": "区分草稿/实唱，核验可用文件和转写质量；没有音频访问不能猜；发布前检查真实目标、仓库约束与权限。", "files": []}
+  ]
+}

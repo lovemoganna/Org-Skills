@@ -1,5 +1,21 @@
 # Changelog
 
+## v16.8 — Browser-first runtime recovery (2026-10-10)
+
+- 针对本地 DuckDB/DNS 不可用即报告阻塞的问题，明确原生 DuckDB、官方 Web Shell、独立 WASM、其他获授权 DuckDB/CI 的可执行候选检查与有证据的失败回退；不把 Web Shell 和同 Origin WASM 错当作两条独立 CORS 修复路径。
+- 固定 SELECT * 的四表单次读取以真实 Result/Arrow 在同一 DuckDB 实例物化；只有未锁定原查询形态时可用 CTAS，禁止 COUNT 探测后重复源读取。
+- 当前没有浏览器操控能力时交付可执行入口并标 EXTERNAL_EXECUTION_REQUIRED；成功标准仍是同引擎、原 SQL、真实 Result 和四个 Gate，不以页面、下载或历史运行代替。
+- 增补 Web Shell 成功、缺浏览器控制、重复读取、同源 CORS 负例 Eval；这些是行为验收资产，不等于已完成线上浏览器 E2E。
+
+
+## v16.7 — Pre-Gate 1 SQL classifier hardening (2026-10-10)
+
+- 冻结 main `123b4a53`，在隔离 PR #64 对原先未覆盖的 `MAX`、条件 `COUNT` 和 `COUNT(DISTINCT)` 写法取得 3 个真实 FAIL；修复后 20 条执行链回归通过。
+- 只修改 `scripts/check_run_lineage.py` 的前置 SQL 分类器：识别额外聚合与业务过滤计数，保留允许的总行数及空值计数勘察；历史后置 Gate 1、非法时间、数值绑定回归仍须通过。
+- 增加独立 `MIN`、`COUNT FILTER`、复合 WHERE 反例和正常 COUNT 别名，防止按样本答案硬编码；原始数据源、四个 Gate、真实 SQL 与 HTML 规则不变。
+- 分类器属于部分静态防线，不是完整 SQL 解析器；模型行为、未知最终 Origin 及全部可能的 SQL 方言未据此宣称通过。
+
+
 ## v16.6 — Ordered live gates, report evidence and isolated browser QA (2026-10-08)
 
 - 修复真实工作簿 CI 的顺序错误：四张授权表以固定 `read_xlsx(URL)` SQL 同会话单次物化，Gate 1 在全部业务汇总、JOIN、净额查询之前完成；逐表从本轮 `DESCRIBE`、有限真实记录建立来源及狭义语义检查。

@@ -1,0 +1,19 @@
+{
+  "scores": {
+    "fact_fidelity": 1,
+    "decision_contract": 0,
+    "mechanism_depth": 0,
+    "actionability": 0,
+    "conciseness_no_bloat": 1
+  },
+  "total_score": 2,
+  "hard_failure": true,
+  "hard_failure_reason": "决策错误：预期应 KEEP，候选产物却给出 REFORGE，违反决策契约。",
+  "evidence_quotes": [
+    "**决策**：**REFORGE**",
+    "在元数据之后添加了概览章节和备注，改变了原始文件结构，未保持零改动。"
+  ],
+  "reasoning": "候选产物未遵循预期 KEEP 决策，且通过新增标题和概览章节对原文进行结构性改动，虽未篡改代码块内容，但违反了零改动要求。未提供任何因果机制或可执行指示，且增加了冗余文字，整体得分低。",
+  "latency_sec": 2.815,
+  "tokens_used": 4322
+}

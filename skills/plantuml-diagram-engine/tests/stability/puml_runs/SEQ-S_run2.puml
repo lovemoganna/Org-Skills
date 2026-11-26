@@ -1,0 +1,22 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+  LifeLineBorderColor #94A3B8
+}
+participant "Client" as C
+participant "Server" as S
+participant "Database" as DB
+
+C -> S : HTTP GET /api/data
+activate S
+S -> DB : 查询数据
+DB --> S : 数据结果
+S --> C : 200 JSON 响应
+deactivate S
+@enduml

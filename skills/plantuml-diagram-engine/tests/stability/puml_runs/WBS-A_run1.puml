@@ -1,0 +1,23 @@
+@startuml
+' 注意：输入为时序流程，改用 Activity 图表示（WBS 不适合时序）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  DiamondBackgroundColor #DBEAFE
+  StartColor #2563EB
+  EndColor #172554
+}
+title 软件开发流程（时序 → Activity 图）
+start
+:收集需求;
+:分析;
+:设计;
+:编码;
+:测试;
+stop
+@enduml

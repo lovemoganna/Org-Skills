@@ -1,0 +1,8 @@
+{
+  "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+  "arm": "arm_b_candidate",
+  "source_path": "skills/note-reforge/evals/cases/source_snapshots/case_22_heldout_reforge_flattened_atlas_mutation.org",
+  "source_sha256": "f36d8c18df624da9d7bf2b15f17de887d0ee33faa1c223cdf46037757ea29ead",
+  "skill_sha256": "edacc2e077e198f7e582494320b01abeaddfa960f88f46757555b0a929ba8a28",
+  "expected_decision_hidden_from_subject": true
+}

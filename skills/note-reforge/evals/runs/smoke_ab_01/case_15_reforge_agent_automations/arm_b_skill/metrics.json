@@ -1,0 +1,19 @@
+{
+  "arm": "arm_b_skill",
+  "l1_pass": true,
+  "decision_detected": "REFORGE",
+  "decision_matched": true,
+  "l2_total_score": 10,
+  "l2_scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 2,
+    "actionability": 2,
+    "conciseness_no_bloat": 2
+  },
+  "l2_hard_failure": false,
+  "l3_accuracy": 1.0,
+  "l3_passed": 3,
+  "l3_total": 3,
+  "output_chars": 12265
+}

@@ -1,0 +1,23 @@
+case_id: case_11_patch_org_mode_image_layout
+source_repo: lovemoganna/org-notes
+source_path: notes/programming/org-mode-image-layout/2e33371a-73f8-4bed-88f4-90249c2d0850.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/programming/org-mode-image-layout/2e33371a-73f8-4bed-88f4-90249c2d0850.org
+expected_decision: PATCH
+decision_evidence: '导出 HTML 时的图片宽度属性 `#+ATTR_HTML: :width` 与 Emacs 内置显示 `#+ATTR_ORG:`
+  存在兼容边界缺口，需局部补充说明。'
+protected_content:
+- 图片配置代码示例
+- '#+WIKI_ID: 2e33371a-73f8-4bed-88f4-90249c2d0850'
+reader_tasks:
+- id: T1
+  question: 如何同时配置 Org 导出 HTML 的图片宽度和 Emacs 缓冲区显示？
+  expected_answer: '分别声明 #+ATTR_HTML 与 #+ATTR_ORG 属性。'
+acceptance_criteria: 局部补足兼容配置说明，保留全部图片路径。
+hard_fail_conditions:
+- 删除图片引用路径
+- 编造不存在的 Org 属性语法
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_11_patch_org_mode_image_layout.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 5e2aa046ad9e8e730809f63cf62fe2472d7a50cd4257dc1d1fdc6ea0f77cc228

@@ -695,6 +695,54 @@
         "测试夹具与通用 Skill 隔离"
       ],
       "files": []
+    },
+    {
+      "id": "runtime-web-shell-success",
+      "prompt": "当前容器没有 DuckDB，但可操作的官方 Web Shell 能运行用户锁定的 read_xlsx(URL) SQL。如何完成四张表的一次读取与后续分析？",
+      "expected_output": "优先尝试官方 Web Shell，实测扩展、原 SQL、Result 和同会话物化能力。只有完成单次物化才进入 Gate 1；不能因为本机无 DuckDB 先报阻塞。",
+      "assertions": [
+        "不把本机安装失败当作整个分析失败",
+        "Web Shell 的成功必须有实际 SQL Result 和物化回执",
+        "固定 SELECT 不改写 CTAS 或再次源读",
+        "通过后按 Gate 1 到 Gate 4 继续"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-browser-no-control-handoff",
+      "prompt": "容器无法连接 Google XLSX，模型没有可操控的浏览器工具；用户可在浏览器打开 shell.duckdb.org 或自建 WASM。当前轮次怎么处理？",
+      "expected_output": "交付可执行的 Web Shell/浏览器入口与原 SQL、所需回执，状态 EXTERNAL_EXECUTION_REQUIRED，不伪造 Result，也不将未测试的浏览器环境写成已失败。",
+      "assertions": [
+        "提供 Web Shell 或 WASM 可操作入口而非仅输出阻塞报告",
+        "标记 EXTERNAL_EXECUTION_REQUIRED，不宣称分析通过",
+        "不把未操控的浏览器写成已验证失败",
+        "不重复询问已有的 URL、表范围和 SQL"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-wasm-one-read-negative",
+      "prompt": "用户要求四张授权表各一次且固定 SELECT * FROM read_xlsx(URL)。WASM 先执行 COUNT(*) FROM read_xlsx(URL) 观察行数，再执行固定 SELECT，并用 CTAS 重新读取物化。能否通过？",
+      "expected_output": "不能。COUNT、SELECT、CTAS 多次触发源读取，而且改写了完整 SQL。应该执行原 SELECT 一次并以结果 Arrow 物化，不再读取源文件。",
+      "assertions": [
+        "拒绝先 COUNT 再 SELECT 的重复源读取",
+        "拒绝锁定 SQL 被 CTAS 改写",
+        "一次 Arrow 结果物化后只查询内存表",
+        "失败时保留证据不标通过"
+      ],
+      "files": []
+    },
+    {
+      "id": "runtime-cors-no-false-fallback",
+      "prompt": "官方 Web Shell 和同 Origin 独立 WASM 都收到远程 XLSX 的 CORS 拒绝，用户未许可修改固定 SQL 路径。下一步？",
+      "expected_output": "识别相同的 CORS 约束，不在同条件下循环重试；寻找具有不同网络路径的获授权 DuckDB 执行环境。禁止改用 Sheets API 或 VFS 修改固定 SQL 路径冒充通过。若只有用户端可运行路径，交付入口及回执要求。",
+      "assertions": [
+        "不把相同 CORS 故障的 WASM 切换当作独立成功",
+        "未获许可不得改写固定远程 SQL",
+        "继续寻找有独立成功可能的原生或云端 DuckDB",
+        "没有结果不生成业务 Finding"
+      ],
+      "files": []
     }
   ]
 }

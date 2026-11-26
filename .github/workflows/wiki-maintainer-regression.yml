@@ -1,0 +1,34 @@
+name: Wiki Maintainer Regression
+on:
+  push:
+    paths:
+      - 'skills/llm-wiki-maintainer/**'
+      - '.github/workflows/wiki-maintainer-regression.yml'
+  pull_request:
+    paths:
+      - 'skills/llm-wiki-maintainer/**'
+      - '.github/workflows/wiki-maintainer-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Synthetic contradiction, idempotency and concurrency contract
+        run: python3 skills/llm-wiki-maintainer/tests/check_conflict_contract.py
+      - name: Repeatable evidence and retired-page contract
+        run: python3 -m unittest discover -s skills/llm-wiki-maintainer/tests -p 'test_wiki_loop.py' -v
+      - name: Checkout real public Org knowledge sources (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: lovemoganna/org-notes
+          path: _real_org
+          persist-credentials: false
+      - name: Read-only current Wiki identity and relation audit
+        run: python3 skills/llm-wiki-maintainer/scripts/wiki_loop.py audit --repo _real_org
+

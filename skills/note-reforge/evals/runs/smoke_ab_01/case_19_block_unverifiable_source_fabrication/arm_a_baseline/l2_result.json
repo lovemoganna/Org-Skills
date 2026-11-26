@@ -1,0 +1,16 @@
+{
+  "scores": {
+    "fact_fidelity": 0,
+    "decision_contract": 0,
+    "mechanism_depth": 0,
+    "actionability": 0,
+    "conciseness_no_bloat": 0
+  },
+  "total_score": 0,
+  "hard_failure": true,
+  "hard_failure_reason": "Grader JSON parse error: Expecting value: line 1 column 1 (char 0)",
+  "evidence_quotes": [],
+  "reasoning": "org …",
+  "latency_sec": 16.203,
+  "tokens_used": 2427
+}

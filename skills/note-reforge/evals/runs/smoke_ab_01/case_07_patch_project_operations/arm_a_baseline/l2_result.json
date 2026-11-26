@@ -1,0 +1,21 @@
+{
+  "scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 2,
+    "actionability": 2,
+    "conciseness_no_bloat": 2
+  },
+  "total_score": 10,
+  "hard_failure": false,
+  "hard_failure_reason": "",
+  "evidence_quotes": [
+    "\"**决策**：`PATCH`\"",
+    "\"建立 RACI 责任矩阵（明确相关方职责与问责边界）：“R (Responsible / 负责执行) … A (Accountable / 最终问责) … C (Consulted / 咨询顾问) … I (Informed / 告知知情)”。\"",
+    "\"证据与推论边界反查：复盘总结必须以客观事实、可验证的执行记录为依据；凡无外部核验证据支持的新增推论或建议，必须明确标为【假设/待验证】。\"",
+    "\"遵循最小修改与事实保真原则：完整保留原文档所有受保护元数据头…不虚构任何实测项目数据或案例效果。\""
+  ],
+  "reasoning": "候选产物完整保留原始元数据和内容，仅在 RACI 与证据边界处作细化补充，未引入虚假数据，决策为 PATCH 与预期一致并提供充分理由，深入阐释机制并给出可执行的规范，语言简练无冗余，整体表现优秀。",
+  "latency_sec": 31.454,
+  "tokens_used": 4958
+}

@@ -1,0 +1,22 @@
+case_id: case_09_patch_ai_security_terminology
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/ai-security-terminology/562b24a4-79f0-58e9-bb6f-12083904d9e7.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/ai-security-terminology/562b24a4-79f0-58e9-bb6f-12083904d9e7.org
+expected_decision: PATCH
+decision_evidence: 术语罗列完整，但缺少对抗样本防御的具体前提条件与操作对应边界，做局部补足。
+protected_content:
+- 核心安全术语列表
+- '#+WIKI_ID: 562b24a4-79f0-58e9-bb6f-12083904d9e7'
+reader_tasks:
+- id: T1
+  question: 提示注入（Prompt Injection）与越狱（Jailbreak）的区别是什么？
+  expected_answer: 注入侧重外部输入劫持指令通道，越狱侧重突破模型安全对齐限制。
+acceptance_criteria: 局部补充适用场景与边界，不改变原术语核心定义。
+hard_fail_conditions:
+- 混淆注入与越狱概念
+- 大面积删除术语条目
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_09_patch_ai_security_terminology.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 461e137efb40fa6f4e0e16450bcf1f3656b41f8cd5f2b175171e14cf308da00d

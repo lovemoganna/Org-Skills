@@ -1,0 +1,51 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+class User {
+  id : Long
+  name : String
+  email : String
+}
+class Product {
+  id : Long
+  name : String
+  price : Decimal
+  stock : Integer
+}
+class Order {
+  id : Long
+  status : String
+  createdAt : Date
+}
+class OrderItem {
+  quantity : Integer
+  unitPrice : Decimal
+}
+class Payment {
+  id : Long
+  amount : Decimal
+  method : String
+  status : String
+}
+class Cart {
+  id : Long
+}
+class CartItem {
+  quantity : Integer
+}
+
+User "1" o-- "0..*" Order
+User "1" o-- "1" Cart
+Order "1" *-- "1..*" OrderItem
+OrderItem "*" --> "1" Product
+Order "1" --> "1" Payment
+Cart "1" *-- "0..*" CartItem
+CartItem "*" --> "1" Product
+@enduml

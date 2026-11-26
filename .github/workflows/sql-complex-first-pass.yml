@@ -1,0 +1,37 @@
+name: SQL Complex First Pass Paired Trial
+on:
+  push:
+    branches: [main, experiment/sql-complex-first-pass-20261015]
+    paths:
+      - ".github/workflows/sql-complex-first-pass.yml"
+      - "skills/analysis-verifier/scripts/evaluate_complex_first_pass.py"
+      - "skills/analysis-verifier/scripts/blind_source_preflight.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  paired-sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned native DuckDB
+        run: python -m pip install duckdb==1.4.2
+      - name: Verify source hashes and materialize original retail tables
+        run: python skills/analysis-verifier/scripts/blind_source_preflight.py complex-evidence
+      - name: Run frozen first-pass queries and independent Python holdout
+        run: python skills/analysis-verifier/scripts/evaluate_complex_first_pass.py complex-evidence
+      - name: Archive initial SQL, failures, results, and independent holdout
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: complex-first-pass-eval-evidence
+          if-no-files-found: warn
+          path: |
+            complex-evidence/source-receipt.json
+            complex-evidence/complex-first-pass-attempts.json
+            complex-evidence/complex-first-pass-summary.json
+            complex-evidence/complex-first-pass-holdout.json

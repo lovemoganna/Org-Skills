@@ -1,0 +1,113 @@
+**KEEP** — `notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org`
+
+文件在当前工作区不可访问，因此未写入或修改文件；按原文提供内容如下。它已清楚列出十二种神通、保留图腾链接，并明确说明这是创作设定而非历史道教说明，没有需要补足的实际缺口。
+
+```org
+#+TITLE: 十二符咒修仙图鉴
+#+WIKI_ID: 9e15fa89-5e58-47a9-aebf-5784261806ad
+#+CATEGORY: 仙侠设定
+#+FILETAGS: :修仙:十二符咒:图腾:道家幻想:
+#+DATE: 2026-10-11
+#+SOURCE: 用户在本次对话中提供的十二符咒修仙设定及对应生成图像；未提供外部出处
+#+INGEST_ID: 4476c69b-6705-412c-942e-6131f5e2a07f
+#+WIKI_STATUS: published
+
+十二生肖，各掌一道神通。十二枚图腾分别对应造化、力道、阴阳、时空、神火、虚隐、护体、阳神、变化、神识、长生与洞察。
+
+以下文字保留创作设定原句；图像为本次创作生成的上古玄门风格图腾。此为仙侠幻想设计，不是历史道教符箓或法术说明。
+
+* 十二图腾
+:PROPERTIES:
+:CUSTOM_ID: zodiac-totems
+:END:
+
+#+ATTR_HTML: :width 660px :style min-width:0;width:100%;max-width:660px;table-layout:fixed;margin:auto
+| [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/01-shu.webp]] 鼠 · 化静为动 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/02-niu.webp]] 牛 · 搬山怪力 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/03-hu.webp]] 虎 · 调和阴阳 |
+| [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/04-tu.webp]] 兔 · 一瞬万里 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/05-long.webp]] 龙 · 神龙烈火 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/06-she.webp]] 蛇 · 隐匿虚空 |
+| [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/07-ma.webp]] 马 · 万劫不染 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/08-yang.webp]] 羊 · 真修阳神 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/09-hou.webp]] 猴 · 七十二变 |
+| [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/10-ji.webp]] 鸡 · 神识念力 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/11-gou.webp]] 狗 · 长生不老 | [[file:../../../note-assets/9e15fa89-5e58-47a9-aebf-5784261806ad/12-zhu.webp]] 猪 · 万物洞察 |
+
+* 十二神通
+:PROPERTIES:
+:CUSTOM_ID: powers
+:END:
+
+** 鼠 · 化静为动
+:PROPERTIES:
+:CUSTOM_ID: totem-shu
+:END:
+鼠，化静为动，点化灵机，造化万千。
+
+** 牛 · 搬山怪力
+:PROPERTIES:
+:CUSTOM_ID: totem-niu
+:END:
+牛，搬山怪力，打碎虚空，肉身成圣。
+
+** 虎 · 调和阴阳
+:PROPERTIES:
+:CUSTOM_ID: totem-hu
+:END:
+虎，分化善恶，调和阴阳，斩去三尸。
+
+** 兔 · 一瞬万里
+:PROPERTIES:
+:CUSTOM_ID: totem-tu
+:END:
+兔，一瞬万里，穿梭时空，遨游太虚。
+
+** 龙 · 神龙烈火
+:PROPERTIES:
+:CUSTOM_ID: totem-long
+:END:
+龙，神龙烈火，煌煌天威，净焚诸界。
+
+** 蛇 · 隐匿虚空
+:PROPERTIES:
+:CUSTOM_ID: totem-she
+:END:
+蛇，隐去身形，收敛气息，隐匿虚空。
+
+** 马 · 万劫不染
+:PROPERTIES:
+:CUSTOM_ID: totem-ma
+:END:
+马，补还本来，趋避外魔，万劫不染。
+
+** 羊 · 真修阳神
+:PROPERTIES:
+:CUSTOM_ID: totem-yang
+:END:
+羊，真修阳神，摄神拿鬼，轮回六道。
+
+** 猴 · 七十二变
+:PROPERTIES:
+:CUSTOM_ID: totem-hou
+:END:
+猴，七十二变，神通地煞，一化万物。
+
+** 鸡 · 神识念力
+:PROPERTIES:
+:CUSTOM_ID: totem-ji
+:END:
+鸡，神识念力，移星拿月，掌握乾坤。
+
+** 狗 · 长生不老
+:PROPERTIES:
+:CUSTOM_ID: totem-gou
+:END:
+狗，长生不老，天地同寿，太乙金仙。
+
+** 猪 · 万物洞察
+:PROPERTIES:
+:CUSTOM_ID: totem-zhu
+:END:
+猪，神目冲虚，万物洞察，总览诸界。
+
+* 设定边界
+:PROPERTIES:
+:CUSTOM_ID: scope
+:END:
+本图鉴依据创作中的修仙神通设定制作。图腾将动物形象与太极、八卦、天象、祥云等视觉元素结合，仅供世界观、美术及故事创作使用。
+```
+

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "job_id": "effort-success",
+  "revision": "r001",
+  "state": "BRIEF",
+  "assumptions": [],
+  "hard_constraints": {},
+  "input_hashes": {},
+  "asset_provenance": [],
+  "commands": [],
+  "checks": {"technical":"not_checked","facts":"not_checked","visual":"not_checked","listening":"not_checked","user_feedback":"not_checked"},
+  "iterations": [],
+  "artifacts": {},
+  "remaining_issues": [],
+  "blocked_reason": null
+}

@@ -1,0 +1,86 @@
+{
+  "id": "doc-1da3e61ffddd",
+  "kind": "tutorial",
+  "title": "DuckDB 聚合入门",
+  "kicker": "TUTORIAL · 单文档",
+  "lead": "本教程通过三条演示交易记录说明分组聚合。金额不代表真实业务数据。",
+  "description": "本教程通过三条演示交易记录说明分组聚合。金额不代表真实业务数据。",
+  "ending": "每行表示一笔交易。",
+  "chapters": [
+    {
+      "id": "section-1",
+      "title": "正文",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "本教程通过三条演示交易记录说明分组聚合。金额不代表真实业务数据。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "认识样本",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "每行表示一笔交易。"
+          ]
+        },
+        {
+          "type": "table",
+          "columns": [
+            "类别",
+            "金额"
+          ],
+          "rows": [
+            [
+              "A",
+              "100"
+            ],
+            [
+              "A",
+              "60"
+            ],
+            [
+              "B",
+              "40"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "编写 SQL",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "code",
+          "language": "sql",
+          "code": "SELECT category, COUNT(*) AS txn_count, SUM(amount) AS total_amount\nFROM (VALUES ('A', 100), ('A', 60), ('B', 40)) AS t(category, amount)\nGROUP BY category\nORDER BY total_amount DESC;"
+        }
+      ]
+    },
+    {
+      "id": "section-4",
+      "title": "核对结果",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "类别 A 有两笔，合计 160。",
+            "类别 B 有一笔，合计 40。",
+            "原始合计是 200；必须核对数据粒度。"
+          ]
+        }
+      ]
+    }
+  ],
+  "annotations": {}
+}

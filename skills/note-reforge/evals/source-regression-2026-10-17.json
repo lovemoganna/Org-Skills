@@ -1,0 +1,102 @@
+{
+  "method": "source-grounded deterministic regression, not independent model A/B",
+  "date": "2026-10-17",
+  "results": [
+    {
+      "case": "项目闭环",
+      "sha": "6b459f23e478925eaa3cee43980c9868828e1dce",
+      "checks": [
+        {
+          "name": "四环节",
+          "pass": true
+        },
+        {
+          "name": "证据边界",
+          "pass": true
+        },
+        {
+          "name": "RACI",
+          "pass": true
+        },
+        {
+          "name": "发布身份",
+          "pass": true
+        }
+      ],
+      "decision": "candidate_available_not_independent",
+      "independent_model_runs": 0
+    },
+    {
+      "case": "提示词解构",
+      "sha": "13ebd52038b4c3860e1a7c4aee4361382d2f6e69",
+      "checks": [
+        {
+          "name": "原始代码块",
+          "pass": true
+        },
+        {
+          "name": "自评不等于实测",
+          "pass": true
+        },
+        {
+          "name": "来源",
+          "pass": true
+        },
+        {
+          "name": "运行验证",
+          "pass": true
+        }
+      ],
+      "decision": "NOOP_baseline_only",
+      "independent_model_runs": 0
+    },
+    {
+      "case": "三魂七魄",
+      "sha": "2afcd9ab1d88f7607e06f39a5ec13256c833c888",
+      "checks": [
+        {
+          "name": "双语",
+          "pass": true
+        },
+        {
+          "name": "非官方框架",
+          "pass": true
+        },
+        {
+          "name": "证据边界",
+          "pass": true
+        },
+        {
+          "name": "行动",
+          "pass": true
+        }
+      ],
+      "decision": "NOOP_baseline_only",
+      "independent_model_runs": 0
+    },
+    {
+      "case": "递归账号发现",
+      "sha": "24d7ec44a508927c8dcbc8bc427b1daab0b0f8ee",
+      "checks": [
+        {
+          "name": "完整代码块",
+          "pass": true
+        },
+        {
+          "name": "递归/去重/停止",
+          "pass": true
+        },
+        {
+          "name": "未定义约束",
+          "pass": true
+        },
+        {
+          "name": "未实测不得验收",
+          "pass": true
+        }
+      ],
+      "decision": "NOOP_baseline_only",
+      "independent_model_runs": 0
+    }
+  ]
+}

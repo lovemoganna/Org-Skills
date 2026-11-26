@@ -1,0 +1,21 @@
+@startuml
+' 输入极度模糊，最小假设：Client + System 两个参与者（已标注为推断）
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+}
+' 推断：将"系统"视为单一服务，"请求方"视为 Client
+participant "Client（推断）" as C
+participant "System（推断）" as S
+
+C -> S : 发送请求
+activate S
+S --> C : 返回结果
+deactivate S
+note right of S : 参与者和消息均为最小推断\n原始输入未提供具体参与者名称
+@enduml

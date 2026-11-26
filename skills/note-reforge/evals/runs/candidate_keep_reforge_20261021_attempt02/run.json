@@ -1,0 +1,299 @@
+{
+  "run_id": "candidate_keep_reforge_20261021_attempt02",
+  "prepared_at": "2026-10-21T03:02:23.314815+00:00",
+  "mode": "sealed_production_vs_candidate_six_case_regression",
+  "executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "production_commit": "7674cf109ecfd69b59f8aeb3843742a3d9897db5",
+  "production_skill_sha256": "abb0e6b4f0af4bb4f05e10da6fe732a6a405bb9b69edc7fc1182d49faaa73aad",
+  "candidate_skill_sha256": "edacc2e077e198f7e582494320b01abeaddfa960f88f46757555b0a929ba8a28",
+  "cases": [
+    "case_06_heldout_keep_sql_blind_cases",
+    "case_14_heldout_patch_thinking_reconstruction",
+    "case_18_heldout_reforge_xianxia_talismans",
+    "case_20_heldout_block_irreconcilable_contradiction",
+    "case_21_heldout_patch_missing_navigation_mutation",
+    "case_22_heldout_reforge_flattened_atlas_mutation"
+  ],
+  "subject_requests_expected": 12,
+  "subject_requests_completed": 12,
+  "status": "EXECUTED_L1_ONLY",
+  "anti_leakage": [
+    "Subject prompts contain only Skill text, task text, and source document.",
+    "Expected decisions, reader-task answers, acceptance criteria, hard-fail conditions, prior outputs, and prior adjudications are excluded from subject prompts.",
+    "Production and candidate arms use separate COPILOT_HOME sessions."
+  ],
+  "limitations": [
+    "Copilot account default model is not pinned or independently identified.",
+    "case_21 and case_22 are deterministic mutations of real historical snapshots.",
+    "Semantic adjudication is performed only after raw subject outputs are preserved."
+  ],
+  "results": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 172,
+          "output_sha256": "874b5c45cfb39ab23c77aec8aca781a9f188cd77cad4082016113180521be925",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 188,
+          "output_sha256": "77f5ae8019be6eba4f7dacbc4ea332f6dc5dc0572de356cbdb52e6531d35f6f4",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 8164,
+          "output_sha256": "4c7ca0c8c30f784d88fc02277570cbf772ecedfaef4677d9334169f24ca99bf9",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": false,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected PATCH"
+            ]
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 8110,
+          "output_sha256": "cc4692370eb05bdb19ff45f6d1669835c411f6f65a17f52bd5756940f55bcdeb",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": false,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected PATCH"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 148,
+          "output_sha256": "2aebb050d6ac74a814d1ebf9622f4e2e52f7d7bcc10fe2209feb6d29e2851d98",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 139,
+          "output_sha256": "5c6adae8e015e036122650f767bb35f0d4a64400399692e928e34f1fa71cfe60",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "expected_decision": "BLOCK",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 142,
+          "output_sha256": "63e61d6bd95038cf3b522b98456fbdf963ddf228f19a021408e79341aa236220",
+          "detected_decision": "BLOCK",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 151,
+          "output_sha256": "42c00b6c8ea1a66f86b0f4689c4371272aab6c43f4c0df1d0e1e6749f9f88ffe",
+          "detected_decision": "BLOCK",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected_decision": "PATCH",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 7813,
+          "output_sha256": "6a50451f0cd15707307aea149c198c70340d7db5b716fb16c299ce0953510e33",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 7903,
+          "output_sha256": "11fb9a61f91fa41b3a6ec869228e0e9af270f9393052c2a162967d95637d1753",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": false,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Missing original headers: ['#+ATTR_HTML::width 100% :style display:block;max-width:100%;height:auto;margin:0 auto']"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected_decision": "REFORGE",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 158,
+          "output_sha256": "b2499f3ecb0916e9857d2974cf012a2c34ec1c49d0017c3b14b532e523726049",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": false,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected REFORGE, detected KEEP"
+            ]
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 2303,
+          "output_sha256": "f7136d3be4fccee2e1e2cda0547e094c055eb2eb20eecbc5f96f1557df2965f2",
+          "detected_decision": "REFORGE",
+          "decision_matches_expected": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "REFORGE",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    }
+  ],
+  "completed_at": "2026-10-21T03:04:26.721156+00:00",
+  "errors": []
+}

@@ -1,0 +1,23 @@
+case_id: case_17_reforge_prompt_iterative_engineering
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/prompt-engineering/2929cd47-a6aa-51b2-a36d-259ed7ce0bb8.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/prompt-engineering/2929cd47-a6aa-51b2-a36d-259ed7ce0bb8.org
+expected_decision: REFORGE
+decision_evidence: 过程性迭代日记阻碍提取通用提示链工程方法论，需将过程日志转化为规范手册。
+protected_content:
+- 多轮提示词历史版本
+- 评测反馈数据
+- '#+WIKI_ID'
+reader_tasks:
+- id: T1
+  question: 提示词优化的停止条件是什么？
+  expected_answer: 当指标不再显著提升或新增规则引入同等退化时停止。
+acceptance_criteria: 重构为工程迭代标准，原始提示词版本作为参考材料完好保留。
+hard_fail_conditions:
+- 丢弃历史版本提示词对比
+- 伪造不存在的评测指标
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_17_reforge_prompt_iterative_engineering.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: cb74a9ea5d43c3ab51f81d30006082533be10a00ab3d24cc08ecb9e13caf8db8

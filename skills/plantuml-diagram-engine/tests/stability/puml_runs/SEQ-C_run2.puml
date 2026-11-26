@@ -1,0 +1,41 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+}
+participant "Browser" as B
+participant "Gateway" as GW
+participant "Auth" as A
+participant "OrderSvc" as O
+participant "Inventory" as I
+participant "Payment" as P
+participant "DB" as DB
+
+B -> GW : 请求下单
+GW -> A : 验证 Token
+alt 认证失败
+  A --> GW : 401
+  GW --> B : 401 Unauthorized
+else 认证成功
+  GW -> O : 转发下单请求
+  O -> I : 查询库存
+  I --> O : 返回库存
+  O -> P : 扣款
+  alt 支付异常
+    P --> O : 失败
+    O --> GW : 回滚
+    GW --> B : 500
+  else 成功
+    P --> O : 成功
+    O -> DB : 保存订单
+    DB --> O : OK
+    O --> GW : 201
+    GW --> B : 201 Created
+  end
+end
+@enduml

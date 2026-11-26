@@ -1,0 +1,32 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+state "已创建" as Created
+state "待支付" as Pending
+state "已支付" as Paid
+state "备货中" as Preparing
+state "已发货" as Shipped
+state "已签收" as Received
+state "退款申请" as RefundReq
+state "退款中" as Refunding
+state "已关闭" as Closed
+
+[*] --> Created : 提交订单
+Created --> Pending : 确认
+Pending --> Paid : 支付成功
+Pending --> Closed : 支付超时
+Paid --> Preparing : 备货
+Preparing --> Shipped : 发货
+Shipped --> Received : 签收
+Received --> RefundReq : 退款申请
+RefundReq --> Refunding : 审核通过
+Refunding --> Closed : 退款完成
+Closed --> [*]
+@enduml

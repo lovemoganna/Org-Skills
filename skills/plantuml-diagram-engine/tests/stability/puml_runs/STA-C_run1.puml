@@ -1,0 +1,24 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+  StartColor #2563EB
+  EndColor #172554
+}
+[*] --> 已创建 : 提交订单
+已创建 --> 待支付 : 确认下单
+待支付 --> 已支付 : 支付成功
+待支付 --> 已关闭 : 支付超时
+已支付 --> 备货中 : 开始备货
+备货中 --> 已发货 : 发货
+已发货 --> 已签收 : 确认收货
+已签收 --> 退款申请 : 申请退款
+退款申请 --> 退款中 : 审核通过
+退款中 --> 已关闭 : 退款完成
+已关闭 --> [*]
+@enduml

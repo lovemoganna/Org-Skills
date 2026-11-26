@@ -1,0 +1,52 @@
+{
+  "account": {
+    "wallet": 10000.203085534682,
+    "lev": 1,
+    "mode": "isolated",
+    "busts": 0,
+    "runN": 1
+  },
+  "runs": [],
+  "rounds": [
+    {
+      "ts": 1795687132967,
+      "symbol": "BTCUSDT",
+      "interval": "1h",
+      "market": "crypto",
+      "startW": 10000,
+      "endW": 10000.2,
+      "pnl": 0.2,
+      "fees": 0.04,
+      "fills": 2,
+      "liqs": 0,
+      "maxDD": 0,
+      "bars": 1,
+      "reason": "手动结束",
+      "peeked": false,
+      "t0": 1628398800000,
+      "t1": 1628402400000,
+      "list": [
+        {
+          "i": 0,
+          "side": 1,
+          "tag": "开多",
+          "type": "市价",
+          "price": 44750.765,
+          "n": 40,
+          "fee": 0.02,
+          "pnl": 0
+        },
+        {
+          "i": 1,
+          "side": -1,
+          "tag": "平多",
+          "type": "市价",
+          "price": 45022.857,
+          "n": 40.24,
+          "fee": 0.0201,
+          "pnl": 0.24
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "B-replay-card",
+  "request": "在第一阶段找到可复用的验收覆盖缺口时，把它提炼成可直接使用的发布卡片。",
+  "goal": "Give a reusable evidence-linked release gate for N07",
+  "mode": "adaptive_continuation",
+  "route_decision": "Inspect the completed causal output first. It identified an actionable coverage handoff with observable evidence. Apply keypoint-loop to convert it into a release gate. If the diagnosis had not identified a reusable mechanism, stop after the causal report.",
+  "prior_artifact": {
+    "path": "B-replay-diagnosis/causes-skill-output.json",
+    "sha256": "1e1508bc2a20320dbd5a75f4b9d894b93a325e10ea6fd53b895d1114db3414af"
+  },
+  "steps": [
+    {
+      "id": "card",
+      "kind": "skill",
+      "target": "keypoint-loop",
+      "args": {
+        "from": "B-replay-diagnosis/causes-skill-output.json",
+        "sha256": "1e1508bc2a20320dbd5a75f4b9d894b93a325e10ea6fd53b895d1114db3414af"
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "card",
+      "criteria": "Three separately actionable checks, falsifiable release rule, evidence and boundaries",
+      "evidence_from": [
+        "card"
+      ]
+    }
+  ]
+}

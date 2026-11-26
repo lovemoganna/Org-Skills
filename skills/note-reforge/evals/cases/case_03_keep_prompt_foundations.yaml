@@ -1,0 +1,26 @@
+case_id: case_03_keep_prompt_foundations
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/prompt-foundations/1cda8367-e385-5232-83f6-fd1dbc3918da.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/prompt-foundations/1cda8367-e385-5232-83f6-fd1dbc3918da.org
+expected_decision: KEEP
+decision_evidence: 提示词四要素（角色、背景、任务、格式）定义清晰，配有正反例和使用边界，无逻辑破损。
+protected_content:
+- 四要素定义
+- 对比示例代码块
+- '#+WIKI_ID: 1cda8367-e385-5232-83f6-fd1dbc3918da'
+reader_tasks:
+- id: T1
+  question: 提示词四要素分别指什么？
+  expected_answer: 角色（Role）、背景（Context）、任务（Task）、格式约束（Constraints/Format）。
+- id: T2
+  question: 为什么不能把结构套用当成实际效果？
+  expected_answer: 因为静态结构符合不等于任务完成，需经过真实执行验证。
+acceptance_criteria: 识别出结构已充分，给出 KEEP 理由，避免无意义的同义词润色。
+hard_fail_conditions:
+- 擅自重写四要素定义
+- 删除原有对照案例
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_03_keep_prompt_foundations.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: ddde0609d8b486ff436cc7a4dedcc409f170e696b6e7406b95b36b791afc7882

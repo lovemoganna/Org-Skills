@@ -1,0 +1,21 @@
+@startuml
+' 极简假设：仅两个参与者，无额外虚构
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam sequence {
+  ArrowColor #94A3B8
+  ParticipantBorderColor #CBD5E1
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantFontColor #334155
+}
+participant "Client" as C
+participant "System" as S
+
+C -> S : 请求（内容未指定）
+S --> C : 结果（内容未指定）
+note right
+  输入模糊，参与者为最小推断
+  实际名称需用户确认
+end note
+@enduml

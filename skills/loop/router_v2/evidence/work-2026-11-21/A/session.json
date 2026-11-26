@@ -1,0 +1,109 @@
+{
+  "plan": {
+    "id": "A",
+    "request": "调查 MetaLoop 为什么曾只生成计划。在候选入口修复执行缺口，运行回归并保留证据。",
+    "goal": "Trace plan-only behavior to its execution boundary and verify the candidate Work handoff",
+    "mode": "single_skill",
+    "constraints": [
+      "Read historical sources",
+      "Fix only PR #118",
+      "Use Work tools"
+    ],
+    "steps": [
+      {
+        "id": "lifecycle",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/AgentComponent",
+          "path": "systems/metaloop/lifecycle.py",
+          "ref": "main"
+        }
+      },
+      {
+        "id": "planner",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/Org-Skills",
+          "path": "skills/loop/evals/failure-repair-v1/route.py",
+          "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+        }
+      },
+      {
+        "id": "diagnosis",
+        "kind": "skill",
+        "target": "loop-engineering-meta",
+        "depends_on": [
+          "lifecycle",
+          "planner"
+        ],
+        "args": {
+          "question": "Identify the earliest observed failure, distinguish scheduler history from the Work bridge, and validate only the candidate repair against real calls and regression tests."
+        }
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "cause",
+        "criteria": "Ground the historical boundary in real source",
+        "evidence_from": [
+          "lifecycle",
+          "planner",
+          "diagnosis"
+        ]
+      },
+      {
+        "id": "repair",
+        "criteria": "Demonstrate a candidate execution and run its regression",
+        "evidence_from": [
+          "diagnosis"
+        ]
+      }
+    ]
+  },
+  "plan_sha256": "0fc71edfdff238c37b918468c43fbeaa4e04aa11d203fc1859415cb200deff6a",
+  "skill_source_hashes": {
+    "loop-engineering-meta": "0ee8b38f9cbb2d7b9da28d49db18f4f828d4b0fd054bdee640010bd9812005e2"
+  },
+  "host_declared_capabilities": [
+    "github.fetch_file",
+    "github.fetch_workflow_run_jobs",
+    "github.get_pr_info"
+  ],
+  "host_write_authorization_declared": false,
+  "read_retries": {},
+  "results": {
+    "lifecycle": {
+      "step_id": "lifecycle",
+      "request_sha256": "6a765fe76ea11737b077ce310996ec9a9360f7779b5dea778ccdfa23c6aa5031",
+      "status": "SUCCESS",
+      "receipt_ref": "lifecycle-1-receipt.json",
+      "artifact_ref": "lifecycle-1-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:19.321842+00:00"
+    },
+    "planner": {
+      "step_id": "planner",
+      "request_sha256": "79eeeca22edb6c0e5a468146c0a72cc494774dbfe4b6f370a334aefff1766279",
+      "status": "SUCCESS",
+      "receipt_ref": "planner-1-receipt.json",
+      "artifact_ref": "planner-1-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:20.530354+00:00"
+    },
+    "diagnosis": {
+      "step_id": "diagnosis",
+      "request_sha256": "2502b5878aa33e70de6c67cef3ecfefad6fe0eae0b0cf98f6e59cfa1f5441bee",
+      "status": "SUCCESS",
+      "receipt_ref": "diagnosis-skill-output.json",
+      "artifact_ref": "diagnosis-skill-output.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:41:37.574075+00:00"
+    }
+  },
+  "started_at": "2026-11-21T03:39:17.371519+00:00"
+}

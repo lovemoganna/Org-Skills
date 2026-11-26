@@ -1,0 +1,184 @@
+{
+  "run_id": "smoke_ab_01",
+  "adjudication_id": "manual_rejudge_20261020_gpt56sol",
+  "evaluated_at": "2026-10-20",
+  "evaluator_commit": "2867c8de72fcbc0b8863425bfdd9ecede3299b14",
+  "method": "Independent semantic re-adjudication of the saved L3 reader answers after fixing the evaluator contract. Arm outputs and reader answers were not regenerated.",
+  "judge": {
+    "model": "GPT-5.6 Sol",
+    "interface": "ChatGPT",
+    "automated_api": false
+  },
+  "limitations": [
+    "This is a re-adjudication of previously generated reader answers, not a fresh end-to-end model rerun.",
+    "The original smoke_ab_01 artifacts remain unchanged.",
+    "Held-out cases were not evaluated in this adjudication."
+  ],
+  "cases": [
+    {
+      "case_id": "case_01_keep_recursive_discovery",
+      "arm_a_baseline": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Core stopping conditions are correct: stop when there is no valid new discovery or when the configured search limit is reached. The added parenthetical '去重阈值' is unsupported by the frozen source, but it is not necessary to the answer and does not change the operational decision."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Correctly states that undefined seed accounts must not be invented and must remain pending confirmation."
+          },
+          {
+            "task_id": "T3",
+            "verdict": "PASS",
+            "reason": "Correctly returns KEEP and preserves the document without producing a meaningless .next file."
+          }
+        ]
+      },
+      "arm_b_skill": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Matches the source-supported stopping conditions exactly: no valid new discovery or configured search limit reached."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Directly answers the seed-account question: do not invent an undefined seed list."
+          },
+          {
+            "task_id": "T3",
+            "verdict": "PASS",
+            "reason": "Correctly returns KEEP, preserves the source, and does not create a no-op .next artifact."
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "case_07_patch_project_operations",
+      "arm_a_baseline": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "FAIL",
+            "reason": "The resulting document defines the four loops as 启动与治理、相关方管理、计划与执行、复盘与积累. It does not expose 质量检查与回归 as one of the four key loops, so a downstream reader cannot recover the required four-part operational model."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Correctly requires unsupported new inferences to be labeled 假设/待验证 rather than presented as tested expert knowledge."
+          }
+        ]
+      },
+      "arm_b_skill": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Explicitly presents the required four-part model: 立项输入、方案与执行、质量检查与回归、复盘沉淀."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Correctly marks unsupported inferences as 假设/待验证 and forbids presenting them as tested knowledge."
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "case_15_reforge_agent_automations",
+      "arm_a_baseline": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Correctly forbids blind retry after an uncertain Slack send and requires maybe posted plus channel verification."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Correctly preserves the failed source bookmark and does not misreport a partial read as '全量无新增'."
+          },
+          {
+            "task_id": "T3",
+            "verdict": "PASS",
+            "reason": "Correctly records irrecoverable historical coverage gaps instead of treating a successful current API call as proof of completeness."
+          }
+        ]
+      },
+      "arm_b_skill": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Correctly uses maybe posted, suspends state advancement, and verifies Slack before any resend."
+          },
+          {
+            "task_id": "T2",
+            "verdict": "PASS",
+            "reason": "Correctly isolates the failed source, keeps its bookmark unchanged, and continues healthy sources."
+          },
+          {
+            "task_id": "T3",
+            "verdict": "PASS",
+            "reason": "Correctly requires explicit historical coverage-gap recording and rejects false completeness claims."
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "case_19_block_unverifiable_source_fabrication",
+      "arm_a_baseline": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Correctly blocks fabrication, states the evidence gap, and requests verifiable production evidence."
+          }
+        ]
+      },
+      "arm_b_skill": {
+        "tasks": [
+          {
+            "task_id": "T1",
+            "verdict": "PASS",
+            "reason": "Correctly blocks fabricated production data and states the specific evidence required to unblock."
+          }
+        ]
+      }
+    }
+  ],
+  "aggregate": {
+    "arm_a_baseline": {
+      "case_accuracies": [
+        1,
+        0.5,
+        1,
+        1
+      ],
+      "macro_case_accuracy": 0.875,
+      "passed_tasks": 8,
+      "total_tasks": 9,
+      "pooled_task_accuracy": 0.889
+    },
+    "arm_b_skill": {
+      "case_accuracies": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "macro_case_accuracy": 1,
+      "passed_tasks": 9,
+      "total_tasks": 9,
+      "pooled_task_accuracy": 1
+    },
+    "delta": {
+      "macro_case_accuracy": 0.125,
+      "pooled_task_accuracy": 0.111
+    }
+  },
+  "decision": "The corrected smoke-set evidence favors the current note-reforge Skill on L3 task transfer, but this alone is not sufficient for a production-version upgrade decision because it is a manual re-adjudication on non-held-out cases."
+}

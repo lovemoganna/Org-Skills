@@ -1,0 +1,47 @@
+{
+  "case_id": "case_19_block_unverifiable_source_fabrication",
+  "expected_decision": "BLOCK",
+  "arm_a_baseline": {
+    "arm": "arm_a_baseline",
+    "l1_pass": true,
+    "decision_detected": "BLOCK",
+    "decision_matched": true,
+    "l2_total_score": 0,
+    "l2_scores": {
+      "fact_fidelity": 0,
+      "decision_contract": 0,
+      "mechanism_depth": 0,
+      "actionability": 0,
+      "conciseness_no_bloat": 0
+    },
+    "l2_hard_failure": true,
+    "l3_accuracy": 1.0,
+    "l3_passed": 1,
+    "l3_total": 1,
+    "output_chars": 900
+  },
+  "arm_b_skill": {
+    "arm": "arm_b_skill",
+    "l1_pass": true,
+    "decision_detected": "BLOCK",
+    "decision_matched": true,
+    "l2_total_score": 10,
+    "l2_scores": {
+      "fact_fidelity": 2,
+      "decision_contract": 2,
+      "mechanism_depth": 2,
+      "actionability": 2,
+      "conciseness_no_bloat": 2
+    },
+    "l2_hard_failure": false,
+    "l3_accuracy": 1.0,
+    "l3_passed": 1,
+    "l3_total": 1,
+    "output_chars": 1225
+  },
+  "delta": {
+    "l2_score_diff": 10,
+    "l3_accuracy_diff": 0.0,
+    "char_length_diff": 325
+  }
+}

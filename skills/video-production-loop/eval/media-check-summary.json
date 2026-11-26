@@ -1,0 +1,106 @@
+{
+  "checks": {
+    "nonempty": true,
+    "dimensions": true,
+    "fps": true,
+    "frames": true,
+    "duration": true,
+    "audioPresence": true,
+    "fullDecode": true,
+    "audioFinite": true,
+    "audioBelowFullScale": true,
+    "audioNonSilent": true,
+    "reviewFramesExtracted": true
+  },
+  "subjectiveReview": "not_checked",
+  "audio": {
+    "samplePeak": 0.5928623080253601,
+    "rmsDbfs": -27.994612688843453
+  },
+  "reviewFrames": [
+    {
+      "frame": 0,
+      "seconds": 0.0,
+      "file": "review-001.png"
+    },
+    {
+      "frame": 90,
+      "seconds": 3.0,
+      "file": "review-002.png"
+    },
+    {
+      "frame": 179,
+      "seconds": 5.966666666666667,
+      "file": "review-003.png"
+    },
+    {
+      "frame": 180,
+      "seconds": 6.0,
+      "file": "review-004.png"
+    },
+    {
+      "frame": 270,
+      "seconds": 9.0,
+      "file": "review-005.png"
+    },
+    {
+      "frame": 359,
+      "seconds": 11.966666666666667,
+      "file": "review-006.png"
+    },
+    {
+      "frame": 360,
+      "seconds": 12.0,
+      "file": "review-007.png"
+    },
+    {
+      "frame": 450,
+      "seconds": 15.0,
+      "file": "review-008.png"
+    },
+    {
+      "frame": 539,
+      "seconds": 17.966666666666665,
+      "file": "review-009.png"
+    },
+    {
+      "frame": 540,
+      "seconds": 18.0,
+      "file": "review-010.png"
+    },
+    {
+      "frame": 630,
+      "seconds": 21.0,
+      "file": "review-011.png"
+    },
+    {
+      "frame": 719,
+      "seconds": 23.966666666666665,
+      "file": "review-012.png"
+    },
+    {
+      "frame": 720,
+      "seconds": 24.0,
+      "file": "review-013.png"
+    },
+    {
+      "frame": 810,
+      "seconds": 27.0,
+      "file": "review-014.png"
+    },
+    {
+      "frame": 899,
+      "seconds": 29.966666666666665,
+      "file": "review-015.png"
+    }
+  ],
+  "sha256": "34da2aa015b9a52d8d467a29c8fd5ef81926b6ca8919df6abc819d56b255a7b0",
+  "expected": {
+    "frames": 900,
+    "seconds": 30.0,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "passed": true
+}

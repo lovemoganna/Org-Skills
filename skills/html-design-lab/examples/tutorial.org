@@ -1,0 +1,14 @@
+#+TITLE: DuckDB 分组聚合实验
+* 明确数据
+本例使用演示数据，非真实交易数据。
+| 组别 | 金额 |
+|------+------|
+| A    | 100  |
+| B    | 40   |
+* 执行 SQL
+#+begin_src sql
+SELECT SUM(amount) AS total FROM (VALUES (100), (40)) AS t(amount);
+#+end_src
+* 核对结论
+- 预期合计为 140。
+- 本文未执行 SQL，不声明真实运行成功。

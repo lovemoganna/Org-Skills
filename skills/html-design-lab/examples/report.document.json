@@ -1,0 +1,227 @@
+{
+  "id": "doc-d1c45e3f5443",
+  "kind": "report",
+  "title": "30 风格内容实验室 V5.5 · Loop 质量验收",
+  "kicker": "REPORT · 单文档",
+  "lead": "有条件通过（发布候选版，不是正式兼容性封版）。 已覆盖 Chromium 源码注入运行、结构、内容与代表性布局测试通过。跨浏览器、本地 file:// 直接打开、持久化跨刷新和真人审美盲测仍缺少边界证据。",
+  "description": "有条件通过（发布候选版，不是正式兼容性封版）。 已覆盖 Chromium 源码注入运行、结构、内容与代表性布局测试通过。跨浏览器、本地 file:// 直接打开、持久化跨刷新和真人审美盲测仍缺少边界证据。",
+  "ending": "当前停止原因：本轮已完成有证据支持的最小修复，继续修改 CSS 或布局无法提高尚缺失的跨浏览器证据。",
+  "chapters": [
+    {
+      "id": "section-1",
+      "title": "判定",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "有条件通过（发布候选版，不是正式兼容性封版）。 已覆盖 Chromium 源码注入运行、结构、内容与代表性布局测试通过。跨浏览器、本地 file:// 直接打开、持久化跨刷新和真人审美盲测仍缺少边界证据。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "基线及环境",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "基线：V5.4，SHA-256 bb0d59d7f42a34901efb9d24462b0a1fb199e916098edee6bc9801894873c48c。",
+            "产物：V5.5 RC，SHA-256 c5f50e18d4e8639864d3ca6f52e6b9a1e873c1ba551cba393aeed4b05c557c22。",
+            "质量规则：lovemoganna/Org-Skills/skills/loop-engineering-meta/SKILL.md，当前 GitHub blob SHA fb98899160a0d579d7567ab7af96b88d3937eb59。",
+            "Chromium：本机 /usr/bin/chromium，Playwright Python 执行；通过 page.set_content() 装载完整 HTML。",
+            "本地文件及本机 HTTP 的导航均被测试环境管理员策略拒绝（net::ERR_BLOCKED_BY_ADMINISTRATOR），并非网页代码异常。Firefox 和 WebKit/Safari 在当前环境缺少实际浏览器可执行文件。",
+            "全部测试源码和 JSON 证据保留在 ZIP 内。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "失效根因与最小修复",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "最早缺陷：F11 版本说明漂移 / F3 表述语义不一致。V5.4 已有 30 套构图，但风格选择窗口仍声称“10 套，其余 20 套保留版式”，角标把部分 V5 风格标为 V3。",
+            "根因：历史风格数量和版本名单被写死在展示文案及角标生成逻辑。",
+            "方案：修正页面版本标题及说明；卡片统一显示“独立构图”，消除无必要的版本分类。",
+            "变更范围：两处静态说明、一个页面版本标题及一处角标生成表达式，共四处替换。不改 CSS、DocumentSpec、业务功能。",
+            "回滚：替换为同包内 guanshi-v55-baseline.html。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-4",
+      "title": "测试和证据",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            "项目",
+            "结果",
+            "可复核证据"
+          ],
+          "rows": [
+            [
+              "JS 语法检查",
+              "3/3 通过",
+              "scripts/release_regression.py + evidence/regression.json"
+            ],
+            [
+              "风格 DOM 事件切换",
+              "30/30",
+              "同上"
+            ],
+            [
+              "真实指针点击样本",
+              "3/3 通过",
+              "同上"
+            ],
+            [
+              "布局/语义矩阵",
+              "540/540 通过，0 失败",
+              "同上"
+            ],
+            [
+              "页面级横向溢出及正文窄列",
+              "0",
+              "同上；最窄阅读容器 354 px"
+            ],
+            [
+              "句子解读、Esc、风格弹层焦点",
+              "通过",
+              "同上"
+            ],
+            [
+              "教程代码块、风险报告表格",
+              "通过",
+              "同上"
+            ],
+            [
+              "JSON 一键导出、导入修改、恶意标签转义、损坏文件隔离",
+              "7 项布尔检查均为 true",
+              "evidence/edge-cases.json"
+            ],
+            [
+              "静态原文/样式完整性",
+              "DocumentSpec、CSS 逐字一致",
+              "evidence/regression.json"
+            ],
+            [
+              "截图基线视觉对照",
+              "3/3 逐像素一致",
+              "evidence/visual-parity.json 和 PNG"
+            ],
+            [
+              "JS 未捕获异常",
+              "0",
+              "evidence/regression.json"
+            ],
+            [
+              "外部 HTTP 资源",
+              "0",
+              "同上"
+            ],
+            [
+              "文字对比度样本",
+              "稳定状态 30 风格 × 深浅模式的选定文字角色，无已判定不达标项",
+              "evidence/contrast-audit.json；不是完整 WCAG 审计"
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            "注：首次对比度抽样在颜色过渡的瞬间捕获 12 条低值；关闭过渡后重复测试为零。前者属于测量时机差异，但本轮未对所有过渡帧进行无障碍审计，因此不能宣称切换过程全程满足 WCAG。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-5",
+      "title": "Loop G0–G6",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            "Gate",
+            "判定"
+          ],
+          "rows": [
+            [
+              "G0 任务有效",
+              "通过：仅发布候选版的可复现质量问题修复"
+            ],
+            [
+              "G1 Trace 完整",
+              "通过：基线、产物、复测脚本与记录均留存"
+            ],
+            [
+              "G2 结论与证据一致",
+              "通过（限已测试范围）"
+            ],
+            [
+              "G3 产物验收",
+              "有条件通过：实际跨浏览器及 file:// 缺失"
+            ],
+            [
+              "G4 安全授权",
+              "通过（本地纯静态文件，恶意导入测试未执行脚本）"
+            ],
+            [
+              "G5 回归",
+              "通过：布局组合及核心操作已覆盖；三个对照样例像素一致"
+            ],
+            [
+              "G6 维护性",
+              "通过（限定于本轮）：移除角标历史版本硬编码，没有增加依赖"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-6",
+      "title": "未验证项目",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Windows 的 Chrome、Firefox 直接双击 file:// 文件。",
+            "Firefox 与 Safari 的真实排版、存储、导入导出和打印。Playwright WebKit ≠ 正式 Safari。",
+            "本地 file:// 情况下风格、主题与收藏跨刷新保持（该协议下 localStorage 行为无统一保证）。",
+            "真人对 30 套构图的辨识度以及完整 WCAG 2.2 AA 验收。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-7",
+      "title": "终验方法与退出理由",
+      "subtitle": "",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "segments": [
+            "在 Windows 桌面 Chrome / Firefox 中分别双击 HTML。切换风格与主题，收藏一句，刷新页面，检查保留或合理降级；分别导出一份兼容性自检 JSON。若任一浏览器出现内容、操作、溢出等实际问题，再根据 JSON 和截图开下一轮修复。"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "segments": [
+            "当前停止原因：本轮已完成有证据支持的最小修复，继续修改 CSS 或布局无法提高尚缺失的跨浏览器证据。"
+          ]
+        }
+      ]
+    }
+  ],
+  "annotations": {}
+}

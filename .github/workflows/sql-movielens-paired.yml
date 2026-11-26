@@ -1,0 +1,36 @@
+name: SQL MovieLens Paired Chat Eval
+on:
+  push:
+    branches: [main, experiment/sql-movielens-20261015]
+    paths:
+      - ".github/workflows/sql-movielens-paired.yml"
+      - "skills/analysis-verifier/scripts/evaluate_chat_movielens.py"
+      - "skills/analysis-verifier/scripts/scope_gate.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  movielens-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install DuckDB 1.4.2
+        run: python -m pip install duckdb==1.4.2
+      - name: Read publisher zip verify publisher MD5 and run both actual SQL arms
+        run: python skills/analysis-verifier/scripts/evaluate_chat_movielens.py movielens-eval
+      - name: Archive aggregate receipts only (never the original licensed data)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: movielens-paired-eval-aggregate-receipts
+          if-no-files-found: warn
+          path: |
+            movielens-eval/source-receipt.json
+            movielens-eval/baseline-sql-result.json
+            movielens-eval/new-sql-result.json
+            movielens-eval/reconciliation.json
+            movielens-eval/summary.json

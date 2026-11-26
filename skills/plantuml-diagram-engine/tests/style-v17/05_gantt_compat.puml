@@ -1,0 +1,11 @@
+@startgantt
+' v17 / separate parser / dependency syntax
+!include ../../styles/style-ink-and-signal.puml
+Project starts 2026-10-20
+[需求核对] lasts 2 days
+[通用样式更新] lasts 3 days
+[通用样式更新] starts at [需求核对]'s end
+[五类图回归] lasts 3 days
+[五类图回归] starts at [通用样式更新]'s end
+[发布验收] happens at [五类图回归]'s end
+@endgantt

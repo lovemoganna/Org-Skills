@@ -1,0 +1,19 @@
+{
+  "arm": "arm_a_baseline",
+  "l1_pass": true,
+  "decision_detected": "KEEP",
+  "decision_matched": true,
+  "l2_total_score": 7,
+  "l2_scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 1,
+    "actionability": 0,
+    "conciseness_no_bloat": 2
+  },
+  "l2_hard_failure": false,
+  "l3_accuracy": 1.0,
+  "l3_passed": 3,
+  "l3_total": 3,
+  "output_chars": 2084
+}

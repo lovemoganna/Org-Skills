@@ -1,0 +1,17 @@
+@startuml
+' 模糊输入，最小假设
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+[前端] --> [后端] : 协作（推断）
+note right of [后端]
+  测试角色未建模为独立组件
+  原始输入缺乏系统边界描述
+end note
+@enduml

@@ -1,0 +1,67 @@
+{
+  "run_id": "candidate_keep_reforge_20261021_attempt02",
+  "github_actions_run_id": 39536321093,
+  "subject_executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "subject_requests_completed": 12,
+  "production_commit": "7674cf109ecfd69b59f8aeb3843742a3d9897db5",
+  "cases": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "KEEP",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "expected": "KEEP",
+      "production": "PATCH",
+      "candidate": "PATCH",
+      "candidate_verdict": "FAIL",
+      "reason": "Candidate invents a new generic evidence-constraint section based on possible future misuse even though the source already states these are unverified prompt/exercise templates. No concrete current-task defect is demonstrated."
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "KEEP",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "expected": "BLOCK",
+      "production": "BLOCK",
+      "candidate": "BLOCK",
+      "candidate_verdict": "PASS"
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected": "PATCH",
+      "production": "PATCH",
+      "candidate": "PATCH",
+      "candidate_verdict": "FAIL_FIDELITY",
+      "reason": "Decision is correct and missing navigation is restored, but candidate changes an unrelated #+ATTR_HTML width from 100% to 100. This violates minimal-patch fidelity even though the current L1 checker records it only as headers_preserved=false."
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected": "REFORGE",
+      "production": "KEEP",
+      "candidate": "REFORGE",
+      "candidate_verdict": "PASS",
+      "reason": "Candidate restores twelve independent object-level entries while preserving all facts and images."
+    }
+  ],
+  "aggregate": {
+    "production_decision_accuracy": "4/6",
+    "candidate_decision_accuracy": "5/6",
+    "candidate_full_case_pass": "4/6",
+    "gate": "FAIL"
+  },
+  "correction_target": [
+    "A merely imaginable future misuse or a generic safety/quality enhancement is not a PATCH unless the source has a concrete current-task omission, contradiction, or usability failure.",
+    "If an equivalent evidence boundary already exists, restating or moving it is not a defect repair.",
+    "Final gate must reject unrelated directive/header drift even when decision classification is correct."
+  ],
+  "production_merge_allowed": false
+}

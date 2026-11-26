@@ -1,0 +1,22 @@
+case_id: case_12_patch_stakeholder_conflict
+source_repo: lovemoganna/org-notes
+source_path: notes/knowledge/stakeholder-conflict/cb070b62-014a-5010-94ed-9338480f7997.org
+case_type: real_historical
+is_held_out: false
+task: 用 note-reforge 炼成下一版：notes/knowledge/stakeholder-conflict/cb070b62-014a-5010-94ed-9338480f7997.org
+expected_decision: PATCH
+decision_evidence: 冲突分类明确，但缺少冲突发生时的仲裁路由与停止条件，做局部补足。
+protected_content:
+- 相关方利益对照表
+- '#+WIKI_ID: cb070b62-014a-5010-94ed-9338480f7997'
+reader_tasks:
+- id: T1
+  question: 当产品与技术就架构稳定性产生不可调和冲突时，决策路径是什么？
+  expected_answer: 先锁定业务核心目标与硬约束，由授权决策人按影响评估裁决，不擅自暗改。
+acceptance_criteria: 补齐仲裁触发条件，保留原有分析案例。
+hard_fail_conditions:
+- 抹平冲突实质
+- 编造项目历史
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_12_patch_stakeholder_conflict.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: d2ad9ebf463cd005b4086a586454c8c6a4555f7d7da8d7e8d8344927ed979fed

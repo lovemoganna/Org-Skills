@@ -1,0 +1,22 @@
+{
+  "scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 2,
+    "actionability": 2,
+    "conciseness_no_bloat": 1
+  },
+  "total_score": 9,
+  "hard_failure": false,
+  "hard_failure_reason": "",
+  "evidence_quotes": [
+    "\"**决策**：`PATCH`\"",
+    "\"建立RACI责任矩阵（明确谁负责、谁批准、谁咨询、谁通知）：\\n  - R (Responsible / 负责人)：负责执行具体任务并交付结果。\\n  - A (Accountable / 最终责任人/批准人)：拥有最终决策权与否决权，对结果负全责；每项任务必须且只能有一个 A。\\n  - C (Consulted / 咨询方)：在执行或决策前提供专业意见的双向沟通者。\\n  - I (Informed / 知会方)：被单向告知进展与结果的人员，不参与决策。\\n  - 运行原则：每项任务单一 A 制，避免责任真空或多头指挥；C 与 I 区分频次，减少不必要干扰。〔补〕\"",
+    "\"*证据反查与边界：* 复盘总结必须区分实测事实与主观推论。无外部核验证据或成效数据的推论，必须明确标为假设/待验证，禁止冒充实测专家知识。〔补〕\"",
+    "\"交付路径：`notes/knowledge/project-operations/6e9c2b10-7e84-459e-a5f1-d98019ed0a33.next.org`\"",
+    "\"保留原发布身份字段但未发布至正式扫描索引。\""
+  ],
+  "reasoning": "候选产物完整保留原始笔记内容，明确标记新增的 RACI 解释和证据边界，符合 PATCH 决策并提供合理依据。补充的机制解释提升了因果理解，操作指引清晰。唯一轻微冗余在于额外的决策与交付元信息，导致简洁性略有下降。整体表现优秀。",
+  "latency_sec": 32.644,
+  "tokens_used": 5279
+}

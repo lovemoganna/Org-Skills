@@ -16,9 +16,13 @@
 
 实测：指定引擎、扩展/版本、读取函数、认证权限、远程可达、文件大小、内存、所需 SQL 与输出路径。安装成功不代表读取成功，格式解析通过不代表业务 SQL 成功。
 
-当前运行时失败后，检查**当前获授权且可用**的等价 DuckDB 运行时（原生、浏览器 WASM、云端或 GitHub Actions 原生 DuckDB）。每次换位置重新验证引擎、固定 SQL、读取函数、来源和权限未变。不必机械测试不可用路径。环境不兼容时继续查下一个等价环境；全部不可用才阻塞。
+不要把当前容器的 DNS、pip、扩展安装失败等同于任务失败。按以下次序选择当前可操作、可获授权的执行位置：① 已具备的原生 DuckDB；② 官方 https://shell.duckdb.org（如有真实浏览器控制）；③ 独立部署的 DuckDB-WASM（如有真实页面或浏览器控制）；④ 其他已获授权、能执行原 SQL 的原生 DuckDB/CI。顺序仅用于减少试错成本；有现成可用的等价运行时可直接优先使用。每个候选都必须实际验证 DuckDB 版本、`httpfs`/`excel`、来源 URL、固定 SQL、真实 Result 与物化能力，不能仅凭页面可访问判定通过。
 
-如果用户要求 `INSTALL`/`LOAD` 各执行一次，必须同一 DuckDB 会话只执行一次。要求“每表读取并物化一次”时，逐表以原 `read_xlsx` 执行 `CREATE ... TABLE ... AS SELECT * FROM read_xlsx(...)`，保存真实执行回执；后续 SQL 只引用物化表，不得再次调用源读取函数。
+**浏览器路由的可操作条件：** 官方 Web Shell 本身运行 DuckDB-WASM；独立 WASM 不是天然不同的执行引擎。只有 Origin、代理策略、版本、扩展分发或网络路径确实不同，才把切换作为可能修复同一 CORS/扩展故障的独立尝试。浏览器跨域限制无法由改写前端 SQL 或设置客户端 CORS 头消除。某个候选失败后记录 `candidate / origin / stage / SQL / error / next_candidate`，继续尝试有独立成功可能的候选；禁止同一条件下无意义重试。
+
+**无浏览器控制时：** 如果官方 Web Shell 或 WASM 在用户浏览器可运行，但当前工具不能点击、输入或取得 Result，交付可直接打开的 Web Shell 链接、原 SQL、必要时可独立执行的浏览器页面及导出回执说明，状态标 `EXTERNAL_EXECUTION_REQUIRED`，明确等待外部运行证据。既不冒充自动执行成功，也不得声称所有兼容运行时已实测失败；不要要求用户重复提供已有数据范围/SQL。
+
+**单次物化：** `INSTALL httpfs; LOAD httpfs; INSTALL excel; LOAD excel;` 在同一 DuckDB 会话各执行一次。若用户**锁定完整 `SELECT * FROM read_xlsx(URL, sheet=..., header=true)` SQL**，每个允许表只执行一次该原始 `SELECT`；在支持 Arrow 的 WASM 客户端中，把这次 Result 用 `insertArrowTable` 等方式导入**同一 DuckDB 实例**的内存表，验证行数与列结构，后续仅查内存表。不能为了物化擅自改写为 CTAS，也不能先用 `COUNT(*) FROM read_xlsx` 探测再执行一次源读取。**未锁定完整查询形态**且允许 CTAS 时，才可直接 `CREATE ... AS SELECT * FROM read_xlsx(...)` 单次读取物化。官方 Web Shell 若无法完成单次物化，只能作为兼容性测试，不能声称四表分析条件已满足。
 
 ## 3. 同源字节和 GitHub 传输恢复
 
@@ -54,7 +58,7 @@ python scripts/source_gate.py --manifest manifest.json --out artifacts/source --
 
 原生 DuckDB、DuckDB-WASM、第三方连接器的成功互不替代。WASM 的 `INSTALL` 可能是 no-op；只能把它视为运行时差异，不能擅改固定 SQL。
 
-只有来源 URL 被锁定、读取 SQL/路径未锁定时，才可把真实 XLSX 原始字节注册到 VFS 后使用 `read_xlsx`；必须验证 Excel 扩展和真实 SQL。用户锁定完整远程 SQL 时，即使 VFS 成功也只能把 VFS 标为独立能力检查，原 SQL 不兼容则寻找其他同引擎运行时。
+只有来源 URL 被锁定、读取 SQL/路径未锁定，**或用户后来明确授权修改读取路径**时，才可把经来源、字节长度和 SHA-256 校验的原始 XLSX 字节注册到 VFS 后使用 `read_xlsx`。必须记录原 URL、校验值、VFS 路径及实际 SQL；路径变化只能标 `AUTHORIZED_VFS_PATH`，不可标 `FIXED_REMOTE_SQL_PASS`。用户仍锁定完整远程 SQL 时，VFS 成功只算独立能力检查，不得代替原 SQL；应改试其他有独立成功可能的 DuckDB 运行时。
 
 没有可操作的**最终浏览器 Origin** 时，写“最终浏览器未实测”。`page.set_content`、Node 语法测试、Mock 复制、服务端 curl 和 CI 的其他 Origin 都不能替代最终部署端到端检查。
 
@@ -67,7 +71,7 @@ python scripts/source_gate.py --manifest manifest.json --out artifacts/source --
 
 ## 6. 阻塞报告与证据回执
 
-当来源字节、权限或全部兼容 DuckDB 运行时均不可用时，停止生成数据 Result、Signal、Finding 和 Dashboard。即使用户要求完整报告，也必须提供：
+仅在来源/权限确实不可用，或**已实际测试所有当前可操作、具独立成功可能且符合契约的 DuckDB 运行时**后，才判定 `BLOCKED_VERIFIED`，停止生成数据 Result、Signal、Finding 和 Dashboard。无法直接操作网页但可交付用户执行入口时使用 `EXTERNAL_EXECUTION_REQUIRED`，不能伪称已穷尽。单候选网络失败、页面未打开、只生成执行器都不是业务 Result。即使用户要求完整报告，也必须提供：
 
 - `source_gate_receipt.json`：原 URL、尝试端点、字节/哈希（成功时）、时间、具体错误及状态。
 - `source_gate_blocked.md`、`source_gate_blocked.html`：明确“阻塞≠分析完成”，已完成与未执行步骤、原始报错、最后成功 Gate、可复跑命令和恢复条件。

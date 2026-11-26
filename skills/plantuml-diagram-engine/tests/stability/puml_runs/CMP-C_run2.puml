@@ -1,0 +1,36 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Noto Sans CJK SC"
+skinparam component {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  ArrowColor #94A3B8
+}
+package "内部服务" {
+  [API Gateway] as GW
+  [UserService] as US
+  [OrderService] as OS
+  [PaymentService] as PS
+  [InventoryService] as IS
+  [Kafka] as MQ
+  [Consul] as SR
+  database "UserDB"
+  database "OrderDB"
+}
+[第三方 PaymentGateway] as PGW
+
+GW --> US
+GW --> OS
+GW --> PS
+OS --> IS
+OS --> MQ
+PS --> PGW
+US --> SR
+OS --> SR
+PS --> SR
+IS --> SR
+US --> UserDB
+OS --> OrderDB
+@enduml

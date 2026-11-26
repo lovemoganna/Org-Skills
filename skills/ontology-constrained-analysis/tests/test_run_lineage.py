@@ -110,5 +110,164 @@ class SequenceRegression(unittest.TestCase):
         d=fixture();d["queries"]=[]
         self.assertIn("NO_ACTUAL_SQL_RESULTS",check(d))
 
+
+    def test_pre_gate_max_aggregate_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "hidden-max": {"sql": "SELECT MAX(amount) AS peak FROM orders"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:hidden-max", check(d, prior))
+
+    def test_pre_gate_filtered_count_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "status-count": {"sql": "SELECT COUNT(*) FROM orders WHERE status = 'completed'"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:status-count", check(d, prior))
+
+    def test_pre_gate_distinct_count_must_be_rejected(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "distinct-uid": {"sql": "SELECT COUNT(DISTINCT uid) FROM orders"}}}
+        self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:distinct-uid", check(d, prior))
+
+    def test_pre_gate_null_profile_must_remain_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "null-check": {"sql": "SELECT COUNT(*) FROM orders WHERE amount IS NULL"}}}
+        self.assertEqual([], check(d, prior))
+
+    def test_post_gate_business_aggregate_is_allowed(self):
+        d = fixture()
+        after = (datetime.fromisoformat(d["stages"][0]["at"]) + timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": after, "queries": {
+            "approved-max": {"timestamp": after, "sql": "SELECT MAX(amount) FROM orders"}}}
+        self.assertEqual([], check(d, prior))
+
+
+
+    def test_independent_pre_gate_aggregate_variants_fail_closed(self):
+        statements = (
+            "SELECT MIN(amount) FROM orders",
+            "SELECT COUNT(*) FILTER (WHERE status = 'completed') FROM orders",
+            "SELECT COUNT(*) FROM orders WHERE amount IS NULL AND status = 'completed'",
+        )
+        for i, statement in enumerate(statements):
+            with self.subTest(statement=statement):
+                d = fixture()
+                before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": before, "queries": {
+                    "independent-" + str(i): {"sql": statement}}}
+                self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:independent-" + str(i), check(d, prior))
+
+    def test_neutral_row_count_alias_remains_allowed(self):
+        d = fixture()
+        before = (datetime.fromisoformat(d["stages"][0]["at"]) - timedelta(seconds=3)).isoformat()
+        prior = {"generated_at": before, "queries": {
+            "counts": {"sql": "SELECT COUNT(*) AS n FROM orders"}}}
+        self.assertEqual([], check(d, prior))
+
+
+
+    def test_comment_obfuscated_pre_gate_aggregates_rejected(self):
+        statements = (
+            "SELECT SUM/* review */(amount) FROM orders",
+            "SELECT AVG -- review\n(amount) FROM orders",
+            "SELECT COUNT/* review */(DISTINCT uid) FROM orders",
+            "SELECT COUNT/* review */(*) FILTER (WHERE status = 'completed') FROM orders",
+        )
+        for index, sql in enumerate(statements):
+            with self.subTest(sql=sql):
+                case = fixture()
+                early = (datetime.fromisoformat(case["stages"][0]["at"]) -
+                         timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": early, "queries": {
+                    "comment-" + str(index): {"sql": sql}}}
+                self.assertIn("PRIOR_ANALYSIS_BEFORE_GATE1:comment-" + str(index),
+                              check(case, prior))
+
+    def test_comments_in_neutral_count_probes_remain_allowed(self):
+        statements = (
+            "SELECT COUNT /* review */ (*) FROM orders",
+            "SELECT COUNT -- review\n(*) FROM orders WHERE amount IS NULL",
+            "SELECT COUNT(*) AS n FROM orders /* neutral */",
+        )
+        for sql in statements:
+            with self.subTest(sql=sql):
+                case = fixture()
+                early = (datetime.fromisoformat(case["stages"][0]["at"]) -
+                         timedelta(seconds=3)).isoformat()
+                prior = {"generated_at": early, "queries": {"neutral": {"sql": sql}}}
+                self.assertEqual([], check(case, prior))
+
+
+    def test_duplicate_and_missing_query_receipt_ids_fail_closed(self):
+        d = fixture()
+        d["queries"].append(dict(d["queries"][0]))
+        self.assertIn(
+            "DUPLICATE_SQL_RECEIPT_ID:original-business-question", check(d)
+        )
+        for invalid in ("", "  ", None, 42):
+            with self.subTest(invalid=invalid):
+                d = fixture()
+                d["queries"][0]["id"] = invalid
+                self.assertIn("SQL_RECEIPT_ID_MISSING", check(d))
+
+    def test_pre_gate_business_expression_variants_fail_closed(self):
+        statements = (
+            "SELECT amount * fx_rate FROM invoices",
+            "SELECT amount / fx_rate FROM invoices",
+            "SELECT amount + fee FROM invoices",
+            "SELECT amount - fee FROM invoices",
+            "SELECT amount FROM invoices WHERE state = 'alert'",
+            "SELECT amount FROM invoices ORDER BY amount DESC LIMIT 10",
+            "SELECT QUANTILE_CONT(amount,0.99) FROM invoices",
+            "SELECT amount FROM invoices LIMIT 5; DELETE FROM invoices",
+            "SELECT COUNT(*) FROM invoices UNION ALL SELECT MAX(amount) FROM payments",
+            "SELECT DISTINCT direction FROM invoices WHERE state = 'alert'",
+        )
+        for i, statement in enumerate(statements):
+            with self.subTest(sql=statement):
+                d = fixture()
+                before = (datetime.fromisoformat(d["stages"][0]["at"]) -
+                          timedelta(seconds=5)).isoformat()
+                prior = {"generated_at": before, "queries": {
+                    "business-" + str(i): {"sql": statement}
+                }}
+                self.assertIn(
+                    "PRIOR_ANALYSIS_BEFORE_GATE1:business-" + str(i),
+                    check(d, prior),
+                )
+
+    def test_pre_gate_allowlisted_source_discovery_still_passes(self):
+        statements = (
+            "DESCRIBE invoices",
+            "SHOW TABLES",
+            "SHOW COLUMNS FROM invoices",
+            "PRAGMA table_info('invoices')",
+            'SELECT COUNT(*) FROM "invoices"',
+            "SELECT COUNT(*) FROM invoices UNION ALL SELECT COUNT(*) FROM payments",
+            "SELECT COUNT(*) AS n FROM invoices",
+            "SELECT COUNT(*) FROM invoices WHERE amount IS NOT NULL",
+            "SELECT * FROM invoices LIMIT 5",
+            "SELECT uid, amount FROM invoices LIMIT 5",
+            "SELECT amount FROM invoices WHERE amount IS NULL LIMIT 5",
+            "SELECT DISTINCT direction FROM invoices",
+            "SELECT COUNT /* inline */ (*) FROM invoices",
+            "SELECT COUNT -- inline\n(*) FROM invoices WHERE amount IS NULL",
+        )
+        for statement in statements:
+            with self.subTest(sql=statement):
+                d = fixture()
+                before = (datetime.fromisoformat(d["stages"][0]["at"]) -
+                          timedelta(seconds=5)).isoformat()
+                prior = {"generated_at": before, "queries": {
+                    "neutral": {"sql": statement}
+                }}
+                self.assertEqual([], check(d, prior))
+
+
 if __name__ == "__main__":
     unittest.main()

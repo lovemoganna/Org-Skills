@@ -1,0 +1,21 @@
+@startuml
+' v17 / dark theme / sequence groups and alternatives
+!$THEME = "dark"
+!include ../../styles/style-ink-and-signal.puml
+title 案件调查：证据请求时序
+actor "调查员" as Analyst
+participant "工单服务" as Case
+database "证据库" as Evidence
+Analyst -> Case : 发起调查
+activate Case
+group 证据收集
+  Case -> Evidence : 查询账户与交易记录
+  Evidence --> Case : 返回证据与缺口
+end
+alt 证据充分
+  Case --> Analyst : 返回结论与依据
+else 存在证据缺口
+  Case --> Analyst : 返回待核查项目
+end
+deactivate Case
+@enduml

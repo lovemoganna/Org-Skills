@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Repository-backed supplemental fixtures for missing legacy inputs, not replacements for original attachments or proof of model evaluation.",
+  "baseline_cases_path": "skills/sketchnote-generator/evals/cases.json",
+  "original_cases_untouched": true,
+  "cases": [
+    {
+      "id": "P01-REPO",
+      "origin_case_id": "P01",
+      "relationship": "supplemental_proxy_not_original",
+      "original_case_input_status": "original_attachment_unidentified",
+      "task": "Turn an existing system architecture plan into a Chinese static knowledge diagram. Separate planned design from implemented behavior.",
+      "source": {
+        "repository": "lovemoganna/Aone",
+        "branch_at_inspection": "master",
+        "pinned_commit": "47baec353ef5b857a22873bdbb1dd107a16000c9",
+        "path": "aone-toolkit/docs/PLAN-orchestration-v3.md",
+        "blob_sha": "e9b2b2ff75ce7acf2d182a828130fa257ceba20e",
+        "url": "https://github.com/lovemoganna/Aone/blob/47baec353ef5b857a22873bdbb1dd107a16000c9/aone-toolkit/docs/PLAN-orchestration-v3.md"
+      },
+      "expected_facts": [
+        "Persona and Skill are conceptual components of Agent",
+        "Squad contains multiple agents",
+        "Workflow contains nodes and edges",
+        "The document is a plan with unchecked implementation steps; do not claim deployment"
+      ],
+      "status": "fixture_source_located",
+      "model_e2e_status": "not_run"
+    },
+    {
+      "id": "P03-REPO",
+      "origin_case_id": "P03",
+      "relationship": "supplemental_proxy_not_original",
+      "original_case_input_status": "original_reference_image_and_tutorial_unidentified",
+      "task": "Create a Chinese for-loop learning diagram, inspired by a user-repository hand-drawn diagram style. Validate syntax independently.",
+      "style_reference": {
+        "repository": "lovemoganna/org-notes",
+        "branch_at_inspection": "main",
+        "pinned_commit": "9344ce375ca5e274dff68254f79da50453314e29",
+        "path": "note-assets/b0f76f51-5884-54b7-9ccc-2d43a989d1a3/sketchnote-header.webp",
+        "blob_sha": "ff13d94484ba354bf07a36d9f35716bb7ab26abf",
+        "url": "https://github.com/lovemoganna/org-notes/blob/9344ce375ca5e274dff68254f79da50453314e29/note-assets/b0f76f51-5884-54b7-9ccc-2d43a989d1a3/sketchnote-header.webp"
+      },
+      "tutorial_reference": "https://docs.python.org/3.14/tutorial/controlflow.html#the-range-function",
+      "example_code": "for n in range(3):\n    print(n)",
+      "expected_stdout": "0\n1\n2\n",
+      "expected_facts": [
+        "range(3) yields 0, 1, 2",
+        "stop value 3 is excluded"
+      ],
+      "status": "fixture_source_located",
+      "notes": "The previous local proxy image was not generated using the pinned repository image bytes; therefore visual-style matching to the pinned repository asset remains unverified.",
+      "model_e2e_status": "not_run"
+    }
+  ]
+}

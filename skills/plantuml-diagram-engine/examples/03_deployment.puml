@@ -1,0 +1,42 @@
+@startuml
+!include ../styles/style-ink-and-signal.puml
+
+node "客户端环境" {
+  artifact "Web 浏览器 / 移动端 App" as client
+}
+
+cloud "公共互联网" {
+}
+
+node "DMZ 隔离区" {
+  node "Nginx 接入集群" as nginx
+}
+
+node "生产 VPC 私有网络" {
+  node "应用服务器集群" {
+    node "API 核心节点 01" as api1
+    node "API 核心节点 02" as api2
+  }
+  
+  database "高可用数据库集群" {
+    database "PostgreSQL 主库 (写入)" as pg_master
+    database "PostgreSQL 从库 (只读)" as pg_slave
+  }
+  
+  node "缓存集群" {
+    database "Redis 哨兵节点" as redis
+  }
+}
+
+client --> nginx : HTTPS (443)
+nginx --> api1 : HTTP (8080)
+nginx --> api2 : HTTP (8080)
+api1 --> pg_master : 读写 SQL
+api2 --> pg_master : 读写 SQL
+api1 ..> pg_slave : 只读 SQL
+api2 ..> pg_slave : 只读 SQL
+api1 --> redis : 缓存读取
+api2 --> redis : 缓存读取
+pg_master .right.> pg_slave : WAL 流复制
+
+@enduml

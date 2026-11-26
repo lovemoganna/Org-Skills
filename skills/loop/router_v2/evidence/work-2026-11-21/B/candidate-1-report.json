@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "candidate-1-receipt.json",
+  "artifact_ref": "candidate-1-receipt.json",
+  "error": null,
+  "step_id": "candidate",
+  "request_sha256": "94623f2468cc14d1b9db481b3d3918c468daed24d0eab8e0d2542aca1702d86c"
+}

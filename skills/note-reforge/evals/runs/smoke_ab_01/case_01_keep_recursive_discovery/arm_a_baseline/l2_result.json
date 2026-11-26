@@ -1,0 +1,21 @@
+{
+  "scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 1,
+    "actionability": 0,
+    "conciseness_no_bloat": 2
+  },
+  "total_score": 7,
+  "hard_failure": false,
+  "hard_failure_reason": "",
+  "evidence_quotes": [
+    "\"**决策**：`KEEP`\"",
+    "\"输入文档事实完备且自洽\"",
+    "\"避免无依据的改写与伪优化\"",
+    "完整复制的 org 内容与原始文档完全一致"
+  ],
+  "reasoning": "候选产物完整保留原始需求，未引入任何虚假或遗漏信息，决策为 KEEP 与预期一致并给出简要理由。未提供新的操作指引，机制阐释仅停留在最小变更原则层面，整体表达简洁。",
+  "latency_sec": 2.707,
+  "tokens_used": 4077
+}

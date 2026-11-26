@@ -1,0 +1,20 @@
+{
+  "request": {
+    "step_id": "causes",
+    "kind": "skill",
+    "target": "causal-net-loop",
+    "executor_binding": "NATIVE_HOST_MODEL_SKILL",
+    "side_effect_class": "host",
+    "args": {
+      "question": "Compare coverage gap vs grading artifact and isolate which causal claims the evidence supports."
+    },
+    "request_sha256": "2f368e20498c25cd7947a9a7d12aa612c38a8ff7b145b261636a903bdde78bba"
+  },
+  "source": {
+    "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+    "path": "skills/causal-net-loop/SKILL.md",
+    "blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c"
+  },
+  "executor": "current Work model",
+  "output": "N07 原始回答与评审报告复核：基线将 CSV 往返、权限允许/拒绝和时区同一时刻各落成发布检查；候选将权限和时区列为独立故障，却只为 CSV 写了复现和发布验收。因此变化发生在从故障分类到可执行验收的交接处。竞争解释是评分员误读，但候选原文缺少可区分这一解释的两项验收条件。证据足以复核内容差距，无法证明某个 Skill 版本本身造成分差。该缺口有可复用机制：先按风险覆盖建门槛，再对优先级最高的一项深挖，完整性可以逐项打勾。"
+}

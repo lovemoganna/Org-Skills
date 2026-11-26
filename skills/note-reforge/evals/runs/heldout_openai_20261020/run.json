@@ -1,0 +1,21 @@
+{
+  "run_id": "heldout_openai_20261020",
+  "started_at": "2026-10-20T03:53:13.033809+00:00",
+  "mode": "sealed_heldout_subject_ab",
+  "cases": [
+    "case_06_heldout_keep_sql_blind_cases",
+    "case_14_heldout_patch_thinking_reconstruction",
+    "case_18_heldout_reforge_xianxia_talismans",
+    "case_20_heldout_block_irreconcilable_contradiction"
+  ],
+  "subject_requests_expected": 8,
+  "subject_requests_completed": 0,
+  "status": "BLOCKED_API_CREDENTIAL_REQUIRED",
+  "model": null,
+  "limitations": [
+    "Held-out expected answers and acceptance metadata are not passed to subject calls.",
+    "This run performs subject generation plus deterministic L1 only; semantic/L3 judging is separate.",
+    "A single selected model is pinned for both baseline and Skill arms."
+  ],
+  "results": []
+}

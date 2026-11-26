@@ -1,0 +1,7 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "card-skill-output.json",
+  "artifact_ref": "card-skill-output.json",
+  "step_id": "card",
+  "request_sha256": "0439b0586925df86c3722f24a5832f54b3bdf97f707c30bd2573a7ce2d639973"
+}

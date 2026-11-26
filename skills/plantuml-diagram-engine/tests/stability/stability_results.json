@@ -1,0 +1,3020 @@
+[
+  {
+    "fixture_id": "WBS-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-S_run1.puml",
+    "timestamp": "2026-10-19T04:44:28+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9TJzfG6CVl-obEzCuRA2zJbuO8fLsoEM8qoowMNHniXKPebxQ4BOi9aXdT94e66XQGbqmovmN6OHQ11RuCvvpsM-oqnOt4StV-Bx_dQNFM31FgPZvfCCQkehw3Eio29DpUJUbQJfLuBQFfO55qprn2adTWBcEAccecO5O62mdDrC0ML0t0Fty1jlY5kR2HXfAMLzGKs84PGsOum_oGaICC7HfNOCg9V6G0S62pUS5WY0s7gRQkgF9CMmr5Wx4LggcQ9Bi506AF5bqHeoBlUdDLFXOF2wohRdfXNPLrm0PSQGDAahCSwtUlBw6UKbJmP7PvhsHpsTUAPAP1mEyazfWzXlFDFc49l5babmFXSEWjuBQTQK_pQSMK8rmoWXfNP3W16ubdO3gyd8vgd2yPuNnkYZQNEDgDnuIeAD1kCk9dWJMke8Ek4wCszN7jX7HwfDx3xSFf_Gc-wE9XUMQTbj7fERePMBSTzBM43lgaFvf1XRYm-W0D03AguEQd_r2xy1aV_qJb8xjGHFKnkHsXvh5dJISNvEmRQRHGhsbzAPBYWEeKoFDYJ6GzO13W-r-uLNa00lBddBJtIRM5ZyhWrUQwAzgZcjMxj2PLL6-I-frT6NiaKH23_B972W7xkeIhl_-HyFS2RdMzVL6lXC_kSE67vxGFSVyADwvfmxhPjpi3-bEODLcLd8Vx5m00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkl1P2lAYx-_7KU70zhsoL1OXhgilXbI5YjTLLpZdHGyFRmiXtoQtiwmSGd0kSgYaFpCXTDLnBcZhFoEFvgznnPZb7LTFjcRzd_4vv-dpc9YME-pmPmkwxq6ivoM6zIIk3N5N6VpOlXgto-lgUXTPXEKSd2AuY4qaaiZgVgYLCc3UwBZUDcA_fwG2-IW5sJGGkpZX1BTYgRlDZjjD_JCRIwwdGldgyol8ZABwYLN5wWCIDYeptq6o8kxbDUWDsRWqqZokuwUAYo8WXRGjIu96c1U-Fg8LrKtuemFdlXXABlxpA0qSsxzrd68voZ5SVPBkdnmvZHPZ14pkpkHA7yT2mD2G880-YQm8WWSXA-Fw6C3gtp1pT_NpxZQjXDKCGldkOAEbiWdgOrycjmqcLxnhfG6KNpc42o3HhKgo0G4y4meBNa6gg64Tozb1ce2EdHqk3sPtw-n9Cb7o4mF5Zp2W0ek5uhlYtx30tYQO-qQ_mkGFuLD6AA0AMqrg5qf_ULvwGR__ROUju1BE9TG5HaHmsWdNJxfk7BtptFCvaX0pkuKA6hTI82JMZD1gEOD7X7hVeQAC8uectPdJtYWPyuDV5ror2qOa1bu0JlVUb5L6nV0ZeyRREIP8skcKAfu6hKu__5Hw9wJudb19Ua-Ez-5w4YfntA9x_wo3rmnDutm3OwP6U5g1WZWch_sX3ukXRQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11742,
+      "possibly_error_diagram": false,
+      "elapsed_s": 1.15,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 32,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-S_run2.puml",
+    "timestamp": "2026-10-19T04:44:29+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9TJzDG6CVl-ocUm1qtetiHCCt2rhKcEfO5GhmmNfpHiZLqfwRjCeqXOL4K1CcI8O4eZ4MdHACB6ics6lWoFQVRj_3qvM9Yxyxl_9_VypmdNRHiPDhraiLP6nf-WanKXH9QsoYRHWqheg4R9apBmJUHKDHrLDDjsS1s0LLLc2eOjW4h25iWtdy0A-BKHDYg8CMeQxWCwqYtL4wmx6UwckPOqvo6odxaEGVWow9-YKIIJwKOosjOZTX2CfF8pZE63KKD2W2o_mqwBsTaCRYRA1MpkPJ41tGv39jODO6F1wY85CKVZfyDZal8B6iOxaI7frgrLdseANO5uhD-OfFRv8HOjC8CF9hcv-AfLF8n26j-jxlrYcQhQQ6K9XyklE4D50ltm1r-SfrZrt78cuuGAwM5M91bzJC2C-IoKaQMcA6K7bsto7PtV7n5V_psaop18lIWIm-lo46RVDcZfqrwT1BoKUyLsVb6p_lavWNf3KQNdSWevQI5oEWvBNhsyhPnrFlk3dQ9CwGNdP2GzzVUfKFEziZ-OBpzba7c4KKvA_E1X_P_qdRhNmzuXsswquIYZh2zkfG7EcnwvutmwhF3rlV-737WzeUmkfmFdR8a9yIvm3d-ki_skkKSdvxGhGORaFvwHpzkqNOtmE5p-bFklcPrerw3MrInul-vVm40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkl1P01AYx-_7KZ7AHTejexEwzcLWtSY6lgVCvDBenNGyNXSnpu0yjSFhURQEyZIhgSiMRadEowsaybYa-DI9p9u38PTlYmLvzu_8n9_zPCddtGxk2vWSxVkbGn6CTFSFElrbKJtGDSuioRsmTMvBN5FQ1HVU023ZwHYBVVWYKhi2ASsIWyDefwAr4tRE2KogxahruAzrSLdUTrDsZ7qa5ljTnIbKfuQ5B-DLon6JRJJPpRjLa1iN2EIyk8jOM4YNRQ0KALL_DTovZ2QxuJsoFbO5lMQHdDkMm1g1gY8HqIgUxR-Onw2OS8gsaxjuRIenWrVWfagpdgXis35ik9vkhFi0wgw8mubn4qlU8jEIa363u_WKZqtpoZQmHy684Q0UC_fAHX5ynWPXccibjhArpYVYkGX1MwIz5LJSRpaYoZQeXbfIdnd8fEV__PaTLMEi9KBLD6_IQZt82aOnTXp0EvJR7xXZ-UbP--TmBekNRpedyCjlpIXI6DktevbytnHU--4OdokzpBedkJD3196lQ872yP5gvP2WQeYRRTkr84GH9n_SdutfD3iHbbrThKKOsL26lAc6bHrnjfDqs8PW9_4cMeD2h7C6nA-dsiQnxLnAOf66z_a65RyfntCtBhuQ_npHP27RdjfA4XP6U-6-ZnWjXoNbVLHi_7l_AYgGHI8",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11047,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.92,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 32,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-S_run3.puml",
+    "timestamp": "2026-10-19T04:44:30+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9DJnfH58RtyojETES6Xe-gpOG8myoYHMCqnaNJnSKPOIBSQMQ6qAOnqKIhfbfeeDO62nerCIuehOsnKE7FSEyC_w9tFcn9UdVdFU_xd7EIEsTQoB3AMPCpDpJy2Xce25cqjf4pz19MHBsW6p0fUs_CeQZhg5ImP1rR2wYemiI2RkcmZB09uhFdi2nEZ9dDF5BqiePpi8uAfie9flMce2OuDZIjePnhUSi1kB1WNZGQu-DnfcKqh0RQR2mPJSqm3UkAwWK0KlyjEYCdPT7hZKN5L3ekyPwwv9iDh1h0Hpnf4IcAknmVzifvPEGq34-2uhLMB1LNDSNAGoJiEZQvJKu81ITCmOj9VZeIZyTUWh3cJdjQpckMcX2oYSK2mjRAV0R8wRNT7GoxbyFUYH3A9eIGvsJfAO7bqoafAKiidqs4UN3wDR9xDRp_GFRVqMRLzJCVCz9AbLIE_JRzMgN7NmBzRCzfTvnls_IeRV_kaif5m9NIqkmZDm9shqQREwJNfTVd_w2ZhGFIwDlVUwJvFi2Td97E3jczjMzxJ64SKPHJCkzpei4nzFu7RTKUEM3NMtI_2YjB6Qzq1dNIQDgDdwDQtsV8aXmLftr634OtXxH-nsuS3jhaykWlnjcksmyVwUSxUh55MrVkPWTxVgVT8G-VwEaDYx9JH-U_k3aLA-wt_GC0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk1PGlEUhvfzK0505waGj6rNhAjDzKJFYzTGRdPFxRlhItxpZobQpjHRRKumWmig1gYLGjUxLiitjbFQ4c9w7wz_onc-bEl6d-c97_ucc5I7Z1rIsMpZkzM3NPwKGagIWbS2kTP0ElZEvaAbMCl7b8yhqOuoVLBkHVsLqKjCxIJu6bCMsAnis-ewLE6Mmc08UvSyhnOwjgqmygmm9aagJjg2NK2hnGt5ywG4sGBeNBrj43GmZTSsBtpsLBlNzTAN64rqBQBS_y06Iydl0euNRcVUOi7xnrrkmw2sGsBHPGkRKYq7HB_2ynlk5DQMT4LitVYsFVc1xcpDJOw6NrlNTggFJ0zBi0l-OhKPx16CsOZOe1rOa5aaELKJxQLC1sp8Bsjptd0dDLuXw96JEMomhJDnZOkpgeXTKSkpSyyfTYR5cPo1sns1vP9A9t_RZtX1Mx8z0kqVVI79Nv1apcdfAv1sz2l3nG_b9Kht_-6SykXAldLS7CM3AnavRps7pNel1-f_oKOtA9Lo2997pPk-wJ2ckc4O2b21b3tMYRxRlFMy73OiwTH0_gdt1R45YNdbdL8KK0sZr3QGddJo2o2fo1rfZ8iSHBWnfUYMRjeHtH7HbhwO2uTy6C_G2a7bDx_p5zt6sUVbV-5mB3t-p90hD5_o6Q2LslNH57-4ORUr7rf9A3ZoFac",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11466,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.83,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 32,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "输入": true,
+          "结构": true,
+          "渲染": true,
+          "验收": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-C_run1.puml",
+    "timestamp": "2026-10-19T04:44:31+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PPBDRjD058NtVefHk-icpO_L55bMOyUMoa-5w885OZ6ftSHgOYFRKK2eKge64b9QMjGK15LGn286qM0ALDGXy3AP6VCMZCS68Z6xyzrppxqpcXN7XRRRA3cSisMOzw0DQw04DxRAjbKtDTcgMZQOLzcPSMZw9gnNNTKotJLOqy7SckLQO1sQ3f2lNWFhyjoCsQb0pMeOPXbimggZSuBZFgZg8aU75WrOZYmFEG2Yi6HUDfjBypnbrmrJJzXohf2LyfIPbgQp1W2a_nRDgmLLPhMPLbagyagQqLknsJPr6wGp3Ds4cXOjbsVg1hJBXWduHDmtQlNQRKDpAo2pk4ZXDhVD2Qda1WlWpdnwASFpkRj0s8Y6NMbK35SNXP8u_Rup_VOAztnqzW8zFGad7r1_JqYLH275dBHxGQ3zHKafg0hjBucusyId7oCFhT4YUXEGGJCS_S0d4xJV9i4muS4nEVR8WJyTlwNH2HmzGOyyTDW9XwqaMYagoqdqD0ZGqSlPwCjmT1QE1gZpF2Pat2BZDkvVu7uhz7TnxqlCySycwdx2fm7gN512OsLPbTHqlF7N7UBj_Oa5iVnxPyR2zdlKzQZwjUkHoJbZPFmEzphazH4-6CQPgg9cvQKui-VZ_T6_J2Rn-PWSFcP0MWNeyZDwvZDLM0NO6z2dvLPqKul-yMy0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplks1u00AUhfd-ilG76ybNj9UUWVZjx5bKT4XoggViMandxGpiI9tRQKhSqgYSUlpa1BQEVVDEIgbRYApU1CHwMpkZ8xaMxwYiMbvz3XPPvTOaFceFttsoOZyzZZj3oA1roAQ3tsq2VTc12apaNphX2ZlxaPomrFdd1TLdNVjTwdya5VpgHZoOkK9eA-vy3IzZqUDNahhmGWzCqqNzguM-qOoiR4cWDViOLA85AKKwZF42m0vzPGXXDVNP2HKukJXylJmWprMGAKT_Fs2rBVVmtZlWWSrySprRW7HZNnUbpDMM3YSaFi2XZ-oGtMuGCfhE3Ddq9dptQ3MrILO4SOE2t80JqeQGC-DOfHopw_O5u0DYiIZdaVQMVxeFkjj9vjP99gr3fHT2Aj09CScfUH9PSJVEIcWctHtBoP1FSSmoCu0vibjbxKcfIw-t0SJ6E5BBMxz9wCcTtN8mwTDhwTE59siBPx2_pdEJHD1Bjzx02AmHrSRaKSrLSfQ0CNDRy9noy3B0Fo4GqPM8JmTcIuM27l_gfiv0d3HvS8zxzybqfsKnAepcUEJjZVmV1HS88dcd4u39iQWx_HtnxsL2e9T1qPq165HJOWNk_A73OuT1ET4YxpmqomblpTiz5-P90b9MJvH5mBw-ZkBaBejyM3rmM1VYBdgb0KflVnRTi_7xbySjHYU",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11308,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 36,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-C_run2.puml",
+    "timestamp": "2026-10-19T04:44:32+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PPDVJzfG6CRl-obEzCuRH6Z4fI7IqYPiQfPvuONPnS5MQ8HsQKlOifYmw2oYE9Q1Mx959BkGBHDnRelGCByCvvpkM-pqZuQvths_ztdUvtrpqaNJWePLpfgCkQLgpw01Yo0BDxPoXbxIP44lw0QOblnlGY4hcx1Ki2HTirPWKG5JAxgbWrMecK1u-0Yi2bCJOZCFPRsiQZcm2Gkcmd2czQAW91aQcbPXpfEyP03mXeLviLWyohAKBQcQ4hA5U2h69oZJT5dn3G3m_osQa5AIuFSch0AVPiMeJvy4OaDJ312TzT5ZAClUSWc_MeP6JjK06nRFrMAfkARALXxCpNhwRMQRuIBX1JDWVJewFyUoyQU0s_327fJpggKakMmIj_he_3qwF7P7tz39mP_EW7piSP5iaeluIkgUuQW_pOifIQH-QgbLyASBtBp0xKjFIHLKWjf3qgculT_uU4IE-cFdCnqQjePDqkoIAuSuRLItoV0ivBrzzBexlZv2ZQfxjZiUlQEQC4zCYmjXtdWuH6y_tC-xMnor1sxlF834sIMExVPtSEj7GAWPxzVnJGNLBYcXamL1ugLeSCdFLwHxyEzaW4-lqSrEsBeDyJj29YAaWMj_HRNkBIFE5zoguaCRdzft1z0KIPHYmdoGqkhZUkz-IW2_EwInXpjx-EINZ_aCG5LQDT3W2htf-ooLYIml0TpjqFTX5XLDzdw3lm00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplk19P2lAYxu_7KU70zhtEaMSlIdLSJmxqlnnhhdnFwVZohHZpS9iymLDoLKI4loFbskUku5AtE3Fui9AwvwznnO5b7PSPhrnevb_3ed7nfXPSRdOChlXOmoy5pWrPoAGLIAs3tnKGXtJkQS_oBpiW_G9CISubsFSwJF2zVmBRAVMruqWDVaiZQHj4CKwKUxNiMw9lvaxqObAJC6bCcKb1oqAkGRqaVmHOk7xkAPCGhXmxWDzKspQtqZoSsoV4KsYnKNN0WfENAPD_LZqQUpLg9yasAp9mxahPnwRiQ1MMEJ310WMoy95yCb9ahkZO1QAbFs_VYqm4pspWHszNevptZpvhIuEFM2B9Ojo_x7Lxp4Db8MIelPOqpSS5bBK3-uj8PTo8dkff0MnBn86AfOxxkWySi_hK6p7hqD_NiylJpH5qqVXwpwvcvMDtS09JFVSC2kPSqbi93_h4RI76Y-czHRq2hk3S7JIrhzhtVLfJ8CzkvX30uju-PkKNqnu2Ox69o5owT0yLC2HeeDhEbz_cz7tbHLUHbu88gMTZJY7t9ndw60dAqBnv1_FNBdUuKaGTBUHipWhwyc9XpHvw72SAT6_RzU7Yug3xO0ImIqSBa39Fte4tI84X3KriQxuf2ncH0BRJlGLCfJDS6uN6735KAL87pLGHO3v45JeP-QxAVVo10OAKven7LJWJLC8B3O3Q92EWFU32foO_MIJHEA",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 12498,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.86,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 36,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-C_run3.puml",
+    "timestamp": "2026-10-19T04:44:33+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9DRzD048Rl_XMZzjPBwYHMKsHPZHslL3ugH0ySK0_hUfjOJTR8TXGGgfIAyXMWQgMchGegGXmQ8JK410XIFlvClFRFOBtUGYJsiZFllFFChBHBOOI3gEE4IhZfqRium2rmyFfcFV3RrBNyfX_0B19dok6I3TnkHiYdqGfk4PXPyICVLZ4DmRfw3LQjcIbpsC2kt_5e7JPmCoIA7aRtcyHG-D2QX-kPvO42aC7al5Afh6eQrwvxb4XjiLmjcHMkKTybeW70_6_H2geYIzIcMYspfjcgK6_bve2I0DIYa6vYrysMguZi1Wxg7WLD9lUyLhjrstEZ1XJdvxcufMmfUa6-O0xkpAeBHKqhhu6-dWsxqcbu4J5qnvZys9vyEs7zKNn-5Byur0kEeHU4X_VDwRopPjfLPFDEns2zBdlz8VFm6Y_6RyR9ssuw_CKEVqfbV90S39BTqUJY7ST9SVWiVZI8zvwcPpiIQjViHGcTZCVn_l4qz7iwFCzZTlgLdUwaeuUi_raglxjnxoEFESIoa8dKVBClsydW-IK4_hv7PEcJzt5lS9abh_RPxbbEG3OgMGiveJzYBuV_29ykaht78ZINnLLTLfO8TRC_-0S0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk1v00AQhu_-FaP21kvqJFZTZFmNHa9UPipEDxxQD-t6m1hN1sh2FBCqlIryFaBqpaatCipCHBohNQQECFI-_ky89s9gvd5CJPayM--888ystEthhIOo44RKuOnRuzjALXDw-mY98NvUtfymH8AsEmfK4ZIN3G5GyKfRCm4RmFnxIx9WMQ3BunoNVq2ZKXPYwK7f8WgdNnAzJIoeRvebxFD40JqH65nlgQKQweS8UqmsahrXrnuUSG2xXC2ZFa5R3yWiAcD8b9EKqiJL1KZaLbOm2apQb-XmgJIA1KKQbmLXzZariOwGDuoeBU0m97xWu3Xbc6MGFOfnubilbCl6Qb5gDu7MqgtFTSuvgb6eDbvSaXgRMXTHmPzYnnw7Yf1RfH4UvzjUC46hF4SH983pvLNm2lVk807HYL0ue_0h8_AaL8Zvxsnbbjr8xQ5_SmV8kBwMkt3R5OIdx0lx-Cx-NIj3nqZnOxJq1-xFCZ2Mx_H-8TT0ezo8z2N2-pWd7qSjh6z_WSq_u3HvI485xLKQidR8sy_byeD5JQT-vkdk6ZP3cW9wmSWv9tnuWU5ANipZCzmhP2Ivh_8Iny6SvcciNJfFVV1Wlgh1sz_4B9FV7cY",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 9280,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.83,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 36,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        },
+        {
+          "@startwbs": true,
+          "@endwbs": true,
+          "技术": true,
+          "人员": true,
+          "流程": true,
+          "数据": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-A_run1.puml",
+    "timestamp": "2026-10-19T04:44:34+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7BJi9068NtynGJNRY6KcziQ4kxqCGD2zSZBTXOEgGTDCQOe562KGCgQgB6IA99Ln1Z88YLXp5qMbQyWbEj1kEiJhx__9USITa4MQHKCC0Cf2yEFQYDtPjWSE4TFWrxVNhTzVersjdpdUEnUq8Rhtx3WKAMw9iwsORUxI1eElvZV-nMLyKC7FPEH-LzhrxzxXkxHy3UqCqYib01hg7iHjx29LELi84jEArylGc7lOvKlAMRUPX3XgrDL5GjXqe6KR19Lb11WrChc62OGQODfQLbc96c9ipevxmT0A7uR-ky8YXIMC6MgbaHbSGqBySO3LT4ZECICPvdJB0il1N1XOJ0YVCCfdLKmARwRtvQb0L5PePC66m4u_mi9uiCoh--s5oSvnDW5n2T61eCtjl3jwxdbhtQsK_UKOpmetB-9_ElNCFfO94skgFRokYkJ9_tas3HgrReVPs9e3K8MaqcVFVAVzXZWdQEW_PbaZNY8aXffXh--IS0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkctOwkAYhffzFBNduIZSb2xoS7vQxA0L1yMt2Fg6pB00xpigUYJRAypqosZIoklXEGMgiJWHMXRaVryCU60G46xOvv_8l5xJ2QRZpFQwwAykLw49qI3dm2Bw4R0-DXt9et31-jXa2fOd47F7QhuvfsOBQpbomzrZht7tIGg6_mN_7FZXxQwc9k5H5X2vXv3uG7tHwN7QzSKyUAGuoexG3sIlU5WwgS04rXy9CYe9jlS8pZt5mEOGrU1UVC2HSgZRsElWUEGDUyuYYJhBpg2lpWWYkaYmzOjnvB0Aofhv67wiKFJYwZaqWRGVxDQvxxgNV0SM4xIxnmdMsCy8FcGFhMCJ8wymdVTApvpvflqUBUVmhkwYbATj_CwniwzKv77YXJznE2AXEJ0YGgze28O3rueWvdrZT95RjPCjcv4n869cw-lgkTa6o9vK6K5Mn_eTYNGrVuh9nYmgNQhaTSZ898p_2GOCdo6D9mWSNeIiSGmmGv75JykP2mE",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 7566,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.81,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 23,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-A_run2.puml",
+    "timestamp": "2026-10-19T04:44:35+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7FIW9H5CRtynGNMxIsSSfouypaB0hSpABrpHbjS9mhTwv9HA11eYXOP64ObKGWBPG8NUXWBzFyM_aAtP4nZCxk-vt3-GxVIPe4Ob8gwCmcyEQtzjMRqntv_QazRJlZgZjeBgoMNscudG7WCqGxrSWPi7lpxzchq_i2HuBCc7dDA48C2-0OPl8vZ4g68Y8TOR0XBMjjmZo12YfhHWvaeMwgQnr5pSAIJYHaa3Gig22IHWG16Hec40yEWIn6reRXwf9p1W3XdsjSuYKnw22ig3Yaeh3FfQAK1XOXOzbObECeup56vH3kndXMY5Ce1yc4S8lRPbC2XQbVc-ZE5iV5c0k6Q4HNWMrLxFQDtvqum_72gl-DiC4iOsRs_CUAyt7fT2P-hvPOIRjUSvwkgNG_P-xisHlElM6VIXgo-r9rhNkxza2bCsvwepl_lUMDgWcw41MPf6eemUz-0000",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc9KAlEUxvfzFBdbtLZxynLjzOQsCtzMovXNGW1wnCt3rklEoEGiKFhkYRiVRCAtlAhd6GAv0_xb-QrdkTGMzu77ncP5Dt9JmgRiUirozCbw5rf21ZvTHfn9qT1tO-OqO2gurJZfabidAeAzRDvVyBmwe_Pv2avT-wJHgsyYec0oQgwL4Bhm8jmMSoYiIh1hsCEta23CPIEKKmtGDmShbqprHUXNwpJOJGSQNCyoIJJGBAEZGiYQDw6BLEbWhuHqknMGAOGfa1ziJTHoIKyoOKSisM-lopQGFiFj2ViU4yjjMUblEO7GeFaIUygHyYRwi9tmUwKFqV-b6M4Wx8WYC4ZoRFeBbVXs9o3fnTjD8cKq_42wwSxjZvb8x4rzcel0Jn6vllhJu15znq6pdD9n7uzZG869YZ9KGrL7UnWte7v2QKUzbnqjO_-95Y2qCboQFZmkaijB734A0rHDEQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 7129,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 22,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "WBS-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\WBS-A_run3.puml",
+    "timestamp": "2026-10-19T04:44:35+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP5DIm9H58RtyoikjcZjnvJfHcVIHO4R5wrlpcY3uroPkIOHWGgPPQcHsS8GXGG9j2yqbS7-Z7DdPkLVQ4PCXCxkFE_Xl8Vt11GCPPn9YTGs84yZRLerPW_QPNS-lZDp1QrM0aTCTA7Ualf4h_T0C8Q5Km6V0QqvMwWbxVkJjA_8LuzKUgJHNwZNb98Kf3IKOGeSmrWo8QECnB58H3BO2YzhOq8vWHpA2b82nA6ey1iAnyTXHiHX9E48JF704K4OWIYK5C0U788ewzWOXdz7dLC0CFzSlU5WcBKL97EylA8iiq-7d1QrBLRCxVOuQTfYGLb6sHNSymJTZDU2KJke5NJHE-uGOy7GsiQvww9f3tL1OG6BFD3Kd5Qz9yEytYjRGPcTgHKjwNVDrvTbIlOooaVg8xDPD9zpvAFWftnQgKXQjNLh36R6e4CQ4z8fsUgWfLVUTRMXj_DMIuPbu-rnFhxHfpz-Qo5AKm5UuknN_W80",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkU1LAlEUhvfzKy62aO3HlOlGZ9JFgRsXrW_OaIPjXJm5JhGBCpllqZHZwhCFBAm0LzSVwf6Mc2dm5V9oRkyEzu487-G8h_cEFAxlnEmJ1DYgTyNtWjVmD9pldz6-M3MFrVYCR0x0od6S-kSv90AwhoVTAZ8BrTlbqCXt-5O0r8hXj1R6pNFfqNeUkhSkNJRhChzDWDIho4zEsUhEMtgKL2tjQjmBHMoKUgLEoajwGwrHx2FGxGEk4QhM8cARQRiBKJQUwB4cgijr2BiGf0edUwAw_1y94WCYtRUkc7y8oiyzT4ecFrUtVszt9jhp2mJBWUbZFdzzBN2M14JRO6gVdNE77hBjwdDaxrnromkPdUFhAYs80NScVr0nw7zeK1tBmZ2pFS3pd83Xl2VK9jLKR-ojs1k0n3Pko-CnfFqpSFq1dWsMZsagQxoT0inZ6qClV951taG381ZLhmXj7XE-vtGnP35rIUpTAV7i7Ff-Ajw2zbE",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 7111,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.85,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 22,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-S_run1.puml",
+    "timestamp": "2026-10-19T04:44:36+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9FJy8m6CRl_HIDNE2uZQdW1JRMWoOSv1DKjidYQ4bN9CQOo44nKGE9aFZde0SbniiEQaW4vTECZHDVmO94bzXBaz_plC-Jl6tEuvZnUjK5tfv3QfZXAjp1vRrTHkl4rAbB6KoWnOavl0esQSCXkz36hcV55DEoSTtbY19Un5KBhXGffx24YGVrpIrOqbTYPbpcphx33-0XW53xrxgEyaYVAvIP5bjINIkeXYJel6B952KjgQfWUSPeOmapwRoYhGjOS72L4lDVVa4pyiY86U8r6KLNKK68fVb-bb1MLnL34z3u3P7MP5LD2xJzayo8nQ0aWoF07UvQCEm-Jyu6uSqm-EnDtflXypbOR1naew-huEGfUki7xK7WduOFpGtWs30vVRc8_ERq-3OQjsQZ-nJa5Ol0vEJQJucQXAuZ3KdPQ7mdfiFNOJYytn3SuxG6BF4MC1bq-WidCWpPaBEJTYTy_9XsRoBVdur4zc3QkepytjyKCHqRvCGr_mRV",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk9PwjAYxu_9FI1c4LiNqeAFNtaDJhzkE1S2yeJoSVckxpjIQTFRA4mQ-OegByXGyw5qSATl04yNE1_BgkSX2EuT3_O8z5O8bc7jmPF61QXenkNqmOEq3MHlvV1G68TUqUsZTKDFiTm8CjZpwyG70MauZ8UU07Jx3eWIEl7EVQuuFCmnsISJB_XNLVjSV2JmXObOvsMP4CGAUPvXuo7ySJ8rlJkWW1JdK6iGJOi8YskUJS2pqmB5xmhjCTPpvKKtC1hwcJUS819-QTPyyIgZ4jUZRVdRQYil-X6WUFZXFUMT0PgNkdZkVU0LtP2TzIjFoCSDI8Ad7low7D5PzgbhzTD47E3em-HzOVhsHGSjr6vg5Cl66wftQeCfhg_NDeDYMDl9uYj85vT4Nhq3ZqP7FOQVi8Dk5NpPiZqEriMNSdlofCemw9dhOLzfENzjtAYs8RYwGXT6CycyDNmQs5N2J3z8mHZvIt-fjUT2YNq6jPze3xQxHRvkxDX_Bt_-d8qc",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11885,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.91,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 26,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-S_run2.puml",
+    "timestamp": "2026-10-19T04:44:37+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP5FIm9168Vlyoa6lUXnLxTCB-wkkuS23_a99dVLnTqPcHsJY0uUAgb0eG8xMQGYWKba25b-czsrKr-XyGybD9U1v_UyyuDtqYv3b5KT6xXb2rSGHGuyGFboaP8gDbHY4mh3-l9i66u96QHcuI8i8DirDnB3BA2gpNI2MHOv9Wnb2ICmXx0BrTqzc5D36pBAC-lGOaVm642e_6jDwBAkBX923PEkgQfa94tWT56nPh5ON90apcHAIMqDT-9oJ4bmcB6GGx3nx_sCeicwneNSOWLhA4fRCKtXKFlrX6rHak8SxQ-6AJOf54Hm0fZ5R1C6TrFly_RhwMe-gljlzM1m2PPB1SdWPk0t9lFPjNVQyyw7F4y1gm0Zyt7VQqwyqLbmN_U7Zy73y_T79mfPoSGmuhT7KLuMLbLTqOMatsXv5vrLH_0w3QQT54zTHYh0vAk74Q_LN_gwfecQcFJRiw3xllAzxijytFERBKx-fh1X5K2QNujV_m40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkU9LAkEYh-_zKQa96HFXt0wv7q67hwIP-Qkmd9XF3RmZHZOIDh4qqUChAjtZpCKBSWQIWX6b3bVTX6HxDyU0l4Hn97zzg3fSLkOUVR0buGULVxBFDjxA-XKRkio2VGITCsP68mwYbgkZpGbhIiwg2zU3EsMsoKrNdIJZFjkmDGUJIzCHsAvV3T2YU0MbMsoz69BiR_AYQKj8a03osq4uEkINk66pqmQkTeB0UbFmsVhckCTOZEpJbQ134nJMSXCYsZBDsPHv_YyiybrGhdxiBWsoSlsxTeFQ-_WEbVGS4hztr4YpNikURHACmMVsEwZ3U-_z9uvpaj6q-2_1YHAJlksFyeBm4Dcm89m1d9rzzoc8TwGrACPzcd9rTrzRWXBf94ePwcPz90cnClnJxDDit0dRXhZWVV3RhaTfaHkXnVVH8DoNpp0UT11GKsDkq4cRr9Vf-rqmiZqY9NuzoPu-8r3uy3zc85stTv6msGEVQJpfi1__Ab6UyoU",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 12091,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.91,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 25,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-S_run3.puml",
+    "timestamp": "2026-10-19T04:44:38+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7DIiD058NtynI3RjfbaaPhtPYaauL25_O9nYRHO3fJ9bEBY8ikr28j5gsY25P1nOMOHP62zUTfqgIhleBJ7xJGknduphdtm9ardsF6oqKF-BikAM66Yt0B5tQt6IqJow0UPN3H7C-Cmz_15gsuP1iwsFFj6SMo7Lpsk4a9p-6Y3HTob5EOnyI7nle6p1iBCsPSuEwUo_VX0O1GdqjDcvffZ1JAB9jDgQ5dLIG9EegOCaL9IQegcCOOhKpXIafJzBI0MHSNAR7cxcTrf9b86FAZ2gPGLfSKf0k8_dpIigogAO4s9ykCs0nACZW4tEMU3QFMIx_MZMvwuTSb6DS9Cl7tHNZqD572PYCyhuV1SNHVNGMk0nFnssCSLFkrPdZQ7dwsav3ls0Gc-jT1KiGi6eQfcr8cxdRYhzUequjwxS7prU3XVLMeFgSbO8lIOI9iFe_z9a8oaZFnJokylHkqRk8W67xM-sVDwF5ZSDA8Wyl_HMAv3bWJp-ZBVm40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc1Kw0AUhffzFINu2mWSRmvdmKSThUIX9gnGJtFgOlMmU4uIiy7UIi0WraIIVkHFhZhFkYL152nSpKu-gtMftNC7GfjOuffAmTWfY8bLRQ_4uy4pYYaLcAsXdrcZLRPLoB5lcNEcz4zD38EWrbhkGzrY8-0ZxbIdXPa4SQnP4aINF3KUU5jHxIfG-gbMGwszZlzg7p7L9-EBgFCfS02bmmmMFMosm02poWdVJAk6ipgyRUlJqiqYxhitTOFKSlP0tIBZFxcpsebuZ3WkmUgY8qMKplBWlxSkC4j-fNKyrKopgTYny4zYDEoyOATc5Z4No9ZLv9aNbnrh1yUY1wky8fdFePQ0UcJmIzyvh8FxdF9dBa4DE_HbYxxU-7VmeNoefraTkO_YBCb610FSxCwahqmbUibuduKv16jTi3rtwfPV4OF9Vag-pyVgi9JhImw-j_0mQjKSM_FPK7y9G7Ru4iAYftb7Z83o8WNw0oiDy_9FYrkOWBPP6Mt_AY_Qx-k",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 12189,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.78,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 25,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-C_run1.puml",
+    "timestamp": "2026-10-19T04:44:39+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/VPDVJzfG6CRl-obEv4OleNGgt4XBUx4bNenFqDaYZT13siF8iYo1POZY4CnWOxgCu61nYOBB50cuxClqzC-LNs6dVxOmMJoNp_Fq_JrzJyw6ZaGD5N9PIjzHrBoeYJdmJDpQsTPWGPKuc8KQ20dUcKle6L62HKNT1cangyjpZYIdnK8M2L15cs9E1akR446G4bKTS8-VW1ItD1SMjv3oN44lm4iA07Q1kYOa1Cvre2R9Mg1oR9BXmqHr4O56qz4mmn0jeMcm68ZhqGJDhX4ngOWvg4eByvCidn3ukS0yPftc6259p9Ixdq2CC8zedYKY_tT8U3N2C54YFVKdQwgiWN24UaKX1MLbOBMkSNlN7fxYUXlttrZDNVEwR9qTKDxUgPZLEZFtRin6qvZs_LISKj9W6K_VuOiEhbJiyO-xs-uAG1bP1SjcPxH2O36dLSR3OpyKfsHo1-IJvbVN2may7-4ZCQTqR7K7ViIOrCcSE75r1FEKh4fAsiEOhP4nwvXxJLph_WTZxd_1rSQ367posIcL_CZTxLjhjcTUdDuZ1Lsi_M_avyrFTLphnIbDpiiY8a6tHs0T3d3Zms8Fjyd9bVd-qj-GLHkRfRBB-AUHrqcWkTMOKwtRexO_qqTxOQ-BZmN5Z49k9-3Y_dVxQc1CMlZoo9WU0XgOvpslXgBx9O0AKG1owzhZYlshwcECIStvs5mi_MT1zizpOph5DmDZTe0hWtkh2N6Sm0hX66uSEQMorHlQmxxpUcZCnd7AYssGdFiyVmC0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNp9k19P2lAYxu_7KU7kRi-hdCrcSEt7sSVejE_Q2SKN0EPaw8iyLIFliOIQzGBjuozgYHGJgssUCbjsy_T0z5VfYad_tjBZPJfP8_T9PX1PzoaORA0VcllK31HUvKiJOfBM3NrZ1mBBlTiYhRoICd6ZS-gZUYJFRd0GaTGry3OOJKfFQhYJUEWbYk4GS5sQQZASVR1wj5-AFLc0Fxa3kPJcQS_ASwoAdoG6JiQEznWgJslaoHJskuHDRHURgUbT0TDDEC2habAYiOvRBM2uETGpiDmoSgvzkyyfEPi5wDxmneYYIUnMlLufQIwwj2ieJSL_d0h4NcIwUSI99SdrqqyBcIR6RSEFZWVgta5xe9cenuJ6G_ffWM1d87psnR1Q3t6pmNU6M_duzEbTmPb9VJxS0mAZT9_hiw6uVOzxj7vb7gpAGVkFy2ZntEJgMadVxsNjPxSnZHIH5JPmV9cLCTwf4SMxp3RsdQd-xJjUyZw4cXUE85SsSkraw5itkTHrmHtNXOv-B2Puf8HVxoMYfPLZKZX8yN3tW2u2Z16c3iMFXaz9b-TnzU91XOvFKU3OyyIiQbdHYB0OcOPDYg-3ycmV-f7S35BVG5ulssv4p5HXSaC51ZhTrdujtj_TR3thr4uPBcWMQm4n4OL-d_tqYExa-PLImB4CGpjnPa-GovslgApRAHLr2uOK_avqY4xJzfnYXCz9Z0H2z3NjOsU3A2N2gCuDe6sJcZzACuEYbhw5pbLVG9rDvvN6aMzGccqLbZCc-zx_AzgNlUY",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 57046,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.96,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 45,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-C_run2.puml",
+    "timestamp": "2026-10-19T04:44:40+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/VLDVRz9G77tlfxWPB-EHVswsFWnA-w397kGJrBMCPgKbxKLYZ0devc26ZMLWY4ia4z0PvOyE6M6eNuPxMvxu2jxsei6Hh6_t_Cxld7FFJRSiA9amczOOQq_LCv8ffS4JQMTlrpIokimRcc42d-XzImmh9Sb6JjLtGLBIB6Lf8Yj9AQj1qT3XjfHMmDgs0GsGa7GBy0yVWGI_jaIMTg3wL8NFm7C6WDYAwwOO5NbtOfYoOYvGFXQF2062kXOBB1GA1o8HWaLDqyWjmFlXQ2YsIS2uAgKDNLxHZyU4g2WGGiAjO0468_T2Geo0mZzUO2COYOG9z9WkcxfYWa2GUS505MeASBeVKBc6MljsvJN-KR0ltymdHLJvWYOlqMY4pj_FyldvfCHuJJCiFcxZwj2kNkBYDLtb63K9rj7u37Ngk9d7ZVOi_yxvVJYVDFm0fXGThEDwpyyef6h2gtpqap0-KH22Gf0bLBlHfd9KOZegEyChZd0iQ6GOHPVLfEU0gxtfJTt-UOeEhd2nWeuQTpgmD3eLvLOigHfgVNC6xLjchDD_HHBPfS-a3t9VTDBa65F9A18aH3SA7Q6pCXfNSQT9UheT1O3_mdZkOeZVOErE2VqwG9NZsM7PwTLSQ-fA3K0kfMhkdXSCVxt0jJvu04AUlcfHTQ0RS27jffdUbEtz8TrOpV7tsjFn65stwJlVlZ0-7-2tVVgSzj4GvmlJ4M5_HoUdpk0Jn_XuNeo90PQSP_c2VT5rkYrQ8yTuEbj4oFqB_m00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNp9U19v0lAcfe-nuBkv45F_brY-DEr7oMke5BPUtYxmpSXtRWKMCejmYIaNZWCISyQT0Bnljw4ZYahfhntbnvgK3vaiwZGsb_f8zu-cc89NtywomTCb1hhrT9UzkimlwRNpZ2_XNLK6zBuaYQKf6H1LDCslyUZO1XdBUtIsZWkiK0kpq0HR0OG2lFbA2rYBDZCQdAvwDx-BBL-2RJZ2oPpUhc_AcwaA2IrrphgVeXdimLJiLlA-Fo8IAYK6FgssFAoHIhGCRU3TyC3A--FoKLZJwLgqpQ1dXtGPx4SoKBBCwq1gAQYj90JCjIDCP15gIxiJhAn0mC6bumKCQJB5wUAVagpwuh9QuYZa-3blNf5RsC_fzCdFVPmCJi_RaITO38_y-fmkxHhNMyw-buPq0K5e4uI1XeUYNQnW0fgMdeq4mceN9iz_zvl9OJ80_ACmFB2s43rPzyikasKrfPSTMD5REIJCkCVUu9GmclRiOio7wyuOcCxoZBhFl9Wk54CrvelN3f55ig6ucLGCjhp3OrA0OhXlViypGmp9cwbtW2as039FEtmlz6QPcl900uQYU8koEiRENwodobMyGldxp0l6uh0FgP_CeO5iiN9g7U4J_TpAlePZYdnp1Vxr6koNQC6lau6eFwx_vcC1PngAQp6-alF1oBtwIe2mmd6U7f0h3VjN8ffa0_EYXbfpO9--MD4f4Ld9-pz20RDnC9MRYX9HJ6fO4BPH-HhejIkBlpxn-YJ90XW6LVojx3g6W0TI_Qv_AGo_lKM",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 33592,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.96,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 43,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-C_run3.puml",
+    "timestamp": "2026-10-19T04:44:41+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/RPDVRz9G6CRl-obEjXjs2QLk5Yz6ItkXoIxa4npNCff13saF4cDCmCXaCtCrGiAsP8G9HfCDJCnO1aQ_3EUqlV8hUFfd1iHUdJpFSzxVUvwaspQ65gwMIvozRvWLQC4oU0Ptz_SiL3Kr6PMG1TRLy5j8s4MeePfXxe42BDdwWgFf1LWjOHMPU0UMTR2sWp02UMZQG7xy1EJbjOKmtCN6SmE_02yv0AGLwfQQLUN0GPQcMx4gIpb1IJ8rGCGQpwUJWi2qh6MXMYm-J6TvQOk9EGEMaQcjpCz9IbPLM20VL12BAU41hqXCLFxcafifGKWpwMbqsJ9r2oHJt2iE6xYa0xTzGpe7tkYI77V8u8th771XgPpejh_GrYqzSURJGUHdEAC04cJwaLntIRFfJRx__j7R0BYeco11k-CDXX7zTeECpg9GXjDPmUoAypdmrbL5IIafqPsrwFKbkPluzJEtDymmoyQemkccPXH21csFvxCkRJdagFSV1Ztyv9yEwDLFlt_t3qCavnT-lNxFNveiHZpty2kzQMGuIw_e4BD8G8n4-dx8thbAP7FTTe_ju_romY80MAA6RrDvULFqtnvxuoWGCYC8g1KDLdOYSkbLdtQ-WKU03qc67N60YN0yCTZ8cpJzKsTrb_iMvzCfkHtEP-z8Sw72fRvbMPNKf4XEFlZrXlzwD9zDtFx86mqoSIFXdMrs3lwXFm00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNptk19v0lAYxu_7KU62G3YJpW4WL0ZLe6HJLuQTHNcymkEPaQ8SY0zAyGQzczVCwrZkhAlGkw1MzFgGRr8M57S98it4-mcGxF6dPM9z3t97nqTbNoYWrpZLnL1vmBVowTJ4Bnf39yxUNTUZlZAF1tXwW0jYRaihmmHugQIs2fqCo-kFWC1hFZl4B5Z1sLaDMAJ5aNpAfvwE5OW1hTDcxcZzA78ALzkApBXqlppV5cBBlqZbsSpLOUFJMjVAxBrPp5OCwLSsZaFaLD5MZ3lpi4k5A5aRqa3Mz0lKVlVYIB9UEIsp4QGvSExU_uaSmylBSDPpaXTZMnULJFPcKw4buKQDt31DOgfe6JIcd8jgjesccGGpnOi2v9DWLT1x5tNB5Gc4owASZPqRXHdJs-lNvv_-0dsAuKibIEG74w2GEf12g4zOolCG01nB7IrzOfDWVUVJKSnRnbXo9SW5m_j1M7c3zDDLxqjC6aZmFEIGbY_nsy5tOeSo9x8GPfzknw7o1U-_f_cPQyTnF369fs9fmixGPPfwK71pZDhLr-gQs0hAjET6fsjeuUpkc912j-3j_XLCIgBYooZvU3l5U_TfHnvjKBAyIwioFQ1WdiJy6VWfdr6BR4APSYYdcYCJcDwx2MibNP1TZ3WX-xbn0ym5Hc5n70hzocKlvmVZldSkSE4--PWG_3o0n03c_sgbDTJxI-GdbXYO_qE_JUNeOg",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 26233,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.84,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 45,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "if (": true,
+          "then": true,
+          "else": true,
+          "stop": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-A_run1.puml",
+    "timestamp": "2026-10-19T04:44:43+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9DJnf16CVl-ocUwA495rnXApQRZUp27cmrZHmyc1vcsH4cmApP7Kf9Oq9RDVZIj2bSDEZ1f0qzD6bJ3w34JoEpSE8hEFjo865Ey_pdzvjdPZ8R7aCkQrYUz0Bu_pu_-ZORNKqUE-FZdq-3-t7xnF_tu3zq-CtHR7J1kqE_suTTlJ0RjRD5HjuJreIdmTTfw_FuUtjwVSbRdo9dDZgLl0gX1yX5DR1GiL9odJgr3QVgkB1iXcEEiF4-gbUPwL2sZMeObhOTva01KG-CpTTGC9RcOA-CRAT1Q0dsKTN3akgnPXLhahX6Zg1IW7oK08BDudwfL5fM596z8HJ7sNewcz8p8gEEZKC1G5yuQCRCcaQuDgSQUax9os6w4y4knIx8gs7q5jbsS3Xv9Iota5iY55x6nGTIgzTsYStA86S2ub0wbDHaV8K4x2tBQwkAadu7QZ7ezgfH9WnhggNnltVyfXUzhvgqD3KP0a9Ag4BBwVcicHUQfVbV_em7lo8-80KXaCdP3r57Szxh-vrWBaJ3C7LJ3aK--BqWmkHy67l0R_lI1gPsy66U0G00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk1PGkEYx-_7KZ7ooQkXXGErNpuN7MIebDWNHDyYHmbZESbArNkdSkljQls1-NK0KVw06MGkDT00aVMPoMRPI7Nw4is4-3IgYU7z_Of3m2dmMhseQy5rWJ70Avj_Pj_6NhtdTR474-OfT4P7cfvE__fgP3T4zdFsdMG7Q7_bh129MBu1s0VG3hPWhKfB12nr8_h7e3p9yVufImc2OpW8CqEHyEU1sFCxUnKdOrUNp-q4sGyGY46w8T6qV5npULaNahiWth3mQAFRD4zN11AwluZgr4xsp0FoCfZR1cOS6rFmFWuSuEaOoFKAfJQAgs3ifqlUWlYUkb0hFMfZejqb0jMio46NQwFAXzhoxsyaRrg2pxp6TsnLYboTwS7FLsirYfQW2XZwOHklLLeQWyIUXsbFB1Kr13aJzcogZwLiUDqU1GR8hQTsLctrq4qSfgdqMej2qlEmDGuqpfG_d_ymF72vmrQ0NRkCQkqoQsvp-ayZF5ql-V_-jAe_Ij4gBSGQydkPUUdz3uv7nWAuRMMwdVMORT74vSDC5HwYe8Bv-9IGpnbwYZ4BoeDbuA",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4572,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.74,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 27,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-A_run2.puml",
+    "timestamp": "2026-10-19T04:44:43+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP4_Jy906CRtVeetC9YmO84gcgQ15ZhuXnWP68p3bHxbGhcQzX29OT8Gr0rMP70mE9Xeue21JsD2mOcluBLq8F6cztsUvtVlUxcSnv3BseOdxC2Ytrj-pfQpeJ--Xv_U02fgUJtl_pwF8Lzbv9gmpdh-87WDGg-GYvfWe6h3SfqMDJN7Tbo8w-7PIfYuXbesqntAIgY98LPoc0DbH3tGZewXhCMsmbuTcKwRK0jgoFQm87kiOsD5uDiL2BA2oAq045mMpKkdCw8aSUs4K1nf1vbyMiroZJec3W40zT-YMJslQw6tXMfgGIgAeNg-2RiKko2cGkaCcMQmdBWRjgV8jGY5lQYv8SrMiq9CLWSn6oIwGbUGaz4J4d0H5_TJafIv1BaQJ3jirmd3Ycme_iUNFnx9IKEHaw75umcP0mMrcDUB732KvTtxOleQPBZ7pTNZW3ERsXzDbiEWveYcwQekXeW_VTj2OFNq7H7Wlqo47APcyEj_",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkT9PwkAYxvd-ijcwmLBggSqapoEWOviHGBkYjMOVHuVCuZr2EIlh0hDUDVZkcDA4mGjigIFPY0LBia_gtXQg8ab3fZ7nd-97uZzHkMvahifswKLfW37OlrOhP76Hn94AKmp5Pe__Po8hX2XkmrDOev4geA1Cr5CLmmCgasNynRY1Ncd2XIjr4dlKmLiGWjbTHcpKqIkhVnKYA2VEPdCOjqGsxbbCXh2ZTptQC2rI9rAge6xjY0Xg2xUIsoLIrQAQXBbNS6czoiRx7YRQHGkHmXxazXKNOiYOAQD136JZPa9robeFampBKoqher4JuxS7IKZC6QyZZrCcuBu2p8i1CIW9qLkhzVazQkxWBzEbJLpCV5CT0RMScBEX91OSlLkEuRpMO2zXCcOKbCj-x5c_HslJQ5GTocXjCZkDBbWY14scMJTl3fti-hpkuMfN1eOAM5vaH02Ww6DmiKbpqi6GiD9920Jg9fQdEeC_TIQcpmbw63-7jLDV",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4272,
+      "possibly_error_diagram": false,
+      "elapsed_s": 1.27,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 27,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "ACT-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\ACT-A_run3.puml",
+    "timestamp": "2026-10-19T04:44:45+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP4zJy906CVt-nHFP31XmGfLD4q3BNJmXHWP68p3bJjA0xsQjWID8J4n6byNSN0W3YOg3aPD720QlmqjJdu5hwK32JVTyx_Vx-wvkvphOSThwowQX_5FTtJowD-zZSvEWu-ll-yh_tRuUtGE5QMCt8R9zh23BT1njM4uTeiHrMxQ3YIqQ4mHXDPmg-bfDlDAsA8mLx8z6ygOkQ2khKDPdPk2tJecTjja1jHmqwL8Shs39fKHxwbWOYD43X50k5byNZgT4KIHPnicet6saicdbIpFc4re900eCurcjRocHcjJggeKnA8GfTiJs67K0M4XYhOm8M5pSRc97SDai1GN-wRLiYecyUeWP4EYWpf8IiLNIC9EGbXU5CNCBaZLyBJLTjtqg2pfil_-wT_tWkTh_j9IIfUbL0HmAIbnhQ0KyrgHQxeS7B-E1ayJFYGvmP7nnGsl9tE_rm-wuPoBggefcX29_k1bHeJnvJ3sm7_eennb9FpzVm00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkT1PwkAYx_f7FE9kMGHBClU0TQMtdPCFGBkYjMOVO0oDvZq2BI0hMTEaXxdxcCAOJioORk0cIBq_DS1OfgWvpQMJN93zv9_v7rm7nOthx2vrLpqH8U93dPLo372Nzk6Dj6-_7yv_dvh7dA4VpYzchsn2sIMt0HG1YTh2ixHVbtoOJLRoTBGE1nCr6Wk280rYojBXsj0bypi5oK6tQ1mdm4LdOiZ222QG1HDTpUhyvYMmlRHvqWBiI0QOEUC4WXxeOp0RRJFnGyajcbaSyaeVLM-YTWgkACgzjWa1vKZGa1OqqhTEohCl2xPYYdQBYSGKtjAhYXNxuYkdw2SwFBf7ptWyKibx6iBkQ6KDOkhKxVdIwk5CWF4UxcwuSNXwtNV23fSoLOmy__7p3_eC52v-0lJKl6VUBHApKXGtoBTzWpFruhwcv44GTxM-JDnBkfHFDa8nc7_XD7rhnIuqqimaEIn-4GVGhPHlMPbAf-ijHGUk_P1_VwG6lw",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4485,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.78,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 27,
+    "actual_type": "wbs",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "wbs",
+        "wbs",
+        "wbs"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-S_run1.puml",
+    "timestamp": "2026-10-19T04:44:45+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9DJiCm44RtFiMeR61HzJTGMA0sJeBKLYsIUu5fuXQhgHqSfnL2784Th90u0k86d8QAO-1KKKcAbzzxCnwFt4yDQfEjOvAkX4nGunhc6AwMMcKoeYfM6aw2_IaPwHr6QYla4XOOfxn48hx0B3Q1acQ2QmwrYJ8A6CeKw704ZDRARVXzncN8uP403BHMs-B2o-wWu_RoC3HAkqf7N1UeTT5sdAv5jtPk4Oe4fQa8rFKSltKa_7jHBnW4j2hbCnUuq-cs7CVYiLZmiP2ySiDXkWCzRky7mRbTs1D9_jf3ZSQ2IrC3jBke4iRrXkizOLNYeS4vfdpFF9SG2lLhO705D_uC6fY8HcGLWg4H6pJSrhFSy5ohC7_iqndO9Ui7OfDwKVhpzVBzzhvx_TmzV-IwZQcDsyqcJ4TmEcJJoHc9UAbddyie_oI_",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk1OwzAQRvc-xahsYFH1N1BYoDZOgtRWLZJ7gWniFqupHRynFUIcgR2skDgC4gachopj4FRRSYqX33szHo_cTw1qk61jkq6ETFDjGuYYrpZaZTKiKlYaToL9KRnpHUZqK-QSFhinvEQivsAsNoGSZoJrDrWJMgoYyhTocASM1spt-H3GZcjhkQAMtFbb4sLL7qDj9vIwNEq7SkdcF6h10XacrkW3dm4RigSlqQjU9Ry_dST8e1EvGAS0KuUzF7jT6bYcx-KxWPCxkLxyw2G6Az1u7wfBuV3YE0n-2kONxoJLUwO0u6gSxvWG6z1hVeKhwTmmfM88lxAK9WtgcAU3_gwamIhGZBWCoREbNNzWs9zwXKswf-zTGdgl6wdik3pR-vP18v32vnv93D1_5LqNqY3bzSZMR3A6ZNPJGYl4qWefyyj_JL_m6rep",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6373,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.91,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 24,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-S_run2.puml",
+    "timestamp": "2026-10-19T04:44:46+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP71Ji9048Rl-nGJF1D0844F1jfI3H8aAIymj0DkABjrkuM3yH4ueJUZYObNzQpFG_Knt68JMztZ_tqp-s-s6sjKEbc6B5vm4Q729KpHNyoLJ4HWor0gE73tfs34bnZ8DHTpc64OKu44DCCarAuKUeHBWif8QWaUYXZimJbuTgMuXguI4Zx1DGFeAINN-OL7hLxJwfXmRCfndqSej2LLG2eNRCjfznj_X7-rEsxFjSjILYp7pMQhqMuRFEGp6d91fHlo2ZSi-Xs6YXro4he2Q9vJ9Xwf5QazySh4GOrJZ6dF78in6weduC4nd4qcOpZjJw264Qy5ncFeQxv2JMQ9bscEPRpqyVdhzIczUqitBymarNp-9_dysAOFzvbkOjl4X_Kw3BoB4UoscztxBGkeiBLB8iY--ni0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkcFOwkAQhu_7FBM8E0AgQQ8G2lINEiQpLzC0A24ou3W7hYPxETihN6OJiVf1rM9D9THcYhNb3eP_fTP7b7Yba1Q6WYYsXnARocIlTNFfzJVMRGDLUCo4cPenYMSXGMg1F3OYYRhTgQQ0wyTUrhR6hEuCykhqCR6KGOzBOXh2pbiGrhISPsE1A-gpJdf5hUetXtPqmHBsynGfRyi0JVVAKhdsy2n3G3-Ef7U7bs-1y1JWLMfNZqvRbhs85DMackGlG_IKNyz6HYaKHXISugJonlMmHqkVqT3xysRBjVOMac8cizEbqifgwTGcTSZjOO1PoIYRrwXGY-hrvkJNZomXaY5lvPTx-ev1Kb17SzcvzCTVfP4n-fzYpg_3mW5i28SH9ToMvIsR7Lab3fstC6iwtUsiyL77G_7Irak",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6420,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.85,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 22,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-S_run3.puml",
+    "timestamp": "2026-10-19T04:44:47+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP71Ji9048Rl-nGJF1D2IXFaO6WBDS6acjGN6Be3RcXtwtOB1-CZS5BF9YPUrRFl0_4nNBHWYtly_s_--ISxB0ngKsOfAnP2vgWnWoacYxbMfUI1IfM6a_3drOZY1hbQ2Jc76QO5rHnEConJ4off8im8Mf4o2cAK1GIJ2uY3LZs6RakI2S4T0_2qLgjguMdFS_o-5QziEP687ANnbUQaAo3mH-wuUmJygzqFlJ1eGhjYbUqulQxhidkM_zaGf8AaQKWnwINfXZH2WrEqXxDV7jfd5GO3E1zVGmTpqU6MOfWOiKH3-vWAimFx43koVNxzUdzX1wLTpzi-VMpNRuT1QrLB1p29BoFOFAmtdu-Cq_6g8Kc--zbl",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkcFOwkAQhu_7FBM8E0JKE-RgaAs1waSa1BcYugNuaHfrdgsH4yNwUs8mJl7Vs-8D8TFctGCLe_z_b_75JzssDGpTZikrFkLmqDGDKSaLuVal5IFKlYaT8OfViOIGuVoJOYcZpgXVHE4zLFMTKmkizAhakTIKYpQFBJMLiINWPYZuS5IJwR0D8LRWq2rhac9z_L4Vr2w5kYgcpfGV5qQrIPBH7rh7BPyr3Q-9MGhCu2KV7Ti9ruuye5b_2RCkgqRpSDHpJemGNEKDU7SHs18e2mcVBgM4H19DB3PR4ZZimBixREP7mAqzA_sQO7J9fv16f2EHpV3P2z59bNdvh0FrVUsHMIkvI9g8rDefj4zT8aohSb772W8WIKqz",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 5755,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 21,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Client": true,
+          "Server": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-C_run1.puml",
+    "timestamp": "2026-10-19T04:44:48+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/RPHHQnD158NVzrTSudCmQHAeVIZDRaofBKqW5P-dsKcxP3CJPoSDLOHMKDAYg6Yneb2nvaNKegWjhVXhd3N-2-_CRjhTs432vdndpfovk-nS88cGlOvl1MsFTOaW7LWbpVQQu3tcEjpd0gvKpIVX2DQ9o_iUMuCMyGEQ82vjaPulgvp9PTAXa5dcaaE3i02S6ulGS3B967gxHrcJmbqBe2m4xySRNYkM2_OqYdKivpMzBc7IviAb8ZOuTgLqFJzX-A_sTBLSTT8cNIp6XK8nNoeXNl9QTCbZDBL3NE6UrRrO31aREmPKP804OATHkRu0yqJIFjaqUFxM1E_9TMXGiU4rgJ5e8MsfwVrJ7gEaJGjiWpB9HRGB_alZEjdi83SGhzEmGYHP9K6KNR4jouRiB3Q56QZN6YjmrKmWi511tJIUWRyV7esEjc65jocpY2-ZAmXVlWtt1lh6QLjsd5FCvU4c8wXnuTsXBXfq6c8xeXR59sQSyMRdieofN0vgY_7AsMW8AAl1QtLsElhyJZtUGnZ9o746ICF3hV1Wg4wVgq_xIBMOJIusuC_kZt1hExaOPwJfasUZxyVXpc7uyHTIVShmnT7littr_ilesn0bCCvaOkHE6EBCyIbAU8euvETzTN9YF8bP84V9J2EoXOEdQlVWqhtE9v9eNj4Xwk4hzM1uFXFGQghaHUP4lIcyKOwW-CIwayqqYYBLyTTewhefSotzdSCV_SBu1m00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNptlFFrE0EUhd_3V1ziczBpEqh9KM1uTKktTSAVn6fZSbtkMxNnJw1VhFZQ0qKoaLGiULHmRdSiqC2t-GucNf4L78xu2t3YQMLmfGfOnLm77FwgiZC9jm8FbY91iSAdWCXN9prgPeY63OcCrlTNJ-EI1onL-x5bgxbxA5ogLm2Rni-rnMll0qGQWeaSQ4OwAJwbi9BwMskYertHWZPCXQugLATvxxteK5YL9jSKdSznNb0uYdLmwqUiNjh2pXQ9P2H4r_Z0tVx10iZdLMaFQjFfKiFe8lp0yWM0tUNc4Z7VvVgMGRs7BlRkgARgp1G5vgDzRNI-2TR4_tYE78l1aFCx4TWpMWghbanp_VMeo6RNC2yDMslFtAv-S-M62ewgNxCv07BCJFklQZRdsS3LhuwsNoUZqNcaK3DVTCCwUEHdNJ6Bvx8ejY62YYW3KbOIL6MrCF--DfcG-sZpW3acU8zl4SYjqHHh3aEuGnQaYjuiFsUnZpzxZueyjKlcDmqL8crZaAgoq8FrdXY6-vxOPd5DGMnIcQZIw8Ot8GCoTp-rT_tItZhNLjbgz-6PcGs7uRhnpOmTZ6Pvx-HOYfjxF1J9yvDF0e-zffX-y-jbECUwzmRi5E4Y4szxKUp4ijjk5311cmI8iVkgR8lMI7KFg6dq9-DSvc4nkmhe0SHq4Sv1YHg-E9BqquRF5kS9KbxRjqD4xLqTzTSKItXx12jquilzLf2dwx_9wvgHp19-6g",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 23564,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 43,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-C_run2.puml",
+    "timestamp": "2026-10-19T04:44:49+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PPFVQXD15CRlzoaEwNKXDGbKBqftDgR4GZSGnUinEssNR6RYx6n35I_ibLP5nGf5qKB_t9IseI0OhDgNoIxhMtXciecxDR2v-7xdE-SxPvFbK56febvWXLsVzwcaFNX4EzqDAIBkEI8G4kOQvfEh23Uf9mO-tu1r6eGiHposJgD0DGHNQxJ7eBGcb80svI4uzrQXxPJoRTZZYF4EWwSMW2sb66G3RrVj2bb4iONX_8xVfrmH8JqcimA7r6jt5suK_1TxiM4td6AH3fRXIgMwKAjPpwp-FmmbWYb29aj0Go15j48L6z1jWrOU5faTgKq3xABkwj3jhOvXRf4r-HRZIiX9nsOHjkXs3wb1hIAg4wFMYMKHc5_2B707qk7tv79dF7eLl_beeOAwZVAVqzVfy3dS5rt6BHeeI2-EKOYFBzDl9_hgC3_jK2thWsehAcGYm0DESJCX_IVCinY-wwn1yk9Tl7kGrI-1gnFyEelVlfyacAH1x6hQH9eSdAJ3m_Z7X_Xy7_MccM9irtlnvwypO0mjRNXvb9pzHaMdJlQ6uwlz-ETEF1gXXAzqvf-jOhpJPR1bSlN9gBcDQkKoIcQDsGBvNZdHvAXhq_Zw2qPBBmxrPJL2TMfmLsyElcMkM9YA4ZYIuQ_7qzCv7XAVPVpI_xk_",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplk99qE0EUxu_3KQ7pdSE1CVQvSnc2psRCNxDF6zE7bZdsZuLsbEMVL-yVVkXFCkXRQv_clLahIBis2pfJLutbeGayibs1sLn4fuc75ztnk-VQUamiXmCFXZ_3qaQ9eEQ73Q0pIu45IhAS5hrmk6sIN6knBj7fgHUahCxHPLZOo0A1BFdrtMegtCaUgDblITj3VqHtlPJt2OOI8Q6DpxaALaUYZANvV-0KWUSxheH8jt-nXBEhPSazAofUa3cXbhT8F3uxYTecYpEOluFKpbpQq1nPrP4_DCWCKUImS0BDIEW0QhUb0G2DVh4WmR2pTQPsou7q0O2tjmFukTX5FuNKyEnHZhG26HYPqUGtIqoTo9aJZRGYX8IscAfS4ffkcmc8ehW_-WihgrqN8p_T1-nwOdwXXcYtGihIL45RiI8v028n-uowP-1QLeuDaisqZCLAA05xMyH9J8yzGL7rrEHy4l28e5DVL4GrE_w6i9--nySYpEHsatpEmhycpMPD-MeH-Hwf9aaZYmzXe_HnrzNgDC1teHmUnP1GRadO9objq_345048GqGEr3Tmn61ivNNlsGVy9cmouY1q5TJKZo3ZAvleOdHkqGvT-PoLRksvDvVlNUJ1anBXbw6-Za5YmIoSOJLhr8fT0zkeEp9l_NL_u7_EyDwF",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 20466,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.84,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 41,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-C_run3.puml",
+    "timestamp": "2026-10-19T04:44:50+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/RPDHIzjG5CVVyoaEtNEnhYqu7ufDQiK9jb1XpyVcgg7flTtDZQMCFMmmqAs3WJXzaEdOV1aRGn3K3VPfJEQ-nSwzYIpN6KWWl___dFi_DpSBaKAfuc7eH8E0Zr3Y4DQnFzYK8kQ-9q8XuK7RN0L7j8M-60Ty4pOmZ5X1yTa6ng5g2wvMSSYWj2gKW1xo2Bp7Az3pIiKsx6dCU9_1CmUWAQKOvmi-gZMhxXp1BeKB-i48kNA5z9dC3PxRgY_EtZ7y5tkktMnxjaa7o-LgjJPRhplFdT4_6KekfOYOB056uDfIixiCIwZO62T6NdfoHu_L5lIOt0xwp1Wqi2qTFOFbCSGsBVDjnfMG4yj8rBPrSJ8adsKYPfjQg70TeqnjkOxZGhb1oM4UkftU6ipWA9WnEnivH4apKyn3UlBnpvSfh8a1umw62jA3atH_9mUGsSgtlMeL_J5q0o9k3XWT3KYFTgai5nlPkAHVNxv9tkuJpW0fD9zUzlWq-R6NV3iaIPDoeURtpxtqmr6nXiRLDRkVqg-_RhvVf6SlITLXayzdD-Udz0B6K-ooIETC6YLlSpj3lL8nk315Xh8vTjubhu_lxTXPARPhq3RhKDCNrrUlakbxen4gLhG4P_T5U6YsqOgG8SPzHzyBzD0_wry0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNptk1FL21AUx9_zKQ7dc7GuLTgfik1qxQm2UGHPx-aqoem93c2NpYw9bDDQrYOBOH2Q6dh8GRtDENQN9mlM5r7Fzr2JLNcZSCC___-c-z83NwuRQqniYehEg4CPUOIQ1rE_2JQi5r4nQiHhQdtcBUe0hb4YB3wTNjCMWEHx2QbGoWoLrlZxyKC0KpSAHvIIvMcr0PNKxTbsacx4n8EzB6AppRjnCz6qNavuHMEuhQv6wQi5coX0mcwNntuqL87eMfwXe67dbHu2SQfL5Wq1NluvO8-d0T8ZSi6liJgsAUbg2lKzuwxLqNgYJ0ZeenJHj9UW9JjcDvrMGDSwLR09g-UxxDYt823GlZATy0jUtnVxMiSfZSJmm1qocB2jTG25juNCuUHJYR66nd4azOAomDE7GzlESTNTzEN68vHPlymsiQHjDoYK0oOTdH8nB5DZyre9ahX9MXQDIm4OGB0NSI92qSwXG9m4pF9fvkne7hPOACk0n172-DT5sZd8OyRJk3Kh5vfPvfTDUbGGxtU1u5_Sr79uvl-kZy9J1WGTz2c356f0AsZT7LJI50waJW9zO0O9UjG4MEWGsjl23iWvj-_t2FkptmvQNutQ0xfXV6-S6XujESpWtARn90V4aLbRipAhxn1H3wv00D_rX1AkOjk",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 20500,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.85,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 41,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true,
+          "Browser": true,
+          "Gateway": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-A_run1.puml",
+    "timestamp": "2026-10-19T04:44:51+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP91Rn915CVlyobUreC7qqD3IQe7KrZbe4bZibSl8plGJPSPt1riZ3619fHQ2rJH7bgaDb4XJRGeYQm5ySlipAudle93TxNKpcMIUR-yz_Qt_nMNOuUN2ZQw3k6a9QeVPQSYpZx9td4ms9cETsMxBFfDKQc5NoRJyO5kMuHok076KvUJ0lZU1zyx4SrDtsk4vUfql2s6t-JxcXpqVEzCDdfo__Dq_0AvwnOjOWSNu17EhkSTLgAcpcpcmBNC-PaZt3LiiWsBvY67RPVCLKoImoMRPnZbgxX0G5jbd861gGlwlVjWwDfy6_AuH6YMm3C4a78SjX4FlBcKIgINrUC3zUbMrYfYojFCCOaJ0thwJlBkud_0bRMNCwcCVXcQBHQN4ucbnMGIFLTU_reu4FqjBHYCWj6H5dQtb1zHV-jxPTckYvrZvLeBJuVowwRS_n7N8TADYXSZG8lUbEb_TZN0Ii1bAle_LoW38HqMReC1jq0qN_qkLwAP26UvzGHpeWW35XIXAoByzKOSTe9HItRQo2Hp36NgSgpy6WUMYxl56H2lT-NtRLav5UzgimoS1oZQuY4LZIFHVHadhNqYctl-v51KX_xFraM3lNhGxQCLGirPCFy0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkkFvEkEUx-_zKV7WgwfTQ0NJqgdTWOWgSWOyVy8jO9BNlxncHWyMMYEmlFoLVNEeWqQ2USFNtCiJrAXxy-zMrie-gkN3tdTOZZJ5v7z39rf_FZdjh5cKNroO4aQlqh9lpyLOPsnecTDYmY53Zbss-k1RqYVfJtPxgW5bhHK4AcZTl5MC-N4H3zsRzU3fa4Tl6nS8LYbf5PuaHPR870w2enL_83T8ArnrFi1iBxfgEc6u5x1WoqbObObAtcz5mSPcNWyyDYvmIYdtl8xVTJLDJZtnGOWruEBAW2WcgYGpC_q9-2Do2nwb8rhEaJbAMwSQchy2EQ-8uZRKpJfV4wP16VbWKmLK08wxiRMDevpO8u7if8CVtZczqYx-GZotFpcTiaXFZBI9V17_WjgQ_S0tGIyC0ZEWdreUH1F_63tl2a6LnWPlWgtPh_Lrptz_Edch0o2KFyNAi96U6X92NcBKwGUq-j9XKAMhHRZugwG3QDRf_S5XopkIZ7n1BHOiCAMWFKErIvz1Rhx2glFLdtrIJHMMZepyrPwaB5aLu8UZEK935fdtWTkV72qzDJwHKNriIRWNI9F9GSetfSKbe_7kUFSH_s_WRYO9etDtoxVCzVkw_wApJT8s",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 8931,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.81,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 21,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-A_run2.puml",
+    "timestamp": "2026-10-19T04:44:52+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PT9FIm91503m-toAXnqwUGWLoaEeMnuA8lBQPNB7MjGPdLsLYA22_f9hPKXG44AH29dX8LFhmuGpwyslq6vAQSxfCU_7Uszu4z0Dp8rCCe6cGLRALkEizraKXu_mTNG5ycvFr0jY_xXN--ntphlDXswpAXktuhma2WVTfjdREqHwNACfp74IDd0qlibPXgeAIp0EK-6VCoBqBQood4Ot8OOJEXd9g2I6CmaZpAYnWfC4N2lCO131L0TbQHaYYckq34bd28qIs440GSvPRjXmpXlqX6RjorNxKLfKIs5gX1XN2Hy29RJWMvpv1oR6dWq7myeuSWORfZqUxupFXtPHwYyDhjxBctmzaANtVkT4cXLPUkvtJbs0TLWZwN5gDTfM-tx2HRPrX6mCxdad1ZyCQY8SDRGiDiYFS39kMpZG3wAO5wrhf98nGvaTi2pXmpg_on8NUUkftcss1ftNgJ3l1_kMTrLvOrhbchZyi1KA4Aewl-8R",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpl0k9LAkEUAPD7fIqHHTp5CBXKQ6hbHgoi8tplcsda1BmdXZWIoIL-kmtlSFAQQpEImeEhU-vDhDPrza_Qbkppzukx78d7b3gT0A3MjUwygaZBVspW46z3WRSHj_B1dAXybk_UC2L_uFf77HfOu82HbrMqG7fivCQKB92m2ds7RHpcoynMcRI2cDS-yVmGqgpLMA5T4Z8zIvQtrLKcRjchhhM6GcmoJIYzCSPMqLGCkwRcK8xgEMFUB2VpGSKKa7QMSWcIjRLYQQBBzllu2HDOG_SEZu3LVftRWlRLYWqEGFcJHwIltOBbnPkHJsaeDQfDyjhyBhumPR7vjM-HdlHqLw2u3subfD2Qpfd-50SaFVl67ndOXYB1WCPpcWo12lb7fsJFtnWEbAzueScGPwxqIhw1tCw2yI9wMm5bONAPopgXrWukkjFDmR2wLOHDOr_LEhd566nebbYGndepMO8H-5Z3VXljWuWauPywFQoQqjq_4hv1fu2R",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 7329,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.83,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 20,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "SEQ-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\SEQ-A_run3.puml",
+    "timestamp": "2026-10-19T04:44:53+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/RPBBIWCn58RtUOf3NRXo8RMWBiHsj0i54UO9OYVMmMbICoaY8bHnlE4D5CLIYqh58ZWgBgnQV9f9PhhgAvXAqNh9wf3luvm_d8ow0dDHo3ce5rHbDVIBSdKpyjzRZLBmvWNrQb2_bGThGNq_AdgjnguwlMXUdSlgINHMKfLrvCxRD8yvpi4CpindEIjGos0Euz2J_ZnTXZk7BRPeqopCOiSbNSGYixZWY3IZOWhd2CIcc61WOkg2CJ49fX7hRaCM2eHc22mZW2JdRB4pS6WW6KyDwijf_IGxO-Sn5Id6BS8xWf4QIupt_nB-n1vC9zF6JwaTh8FZyO7-H0AjeFmtXfZXs8IA660T-2Snbrn1Sf_4HCY0lX4mOHYY-sVrkDPgRCaDJ_elgdohTZUbNserjf49VTeoj1M-7QbA-N-BCa60szaveRD6xqVIkrQro_1fHs_fQsD1_LMLY_BXGEtNrCcTDgLVQPvvyd0ll7bebelXSKrjFOUNVkHN4Q4MjDkYKLsr_yG7",
+    "kroki_url": "https://kroki.io/plantuml/png/eNptkstKAzEUhvd5ikNduHIhtaAuxHa0CwUR5gliJ9bBaVIzKSIiVHG84Q0UxVKLSsUiOCourFp8mklmuuormErResnqkO_jnD-cjLoCc1HIOagXVGU19ItydTPy31uNUvDmBfVqUL-VB2tBfT8qeq3Grjq9aF6dy-pJdFZSlXXkzts0jznOwQzOzGc5K1DLYA7j0JP-PF2GO4cttmjTLMxixyVdxCKzuOCINKNiCucIxKaYYGBi6oIxMQmmEetuQxYKhGYILCOAJOdssTNwaCAZTw3qy2n9JDtj5zEVKcYtwjuCkRpLjPf_Ev7EHkwn08ZPqR2sg-Pxgf5EAq2g_DeGmOHYhIoYYB34JzGXXEFyn8REyIC-ETBhGKL7Z_W41mpsyQ1P-i-qfKt2N6VfajW2kQl92jK0Fb4dqUr5f4syQYDb2Tmhs0bvR9K7VrXL8GlHb-lrY0H9VZWL8uFA7dfUyZ02pV9pnnnycC-8eWiWi-FxTW09h5d-5FcRoRa026JRXbX_xAeeK_Jw",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 7814,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 21,
+    "actual_type": "sequence",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "sequence",
+        "sequence",
+        "sequence"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-S_run1.puml",
+    "timestamp": "2026-10-19T04:44:53+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/SoWkIImgAStDuIhEpimhI2nAp5L8IapEJY_AByrBSSxFoIzIK7O30oGLnHc9AVdbcNdf2cc9ESMfI38fgMc9fJabRlbv9Nw9kQaAIdxv9VaAmObvnGhENjuAmSvAoCQK99QaAbHpAIWuOLXfuURevWoIoIzAIIs2YZexkPYw6W95GUP3nOoDJGnDJO5YZaL5-ULGGKiJHsCd2w1WCCXxK44ZKpDZLoUWe2lS6aDp8rDJ4wvQhcYjM0LTNJk5fwsRNqvVomMX829x6fvEMAzWfL1IMfJddyS5vICKmwJIqf3bW0PoEQJcfO225W00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpzKC5JLCopzc3hKs7OzCtILErMVUhKTM5OL8ovzUtxzs_JL1JQdgMDJBXFGYkp-eWZeekKaYk5xalIMimpaYmlOSVu-Xklfom5qQpKfvkl-QrBiXnFCs5e3grBzkrIxpQklqQqVHMpKDhhWGnh5ujmDJLJL0pJLYKKOju5mLoaAkVB5kPFjI1NDE1NgWKORUX55VBBSxNHYycLoGAwyHtQQSNTM2NXJ6CgK9waQ3MjU1MTrlquaK1YBV1dO4WnrZtfTl_LBaEgInsank5Yr2ClUFJalOefxwXlIxTDpNLSkOWABnI5pOalgIIWAJ1HfNc",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 3726,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.85,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 17,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-S_run2.puml",
+    "timestamp": "2026-10-19T04:44:54+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/SoWkIImgAStDuIhEpimhI2nAp5L8IapEJY_AByrBSSxFoIzIK7O30oGLnHc9AVdbcNdf2cc9ESMfI38fgMc9fJabRlbv9Nw9kQaAIdxv9VaAmObvnGhENjuAmSvAoCQK99QaAbHpAIWuOLXfuURevWoIoIzAIIs2YZexkPYw6W95GUP3nOoDJGnDJO5YZaL5-ULGGKiJHsCd2wvQhcYjM0LTNJi5_xGq1Ik5fnrpdoxlVjwrxLb38nT4w7dZ-kTjBSyRrtBvvq6uJtQjUx5rErWQh1CaN59QbEUV1rA2C0mibfO64mJQnEMGcfS22ai0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpzKC5JLCopzc3hKs7OzCtILErMVUhKTM5OL8ovzUtxzs_JL1JQdgMDJBXFGYkp-eWZeekKaYk5xalIMimpaYmlOSVu-Xklfom5qQpKfvkl-QrBiXnFCs5e3grBzkrIxpQklqQqVHMpKDhhWGnh5ujmDJLJL0pJLYKKOju5mLoaAkVB5kPFjI1NDE1NgWKORUX55VBBSxNHYycLrlquaK1YBV1dOwX_tDQFK4WnHXOfLu9-3rXtWUMjF0ToeeP6520tzxvXcvnnQbhPdq17sXU7WBqsEyRcUlqU558HUoIwDCyWlgYTBNrE5ZCalwIKSwDziHZD",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 5019,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.8,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 17,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-S_run3.puml",
+    "timestamp": "2026-10-19T04:44:55+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/SoWkIImgAStDuIhEpimhI2nAp5L8IapEJY_AByrBSSxFoIzIK7O30oGLnHc9AVdbcNdf2cc9ESMfI38fgMc9fJabRlbv9Nw9kQaAIdxv9VaAmObvnGhENjuAmSvAoCQK99QaAbHpAIWuOLXfuURevWoIoIzAIIs2YZexkPYw6W95GUP3nOoDJGnDJO5YZaL5-ULGGKiJHsCd2wvQBeWLJritlvo-5iRPq_1qmdgkQArO1LrTEvWSX8A8W1KeM2cKb1Rb-UTnGVa8nJ2fj3GkXzIy553e0G00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpzKC5JLCopzc3hKs7OzCtILErMVUhKTM5OL8ovzUtxzs_JL1JQdgMDJBXFGYkp-eWZeekKaYk5xalIMimpaYmlOSVu-Xklfom5qQpKfvkl-QrBiXnFCs5e3grBzkrIxpQklqQqVHMpKDhhWGnh5ujmDJLJL0pJLYKKOju5mLoaAkVB5kPFjI1NDE1NgWKORUX55VBBSxNHYycLrlouiBVPWze_nL4WxtnT8HTCeq5orVgFXV07mByEgoiAFShYKZSUFuX553FB-QjFMKm0NC6H1LwUUOgBAM6ZeSc",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 3204,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.86,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 16,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-C_run1.puml",
+    "timestamp": "2026-10-19T04:44:56+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9DIm916CVlyoa6kmKUVDco3g5kUYZmuZ4wJErgekx4xeg72Bo8aeK6Xb67CWGlkKA6YePz6MTTlqKpwxHhEQU7t_ytpxo6DHsfUY6V0resermY5UNX6JhFfbLSK2GHvx0Aj-BsM3Eq2oJXOaP9mnJAQV9Q8iafLCZfSQpe2PINeIU1TGoJID6WU7GCaw9dlOsET1bU0GYZ6qk6uf6uo1AiIhBAgHWz568-Ibb_pWA1e4yGA8keAYvok1UC1A8X2fFiU1pwXPr0B4fXp5d6j-iNX22u1YVRfz3hFO1az46gpsGwWVlGh3Vcauvbl96x1-06jZOhcyt-VFf8jKNRi8pEV5opDIVWtHnjLPZL1hbvsTH8UR1izHpD6fRDrX2uyssjKx4-k_CnqyXNYNHhAmBSuBTR_Pu2fja5S14N5hsPsHmwcwSrrtZ0j6MfPBxF5is1rHynqovM4Fp9N9dlpMYRh-DbwSdwhW0t-7_ILKACMtedm0sOHby3X6L5Ol_o1m00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk1LAkEYx-_zKQa7BR582bIOoW56KPDiMTpM7Wqi7sTuiocIvIiShQaGUYcyBC-5QoaKhn0ZZ12_RTPrtGs5p4ff_zfPvIY1Hal6IZ8DWjajXCIV5eEZOs-mVVxQJBHnsAq34vZYM7QLJOFiRknDFMpp8loiySlUyOlxrOgJlJehJ4F1DJNI0aB4dAyTome9jY50GV4BCKMbS4bikbjIEqxKssqpGD0UYj5KWX_OAoGgTxAoi6gqLnK4F4wEoiEKk-x4HPqFnUAsSmHMWca36xeEILgGJ9un0Os9gGT0QarPZDqB-9CsN-aTjmW8kbsH4Aa2Niubzf58-ki1RduwjM58XLM1J-DdHG1VmNUGuXnZ1Eh5sGz1HM0als3WELjzba1TsT678zHTyFeJdGsrAtzgt1v9ngKm2QVwERcWvZnZHDqbpzXXeMC0Zalkvs8WzYHVHzHTLlYQ_Mlcme_NaJuv42XpyfquADf4f9JVQoxbeifADZhGXwOEZUVi__IH9AFCBQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 16056,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.92,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 24,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-C_run2.puml",
+    "timestamp": "2026-10-19T04:44:57+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP9FIm9168VlxwSOx1Pu41MiGwXRUoZmuZ4wJErguheJioCU8l0YsZygCWmwX21qoHKor1JyDCwwVejstCsncjEFv_VCEplB92s6AIkN3B2A1VCCKrn2n_YacAUaR6eACGX56-fohHdMATP8fM3cKGuRbhxMQ7eEbmsc4fDbS4b7eGnX16MnQI5b_m1bbT3w68QPZiu1eVI_8nDgIbL4GwYcqu0gwTtuNiIZOdx0ej5O91xtM8fIKWdWLYmLJIVW0WutZr0ul8Fuy8CtNlXa3AlaysdDQVPcasUqZMQZQtxxD6_Rhjq1MGJRLveVdCOzlthzh_5QVz7gUfexg3cj0SYTIw5JTp_VPYCX-1aa-fbmz-018TJ7VFm84WN2l3jrcWDFy0D898H5jUgyJ-VDljiR2cSPV0Y_EYa7tsEtdSilaEZlZVo6spVUtK4MGlD-CoHrKnCFwHi0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkk9LAkEYh-_vpxjsFngQFaxDqFt7KPDiMTpM7WriuhOzIx4i8CLaPyoyDDqEIHTJFTLUFPw0zrp-i3bczbGa04_n98w7O8skLYYpK5cMsIoF8wxTXELH-KSYp6RsagoxCEUb6nKtGdYp1kilYOZRDhuWvtZoeg6XDaYSk2VwSUehDGEEZbFpIWX_AGWV0PoYhpmOzgGh9L8jE2pKVURDqKbTgCrp3fhexKNifsCi0VgkHvdYilJSCeBWLBVNJ-ACDjePUDi8g_jwgzde-GQMq-Tzac1p9maTZ7SNZqNrfvs0b9uu3QFZBNtXmh-cxj2_ev2v8Vp_0ep6mjuoOa0ByJ1LoVN3P99mIyH4GST6mXD34AEh1Md8_AgSBcK8O3WaA0_wA0gkhEW16rxP582-2xsKZxl8CL86KQffY7edyy-Q6O-N_IbbN97dQRZC834zJHVTEw_pG8wGHQk",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 14032,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.86,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 22,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-C_run3.puml",
+    "timestamp": "2026-10-19T04:44:58+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PPCnIyD068Rt-nL7tOGEKWlg8BRH30eYTXI7qrnhQ9ghbzGE8dGfYYWgL1GTj59mqGYjj4MX_facJV-5TvTBash6ztc_xxltXQnODg9sfMG0gwYRPKHH2UwX_MA1aegfASGW5Cweueivh0EaaQfk5c0U6HQE4GtdKSMmLMBQcwY4OMAJs0Jca6b1PNq3vfH4V8sDR0oF0OJPVoSNr8ogS4AeXgbKbUngUcsEgNo_r5Af-RbqccaPIabLYelpcLHs0Po0u4J2xRNTiqVt-oi14Ni9nKpL9d1GzneVm-zx0RUmgR5aiSauH7eqrZhrFr-7_VU0KCn2JG-wLpVC8N3kG2-NOoTxxT7xm6jq1Tp6-rW_YkYuLlFU1gD6n__eIKEULRED3wSTuUq0_xbTxupl0gmOn6BBmSxiBamcbyFuS0bwLzV3hvRllBYNjo2KkKMMm2oZfkCxBH0A0h8I-B2enJkxTi-VfdXmR-BmktNlhWl4b1WFcsAEe4CGITmWk-9O50X2WSEmA_uqqI2OA06MJJ4Uhn548BB9DpXDxxa_hZtuFwSW0bD9WbMkSy7Y0gbo0wiKhB3e_0Vw1G00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkzFLw0AYhvf7FUfdhA5SC-ogttEMCiJ2FIfTXGtomquX1A4idCmKKCpUFB20UnDRCK20RaH-mSZN_4V3l0uTasb3eb_vu_eFrFg2onalZACrqJtlRFEJ7qH9YoGSiqkpxCAUzqjiizmsA6SRqm4WYB4ZFo4RDedRxbBVYtqbqIRhYpPYBOaQaUFlfQPmlER8jY1sDI8BhNl_JxfUjKpwQqiGqVSV7Gp6bY6pfL_UUqn5uXSaaRlKSVWKi_OZVHYBnIDgRMLttd2zR_f7KwERewnFTNUmcFD3Gh_D73sBt7CpsWSxyThEejTWOvU_X4f994BQzEJND7pXN8whcO5AL5djJ3vt0fvAa3QF3Mb7WD-K6LhW894Go0bH_-hJQ55Vs40Ppx3h7QD_uV3vjO8CrBjEYsvBzuwuTCaXw_hwCXpX18Ovlu-8uJe3IJS5RZbALKOm4zstEAoCshL4sKjFO7t2z5-meHBv4vC7de-uC8SUGA-bYo6gQxBJ3CC74lgUCEKBw7Ar_jTRIJgoAZZNMR6vEUQgssk3OE3vuT-uPfg_pyACU0mCVa5zweICqXIDqxSssOj8B_oFsFxT3A",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 15314,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.88,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 32,
+    "actual_type": "state",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "-->": true,
+          "[*]": true,
+          "已创建": true,
+          "已关闭": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "state",
+        "state",
+        "state"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-A_run1.puml",
+    "timestamp": "2026-10-19T04:44:59+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7FJi904CRl-nGRF7Y6KaMyq5Pwq8GBJx3IWWsbIxQBn1WJq6WG_q2Kf36UF93WmOE98DQ6Xp5q2oTUmIsfXCGvVVdDPBx9DncR8a9h5HDimjdaqR_iJySkSqQ-ss73PZ2uMNYthFSLz0PGAb3ZsA0dq7-UBBnMq1wnHfFhwVXktZZtkws5Tmtiic5L4K4LU8WAvHB1DKjJi8a9t52NjJPX7o4Drmsh18l8jFMrZgONKSsaAhPe3bLq6CjXYc4UMJPKzWzWNecj3QE_kqu1XF8_rvGggKhOmKJJIKGLUK_CnZaDBI8c2CcuA78c4OBh4Tn9IeASuZ0VvXJ1XBWbP6KEiokR-7P259FW3523cZfapYjx6Z2dlqomDNznLu72dwk7LPRBoCBD83qRVlfkUnUasOV3l7Sk_Eu5tpFlluNw_diwRWSThcsAgo2ZMrhujLy0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc9OwkAQxu_7FBs8eIZSRbzQVnrQhAtPsNKCDaVLtovEGBPQaBD_QJSkMZ48kODBg4kg1oaHMXQLJ17BLamExDl9-c1kvsk3GZsiQmsVE2zC2eTRv-xPxy5zRr7bYcNmMLhZeLes9xX0BlAqUOPYoCfQf54svFbQHrFGk-vp-G7eOPe7rYV3DeyyYVURQRV4iArlEsE1S1OwiQncUJe1NmEfIQ3XDasEi8i09bWOphdRzaQqtmgOVXQYy2GKYR5ZNlT2D2Beia0No7-7TgGE8j_XlCqpStjBRNNJRBV5T8zGOQ0tIiYIybgociYRgusR3ElKgpziMB_mFMGEuCVkZQ6zK5v4dkIUk-AMUIOaOmTOK3saMKe_TLA1f3FXgcKfq4dVlsvIws0gPRt--m57F6TZh8O8dy787gXfM--_hfr-ezpuBx2ubYqrIKNbWvi1Xw-1vq4",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6163,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 21,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-A_run2.puml",
+    "timestamp": "2026-10-19T04:45:00+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/SoWkIImgAStDuL9NU3PzszDT_S-cBts-eblXKTia1SVaaioop99AXQUpzxtVq_6YeUVbt7dFkxOzQsW4YtHo5MTdvXKa5YNcAYGb9cUd5-MNvgKuv-Va5oaeku41aehYZCIK_FBCl7I5jCISubGacPJKjCJId1At_BmIlyJSL0Kbl_oIV8NWnBnY1MSlRuLWPoKanOamHrLpAIWuOTXguURevWoIoIzAIIs2YZexkPYw6W95GLP0nOoDJGnDJO5YZaL5-ULGGKiJHsCd2w1WC2XOe896fcR6hav0GLUuDORcHgQc9borNE3Wux9wDdtbanrTBxPkVxghonh8tJBzsPwDJzlRdYvf1tAVJcW6AdYvP0A8tRxhQVz4eEBd_MkjWThp2xWSKlDIG3400000",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpzKC5JLCopzc3hUld4Nn3b0139z6Yvfb6iW-FR2yQFx-SSzLLMkkqFp7P3vd_T8aKh5-Xcec-7tj1raASLdHIVZ2fmFSQWJeYqJCUmZ6cX5ZfmpTjn5-QXKSi7gQGSiuKMxJT88sy8dIW0xJziVCSZlNS0xNKcErf8vBK_xNxUBSW__JJ8heDEvGIFZy9vhWBnJSTFiTBHVXMpKDhh2Grh5ujmDJLJL0pJLYKKOju5mLoaAkVBVkDFjI1NDE1NgWKORUX55VBBSxNHYycLoGAwKFiggkamZsauTkBBV7g1huZGpqYmXLVc4ODjsno2feWTHV0vtm5_uqvLGsjdMv3Zno1P29ueLmkHcp9OaAYqeLlkAojdvutp_0Sg4uf9a62B2vMLuBxS81JAMQAAiMuebA",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4446,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 20,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "STA-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\STA-A_run3.puml",
+    "timestamp": "2026-10-19T04:45:00+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7DIiD058NtynINkd2T9j5QDqrYir3e9aymDcaDJJDbCh682BeHZKh1JH1N1GEjq8NWJmd1Xv5csgxw2YObIC6xEdpdmBdSM_COfiplEcWRbiCuZGTy4YrVN-3d-X6K9hDFRNQsIcvcquSqYHV3-pGAvy4dlxnAdxzNoItoEhRRmnHtuHWtEsrAVDVKY4CeREdhsKXu9zWaVTjjGmixdhNXc5OB-mxJYSiQk6j1gK4O0GEx7cY7Hs1efOqmBjQ2SmIW_ckjw8gkvGwXfaKBgga7Sbt8Q5vHC56K15dEc48fwHTmJr94jP918pzC0SloZbXNCrZ_gn5sox8ieGl4REPOmCCnVnhnC9gFxj3wfgYw-FXAus0VLVbxo9EtN8JZPJJ9n6mQp0UPy1ZfePhbcla7VW40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc1Kw0AUhffzFJe6cJ0m0Vo3TWKzUOgmTzA2aQ1NM2UysYgIuhGNSsFNEFcFA63QheBPCcGHkWbarvoKJiVIwbs6fOfAudxb8ximzO86aBuWwziNB3wSLV9f4Of6EZQms09tdrZKbmbThzSJF8P7NArnwSe_vEqfv1fJLfI6ttvDFHfhGDc7bUp819SIQyhs6evZSHgn2CR9221DCzueteGYVgv7DtOJyxq4a0GpQRgBA7seaIdHYGiljTAu1oJzBKD-a63oiq7lDqGmRQuqqQdyXchoXlEwUZQEWc6YQinpF3BPUkS1kkEjP0wBy_KOWFczWP-rEXbLsiyhC8Rs5ljAwzF_GvEwmo_u0PqmqLr4-ErjYB9V-XvIk7dchONlNMnEbBrMB5nwGOmhmuWa-Qd-AaQnnXY",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4509,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.78,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 21,
+    "actual_type": "activity",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {},
+        {},
+        {}
+      ],
+      "diagram_types_per_run": [
+        "activity",
+        "activity",
+        "activity"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-S_run1.puml",
+    "timestamp": "2026-10-19T04:45:01+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PT3DIiD050NW_Jp5fQuhb3HGNKWpIGR_2B79hhYuPgQnDfbRPYPq8Jw02v_4XKybleQJc4N0k_pEWGDtRHqQrxKDiuUzFgB15fwmEjI6EYrZQiZ0cHXkqh3FAEcqrpNiiB5gaaYrmwvnWhJBi5KmoyWH5AWjnBTtKCIpIRcYzaXQQGUl383_crs9ICHzGaOgCshCap1TUEqtHWk2vI8ClKN6q6d4YsKKy1LxOzkDmih1z_l7p-VN8w05aR9jHbATlrY8yfl1kBUShAkDAXxk1qeuOoA5-VpAft09rsMPmoOjIiR_DE5UVPkjbPRz4ty1",
+    "kroki_url": "https://kroki.io/plantuml/png/eNpl0M1Kw0AUBeD9PMWlriuUNFBdSDNJBv8IscmuuLhmprE2mVtmJnQhPoALn8SFTyW-hpOYRcC7_M6BA3dtHRrXtQ2zh70-osEWnrA61IY6LWNqyMCZGG7SsM8o6bTXNeywsWqSSLXDrnGCtMuwVTDLyBEUqC3Et3dQxLNJuaL2SFppB68MgP-bXYlIxH1CRiozasyTMF147TdGC4LlIgy9RcbQacSLZRTwFXtj243CysH3-8fP59cjoAWRsm1GUp2_WIjym8G4t5ysq40qHu4HSjhjIoX5_MqncAnXZZnDJi1Kxv804V59m62Vlv0TfwEeHmuZ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 3923,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.84,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 17,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-S_run2.puml",
+    "timestamp": "2026-10-19T04:45:02+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7FQi9048VlUOeXFLkGADWUYjd4GFyGR7FeeVIm9cjgJNPaTuE7qbClzM0frD9NA1IiPn7wD55xyXMwHWMXS_o-7_CRcBfKLAWiJGpPxV0U5JI55WsxiS2CHmucAE30AsOl8UzeXFqEZw5D4ydsJCJQD4kKXrpvD6LW-gWG0iebE6Vd43ZcNZZ4j8USSGKF1W3vLrlpRCzP6nGH4rlg4BVQA6kwxjWoowgKgrNDR26mluL75TiYDUFHwEd5DDQtNBCMvDFHOlHf5eqt-M2u-FfUpPwl60tLQZQu1Ih1QnJkzMNZV8pOuRtSMLBO-VjaFXpdqpSTQA9KiM31vSKkun9TwpMWL3hHUJW6ktaAoycJRZR81hj4uysMvVZdzsDir1cFre_u0m00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc9qwkAQh-95iiE9W5Ao2B6K2cRA_xBsc-ih9LAma2pNdmR3g4fSUy_1YCnU0lcoFKxnEfo0UXvyFbpGBaFz_L4f8xuYulRUqCxNDNnt8B4VNIUWDbuxwIxHDiYo4MArZi8h72iE_Q6PoU0TyfZMxNo0S5SHXPk0ZWD6qBACyiU4Z-cQOOZeOMS0h5xxBQ8GAPlXW_Nsz1kbFBETW-oQt9ooa7ru2DLLqpSrVc1sIbC_hUcV2yI149Ho6cU01rdcsxbk09Fi9GkWjTf5YLj4-l7Nnq8YDdVqNrgFKsFrFO71ZeN8jNjhvdxZUtj5-2Q-HOfTNx1oolSxYMHlxS7jEl3rNaBUOtF5OAa7eQrLyZNuNsgGu0TjzZbl-Of3Y2zUGY_Wj_gDiDmXlQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6491,
+      "possibly_error_diagram": false,
+      "elapsed_s": 2.11,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 18,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-S_run3.puml",
+    "timestamp": "2026-10-19T04:45:04+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP31Yi9044JlynMDUtP1Oi3TWvYC1dINeCQRU6WpRLPDfgLdWeV5VzT83X7h-Ef1GKsSH_5rLIftFjeB2bQmn_nS2DVMQ2vPu2DvfcEuFpHyFTe23bWwwZI63bYNFc7hKwm8UYbxXWoj0xtuWKptEdBErOKjMG__2Y1-cnqbKQARXiMGj5J7qt0sUD1cesL1C1o4uOD58dnjuTSm2kAHkgdjcZ3tE-Ztnx1DsT3doK6qdE_W6zQpRADUuLDRilE5KBRwRQp5DDPgGjOqHzq1",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkMGKwkAQRO_zFY17dkFiwN2DmIwGdJegxpt4aDNtVk2mpWeCh8V_10gOEev46kFBTZxH8XVVKnc-2gsKVrDH_FwI19ZoLlngI3mmY7g_NHw92gIOWDrqNIYOWJc-YetTrAh6KXuGDK0DvfiBTPc6cs7VhS1ZD_8KIH6bHSVRopuGxZC0VMfTcDZ40GajZUEwHIThg0UifG3h1zAK4pG6qe2aMPc76PfHsE3Z0OfJQbSc7-Ab1rNso17hU1uy84VQtvptrMU01mpC1jRH3QEOzmMo",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 3566,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.79,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 13,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "[": true,
+          "]": true,
+          "-->": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-C_run1.puml",
+    "timestamp": "2026-10-19T04:45:05+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/TP9DI-D06CVlyoc6UXEaI2suUn2Rr9QirAODnKFnyDXCkwN9J9cPMChYIP0jkwo88DuyYE2XWY28R-odQUhHhx0pqsG9x9hZx_UVvuri2WbSHc60nA1FXy0XnFlG6VGuYwXliu1nl5GnNoOXleBFHdtQmrq81CaOdtGX2cI5KRa38S6v7IOPze0AR7_PnfwTouGxB1moIgZ4tn36rZzjrokbYgqDupxX2RMjSd5hLL7T8s65mjfgiQXOYNCsIk2djLB1MaU7g5ro7Lm5IKOmtiCWS7KNjLk2S8_mWtw76DRoKBkkssHXNK4Nng4QCOjTXHrwe2ZZuwnmbAWH8Q176X69oFlhzste3k3zTM9yhV6tNZAFIhnDfxF7oVpyAKsvUhwaR9Fq-a9odRCP5L6GXhmcya72FWXrPBrCsSgPFSfMHfYD4bDN1bLtyShAXjeMVyRvI3qJ-UNbbDODDSVEOjVWuM9k8rHG2qUB-ULr_7mMtrwajDPGD3uvZH-FPiy_PYyFo5q8jPVEJwxcqz-ejM1UKwFxc_ZuPrwzUVjrbvRvZt4_DCw79kcZpv8KrdVO9DJNF_qV",
+    "kroki_url": "https://kroki.io/plantuml/png/eNp1kk1L40AYx-_zKYZ6E6RILbh7EJvUlqzUpg3FQ_Hw2Ey7pclMmZlYyuJJkC27rIgg3jyI4KGCIIhv7Kdp6tGvsDPTZAnsmuPv95_njWwKCVxGYYDEoE-HwCHE-9AZ9DiLqG-zgHG8VDFfJiG-gs9GfdrDXQgEyRifdCEKZIVRuQMhwbkdJhn2gApsf9nGnp3LhDssHDJKqMTfEMbWP23XK6WKrQ3jPuEJta1ycWtVUd0jYYXC2mqxqFiJczZK4Ke1UsFaR4eoXXIdXAVJRjDewyBwdRe1W4Jwj_CDfocY1vJQu67bZGFdQRfGoRoxi12FHXqgKOPjrHCUqBEhoEcaEYnI--v3begO4P11Ynyt8bdeMo9KvE2ns8fJ_PwpTbl6vqRsk_T6QnKdsxkVUZCGvCbyQcI-CHVkvUzZypk9ylZGmI0SU1cGVXfxysqG2hZ_xvlIPRP55eWU1g01x85i1-DhYm4jVFALR4v55XX8fBbfXqS01lA0PjmNH49mzz9mLw_IXQi1l85PrubT36i1YF5To_ub-PhnXr15-3WXlvmPcT80zocm6aPPkhTWd9gk1Nc__R-hWhPH",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 23959,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.88,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 34,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-C_run2.puml",
+    "timestamp": "2026-10-19T04:45:06+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP91Jy8m68Rl_HNDF7CWG88NmpOScKGsNGW7uk635IHiBMax236SZ2QQUFNanPi7Ve3-7y7uBspBN6RSwUtpVbkVBrbBIE0oInCavZEw00uf7i5uFkKiex7B4iRnaMUUqeIuXfYjPdIA9v08KcfYCe4iaHwZiWSfmLQFIOOZe0AxPrqSkLPfUCpI1QE4Ido3C7R-NTlqRC_L3UCnuJbrdNRZjAgelYDdjLgzscWePdFELZayhjirfuasQA4-35Fbihk_-xvzsxyyxHvVBNFdq0vzt059Lh2-mY1mPw1fNn0U4RwSZOcX_KZJG5kKSM1m2EjKxL0kGbFuTAauu-jovPkg2vCvcFFvXJwxZ8eiCI2wL2062ICGobchj1th3pCY6cxGy6kx_Nn_s3z_uDoZl4sera6T0QvKJlGEUGgAf3o3o2I_I4eeF2JzTlyGbLHGfB18Vf7okOFjxspkYLg4nleN-m40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkkFPwjAYhu_9Fc08cyBAghfDNhyZRDZdCAfi4YMVJGwtaTsIMZyMJpp49eTFmwd-gP4fwfgvbMtcZtzp7fN-W58vWUtI4DJLEyTmM7oADikewXg-5SyjscsSxvGRZ57ShLiGmK1mdIonkAhSamIygSyRHqOyBynBVo9JhiOgArtnXRy5Vml4zNIFo4RKfIMwdv5d2_Rsz9UN4zHhOXWdduO0qqi-I2e1Wr3aaChmc85WOTyu2zWniTZooT4MU-Wyu7_7vn3bvzztHl8tc-fQDn3cAUlWsL7CIHBnoGlfEB4RvpyNiaH9SNNAW5RxYHAI61TtUC5CU_h0qTjj63Llm6oLkzmY8_mFPruMiiwxILpUIAYJIxDKWau0HesPMyIabtDwa7v9fH_YP3_g3KO8TajWQZ0BrlRO9A55CoqkPIPIJL9ISig8JP12_xCVVFCksEh-kfK5g-3vbO6JWoTG-hf7ATfLxLI",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 17237,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.8,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 36,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-C_run3.puml",
+    "timestamp": "2026-10-19T04:45:07+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/ZPB1Ji9048RlVOe9dZaG844EXhPGWqP4gYVImqY7sj3kajqjf35UlFa2le4tl6lYuoY-XctJc9AjYNlRRxxD_q-o0wbGg2IE3BaAsHe5nd2BYrKWUC9ycqTSm95Jd8eXxz3dsv05iCH8KcNYqnAJI3cSgGd618q9LnnSP1BiitDmxKP5Nl1upHan1VS6WAN5zXpJiVC95pw9ajhMi3jgPJJFA5cxtMbrknapXU3R4XvtpBRLCnwCkJaTmoagscBgGRDv0lCRIS8biGaNv44VPYFtkawxp7F_uKqnZRCrDFFmVQ6EsIOpkKWhSZ2RshNo1Kc90Lqbb1JYryVZ_lN5qFAg9NwRzU5xj_jyUze_lnk72nTwUPjH44ebKg-sW2xLHkkQlkOVebui9qEhla-1yk60c9__sXy0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNqNksFOwkAQhu99igmeORAgQQ6GtlCDRkSqJ9LDSIfa0O6S3S2kMV68-QK-gTe8a-LjKL6GbdOYkq2Je9tvvs3_T7IDqVCoJI4MuQrZGgXGcIuLVSB4wnybR1zAkVOciiHv0OfbkAWwxEhSZeLTEpNIOZypCcYEjQlXHFxkEuyzc3DtRkVe8HjNGTEF9waApcX2HNOx8wkXPomS2tawO2plNM8oWbvdaXW7GTOF4NsSHnfMttUzHoy5OR3DKSraYupBs3kC8xtJwiWxCRfkQR9mI_e6TrvMc__hTTGNszU08_B9oY7ZJjO5SCtyMJvatfIFSYkBXSWUFOLXx-P-9cXQ8qolfpv14Xu3-3x72j-_G4cLF3p5m1EQSiVSr7aALtVG65q-5h-iXiwnQ6u-T4Hy4YCYn__aH-tB890",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 17878,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.88,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 23,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "Gateway": true,
+          "UserService": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-A_run1.puml",
+    "timestamp": "2026-10-19T04:45:08+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/TP9FJnD16CRlyodUh0TF74XfWXuCkslte0a9uMWy3EmM2TqPiZiD1sDI4lxLbYv1CGIR02ff8reQY59jhH_6dTdXrA_WB5D8ZM5Ea-VzpVE-y-IT2XaEMD4leFiW-s_u-ebe7YSNhmUzggYNU3lYgvkorH_q3k9EEUvyberTMJuN-qUylHPtVYRTjRZxVT3RufVducXJN3H5hIdUVHtqoYXSMYJBEC0-pE7vfOM05ebhqm8Du9vpVKQ8y0LswSeYMO0yBeJUICNryhXOO0ubR1hx7XZJb56OnIG4-ybJcBMD4NYU-ikKU8J1ImHW_TTsqZ4TEwtGmFM2eMfRZxEvSQMcFOPQ9ZCndiqgpGm2kZ8K7qoO6MiIlL9HtVpoWBSt35xUJaxFZ3-bLOFlr6wkubj5dkqPih6HvbJvafnMT5hecNvmczrjPCy1X-3a571jSmTWAK2Rtm7Cc0WvEHWRUwHOU0XyEuf_rKSnPEdoZAdAsalKJdZqyH-8KER176MC-a3pwM00l7R86nMzAN5tNKIH_DtcxpzSxH_grL2C7alsVoHxLRvRrSug1BrGsbzXL_LIyhOfjYwJuvPiVK8USI5jYQRKBTt8lm00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNp1kk9PE0EYxu_zKd6sB08cSGmCHgy7a_egCQnhaDwM7BYJ3RmyOw0HY1IS_tWWLkExBJsAKmkjWhqIUm2tH8ad2eHUr-AsU0iNYU6T5_3N877z5J0KGQ5Y0S-g-yD7b_j6iWgeJxevB72qqJd4O-Krm7LVH_QO4k457nyWjV1ZPhf7R7y9Fnd-Jt21uPt90Nvil-fiaFNcNEWtKd59HfTKKFxaJMs4wD7M4fmlhYAWiWvTAg3gnnN9RojwBXbpyiJZgDwuhN5IxfXyuFhgDiVsGvseGNOUUZjFJAT7yVOYtY0ReJ76y5R4hMFLBGD913bSMR07rdDA9YKhaluPs7lxpaY9hlomMzGezSrNDAK6MhQfTJgZaxK9UlHd_PKAtzcMXt5OTs-MP6VVg-_Ubq7iW0We7RmysZHmVPmSnFZ0WuiZfnCb3W1kzwGH4OQUcG1zB2ApQJvfAcyYCDk5GBt7pFh4CHw7in_VRzFk6fKMqcraS9ROePTxH4hQ5sEcZYz6QPPpYAC8dsgbFb0pcXddRJH83ebvP1ztH-rVUIweS_Z_JHtVvlvVzioEvVDaX2FX9VLytim2LpPjlmx9Qh5xIW2JptQt3ci_yppTRQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 11989,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.94,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 24,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-A_run2.puml",
+    "timestamp": "2026-10-19T04:45:09+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7FIW9H5CRtynG7MxHo8IfOYr2dPb7WngMqk3dZ7nplbJiZBY8eACf6dIXi9KYBKB9IaYAToLvcxjpP-GgD9Y5qLkVypiVvu3jnJKTKhvPLOHFS_WCVNtkpEtRnEBSRRkUKZKnsTkczpWIjLCGLH54PZb2sbAUaYcMHg8J2XhIiDOLMG3Af5N4USaZLbBMDhEHGLTKbWlKKAYiGI16TG1fX3SJz0qYBWJLnbfGh12jOXsC18FdFDYOb976n8LHMw8gAoTteNiYd2uyL2uSZeMZKPmbAIMq5joA9S38cd0WPLc_omV0GWi4ToB2RrdBO1jOqdQ_EtBvoMttt_cLkrmLCT0LeCL_GWUJ-jFvXzztmXcslT-lLtzpE4xEcVfREvvGRptnWSElSiJvy6MjrMS_u3PZRKsTYyh75hQutc_1smpLDxtiaA5Y6XP4Gzxl5Otu0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc9KAlEUxvfzFAdbtHIhKliLUKdmUeDGpbS4OeMfHO-VOyMuIigoykadKGwlSItQslKSIp3JXmbu3Nn5Co0mIXRW5_zOx_ngO3FNR1SvllVhE9z-Ax9fe7M7dvE4txtu55SNTHZ26b3OBK1UxBVEURmOULaUp6SKZZGohMKGtKw1hVZAMqkVcR5ySNWUtY2s5FBV1SWC9RQqKxBIEZ1AGmENxP0DSIuBNXGWlCsEK1iHYwEg-c82JiUkcbEhVFboiorJ3eheyKcLjxULhyOhaNRnCUpJbQW3IolwMiacCBlWb_LB8BCCwR3IsJvWctgG1jSdr87cvnJbfff-ZW7XBUx0BWgxX9CB5P60_mH33fCGba9369Xf3M4Ts6Z-ls7nlBvPfGBw69yxPnwZa3VZz_gNmNtTZ2LyscWtrjeb8HbDNU3veyQoWIaFkRD3u8VjfgBVALyJ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6548,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 17,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CMP-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CMP-A_run3.puml",
+    "timestamp": "2026-10-19T04:45:10+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP7FIm915CVlyrSyxD39WwXW7KBTsaE15u_IONBN7xWx8xCh7YB8CCWo3S5AAKaaaY2Zg8ZMw9_PdTsR_qApOY3qJlC-xyFxmfkuOM9cLdGDhG8VrDp98M-D-UNJRDhdLtTUhyy7TTUgszO7Caf5KiOCwx27iwKyenMYI5IZ35RaUIqPHW4hj5eaUSXXpL2N9egQmnNDb2anKrXN8P2Y9eKq9WP8spkGbW9BSfRgPKfKOi8-0aZ-Yut92Ldo9vGfAbjGARaPtGe9wcSiM3WS2KMZWYKOezK5N8iamiaOEa0PcGbL9Sek18CRaF63vjqwyDQzqnxDfYT_PsaWGaqLM35VCCK-spgsVsxTRezVjzpXXBSldFQfswzx3nslyIe4_dxcFNUzMjDx6pdV7UTbm6yUXJoRDdd_oFuyTwmlFXuYaGV-PXGNB_y_VW40",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkc9LAkEUx-_zVzzs0MmDqGAdQt3aQ4EXj9JhctcfuDsjsyseIsgwyDINwUopSSSSIKOoiNbon9md3Zv_QrNiIPRO8z7vw_vCm7hhYmZWdA2tAh_U3Mkhb4355dNs2udXd16vzwd116rb1gcySkVSxgzrsIezpTyjFaJIVKMMVuR5LRlGASu0WiR5yGHNUJcmiprDFc2UKTFTWFchkKImhTQmBkjbO5CWAktyluplSlRiwj4CSP6LjckJWfInlCkqW1ApuRndCgnqZyxYOBwJRaOCJRij1QVciyTCyRg6QBmZCVUlyi4EgxuQ8YPm3Trw1r3THs2mJ39naSBCTRVYMV8wxT7bOrZ_bt1uj1-33OGEty-c9qnbr3sPHa_xKgT-fuY9d71a03sbOd8d52XAbx6FPJs2ef_I_jx3rC8-HiKRB_5mFBcv_z9-AbHusmc",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6475,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.8,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 17,
+    "actual_type": "component",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "component",
+        "component",
+        "component"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-S",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-S_run1.puml",
+    "timestamp": "2026-10-19T04:45:10+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/RP5DJiCm44RtESN8x42j6gMHIXPLyoi4g2oY7c28tH3LiT7OKHU80o2km9QhzHmu8OYWufNzPlpysTuOYsIxLdhcqAXd96pX4Qj3JRfJFDLI4rmKmvXqc2Va-jYe6lOeZPXKkDXZ9ssXbTrYAu1jjTLGeZAGtjv1cR99SoNH67Zn09Ap8rT5NAHzHHCNDD8qoSBSTxJtZom8bduOEXOJwUC8hvTnaAmSl17ejf_fioIFYznxzRuZx8oW8SSLD1mYkDUg7bQglqC4fQLc9AB5HlwY7yD3d_9VXNjWsvc_aee4Mi5Zwt3cPaupH60-Wzbi3Mmndr-oKHh1wVtpzF7cROJY_Kzz0G00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNptkU1OwzAQRvc5xcjsQK0apZFKFlXzKwSoLKIeYIjdENWx0dhRF4gDIK7Alqv1HDghiKDilf1m_PzZ3hiLZLtWeubQqGckbOERq0NNulM81VITXBTDmHSYJ-T62Kga9iiNmFS42GMnbaGV3WIrgG211VCiMpDe3kGZsklzJdEYePEAkrMjV0VcpH1FExc00jTJwtx3tPePLAiWfhg6FhPp4wivl3GQrBy8Eei2n-mzJI-L3Hv1viPsjKAhxxU0HCK416oeVqq_QwSlpWYkosVG_qIfw0Of8l-Fe2Dbmb-SigRawWPrcOZmTjNEYD6D2WwNbDGfX7JRGsHp_fP08eZthOL9T30BdnyKDA",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 6088,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 23,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-S",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-S_run2.puml",
+    "timestamp": "2026-10-19T04:45:11+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP3FQiCm38VlVWhXdNi8QQ3ROJJnbaCBtQ7i0RHOxKBzfqWEPOoz-vmiR87vO9jFd_Kpsaf2JeDtIYvzk2AZXpViBcUEGx0ckiXmrqvhOSWxsdZhmnbEw8GM5Kid75ngOqW7z0Jw45E48mO1izl3qUY5t3aKWKy5qFoBtBHrQyPAP4iyKzCyLSz5fcF_cPNbkgYgp6hcU9lX_RekcutwKZyHhq8yvVGsRo5_B1_aiNU_oiiOy-VaiQH1ygLZmaIsJjcSskX2mshr2DfZ-D3pkmUuEkn8r9Q27QVv3G00",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkM9qwzAMh-9-CuGdewhpoNthNPGWQwvdoewBtFjtQv2nSA5ljL37nCxsgflgm0-f9TPaSkJOg3dKLn24IqOHN-wuZ45DsCa6yHDXTmthyDvaeOvDGU7ohBYVSyccXGpjSAf0BPoQU4QjBgGz28PR6IXcORSBTwXQ_IvctHVrxkpkSzxT0zxVz0WmY_-ZleW6qKrMauZ4m-H9ui6bjfpSPxGvQjzl9DZvIX8sH-Sxd7_Kyxjz5-SxpEHypWPCRLZO2Zza6ELDavUI2mP40PO7B7g67EjUloIdp_kN4NRuVQ",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 4655,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 22,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-S",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-S_run3.puml",
+    "timestamp": "2026-10-19T04:45:12+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/PP3DYi9048JlynJDU1CKGmpedan6St113x8FqEkCFpYPbku9ESY-kywQGy0-DLyLLL0hYSYnRRoIspNSaR61NppUpanji8OyCOpg_niuv8AMkciummczk85YtGbR7siASOUD0xsZI730862stt0mUc0-UXI1XmAeFYeNTLcRf11RnpqrrRhOP2-QydkMv_EiA5wiPAQkXyjvcLSBzQVU5J_Yk7_tAKub03hJC9c0dasdO_qMu0ke2w9MBjWqoXC0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNplkM2KwkAQhO_zFM14ExRDDOieTEZzcEEPsg_Q64w_OJmW7gk5yL67zppDwD41XxVVUCuJyLFtvJLbNdyRsYFfPN7OTG2whjwxjOr_Gzjkgpa6azjDCb24gWLdCVsfawpxh40DvaNIcMAgYLbfcDB6YD56FIGHAqg-Khd1WZukEFvHPTXVuthkL5rye5bn86woXqxkpq6Hy3mZVwv1p94VP-K4f_cpTiUAOtMwmYCeTadj_RbgC6gLolYu2DTKE0u2XPM",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 2916,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.8,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 14,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-C",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-C_run1.puml",
+    "timestamp": "2026-10-19T04:45:13+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/ZPFFJkCm4CRlUOfHzWO2RLKgGGw8D6t4Fq6bYWSOObEinZRO4o64E73WW0290tlRD-38XGUYYCTO9wHfcgBTpIN9DvFVzutjR5b2GvbCFJiMwWmDIZZ6P3moEbCiqgasy2Ckhbg7FKMcBuGQmGccbjSgZ9zWbbAi5HsWvE0VQD8mH6KXsjs3OUJNcfCKhOKh3w2xOBaUXt6KLxHXt9HgrErr-YsdvlnIQxVNMfsEqq9Zz4KfRgo5xUww4xSvkiyNyBrkFupxthNt5U78SbFaM0R1881zhKR5cyfd2618HfGAboZIcJGb38ncMKB_2Jap8icb7a-4nBJGBEbaxBGTHNp4JKK-pEV_bkksZZ8xJquCH-8if9pkdkOnEyHbYJhFK96WovfZBcTAqA2HhfeHBoLNty-8qgqkDKQId4urcm_O33s5H-uOBf3hnRzdl_QAFVHRFgoiR8B_StLroI_NBe3tj_l9uwz6YxiNfW5yFDny_BxplhfdzHcYy0vWyd0xUNhnPb9fCyLD3u7hl7tzl7bU8FhL6bOjHOH6x6hSoh9I_kMunHNB_-O_",
+    "kroki_url": "https://kroki.io/plantuml/png/eNqNk89O4zAQxu95ilH2BgJtVSpBDog0bcQ_QaWKBxhiU6zGNtgTIYQ4cOCAAIkDe9s34MiFB6KIx1gnpGmaot3NJck3k9_3je1sWUJDmUw9OxbqDA1KOMZkPDI6UyzSqTbwIy6uWoc9RaYvhBrBCaaW1yqMn2CWUqwVHaDk4B9o0jBEZSHa3YNh5NeakxSthSsPoLtguR6HcZRXtGHclGrU7XX6Lafm_FJrt9danY7TQmP0RSlurIXt7roTtzm6zxfwvW4_jPvetfcV4chyU-RYBsEggH2tRsWbymcIYEhGlAqXKNKZNCUMjGZZQv8JOTMiyaUeT4TEtNAs6WTstB1FfMRNRT7M5_-W67aOMjtPTgxH4iyknO6e5jE7xGWJOs9QkaDLmmMuZ0rQoJGumhEvJVffz4jSrS41RpKcTjWbD9gMPYVH7hgukOvFv2e_9oo99Fs-rKxsgv9zdXXJL9cugPe3-8njr0aLuxemAXw83Hz8vvO-umf1GaLwDmDycDt5evFmUmkzxU0Pgeu8ff28eV4g-tUaVi1FhEbsatzKslL-5bjFFcv_5j8sRjUs",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 23698,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.88,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 51,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-C",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-C_run2.puml",
+    "timestamp": "2026-10-19T04:45:14+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/VPBHQi8m58Rl-nIXknCKH0MtYs7jLjW6Jf0zm5aIDTWaBZb1PFZkIsBJLeJreWd_-VB_foTTM0I3JjQPFGXr10EIV0Czx8nsYfMwreOyLF7f4NOFJ9-4sf4jr9RtAenlmTLOQOKha9paAusQR41PKhv_a4sPzs1QWxNaDoDaUHSvhugg31Lj63UDMYvVPgzZhmR_HfjCfkFPp6k5CVhKY8_JOhASPvVi6l5bkOavWlcNyetvXKiGTOkiZMQEuXrrD8A6rQAcXvR-34rrh1yYEkitr710pWgy9T-GoqZ_E50eyEotJWbSH_Es1JXBhdejWFGJGR-H7FUw5vHEbFxk4jxNxlCkMHQ7C1m-Dyq_aNmy6Ws8FYcRTyLe6Mfa3rw_iksfQ9nEKdy985IYOYsGQPIU6n33jtsNz8rTGWnCoSb_qDN-iLrmnSAl-mS0",
+    "kroki_url": "https://kroki.io/plantuml/png/eNp9ktFqwjAUhu_7FKG7ExREBbeLYe1W2AZOkD3AWRI12CQuOUFk-O5LYtNWhPWiCf_58v-nJ11YBINO1pk9CHUEA5J8Az3sjHaKlbrWhjxU8ekRdg9Mn4TakS3UlvcqjG_B1VhphSuQnOQrjZpsQFlSvn-QTZn3YFqDteQ3I2R5FzmviqoMFW0YN41aLl9mr2OvBv9Gm0ym49nMa4Ux-tSIj9Nispxnl-wa8WW5iTmC-ZfyjfmFSxB1i6yNZo7iHXU0gobVoqaHlv4MTXWsHyI66zfUcEDOCrwl35DLSP84UCjw7LdOCVxH87YFOEuuei2A9BNBv5Ec97oXlE6U_u4S3tfu8y5ZFocwHD43zT-RfDwaDYg-KZt3xWgZamQPXr-y7alonE5SfwkgVKJiLZBplJ4bEMO3fZf0jV1CDEzJyX_Q1f6xXXDFwq_7ByP63Uo",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 17602,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.76,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 51,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-C",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-C_run3.puml",
+    "timestamp": "2026-10-19T04:45:15+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": "https://www.plantuml.com/plantuml/png/XLDHQy8m47xFhpYwDw4oKS7jOLZh2cx32R8Va3Mn1fl49LT4XlzzILjhhMFhIvFlxhxxlhjsQf4QB6HEx4weFJLKmYTDTvdHXMAnphM1kwHyMXbsIva-29N1XkQMjoACRsYHOw8LBgda42mrQbXJPI5-UOLr7BIIqvnQ2zy4O7RJSf94IUmZsZ1kQZIUpSVF0uTw_XeR3aU3yTXXaJ7wK8CFesWucv0JgLfyM6xAFeB18xnfbRcpyleUOOr6b7SkgSWlmBbsPJGhKlotV6z4we4vJuMakKCiwdJda8L2dd7JCBvxHpTyRX5Os3PZQZX5pYBqhEvqJR10BakIhu8g57XiTG8ebC1LHr7ZY1ubLxUEg7GBm2iBakDMixQehimpQUm-emvZE_INsXCXvOA2GG0w326ux_TxGUMo4t5lpqQg4VfhhuGl1RuHkGmeS7WOFfMfzIPRnKsacWWfJJIibOopUjBO-8rpoXNpVz4F",
+    "kroki_url": "https://kroki.io/plantuml/png/eNqFU1FrwjAQfs-vOLo3oTJRwe1hWOsKbsMJsh-QNbEGm8QlV0SG_31JW2utY-tLk-_uvvu-u3ZqkRosZE7sTqg9NVTCJ013mdGFYrHOtYG7pHxaGXZLmT4IlcGG5pa3IoxvaJFjohUuqeQQLDVqWFNlIX55hXUctJLTnFoL3wRgdtNykkRJ7CPaMG5qNJ7Nx88Dh3r-GhsOR4Px2GGRMfpQgw-jaDibkBOpWnxYbso-gsEjvGmVubPy-h5hjUaUdy6pyC_AuXZlNCtS_Ld8b0TqgTlPhaS5QyzqdOeQhUKecdMwvntHN3xuEVjYNmNqOEXOIvSs7nRNsEAuS5KvgioUeGx1AiiUwFVHUeOIHiVXt46odAvAKwuS41aztqiuzDNp7D6jDmM79JfaEyHlgoJBADoMIbjv93tB5bITcW_PRqoR-muvhC8FvhG5DChweBg-lan1JlvFTaSaCClNNKyVjLN60tj4jXPKFfN_0Q8LowSq",
+    "online": {
+      "status": 200,
+      "content_type": "image/png",
+      "error_header": "",
+      "is_png": true,
+      "size_bytes": 20210,
+      "possibly_error_diagram": false,
+      "elapsed_s": 0.82,
+      "ok": true
+    },
+    "static_ok": true,
+    "type_match": true,
+    "url_ok": true,
+    "online_ok": true,
+    "sensitive_blocked": null,
+    "source_lines": 51,
+    "actual_type": "class",
+    "status": "PNG_VALIDATED / VISUAL_UNVERIFIED",
+    "semantic_consistency": {
+      "consistent": true,
+      "element_presence_per_run": [
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        },
+        {
+          "@startuml": true,
+          "@enduml": true,
+          "class": true,
+          "User": true,
+          "Order": true,
+          "Product": true
+        }
+      ],
+      "diagram_types_per_run": [
+        "class",
+        "class",
+        "class"
+      ],
+      "type_consistent": true,
+      "element_consistent": true
+    }
+  },
+  {
+    "fixture_id": "CLS-A",
+    "run": 1,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-A_run1.puml",
+    "timestamp": "2026-10-19T04:45:16+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": null,
+    "kroki_url": null,
+    "online": {},
+    "static_ok": true,
+    "type_match": false,
+    "url_ok": true,
+    "online_ok": false,
+    "sensitive_blocked": true,
+    "source_lines": 19
+  },
+  {
+    "fixture_id": "CLS-A",
+    "run": 2,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-A_run2.puml",
+    "timestamp": "2026-10-19T04:45:16+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": null,
+    "kroki_url": null,
+    "online": {},
+    "static_ok": true,
+    "type_match": false,
+    "url_ok": true,
+    "online_ok": false,
+    "sensitive_blocked": true,
+    "source_lines": 17
+  },
+  {
+    "fixture_id": "CLS-A",
+    "run": 3,
+    "puml_path": "C:\\Users\\Admin\\Desktop\\AI Pro\\org-skill\\skills\\plantuml-diagram-engine\\tests\\stability\\puml_runs\\CLS-A_run3.puml",
+    "timestamp": "2026-10-19T04:45:16+00:00",
+    "failures": [],
+    "warnings": [],
+    "url": null,
+    "kroki_url": null,
+    "online": {},
+    "static_ok": true,
+    "type_match": false,
+    "url_ok": true,
+    "online_ok": false,
+    "sensitive_blocked": true,
+    "source_lines": 16
+  }
+]

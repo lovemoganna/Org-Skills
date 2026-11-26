@@ -6,10 +6,27 @@
 
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
+| 从真实买方需求发现可独立变现的机会，核验预算与入口并增量追踪 | `market-demand-sniffer` | skills/market-demand-sniffer/SKILL.md |
+| 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
+| 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
+| 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
+| 从复杂现象识别因果、规则与可控突破口，并通过最小干预验证结果 | `causal-net-loop` | skills/causal-net-loop/SKILL.md |
+| 从日常工作与多个案例归纳可验证、可迁移的简历能力，并保留面试证据 | `career-evidence-loop` | skills/career-evidence-loop/SKILL.md |
+| 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |
+| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
+| 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
+| 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
+| 创作或迭代 Suno 原创华语歌曲，设计曲风、双语歌词与 1000 字符内 Style Prompt | `suno-songwriting` | skills/suno-songwriting/SKILL.md |
+| 将结构、业务流程或代码转换为 PlantUML，并获得在线 PNG 图片直链 | `plantuml-diagram-engine` | skills/plantuml-diagram-engine/SKILL.md |
 | 把编程文章、代码教程或脚本变成干净、可执行、可验证的 Org 文学编程 | `org-literate-engineering` | skills/org-literate-engineering/SKILL.md |
+| 将新资料融入既有 Org Wiki，维护证据、关系、索引与日志 | `llm-wiki-maintainer` | skills/llm-wiki-maintainer/SKILL.md |
 | 把旧 Org / Markdown 笔记炼成更好用的下一版 | `note-reforge` | skills/note-reforge/SKILL.md |
+| 读取公开 X/Twitter 帖文并核验正文 | `x-link-reader` | skills/x-link-reader/SKILL.md |
+| 从突发经营事件或业务目标提炼值得决策的分析任务 | `business-owner` | skills/business-owner/SKILL.md |
 | 面对陌生数据集，从业务问题推导数据逻辑与 SQL | `sql-business-thinking` | skills/sql-business-thinking/ |
 | 将模糊要求炼成分类、判定、操作、能力、质量等可执行标准，并完成 Loop 质检 | `standards-engineering-loop` | skills/standards-engineering-loop/SKILL.md |
+| 用历史 K 线盲测训练交易决策、模拟执行和复盘 | `trading-simulation-coach` | skills/trading-simulation-coach/SKILL.md |
+| 只读核验股票行情、财报、DCF、持仓集中度和研究证据 | `equity-research-auditor` | skills/equity-research-auditor/SKILL.md |
 | 从真实多表数据建立本体、独立验证 SQL 与 Finding | `ontology-constrained-analysis` | skills/ontology-constrained-analysis/SKILL.md |
 | 扫描多表数据集并生成高价值定制看板 | `dataset-dashboard-builder` | skills/dataset-dashboard-builder/ |
 | 把业务材料转化为短、准、可开发、可验收的 BRD | `bprd-plus` | skills/bprd-plus/SKILL.md |
@@ -22,19 +39,61 @@
 - 自检：`用 bprd-plus 自检这份 BRD`
 - 定向修改：`用 bprd-plus 按下面的反馈修改 BRD：<反馈>`
 
+## 知识视频制作
+
+- `video-production-loop`：需求 → VideoSpec → 配音/音乐 → 预览 → 实际渲染 → 技术与视听检查 → 最小修订 → 交付。
+- 附带 Remotion 起点、初始化和媒体验收脚本；用户音乐和本机路径不随包发布。
+- 调用：`使用 video-production-loop，将这些主题制作成视频，完成渲染、质检和交付。`
+- [制作 SOP](skills/video-production-loop/references/sop.md) · [已运行的验证](skills/video-production-loop/references/validation.md)；批量协议尚未进行大规模压测。
+
+## 视觉知识图解
+
+- `plantuml-diagram-engine`：按语义选择 WBS / Activity / Sequence / Component / State / Class / Deployment / Gantt / MindMap 9 类图，加载 Ink & Signal (v7) 通用样式，默认交付在线 PNG 直链，验证状态如实报告。
+
+- `sketchnote-generator`：材料核验 → 动态知识模块 → 复古笔记本式 Sketchnote → 图片生成 → 视觉与事实检查。需要实际可用的图像生成工具；纯 Claude 环境不能凭 Skill 生成插画。
+- 固定调用：`手绘图：<文章 / 案例 / 链接>`。
+
+### 因果与系统突破
+- `causal-net-loop`：事实/竞争因果 → 系统约束 → 可控杠杆 → 最小干预 → 验证/止损；与 `keypoint-loop` 的事后关键点复用分工明确。
+- 固定调用：`用 causal-net-loop 分析以下问题，找出可证伪的原因、真正的限制和一个最小破网动作：<材料>`。
+
 ## Skill 能力地图
+
+### Skill 速查与闭环工程
+- `keypoint-loop`：真实问题 → 核对对象/反证/约束 → 找到改变决策的关键点 → 停止无信息重复 → 同机制归并、复测与存档；证据不足不升级。
+- 固定调用：`使用 keypoint-loop 处理以下材料，捕获关键点、同类归并并输出最短可执行方法卡：<问题与处理记录>`。
+- `career-evidence-loop`：工作记录/多个 Case → 事实与贡献核验 → 共性方法归并 → 适度抽象的岗位能力与成果 → 简历/面试证据双层输出；单案不证明全面能力。
+- 固定调用：`使用 career-evidence-loop 从这些工作记录生成简历能力，并保留代表案例供面试：<工作记录及目标岗位>`。
+- `loop`：前端目标建模与按需编排（Intent → Model → Orchestrate → Verify → Evolve）；复杂故障复盘交给 `loop-engineering-meta`。
+- `skill-quick-reference`：读取真实 `SKILL.md`，输出用途、适用场景、核心能力和自然语言调用示例；不执行目标 Skill。
+- `loop-engineering-meta`：基线 → 执行轨迹 → 根因诊断 → 最小修复 → 独立回放 → 门禁与回归 → 固化经验；高风险动作须遵守授权。
+- 固定调用：`用 skill-quick-reference 简要介绍这个 Skill：<SKILL.md 或仓库路径>`。
+- 闭环调用：`使用 loop-engineering-meta 检查并修复当前任务：<任务与失败样本>`。
 
 ### 文学编程
 - `org-literate-engineering`：编程材料 → 逆向与参数化 → 最小 Org/Babel 结构 → 真实执行 → Eval / Repair / Regression → 干净的文学编程产物。
 
 ### 知识资产
+- `llm-wiki-maintainer`：对已有 Org Wiki 执行增量摄入、索引优先问答、证据冲突处理、跨页关系维护及健康检查；复用已有内容炼化和发布机制。
+- 固定调用：`用 llm-wiki-maintainer 维护知识库：<来源 / 主题>`；只读问答：`用 llm-wiki-maintainer 回答：<问题>`。
 - `note-reforge`：已有 Org / Markdown → 保留独有经验与证据 → 补判断、边界、默认建议与检索入口 → 生成长期可用的下一版知识资产。
+- `x-link-reader`：公开 X URL → 多源读取 → 完整性/来源核验 → `note-reforge` 源材料。
 - 固定调用：`用 note-reforge 炼成下一版：<文件 / 目录>`。
 
 ### 数据分析
+- **四阶段（Carmen）**：`business-owner` S1 下达任务 → `business-reasoning` S2 基础梳理（先结果表、行粒度）→ `analysis-verifier` S3 基础校验 → `business-reasoning` S4 形成分析（B 独立验证 Finding），**老板只看最终分析报告**。规范：`skills/business-owner/references/four-stage-review.md`。
+- `business-owner`：事件或经营目标 → 业务影响假设 → 单一决策任务 → 证据要求 → 最终报告 Decision Review；与 `business-reasoning` / `analysis-verifier` 形成业务价值闭环。
 - `ontology-constrained-analysis`：业务语义 → 本体原子与规则 → SQL 验证 → Signal → Finding；源不可用时交付阻塞审计报告。
-- `sql-business-thinking`：业务问题 → 数据逻辑 → SQL；支持陌生数据集勘察、人物会话推演、HTML 报告与回归闭环。
+- `business-reasoning`：业务目的 → 拆问题 → 结果表 → 表/字段/条件 → 候选 SQL（只分析）。
+- `analysis-verifier`：独立检查语义、SQL、真实 Result 与反例，输出 Verification Feedback（只验证）。
+- `sql-business-thinking`：仅兼容路由；旧版完整规则归档在 `skills/sql-business-thinking/legacy/SKILL.md`。
 - `standards-engineering-loop`：要求还原 → 领域与本体映射 → 原子标准 / Lisp 规则 → 测试 / 依据 → Baseline → Loop 0–9 → 发布判断。
+
+### 交易训练与投资研究（独立边界）
+- `trading-simulation-coach`：历史行情盲测 → 信号/风险 Gate → 模拟执行 → 揭盲复盘 → 独立样本评估；不自动实盘下单。
+- `equity-research-auditor`：行情/原始财报/业绩/DCF/持仓暴露 → 证据化 ResearchPacket；默认只读，不安装第三方工具。
+- **隔离规则**：研究资料只有能证明在历史决策前公开（`available_at <= decision_time`），才可作为训练当时已知资料。用户不授权则不与模拟训练自动联动。
+- 示例调用：`用 trading-simulation-coach 训练我判断一组盲测 K 线`；`用 equity-research-auditor 核查这份公司的财报及DCF假设`。
 
 ### 数据产品
 - `dataset-dashboard-builder`：多表数据 → 质检 → 领域建模 → 指标与问题设计 → SQL / Result / Visual Spec → 看板与审查闭环。
@@ -43,13 +102,33 @@
 
 | Skill | 一句话能力 | Canonical path | 状态 |
 |---|---|---|---|
+| `market-demand-sniffer` | 真实需求发现、原文核验、能力匹配和成交反馈 | `skills/market-demand-sniffer/SKILL.md` | Candidate; live exploratory scan; native host and recurring eval pending |
+| `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
+| `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
+| `skill-router` | 按任务选择 Skill，在 Work 内执行 GitHub 只读调用并核验回执 | `skills/skill-router/SKILL.md` | V2.0.0 · Stable for Work GitHub reads |
+| `skill-router/Legion Mode` | 在 Work 中按需组合 Skill 与工具，执行跨工具任务并核验结果 | `skills/skill-router/SKILL.md` | 已发布经真实任务验收的 Work 场景，需主动调用 |
+| `keypoint-loop` | 发现关键前提与决策突破点、打断无效重复，按具体机制归并可复用经验 | `skills/keypoint-loop/SKILL.md` | Exploratory multi-run replays; live transfer/long-term benefit pending |
+| `career-evidence-loop` | 从多条工作经历提炼通用能力、真实成果及可追溯面试案例 | `skills/career-evidence-loop/SKILL.md` | Manual real-case walkthrough; independent invocation pending |
+| `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |
+| `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
+| `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |
+| `llm-wiki-maintainer` | 证据驱动的持续 Org Wiki 维护、问答与质检 | `skills/llm-wiki-maintainer/SKILL.md` | Audit/plan CI + live 21-page audit passed; real-source T17 pending |
 | `note-reforge` | 把历史 Org / Markdown 笔记炼成可检索、可判断、可执行的下一版知识资产 | `skills/note-reforge/SKILL.md` | Active |
-| `sql-business-thinking` | 把业务问题拆成数据逻辑，再翻译成 SQL | `skills/sql-business-thinking/SKILL.md` | Active |
+| `x-link-reader` | 公开 X/Twitter 内容只读获取与来源核验 | `skills/x-link-reader/SKILL.md` | Network E2E pending |
+| `business-owner` | 从真实业务事件/经营目标制定决策挑战并验收分析价值 | `skills/business-owner/SKILL.md` | Active; decision framing |
+| `business-reasoning` | 复现业务负责人 SQL 思维：从目的和结果表反推业务问题与候选 SQL | `skills/business-reasoning/SKILL.md` | Active; reasoning only |
+| `analysis-verifier` | 独立检验业务语义、SQL 和真实结果，反馈反例并驱动下一轮分析 | `skills/analysis-verifier/SKILL.md` | Active; verification only |
+| `sql-business-thinking` | 旧入口兼容路由（执行逻辑已一拆二） | `skills/sql-business-thinking/SKILL.md` | Compatibility only |
 | `standards-engineering-loop` | 通用标准规范撰写与 Loop 自迭代优化 SOP V3；覆盖标准、测试、证据与版本闭环 | `skills/standards-engineering-loop/SKILL.md` | Eval pending |
+| `trading-simulation-coach` | K线盲测训练与模拟交易能力验证，风险优先并隔离未来信息 | `skills/trading-simulation-coach/SKILL.md` | 模拟器单局独立验收通过，批次验证待做 |
+| `equity-research-auditor` | 股票投资研究证据审计与估值、持仓风险分析；只读 | `skills/equity-research-auditor/SKILL.md` | 真实财报样本独立复算通过 |
 | `ontology-constrained-analysis` | 本体约束多表分析与真实验证，源不可用时交付审计报告 | `skills/ontology-constrained-analysis/SKILL.md` | Active |
 | `dataset-dashboard-builder` | 自动扫描多表数据集并生成高价值定制看板 | `skills/dataset-dashboard-builder/SKILL.md` | Active |
 | `bprd-plus` | 将业务材料转化为短、准、可开发、可验收的 BRD | `skills/bprd-plus/SKILL.md` | Active |
+| `plantuml-diagram-engine` | 按语义将业务/系统结构转为 9 类 PlantUML，加载 Ink & Signal v7 样式并交付在线 PNG 直链 | `skills/plantuml-diagram-engine/SKILL.md` | Active; 9 diagram types verified |
+| `sketchnote-generator` | 把真实材料制成复古手绘中文知识信息图，需具备图片工具 | `skills/sketchnote-generator/SKILL.md` | Packaged; image E2E pending |
+| `suno-songwriting` | 原创华语歌曲、Suno 曲风参数、双语歌词、迭代与文本 QA | `skills/suno-songwriting/SKILL.md` | Candidate; 8 local unit tests passed; audio E2E pending |
 
 ## 目录约定
 

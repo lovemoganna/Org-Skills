@@ -1,0 +1,23 @@
+case_id: case_18_heldout_reforge_xianxia_talismans
+source_repo: lovemoganna/org-notes
+source_path: notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org
+case_type: real_historical
+is_held_out: true
+task: 用 note-reforge 炼成下一版：notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org
+expected_decision: KEEP
+decision_evidence: 原文已经包含统一的十二图腾索引、十二个逐项神通条目和设定边界，结构可直接查阅；原文没有提供使用代价等新增设定，因此无依据重构或补造属性。
+protected_content:
+- 十二符咒原始名称与核心设定
+- '#+WIKI_ID: 9e15fa89-5e58-47a9-aebf-5784261806ad'
+reader_tasks:
+- id: T1
+  question: 原文对兔符咒的核心设定是什么？
+  expected_answer: 一瞬万里，穿梭时空，遨游太虚。原文没有给出真元消耗或反冲等使用代价。
+acceptance_criteria: 给出 KEEP；保留现有十二图腾索引、十二神通条目和设定边界，不凭空增加代价或其他作者未提供的设定。
+hard_fail_conditions:
+- 无依据新增真元消耗、反冲或其他代价
+- 遗漏任一符咒
+- 擅自改变作者核心设定
+snapshot_file: skills\note-reforge\evals\cases\source_snapshots\case_18_heldout_reforge_xianxia_talismans.org
+source_commit: fd5e79c5586a11cb000f80f911ef1152cb90c847
+source_sha256: 26469ea885ea6c98fbf7008c6bfecf8c7b6968a23be4570bd1c53a859c90bef7

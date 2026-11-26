@@ -1,0 +1,86 @@
+{
+  "research_id": "org-skills-pr99-nvda-fy2026-disclosure",
+  "subject": "NVIDIA Corporation (NVDA)",
+  "market": "NASDAQ",
+  "as_of": "2026-02-26",
+  "available_at": "2026-02-25T16:42:19 (as displayed in EDGAR filing index)",
+  "source_date": "2026-02-25",
+  "period_ended": "2026-01-25",
+  "currency": "USD",
+  "unit": "million",
+  "method_version": "R02/R06; PR 99 head 40e15dd2e8f77ed0be18ad552a966dde67244602",
+  "source": {
+    "filing": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+    "index": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm",
+    "issuer_reconciliation": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/"
+  },
+  "verified_facts": [
+    {
+      "metric": "Consolidated full-year revenue",
+      "current": 215938,
+      "previous": 130497,
+      "locator": "10-K Item 8, Consolidated Statements of Income"
+    },
+    {
+      "metric": "GAAP operating cash flow",
+      "current": 102718,
+      "previous": 64089,
+      "locator": "10-K Item 8, Consolidated Statements of Cash Flows"
+    },
+    {
+      "metric": "Purchases related to property, equipment and intangible assets",
+      "current": 6042,
+      "previous": 3236,
+      "locator": "10-K Item 8, Consolidated Statements of Cash Flows"
+    },
+    {
+      "metric": "Principal payments on property, equipment and intangible assets",
+      "current": 101,
+      "previous": 129,
+      "locator": "10-K Item 8, Consolidated Statements of Cash Flows"
+    },
+    {
+      "metric": "Issuer-defined non-GAAP free cash flow",
+      "current": 96575,
+      "previous": 60724,
+      "locator": "Issuer release, GAAP to non-GAAP reconciliation; recomputed from audited cash flow line items"
+    },
+    {
+      "metric": "Two unnamed direct customers' individual revenue shares",
+      "current_pct": [
+        22,
+        14
+      ],
+      "locator": "10-K Item 7, Concentration of Revenue — Direct Customers; corroborated by Item 8 Note 16, Segment Information"
+    }
+  ],
+  "inferences": [
+    {
+      "claim": "Full-year revenue grew 65.47% year over year",
+      "value": 65.47,
+      "calculation": "(215938/130497 - 1) * 100"
+    }
+  ],
+  "assumptions": [
+    "Both periods use issuer fiscal-year consolidation; dollars in millions. Calculations treat purchases and financing principal payments as positive deductions."
+  ],
+  "counterevidence": [
+    "Subtracting purchases alone yields 96,676, not the issuer's 96,575. The additional 101 of principal payments explains the difference.",
+    "The 22% and 14% figures describe direct customers. They are not read through to end-customer concentration."
+  ],
+  "missing_evidence": [
+    "Contemporaneous quote, forecasts, user portfolio and valuation inputs were outside this fiscal filing sample."
+  ],
+  "scenario_outputs": {
+    "before_filing": {
+      "decision_date": "2026-02-24",
+      "allow_filing_into_backtest": false
+    },
+    "after_filing": {
+      "decision_date": "2026-02-26",
+      "allow_source_timestamp_check": true,
+      "auto_signal": false
+    }
+  },
+  "decision_boundary": "Read-only historical disclosure reconciliation. No price target, holding advice, real order, or automatic input to a simulation."
+}

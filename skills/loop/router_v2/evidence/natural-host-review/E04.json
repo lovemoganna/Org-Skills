@@ -1,0 +1,85 @@
+{
+  "repo": "lovemoganna/Org-Skills",
+  "head": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+  "base": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+  "path": "legion-test/sum.mjs",
+  "raw": [
+    {
+      "commit": {
+        "sha": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "message": "Legion operation E04-26b4049",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "diff": "@@ -0,0 +1 @@\n+export const sum = values => values.reduce((a, b) => a + b, 0);",
+        "files": [
+          {
+            "filename": "legion-test/sum.mjs",
+            "patch": "@@ -0,0 +1 @@\n+export const sum = values => values.reduce((a, b) => a + b, 0);"
+          }
+        ],
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "comments": null,
+        "author": {
+          "login": "lovemoganna",
+          "name": null,
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+          "id": 31183446
+        },
+        "committer": {
+          "login": "lovemoganna",
+          "name": null,
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+          "id": 31183446
+        },
+        "created_at": "2026-11-22T21:04:54Z",
+        "git_author_email": null,
+        "display_url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "display_title": "Legion operation E04-26b4049"
+      },
+      "url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47",
+      "title": "Legion operation E04-26b4049",
+      "diff": "@@ -0,0 +1 @@\n+export const sum = values => values.reduce((a, b) => a + b, 0);",
+      "display_url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47",
+      "display_title": "Legion operation E04-26b4049"
+    },
+    {
+      "content": "export const sum = values => values.reduce((a, b) => a + b, 0);\n",
+      "encoding": "utf-8",
+      "sha": "b51e5621efa3e1178a90b5f582e94c460913b710",
+      "display_url": "https://github.com/lovemoganna/Org-Skills/blob/996b1f7f57fdb587e74940f362443d66a6d54a47/legion-test/sum.mjs",
+      "display_title": "sum.mjs"
+    },
+    {
+      "repository_full_name": "lovemoganna/Org-Skills",
+      "base": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+      "head": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1,
+      "too_large": null,
+      "base_commit": {
+        "sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/26b4049ee110e2860243c095e5bf1a76cf7f6ae5"
+      },
+      "merge_base_commit": {
+        "sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/26b4049ee110e2860243c095e5bf1a76cf7f6ae5"
+      },
+      "files": [
+        {
+          "filename": "legion-test/sum.mjs",
+          "status": "added",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1,
+          "previous_filename": null
+        }
+      ]
+    }
+  ]
+}

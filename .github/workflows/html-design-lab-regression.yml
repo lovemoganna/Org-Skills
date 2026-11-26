@@ -1,0 +1,60 @@
+name: html-design-lab regression
+
+on:
+  pull_request:
+    paths:
+      - "skills/html-design-lab/**"
+      - ".github/workflows/html-design-lab-regression.yml"
+  push:
+    branches:
+      - "feat/html-design-lab-v6-rc"
+    paths:
+      - "skills/html-design-lab/**"
+      - ".github/workflows/html-design-lab-regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate Python syntax and tests
+        run: |
+          python -m compileall -q skills/html-design-lab/scripts skills/html-design-lab/tests
+          python -m unittest discover -s skills/html-design-lab/tests -v
+      - name: Generate independent HTML outputs
+        run: |
+          set -eu
+          cd skills/html-design-lab
+          mkdir -p /tmp/html-design-lab-ci
+          python scripts/generate.py --input examples/poem.document.json --output /tmp/html-design-lab-ci/poem.html
+          python scripts/generate.py --input examples/tutorial.org --kind tutorial --output /tmp/html-design-lab-ci/org.html
+          python scripts/generate.py --input examples/real-loop-review.md --kind report --output /tmp/html-design-lab-ci/report.html
+          python scripts/generate.py --input examples/tutorial.md --kind tutorial --output /tmp/html-design-lab-ci/markdown.html
+      - name: Install browser-test dependency
+        run: |
+          python -m pip install "playwright==1.57.0"
+          python -m playwright install --with-deps chromium
+      - name: Independent browser replay
+        run: |
+          set -eu
+          mkdir -p /tmp/html-design-lab-ci/results
+          for kind in poem org report markdown; do
+            python skills/html-design-lab/scripts/browser_review.py \
+              --html "/tmp/html-design-lab-ci/${kind}.html" \
+              --out "/tmp/html-design-lab-ci/results/${kind}.json"
+          done
+      - name: Archive run evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-design-lab-regression
+          path: /tmp/html-design-lab-ci/results/
+          if-no-files-found: ignore

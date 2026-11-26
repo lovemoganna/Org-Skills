@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+skill = (ROOT / "legacy" / "SKILL.md").read_text(encoding="utf-8")
 
 assert skill.startswith("---\nname: sql-business-thinking\n"), "invalid skill frontmatter"
 
@@ -453,6 +453,15 @@ assert set(d23_info["screenshots"]) == {
 }, "D23_SCREENSHOT_NAMES_STALE"
 
 
+# Investigation-grade quality is a separate acceptance gate from technical SQL/HTML success.
+for token in ("Result-Driven Investigation Gate", "Investigation Depth Gate", "DESCRIPTIVE_ONLY"):
+    assert token in skill, f"missing investigation gate: {token}"
+ontology = (ROOT / "references" / "ontology-analysis.md").read_text(encoding="utf-8")
+for token in ("Discovery Breadth Gate", "Temporal Relationship Gate", "Hypothesis Discrimination Gate"):
+    assert token in ontology, f"missing investigation contract: {token}"
+assert "深度报告技术检查全绿但遗漏可检验行为模式" in regression, "historical shallow report regression missing"
+subprocess.run([sys.executable, str(ROOT / "tests" / "check_investigation_trace.py")], check=True)
+
 # Regression: cleanup must preserve both execution paths and strict runtime fidelity.
 for token in ["完整连续执行请求", "单阶段请求", "从指定阶段继续", "不能机械走一次 D01 至 D23"]:
     assert token in debug_stages, f"debug mode scope regression: {token}"
@@ -470,5 +479,24 @@ assert "嵌套网格宽表的真实滚动反例" in regression, "historical scro
 strict_url_workflow = (REPO_ROOT / ".github/workflows/sqlbt-strict-url-acceptance.yml").read_text(encoding="utf-8")
 for token in ("DuckDB 1.4.2", "check_native_contract.py", "read_xlsx", "source_csv_sha256", "render-qa.json", "playwright"):
     assert token in strict_url_workflow, f"strict URL acceptance missing: {token}"
+
+# MECE is a runtime orchestration layer, not five new gates or replacement of Dxx diagnostics.
+phase_rows = re.findall(r"^\| (M[1-5]) [^|]*\| D(\d{2})–D(\d{2}) \|", debug_stages, re.M)
+assert len(phase_rows) == 5 and {x[0] for x in phase_rows} == {f"M{i}" for i in range(1,6)}, "MECE five-phase routing incomplete"
+owners = {}
+for phase, first, last in phase_rows:
+    lo, hi = int(first), int(last)
+    assert lo <= hi, "MECE phase range invalid"
+    for num in range(lo,hi+1):
+        assert num not in owners, f"MECE overlapping stage D{num:02d}"
+        owners[num] = phase
+assert sorted(owners) == list(range(1,24)), "MECE orphan or duplicate Dxx stage"
+assert "## 5. Direct / Autopilot：MECE 五段主流程" in skill, "five-phase primary route absent"
+assert "正常模式只执行五段主流程" in skill, "normal route still forces 23 stage cards"
+assert "一口气/顺序完成分析" in skill and "一口气完成普通分析" in skill, "one-shot incorrectly triggers debug"
+assert "M3 得到新 Result 后" in debug_stages and "D08/D09" in debug_stages, "result-driven reentry missing"
+assert "Dashboard-only" in debug_stages and "D07→D19→D20–D23" in debug_stages, "dashboard bypass lost"
+assert "tests/check_investigation_trace.py" in skill, "dynamic evidence gate removed"
+assert "## V55：MECE 五段执行与旧 23 阶段完整保留" in regression, "MECE regression case missing"
 
 print("OK: sql-business-thinking repository integrity")

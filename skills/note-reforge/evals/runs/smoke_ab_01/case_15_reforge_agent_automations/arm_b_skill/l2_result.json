@@ -1,0 +1,22 @@
+{
+  "scores": {
+    "fact_fidelity": 2,
+    "decision_contract": 2,
+    "mechanism_depth": 2,
+    "actionability": 2,
+    "conciseness_no_bloat": 2
+  },
+  "total_score": 10,
+  "hard_failure": false,
+  "hard_failure_reason": "",
+  "evidence_quotes": [
+    "\"**决策**：`REFORGE`\"",
+    "\"| 现象 | 先查的状态 | 决策规则 |\" (表格中列出所有原始七个故障现象)",
+    "\"** 场景二：发送超时与未知状态（Slack maybe posted 判定）**\"",
+    "\"1. *严禁直接盲目重试发送*：若直接重发，在消息已实际送达时将导致同一天发布多份重复简报\"",
+    "\"*一次运行的八步执行闭环*\" (步骤 1‑8 与原文完全一致)"
+  ],
+  "reasoning": "候选产物完整保留原文五大场景及细节，结构化为排查索引并提供每个场景的触发条件与处置规则，未引入虚假信息，决策为预期 REFORGE，且给出明确可执行的步骤，表达紧凑无冗余。",
+  "latency_sec": 55.454,
+  "tokens_used": 7216
+}
