@@ -1,0 +1,43 @@
+{
+  "args": {
+    "spreadsheet_id": "1ZPdXxmchdk9gKIodQFkhd5XV1lH6ZKKw_cUdNBeiY2o",
+    "sheet_name": "FormulaRepair",
+    "range": "A1:C2"
+  },
+  "time": "2026-11-22T21:05:22.526Z",
+  "reads": [
+    {
+      "range": "FormulaRepair!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Units",
+          "Unit price",
+          "Total"
+        ],
+        [
+          7,
+          6,
+          "=A2*B2"
+        ]
+      ]
+    },
+    {
+      "range": "FormulaRepair!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Units",
+          "Unit price",
+          "Total"
+        ],
+        [
+          7,
+          6,
+          42
+        ]
+      ]
+    }
+  ],
+  "passed": true
+}

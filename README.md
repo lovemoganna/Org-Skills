@@ -6,13 +6,15 @@
 
 | 我现在要做什么 | 使用 Skill | 入口 |
 |---|---|---|
+| 从真实买方需求发现可独立变现的机会，核验预算与入口并增量追踪 | `market-demand-sniffer` | skills/market-demand-sniffer/SKILL.md |
 | 制作或批量生产知识解说视频，完成自然配音、音乐混音、真实渲染与反馈修订 | `video-production-loop` | skills/video-production-loop/SKILL.md |
 | 简要介绍一个 Skill 的用途、场景、能力和调用方式 | `skill-quick-reference` | skills/skill-quick-reference/SKILL.md |
 | 从真实问题中找关键前提、及时停止无效重复，并保存经证据验证的可复用突破点 | `keypoint-loop` | skills/keypoint-loop/SKILL.md |
 | 从复杂现象识别因果、规则与可控突破口，并通过最小干预验证结果 | `causal-net-loop` | skills/causal-net-loop/SKILL.md |
 | 从日常工作与多个案例归纳可验证、可迁移的简历能力，并保留面试证据 | `career-evidence-loop` | skills/career-evidence-loop/SKILL.md |
 | 将模糊目标转为可验证任务，并决定直接执行或最小提示链 | `loop` | skills/loop/SKILL.md |
-| 将模糊/跑偏的 AI 沟通变成可理解、可核验的回答或可复制 Prompt | `communication-meta-loop` | skills/communication-meta-loop/SKILL.md |\n| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |\n| `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
+| 将模糊或跑偏的 AI 沟通变成可核验的回答或可复制提示 | `communication-meta-loop` | skills/communication-meta-loop/SKILL.md |
+| 对失败的 Skill 或工作流做根因诊断、最小修复和回归 | `loop-engineering-meta` | skills/loop-engineering-meta/SKILL.md |
 | 让 AI 自主执行任务，只把关键决策和高风险变更上报给我 | `decision-first-agent` | skills/decision-first-agent/SKILL.md |
 | 把文章、报告、教程或案例制作成复古笔记本手绘知识图解 | `sketchnote-generator` | skills/sketchnote-generator/SKILL.md |
 | 创作或迭代 Suno 原创华语歌曲，设计曲风、双语歌词与 1000 字符内 Style Prompt | `suno-songwriting` | skills/suno-songwriting/SKILL.md |
@@ -61,7 +63,8 @@
 - 固定调用：`使用 keypoint-loop 处理以下材料，捕获关键点、同类归并并输出最短可执行方法卡：<问题与处理记录>`。
 - `career-evidence-loop`：工作记录/多个 Case → 事实与贡献核验 → 共性方法归并 → 适度抽象的岗位能力与成果 → 简历/面试证据双层输出；单案不证明全面能力。
 - 固定调用：`使用 career-evidence-loop 从这些工作记录生成简历能力，并保留代表案例供面试：<工作记录及目标岗位>`。
-- `loop`：前端目标建模与按需编排（Intent → Model → Orchestrate → Verify → Evolve）；复杂故障复盘交给 `loop-engineering-meta`。\n- `skill-quick-reference`：读取真实 `SKILL.md`，输出用途、适用场景、核心能力和自然语言调用示例；不执行目标 Skill。
+- `loop`：前端目标建模与按需编排（Intent → Model → Orchestrate → Verify → Evolve）；复杂故障复盘交给 `loop-engineering-meta`。
+- `skill-quick-reference`：读取真实 `SKILL.md`，输出用途、适用场景、核心能力和自然语言调用示例；不执行目标 Skill。
 - `loop-engineering-meta`：基线 → 执行轨迹 → 根因诊断 → 最小修复 → 独立回放 → 门禁与回归 → 固化经验；高风险动作须遵守授权。
 - 固定调用：`用 skill-quick-reference 简要介绍这个 Skill：<SKILL.md 或仓库路径>`。
 - 闭环调用：`使用 loop-engineering-meta 检查并修复当前任务：<任务与失败样本>`。
@@ -92,10 +95,14 @@
 
 | Skill | 一句话能力 | Canonical path | 状态 |
 |---|---|---|---|
+| `market-demand-sniffer` | 真实需求发现、原文核验、能力匹配和成交反馈 | `skills/market-demand-sniffer/SKILL.md` | Candidate; live exploratory scan; native host and recurring eval pending |
 | `video-production-loop` | 选题到成片的制作、技术验收、反馈修订与批量恢复闭环 | `skills/video-production-loop/SKILL.md` | Real render + media checks passed; large batch eval pending |
 | `skill-quick-reference` | 从真实 Skill 说明提炼四字段中文速查卡与最短调用示例 | `skills/skill-quick-reference/SKILL.md` | Packaged; cross-model eval pending |
+| `skill-router` | 按任务选择 Skill，在 Work 内执行 GitHub 只读调用并核验回执 | `skills/skill-router/SKILL.md` | V2.0.0 · Stable for Work GitHub reads |
+| `skill-router/Legion Mode` | 在 Work 中按需组合 Skill 与工具，执行跨工具任务并核验结果 | `skills/skill-router/SKILL.md` | 已发布经真实任务验收的 Work 场景，需主动调用 |
 | `keypoint-loop` | 发现关键前提与决策突破点、打断无效重复，按具体机制归并可复用经验 | `skills/keypoint-loop/SKILL.md` | Exploratory multi-run replays; live transfer/long-term benefit pending |
 | `career-evidence-loop` | 从多条工作经历提炼通用能力、真实成果及可追溯面试案例 | `skills/career-evidence-loop/SKILL.md` | Manual real-case walkthrough; independent invocation pending |
+| `loop` | 模糊目标还原、任务建模、direct/chain 最小编排和证据化验收 | `skills/loop/SKILL.md` | Candidate; static checks; behavioral eval pending |
 | `loop-engineering-meta` | 为失败或重复任务建立证据化诊断、最小修复、独立回归与经验固化闭环 | `skills/loop-engineering-meta/SKILL.md` | Imported; runtime E2E pending |
 | `decision-first-agent` | 从目标理解、授权与风险分流，到执行验证和先例复用的协作协议 | `skills/decision-first-agent/SKILL.md` | Deterministic gate tested; live agent E2E pending |
 | `org-literate-engineering` | 把编程材料变成干净、可执行、可参数化、可验证、可收敛修复的 Org 文学编程 | `skills/org-literate-engineering/SKILL.md` | Active |

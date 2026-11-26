@@ -1,0 +1,52 @@
+[
+  {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "range": "Settlement!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Gross received",
+          "Refunded",
+          "Net received"
+        ],
+        [
+          125,
+          17,
+          "=A2+B2"
+        ]
+      ]
+    },
+    "isError": false
+  },
+  {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "range": "Settlement!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Gross received",
+          "Refunded",
+          "Net received"
+        ],
+        [
+          125,
+          17,
+          142
+        ]
+      ]
+    },
+    "isError": false
+  }
+]

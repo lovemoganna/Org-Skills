@@ -1,0 +1,85 @@
+{
+  "repo": "lovemoganna/Org-Skills",
+  "head": "2031d2b3fcd7d601cea24830e3da56bf6021389f",
+  "base": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+  "path": "legion-test/sum.mjs",
+  "raw": [
+    {
+      "commit": {
+        "sha": "2031d2b3fcd7d601cea24830e3da56bf6021389f",
+        "message": "Legion operation E04-natural-R2",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/2031d2b3fcd7d601cea24830e3da56bf6021389f",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/2031d2b3fcd7d601cea24830e3da56bf6021389f",
+        "diff": "@@ -1 +1,9 @@\n-export const sum = values => values.reduce((a, b) => a + b, 0);\n+export function sum(values) {\n+  return values.reduce((total, value) => {\n+    const numeric = typeof value === 'number' ||\n+      (typeof value === 'string' && value.trim().length > 0);\n+    const amount = numeric ? Number(value) : NaN;\n+    if (!Number.isFinite(amount)) throw new TypeError('Expected a finite number');\n+    return total + amount;\n+  }, 0);\n+}",
+        "files": [
+          {
+            "filename": "legion-test/sum.mjs",
+            "patch": "@@ -1 +1,9 @@\n-export const sum = values => values.reduce((a, b) => a + b, 0);\n+export function sum(values) {\n+  return values.reduce((total, value) => {\n+    const numeric = typeof value === 'number' ||\n+      (typeof value === 'string' && value.trim().length > 0);\n+    const amount = numeric ? Number(value) : NaN;\n+    if (!Number.isFinite(amount)) throw new TypeError('Expected a finite number');\n+    return total + amount;\n+  }, 0);\n+}"
+          }
+        ],
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "comments": null,
+        "author": {
+          "login": "lovemoganna",
+          "name": null,
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+          "id": 31183446
+        },
+        "committer": {
+          "login": "lovemoganna",
+          "name": null,
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+          "id": 31183446
+        },
+        "created_at": "2026-11-23T02:52:36Z",
+        "git_author_email": null,
+        "display_url": "https://github.com/lovemoganna/Org-Skills/commit/2031d2b3fcd7d601cea24830e3da56bf6021389f",
+        "display_title": "Legion operation E04-natural-R2"
+      },
+      "url": "https://github.com/lovemoganna/Org-Skills/commit/2031d2b3fcd7d601cea24830e3da56bf6021389f",
+      "title": "Legion operation E04-natural-R2",
+      "diff": "@@ -1 +1,9 @@\n-export const sum = values => values.reduce((a, b) => a + b, 0);\n+export function sum(values) {\n+  return values.reduce((total, value) => {\n+    const numeric = typeof value === 'number' ||\n+      (typeof value === 'string' && value.trim().length > 0);\n+    const amount = numeric ? Number(value) : NaN;\n+    if (!Number.isFinite(amount)) throw new TypeError('Expected a finite number');\n+    return total + amount;\n+  }, 0);\n+}",
+      "display_url": "https://github.com/lovemoganna/Org-Skills/commit/2031d2b3fcd7d601cea24830e3da56bf6021389f",
+      "display_title": "Legion operation E04-natural-R2"
+    },
+    {
+      "content": "export function sum(values) {\n  return values.reduce((total, value) => {\n    const numeric = typeof value === 'number' ||\n      (typeof value === 'string' && value.trim().length > 0);\n    const amount = numeric ? Number(value) : NaN;\n    if (!Number.isFinite(amount)) throw new TypeError('Expected a finite number');\n    return total + amount;\n  }, 0);\n}\n",
+      "encoding": "utf-8",
+      "sha": "c4f4464fdad1ac9e98cc5c351974e4283f4e387d",
+      "display_url": "https://github.com/lovemoganna/Org-Skills/blob/2031d2b3fcd7d601cea24830e3da56bf6021389f/legion-test/sum.mjs",
+      "display_title": "sum.mjs"
+    },
+    {
+      "repository_full_name": "lovemoganna/Org-Skills",
+      "base": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+      "head": "2031d2b3fcd7d601cea24830e3da56bf6021389f",
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1,
+      "too_large": null,
+      "base_commit": {
+        "sha": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47"
+      },
+      "merge_base_commit": {
+        "sha": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "url": "https://api.github.com/repos/lovemoganna/Org-Skills/commits/996b1f7f57fdb587e74940f362443d66a6d54a47",
+        "html_url": "https://github.com/lovemoganna/Org-Skills/commit/996b1f7f57fdb587e74940f362443d66a6d54a47"
+      },
+      "files": [
+        {
+          "filename": "legion-test/sum.mjs",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 1,
+          "changes": 10,
+          "previous_filename": null
+        }
+      ]
+    }
+  ]
+}

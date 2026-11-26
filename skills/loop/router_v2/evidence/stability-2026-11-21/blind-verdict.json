@@ -1,0 +1,476 @@
+{
+  "rubrics": [
+    "../inputs/rubric.md",
+    "../inputs/L-rubric.md"
+  ],
+  "scale": "每项 0 或 1，每任务满分 5。证据路径相对于盲评目录。",
+  "scores": {
+    "A": {
+      "T": {
+        "score": 5,
+        "criteria": {
+          "T1": {
+            "score": 1,
+            "reason": "候选 Work 驱动和 Python 桥接有实际调用与退出码；GitHub 明确为本地替身。",
+            "evidence": [
+              "A/T-execution.json",
+              "A/T-raw/calls.jsonl",
+              "A/T-driver.cjs"
+            ]
+          },
+          "T2": {
+            "score": 1,
+            "reason": "三份原始回执分别保留 404、空结构、非空文本与合法格式 SHA。",
+            "evidence": [
+              "A/T-raw/empty-structured/read-1-receipt.json",
+              "A/T-raw/github-404/read-1-receipt.json",
+              "A/T-raw/valid-structured/read-1-receipt.json"
+            ]
+          },
+          "T3": {
+            "score": 1,
+            "reason": "两份 FAILED 并停止；成功读取只记为 RECEIPTS_RECORDED_UNVERIFIED。结论明确区分读取和任务验收。",
+            "evidence": [
+              "A/T-result.md",
+              "A/T-execution.json",
+              "A/T-raw/calls.jsonl",
+              "A/T-raw/empty-structured/read-1-report.json",
+              "A/T-raw/github-404/read-1-report.json",
+              "A/T-raw/valid-structured/read-1-report.json"
+            ]
+          },
+          "T4": {
+            "score": 1,
+            "reason": "404 回执携带连接器 isError；空结构回执来自驱动校验失败。正文将两条错误分别列出，并指出类型和 SHA 格式检查的限度。",
+            "evidence": [
+              "A/T-result.md",
+              "A/T-raw/empty-structured/read-1-receipt.json",
+              "A/T-raw/github-404/read-1-receipt.json",
+              "A/T-raw/valid-structured/read-1-receipt.json"
+            ]
+          },
+          "T5": {
+            "score": 1,
+            "reason": "脚本核对冻结 HEAD；读原驱动并调用桥接。可见写入限于临时会话，GitHub 响应来自本地替身。",
+            "evidence": [
+              "A/T-execution.json",
+              "A/T-raw/calls.jsonl",
+              "A/T-driver.cjs"
+            ]
+          }
+        }
+      },
+      "N": {
+        "score": 5,
+        "criteria": {
+          "N1": {
+            "score": 1,
+            "reason": "固定候选提交取出的两份回执与 trace 可定位，分别记录失败、纠正请求和成功。",
+            "evidence": [
+              "A/N-execution.log",
+              "A/N-raw/read-1-receipt.json",
+              "A/N-raw/read-2-receipt.json",
+              "A/N-raw/trace.jsonl"
+            ]
+          },
+          "N2": {
+            "score": 1,
+            "reason": "日志留存命令和结果；独立对保存的 7951 字节执行 git hash-object，均得到与源回执相同的 50baab758cafc35d9201c32a0829763080f1956a。",
+            "evidence": [
+              "A/N-execution.log",
+              "A/N-raw/recovered-content.utf8",
+              "A/N-raw/read-2-receipt.json"
+            ]
+          },
+          "N3": {
+            "score": 1,
+            "reason": "两份请求同仓同 ref 06c23284dd275cf424eeecce6fd0b6faaee298e6，仅 README.missing.md 改为 README.md；trace 仅一条纠正请求。",
+            "evidence": [
+              "A/N-result.md",
+              "A/N-raw/read-1-receipt.json",
+              "A/N-raw/read-2-receipt.json",
+              "A/N-raw/trace.jsonl"
+            ]
+          },
+          "N4": {
+            "score": 1,
+            "reason": "明确允许一次纠正的条件、停止并交值班的触发条件，以及扩大范围所需的分类验证与独立验收。",
+            "evidence": [
+              "A/N-result.md"
+            ]
+          },
+          "N5": {
+            "score": 1,
+            "reason": "交接文件按 Markdown 原文计共 398 个，在 400 上限内。交接便笺未声称已稳定、上线或可通用恢复。",
+            "evidence": [
+              "A/N-result.md"
+            ]
+          }
+        }
+      },
+      "L": {
+        "score": 5,
+        "criteria": {
+          "L1": {
+            "score": 1,
+            "reason": "PR #118 的实际 GitHub 工具回执记录 open、draft、未合并，head 对应固定候选 af94fbae23326e6ac9626bf525407fcaf59f7659。",
+            "evidence": [
+              "A/L-raw/pr-118.json"
+            ]
+          },
+          "L2": {
+            "score": 1,
+            "reason": "固定提交工作流及 C-replay trace 均有 GitHub 工具名、参数与原始回执。",
+            "evidence": [
+              "A/L-raw/workflow.json",
+              "A/L-raw/work-trace.json"
+            ]
+          },
+          "L3": {
+            "score": 1,
+            "reason": "记录 git hash-object 及固定提交对象对照的命令与成功结果，两文件的连接器内容、Git Blob SHA 及本地对象均一致。",
+            "evidence": [
+              "A/L-execution.log",
+              "A/L-raw/workflow.json",
+              "A/L-raw/work-trace.json"
+            ]
+          },
+          "L4": {
+            "score": 1,
+            "reason": "结论引用 CI 本地任务及协议在未执行点停止的证据，明确单次 Work 路径纠正和无人值守、部署的不同证据边界。",
+            "evidence": [
+              "A/L-result.md",
+              "A/L-raw/workflow.json",
+              "A/L-raw/work-trace.json"
+            ]
+          },
+          "L5": {
+            "score": 1,
+            "reason": "判定保留草稿、暂缓发布，说明能触发复审的无人值守运行、独立验收及目标环境部署证据；原始连接器调用为只读。",
+            "evidence": [
+              "A/L-result.md",
+              "A/L-raw/pr-118.json",
+              "A/L-raw/workflow.json",
+              "A/L-raw/work-trace.json"
+            ]
+          }
+        }
+      }
+    },
+    "B": {
+      "T": {
+        "score": 5,
+        "criteria": {
+          "T1": {
+            "score": 1,
+            "reason": "候选 Work 驱动和 Python 桥接有实际调用与退出码；GitHub 明确为本地替身。",
+            "evidence": [
+              "B/T-raw.suDwW9au/commands-and-results.log",
+              "B/T-raw.suDwW9au/exit.txt",
+              "B/T-run.sh",
+              "B/T-fixtures.cjs"
+            ]
+          },
+          "T2": {
+            "score": 1,
+            "reason": "三份原始回执分别保留 404、空结构、非空文本与合法格式 SHA。",
+            "evidence": [
+              "B/T-raw.suDwW9au/sessions/empty-structured-content/read-1-receipt.json",
+              "B/T-raw.suDwW9au/sessions/github-404/read-1-receipt.json",
+              "B/T-raw.suDwW9au/sessions/valid-sha-and-text/read-1-receipt.json"
+            ]
+          },
+          "T3": {
+            "score": 1,
+            "reason": "两份 FAILED 并停止；成功读取只记为 RECEIPTS_RECORDED_UNVERIFIED。结论明确区分读取和任务验收。",
+            "evidence": [
+              "B/T-result.md",
+              "B/T-raw.suDwW9au/commands-and-results.log",
+              "B/T-raw.suDwW9au/exit.txt",
+              "B/T-raw.suDwW9au/sessions/empty-structured-content/read-1-report.json",
+              "B/T-raw.suDwW9au/sessions/github-404/read-1-report.json",
+              "B/T-raw.suDwW9au/sessions/valid-sha-and-text/read-1-report.json"
+            ]
+          },
+          "T4": {
+            "score": 1,
+            "reason": "404 回执携带连接器 isError；空结构回执来自驱动校验失败。正文将两条错误分别列出，并指出类型和 SHA 格式检查的限度。",
+            "evidence": [
+              "B/T-result.md",
+              "B/T-raw.suDwW9au/sessions/empty-structured-content/read-1-receipt.json",
+              "B/T-raw.suDwW9au/sessions/github-404/read-1-receipt.json",
+              "B/T-raw.suDwW9au/sessions/valid-sha-and-text/read-1-receipt.json"
+            ]
+          },
+          "T5": {
+            "score": 1,
+            "reason": "执行前后工作树状态为空，驱动与桥接 diff 通过；脚本只调用本地替身，写入限于临时会话。",
+            "evidence": [
+              "B/T-raw.suDwW9au/commands-and-results.log",
+              "B/T-raw.suDwW9au/exit.txt",
+              "B/T-run.sh",
+              "B/T-fixtures.cjs"
+            ]
+          }
+        }
+      },
+      "N": {
+        "score": 5,
+        "criteria": {
+          "N1": {
+            "score": 1,
+            "reason": "固定候选提交取出的两份回执与 trace 可定位，分别记录失败、纠正请求和成功。",
+            "evidence": [
+              "B/N-raw.XY764I8L/commands-and-results.log",
+              "B/N-raw.XY764I8L/read-1-receipt.json",
+              "B/N-raw.XY764I8L/read-2-receipt.json",
+              "B/N-raw.XY764I8L/trace.jsonl"
+            ]
+          },
+          "N2": {
+            "score": 1,
+            "reason": "日志留存命令和结果；独立对保存的 7951 字节执行 git hash-object，均得到与源回执相同的 50baab758cafc35d9201c32a0829763080f1956a。",
+            "evidence": [
+              "B/N-raw.XY764I8L/commands-and-results.log",
+              "B/N-raw.XY764I8L/recovered-content.bin",
+              "B/N-raw.XY764I8L/read-2-receipt.json"
+            ]
+          },
+          "N3": {
+            "score": 1,
+            "reason": "两份请求同仓同 ref 06c23284dd275cf424eeecce6fd0b6faaee298e6，仅 README.missing.md 改为 README.md；trace 仅一条纠正请求。",
+            "evidence": [
+              "B/N-result.md",
+              "B/N-raw.XY764I8L/read-1-receipt.json",
+              "B/N-raw.XY764I8L/read-2-receipt.json",
+              "B/N-raw.XY764I8L/trace.jsonl"
+            ]
+          },
+          "N4": {
+            "score": 1,
+            "reason": "明确允许一次纠正的条件、停止并交值班的触发条件，以及扩大范围所需的分类验证与独立验收。",
+            "evidence": [
+              "B/N-result.md"
+            ]
+          },
+          "N5": {
+            "score": 1,
+            "reason": "交接文件按 Markdown 原文计共 394 个，在 400 上限内。交接便笺未声称已稳定、上线或可通用恢复。",
+            "evidence": [
+              "B/N-result.md"
+            ]
+          }
+        }
+      },
+      "L": {
+        "score": 5,
+        "criteria": {
+          "L1": {
+            "score": 1,
+            "reason": "PR #118 的实际 GitHub 工具回执记录 open、draft、未合并，head 对应固定候选 af94fbae23326e6ac9626bf525407fcaf59f7659。",
+            "evidence": [
+              "B/L-connector-raw.json"
+            ]
+          },
+          "L2": {
+            "score": 1,
+            "reason": "固定提交工作流及 C-replay trace 均有 GitHub 工具名、参数与原始回执。",
+            "evidence": [
+              "B/L-connector-raw.json"
+            ]
+          },
+          "L3": {
+            "score": 1,
+            "reason": "记录 git hash-object 及固定提交对象对照的命令与成功结果，两文件的连接器内容、Git Blob SHA 及本地对象均一致。",
+            "evidence": [
+              "B/L-raw.e0GqwOAs/commands-and-results.log",
+              "B/L-connector-raw.json"
+            ]
+          },
+          "L4": {
+            "score": 1,
+            "reason": "结论引用 CI 本地任务及协议在未执行点停止的证据，明确单次 Work 路径纠正和无人值守、部署的不同证据边界。",
+            "evidence": [
+              "B/L-result.md",
+              "B/L-connector-raw.json"
+            ]
+          },
+          "L5": {
+            "score": 1,
+            "reason": "判定保留草稿、暂缓发布，说明能触发复审的无人值守运行、独立验收及目标环境部署证据；原始连接器调用为只读。",
+            "evidence": [
+              "B/L-result.md",
+              "B/L-connector-raw.json",
+              "B/L-connector-raw.json"
+            ]
+          }
+        }
+      }
+    },
+    "C": {
+      "T": {
+        "score": 5,
+        "criteria": {
+          "T1": {
+            "score": 1,
+            "reason": "候选 Work 驱动和 Python 桥接有实际调用与退出码；GitHub 明确为本地替身。",
+            "evidence": [
+              "C/T-commands.log",
+              "C/T-raw/empty-structured-execution.json",
+              "C/T-raw/github-404-execution.json",
+              "C/T-raw/valid-data-execution.json",
+              "C/T-reproduce.js"
+            ]
+          },
+          "T2": {
+            "score": 1,
+            "reason": "三份原始回执分别保留 404、空结构、非空文本与合法格式 SHA。",
+            "evidence": [
+              "C/T-raw/empty-structured/read-1-receipt.json",
+              "C/T-raw/github-404/read-1-receipt.json",
+              "C/T-raw/valid-data/read-1-receipt.json"
+            ]
+          },
+          "T3": {
+            "score": 1,
+            "reason": "两份 FAILED 并停止；成功读取只记为 RECEIPTS_RECORDED_UNVERIFIED。结论明确区分读取和任务验收。",
+            "evidence": [
+              "C/T-result.md",
+              "C/T-commands.log",
+              "C/T-raw/empty-structured-execution.json",
+              "C/T-raw/github-404-execution.json",
+              "C/T-raw/valid-data-execution.json",
+              "C/T-raw/empty-structured/read-1-report.json",
+              "C/T-raw/github-404/read-1-report.json",
+              "C/T-raw/valid-data/read-1-report.json"
+            ]
+          },
+          "T4": {
+            "score": 1,
+            "reason": "404 回执携带连接器 isError；空结构回执来自驱动校验失败。正文将两条错误分别列出，并指出类型和 SHA 格式检查的限度。",
+            "evidence": [
+              "C/T-result.md",
+              "C/T-raw/empty-structured/read-1-receipt.json",
+              "C/T-raw/github-404/read-1-receipt.json",
+              "C/T-raw/valid-data/read-1-receipt.json"
+            ]
+          },
+          "T5": {
+            "score": 1,
+            "reason": "复跑脚本从候选工作树读取真实驱动，执行日志中只有本地替身及临时会话操作。同一工作树 HEAD 另由 N 复核记录。",
+            "evidence": [
+              "C/T-commands.log",
+              "C/T-raw/empty-structured-execution.json",
+              "C/T-raw/github-404-execution.json",
+              "C/T-raw/valid-data-execution.json",
+              "C/T-reproduce.js",
+              "C/N-commands.log"
+            ]
+          }
+        }
+      },
+      "N": {
+        "score": 5,
+        "criteria": {
+          "N1": {
+            "score": 1,
+            "reason": "固定候选提交取出的两份回执与 trace 可定位，分别记录失败、纠正请求和成功。",
+            "evidence": [
+              "C/N-commands.log",
+              "C/N-raw/read-1-receipt.json",
+              "C/N-raw/read-2-receipt.json",
+              "C/N-raw/trace.jsonl"
+            ]
+          },
+          "N2": {
+            "score": 1,
+            "reason": "日志留存命令和结果；独立对保存的 7951 字节执行 git hash-object，均得到与源回执相同的 50baab758cafc35d9201c32a0829763080f1956a。",
+            "evidence": [
+              "C/N-commands.log",
+              "C/N-raw/recovered-README.md",
+              "C/N-raw/read-2-receipt.json"
+            ]
+          },
+          "N3": {
+            "score": 1,
+            "reason": "两份请求同仓同 ref 06c23284dd275cf424eeecce6fd0b6faaee298e6，仅 README.missing.md 改为 README.md；trace 仅一条纠正请求。",
+            "evidence": [
+              "C/N-result.md",
+              "C/N-raw/read-1-receipt.json",
+              "C/N-raw/read-2-receipt.json",
+              "C/N-raw/trace.jsonl"
+            ]
+          },
+          "N4": {
+            "score": 1,
+            "reason": "明确允许一次纠正的条件、停止并交值班的触发条件，以及扩大范围所需的分类验证与独立验收。",
+            "evidence": [
+              "C/N-result.md"
+            ]
+          },
+          "N5": {
+            "score": 1,
+            "reason": "交接文件按 Markdown 原文计共 368 个，在 400 上限内。交接便笺未声称已稳定、上线或可通用恢复。",
+            "evidence": [
+              "C/N-result.md"
+            ]
+          }
+        }
+      },
+      "L": {
+        "score": 5,
+        "criteria": {
+          "L1": {
+            "score": 1,
+            "reason": "PR #118 的实际 GitHub 工具回执记录 open、draft、未合并，head 对应固定候选 af94fbae23326e6ac9626bf525407fcaf59f7659。",
+            "evidence": [
+              "C/L-raw-execution.json",
+              "C/L-session/pr-1-receipt.json"
+            ]
+          },
+          "L2": {
+            "score": 1,
+            "reason": "固定提交工作流及 C-replay trace 均有 GitHub 工具名、参数与原始回执。",
+            "evidence": [
+              "C/L-raw-execution.json",
+              "C/L-session/workflow-1-receipt.json",
+              "C/L-session/trace-1-receipt.json"
+            ]
+          },
+          "L3": {
+            "score": 1,
+            "reason": "记录 git hash-object 及固定提交对象对照的命令与成功结果，两文件的连接器内容、Git Blob SHA 及本地对象均一致。",
+            "evidence": [
+              "C/L-commands.log",
+              "C/L-raw-execution.json",
+              "C/L-session/workflow-1-receipt.json",
+              "C/L-session/trace-1-receipt.json"
+            ]
+          },
+          "L4": {
+            "score": 1,
+            "reason": "结论引用 CI 本地任务及协议在未执行点停止的证据，明确单次 Work 路径纠正和无人值守、部署的不同证据边界。",
+            "evidence": [
+              "C/L-result.md",
+              "C/L-raw-execution.json",
+              "C/L-session/workflow-1-receipt.json",
+              "C/L-session/trace-1-receipt.json"
+            ]
+          },
+          "L5": {
+            "score": 1,
+            "reason": "判定保留草稿、暂缓发布，说明能触发复审的无人值守运行、独立验收及目标环境部署证据；原始连接器调用为只读。",
+            "evidence": [
+              "C/L-result.md",
+              "C/L-raw-execution.json",
+              "C/L-session/pr-1-receipt.json",
+              "C/L-raw-execution.json",
+              "C/L-session/workflow-1-receipt.json",
+              "C/L-session/trace-1-receipt.json"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

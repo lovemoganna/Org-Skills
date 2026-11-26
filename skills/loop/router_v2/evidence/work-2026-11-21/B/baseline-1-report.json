@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "baseline-1-receipt.json",
+  "artifact_ref": "baseline-1-receipt.json",
+  "error": null,
+  "step_id": "baseline",
+  "request_sha256": "b3be2d3b56140abe8aea34c215a8ab7f52e7f03b1849255f0071ed6954eb0a3c"
+}

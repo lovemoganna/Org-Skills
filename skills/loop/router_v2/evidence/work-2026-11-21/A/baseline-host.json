@@ -1,0 +1,9 @@
+{
+  "base_ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+  "host_bridge_blob": "c8dcdce26379174f4eac0159db3e8927193d147c",
+  "chunk_id": "9fad97",
+  "wall_time_seconds": 0.041787201,
+  "exit_code": 0,
+  "original_token_count": 342,
+  "output": "{\n  \"task_id\": \"A\",\n  \"phase\": \"AWAITING_HOST_EXECUTION\",\n  \"completed_step_ids\": [],\n  \"pending_request\": {\n    \"step_id\": \"lifecycle\",\n    \"kind\": \"tool\",\n    \"target\": \"github.fetch_file\",\n    \"executor_binding\": \"mcp__GitHub__fetch_file\",\n    \"side_effect_class\": \"read\",\n    \"args\": {\n      \"repository_full_name\": \"lovemoganna/AgentComponent\",\n      \"path\": \"systems/metaloop/lifecycle.py\",\n      \"ref\": \"main\"\n    },\n    \"request_sha256\": \"6a765fe76ea11737b077ce310996ec9a9360f7779b5dea778ccdfa23c6aa5031\"\n  },\n  \"evidence_trust\": \"HOST_REPORTED_NOT_INDEPENDENTLY_AUTHENTICATED\",\n  \"status\": \"PLANNED_NOT_RUN\",\n  \"independence\": \"self-check only\"\n}\n{\n  \"task_id\": \"A\",\n  \"phase\": \"AWAITING_HOST_EXECUTION\",\n  \"completed_step_ids\": [],\n  \"pending_request\": {\n    \"step_id\": \"lifecycle\",\n    \"kind\": \"tool\",\n    \"target\": \"github.fetch_file\",\n    \"executor_binding\": \"mcp__GitHub__fetch_file\",\n    \"side_effect_class\": \"read\",\n    \"args\": {\n      \"repository_full_name\": \"lovemoganna/AgentComponent\",\n      \"path\": \"systems/metaloop/lifecycle.py\",\n      \"ref\": \"main\"\n    },\n    \"request_sha256\": \"6a765fe76ea11737b077ce310996ec9a9360f7779b5dea778ccdfa23c6aa5031\"\n  },\n  \"evidence_trust\": \"HOST_REPORTED_NOT_INDEPENDENTLY_AUTHENTICATED\",\n  \"status\": \"PLANNED_NOT_RUN\",\n  \"independence\": \"self-check only\"\n}\nNo recorded tool results after baseline init and next.\n"
+}

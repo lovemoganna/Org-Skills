@@ -1,0 +1,42 @@
+{
+  "args": {
+    "spreadsheet_id": "1DqNcWpRv5FOY0VBFqPo1FjN6lg3UfxzA98sugjWH0U8",
+    "sheet_name": "Settlement",
+    "range": "A1:C2"
+  },
+  "time": "2026-11-23T08:24:47.595Z",
+  "reads": [
+    {
+      "range": "Settlement!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Gross received",
+          "Refunded",
+          "Net received"
+        ],
+        [
+          125,
+          17,
+          "=A2+B2"
+        ]
+      ]
+    },
+    {
+      "range": "Settlement!A1:C2",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Gross received",
+          "Refunded",
+          "Net received"
+        ],
+        [
+          125,
+          17,
+          142
+        ]
+      ]
+    }
+  ]
+}
