@@ -1,0 +1,164 @@
+{
+  "run_id": "heldout_copilot_20261020",
+  "adjudication_id": "heldout_key_audit_and_rejudge_20261020_gpt56sol",
+  "evaluated_at": "2026-10-20",
+  "executor": {
+    "subject": "GitHub Copilot CLI",
+    "model": "ACCOUNT_DEFAULT_UNPINNED",
+    "subject_requests_completed": 8
+  },
+  "evaluator": {
+    "model": "GPT-5.6 Sol",
+    "interface": "ChatGPT",
+    "automated_api": false
+  },
+  "evidence_policy": [
+    "Raw subject outputs and original L1 files are preserved unchanged.",
+    "Case labels and reader-task references are checked against the frozen source before judging model behavior.",
+    "For KEEP, the effective final artifact is the unchanged frozen source; the short KEEP response is a decision receipt, not a replacement document.",
+    "This run is exploratory because the Copilot subject model is account-default and unpinned."
+  ],
+  "key_audit": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "original_problem": "decision_evidence falsely said the 23 cases had passed; reader task asked about D08 although the frozen note defines S01-S13 and T01-T10, not a D08 case.",
+      "correction": "KEEP remains correct, but evidence now states all 23 are still pending execution. Reader task now asks whether the page proves the 23 cases passed.",
+      "source_evidence": [
+        "“23 个案例仍是待执行的测试需求。”",
+        "“上线本页只表示测试资产已发布，不代表 23 个案例或跨模型 Eval 已经实际通过。”"
+      ]
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "original_problem": "PATCH label and reader answer introduced latency-sensitive / structured-extraction degradation rules that do not exist in the frozen source.",
+      "correction": "Expected decision changed to KEEP. The source already defines 5/15/45-minute choices by available time, learning goal, and problem complexity; no new evidence justifies extra degradation rules.",
+      "source_evidence": [
+        "“根据可用时间、学习目标和问题复杂度选择相应提示版本。”",
+        "5 分钟建立方向；15 分钟形成结构化理解；45 分钟深挖可迁移知识。"
+      ]
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "original_problem": "REFORGE label described the note as fragmented even though it is already a structured gallery with 12 per-item entries. Reader answer fabricated rabbit costs (true-energy consumption / backlash) absent from the source.",
+      "correction": "Expected decision changed to KEEP. Reader task now asks only for the source-supported rabbit setting.",
+      "source_evidence": [
+        "The frozen source has a 十二图腾 index, 十二神通 section, twelve named subentries, and a 设定边界 section.",
+        "兔，一瞬万里，穿梭时空，遨游太虚。",
+        "No 真元、反冲、代价 field exists in the frozen source."
+      ]
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "original_problem": null,
+      "correction": "No change. BLOCK label and reader task are source-supported.",
+      "source_evidence": [
+        "One section requires physical isolation and forbids all outbound/public-cloud access.",
+        "Another mandates public HTTPS Slack webhook and external OAuth2 verification."
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "corrected_expected_decision": "KEEP",
+      "arm_a_baseline": {
+        "detected_decision": "PATCH",
+        "decision_verdict": "FAIL",
+        "decision_reason": "Creates an unnecessary replacement opening even though the source already states scope, pending execution status, and evidence boundaries; no new execution evidence was supplied.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Its proposed text correctly says the 23 cases are not proven executed/passed."
+      },
+      "arm_b_skill": {
+        "detected_decision": "KEEP",
+        "decision_verdict": "PASS",
+        "decision_reason": "Correctly refuses a no-evidence rewrite and explicitly cites the existing scope and unrun status.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Under KEEP the effective artifact is the frozen source, which explicitly states the cases remain pending and publication is not proof of passing."
+      }
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "corrected_expected_decision": "KEEP",
+      "arm_a_baseline": {
+        "detected_decision": "REFORGE",
+        "decision_verdict": "FAIL",
+        "decision_reason": "Performs a broad rewrite despite the source already having a clear three-depth selection model and no new evidence for additional rules.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "The rewritten output preserves the 5/15/45-minute selection table and its purposes."
+      },
+      "arm_b_skill": {
+        "detected_decision": "KEEP",
+        "decision_verdict": "PASS",
+        "decision_reason": "Correctly recognizes that the existing selection model is usable and that no evidence supports inventing extra degradation criteria.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Under KEEP the effective artifact is the frozen source, which states selection depends on available time, learning goal, and problem complexity."
+      }
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "corrected_expected_decision": "KEEP",
+      "arm_a_baseline": {
+        "detected_decision": "PATCH",
+        "decision_verdict": "FAIL",
+        "decision_reason": "Makes an unnecessary editorial patch to an already structured twelve-entry atlas without new source facts.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Its output preserves the rabbit setting: 一瞬万里、穿梭时空、遨游太虚."
+      },
+      "arm_b_skill": {
+        "detected_decision": "KEEP",
+        "decision_verdict": "PASS",
+        "decision_reason": "Correctly identifies that the existing gallery, per-item entries, and scope boundary are already usable and refuses to invent missing cost attributes.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Under KEEP the effective source directly provides the rabbit setting and contains no unsupported cost."
+      }
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "corrected_expected_decision": "BLOCK",
+      "arm_a_baseline": {
+        "detected_decision": "BLOCK",
+        "decision_verdict": "PASS",
+        "decision_reason": "Correctly identifies the absolute conflict and asks for an authorized priority decision.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Correctly refuses to choose one conflicting requirement without authorization."
+      },
+      "arm_b_skill": {
+        "detected_decision": "BLOCK",
+        "decision_verdict": "PASS",
+        "decision_reason": "Correctly identifies the mutually exclusive network requirements and blocks unapproved reconciliation.",
+        "reader_task_verdict": "PASS",
+        "reader_task_reason": "Correctly refuses to fabricate a unified executable version."
+      }
+    }
+  ],
+  "aggregate": {
+    "arm_a_baseline": {
+      "decision_passed": 1,
+      "decision_total": 4,
+      "decision_accuracy": 0.25,
+      "reader_tasks_passed": 4,
+      "reader_tasks_total": 4,
+      "reader_task_accuracy": 1,
+      "keep_cases_changed": 3,
+      "keep_cases_total": 3,
+      "unnecessary_change_rate_on_keep": 1
+    },
+    "arm_b_skill": {
+      "decision_passed": 4,
+      "decision_total": 4,
+      "decision_accuracy": 1,
+      "reader_tasks_passed": 4,
+      "reader_tasks_total": 4,
+      "reader_task_accuracy": 1,
+      "keep_cases_changed": 0,
+      "keep_cases_total": 3,
+      "unnecessary_change_rate_on_keep": 0
+    },
+    "delta": {
+      "decision_accuracy": 0.75,
+      "reader_task_accuracy": 0,
+      "unnecessary_change_rate_on_keep": -1
+    }
+  },
+  "conclusion": "On this corrected held-out set, note-reforge's measurable advantage is decision discipline: it avoids unsupported rewrites while preserving downstream usability. The set no longer contains valid PATCH or REFORGE cases after source audit, so it does not yet establish held-out performance for those two decisions."
+}

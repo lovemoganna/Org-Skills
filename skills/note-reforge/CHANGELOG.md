@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-11-01 — reader retelling and condition-change transfer
+
+Problem:
+- The canonical Skill already required clarity, necessary evidence, mechanisms and a single real-task walkthrough. But it did not explicitly reject a draft that sounded clear yet could not be restated by the reader or applied when one critical condition changed.
+- Shortening text can also silently delete the denominator, scope, exception or causal link needed for a sound decision.
+
+Minimal change:
+- Strengthened the existing clear-language and one-round task-acceptance paragraphs; no new mandatory document sections or multi-run A/B process.
+- Reader must restate the conclusion, causal explanation and conditions in their own words, then decide whether a one-condition change preserves, changes or makes the conclusion unproven. Trace the basis and next action.
+- Correct misleading prose locally. Do not fabricate mechanisms to satisfy the test. KEEP remains valid when the original text already works.
+
+Regression:
+- `tests/regression/reader-retell-and-transfer.md` includes SQL LEFT JOIN condition transfer, alert denominator preservation, and KEEP-on-good-source cases.
+- `tests/check_repo.py` checks contract and fixture presence only. **These are static checks; no independent reader study or model A/B was run.** Actual effectiveness remains to be established through saved reader responses.
+
+
 ## 2026-10-17 — published-title protection and real-task acceptance
 
 - Publish failures were not missing checks in the publisher. The GitHub connector write route skipped the publisher's pre-submit protection. Added a runnable Org update preflight and made it mandatory before any GitHub write.

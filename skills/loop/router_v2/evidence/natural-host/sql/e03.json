@@ -1,0 +1,431 @@
+{
+  "task": "使用 Skill Router V2 的军团模式执行：用 SQL 汇总 lovemoganna/Org-Skills 的 #118、#120、#121 三个 PR，给出 PR 数量、各 PR 变更文件数的合计、新增行数和删除行数。结果字段按 pr_count、file_appearances、additions、deletions 排列。独立用 Git 对象核算。",
+  "route": "direct",
+  "plan": {
+    "id": "legion",
+    "goal": "使用 Skill Router V2 的军团模式执行：用 SQL 汇总 lovemoganna/Org-Skills 的 #118、#120、#121 三个 PR，给出 PR 数量、各 PR 变更文件数的合计、新增行数和删除行数。结果字段按 pr_count、file_appearances、additions、deletions 排列。独立用 Git 对象核算。",
+    "steps": [
+      {
+        "id": "pr118",
+        "kind": "tool",
+        "target": "github.get_pr_info",
+        "args": {
+          "pr_number": 118,
+          "repository_full_name": "lovemoganna/Org-Skills"
+        },
+        "depends_on": []
+      },
+      {
+        "id": "pr120",
+        "kind": "tool",
+        "target": "github.get_pr_info",
+        "args": {
+          "pr_number": 120,
+          "repository_full_name": "lovemoganna/Org-Skills"
+        },
+        "depends_on": []
+      },
+      {
+        "id": "pr121",
+        "kind": "tool",
+        "target": "github.get_pr_info",
+        "args": {
+          "pr_number": 121,
+          "repository_full_name": "lovemoganna/Org-Skills"
+        },
+        "depends_on": []
+      },
+      {
+        "id": "query",
+        "kind": "tool",
+        "target": "sql.query_rows",
+        "args": {
+          "rows": [
+            {
+              "additions": {
+                "$from": "pr118",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "additions"
+                ]
+              },
+              "changed_files": {
+                "$from": "pr118",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "changed_files"
+                ]
+              },
+              "deletions": {
+                "$from": "pr118",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "deletions"
+                ]
+              }
+            },
+            {
+              "additions": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "additions"
+                ]
+              },
+              "changed_files": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "changed_files"
+                ]
+              },
+              "deletions": {
+                "$from": "pr120",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "deletions"
+                ]
+              }
+            },
+            {
+              "additions": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "additions"
+                ]
+              },
+              "changed_files": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "changed_files"
+                ]
+              },
+              "deletions": {
+                "$from": "pr121",
+                "path": [
+                  "raw",
+                  "structuredContent",
+                  "deletions"
+                ]
+              }
+            }
+          ],
+          "sql": "SELECT count(*) AS pr_count,sum(changed_files) AS file_appearances,sum(additions) AS additions,sum(deletions) AS deletions FROM input_rows"
+        },
+        "depends_on": [
+          "pr118",
+          "pr120",
+          "pr121"
+        ]
+      }
+    ],
+    "acceptance": [
+      {
+        "evidence_from": [
+          "query"
+        ],
+        "id": "matches_git_diff"
+      }
+    ]
+  },
+  "trace": [
+    {
+      "event": "EXECUTED",
+      "step": "pr118",
+      "status": "SUCCESS",
+      "provider": "mcp__codex_apps__github_get_pr_info"
+    },
+    {
+      "event": "EXECUTED",
+      "step": "pr120",
+      "status": "SUCCESS",
+      "provider": "mcp__codex_apps__github_get_pr_info"
+    },
+    {
+      "event": "EXECUTED",
+      "step": "pr121",
+      "status": "SUCCESS",
+      "provider": "mcp__codex_apps__github_get_pr_info"
+    },
+    {
+      "event": "EXECUTED",
+      "step": "query",
+      "status": "SUCCESS",
+      "provider": "mcp__legion__query_rows"
+    }
+  ],
+  "actual_calls": [
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "args": {
+        "pr_number": 121,
+        "repository_full_name": "lovemoganna/Org-Skills"
+      },
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+          "number": 121,
+          "state": "closed",
+          "merged": true,
+          "mergeable": false,
+          "draft": false,
+          "body": "## Purpose\nFix the T18 demonstrated TOCTOU window: a worker may retain authorization after another worker becomes owner and append twice. Candidate only; **DO NOT MERGE / DO NOT PROMOTE** without independent regression and real sink evidence.\n\n## Scope\n- Fails closed with `SINK_ATOMIC_WRITE_REQUIRED` for unsupported non-idempotent writes.\n- Explicitly limits Sheets writes to one atomic batch creating a unique sheet and writing only that new sheet.\n- Requires deterministic path/version parameters for GitHub create/update.\n- Trusted host write adapters may opt in to sink atomic semantics; they must be separately reviewed.\n- Adds T18/T19 positive/negative tests plus documentation. No stable V2 path changes.\n\n## Evidence\n- Baseline: two independent old-engine unsafe appends caused two provider effects in controlled V8 fixture; historical T18 live test showed 2 matching rows.\n- Candidate V8 execution: 17/17 test callbacks passed; native Node 22 GitHub CI must be independently checked.\n- Real isolated Google Sheets sink-atomic patterns previously passed T19/T20; the new candidate code still needs fresh real connector verification.\n\n## Boundaries\nNo general exactly-once, fencing, lease takeover, or unrestricted arbitrary writes claim. Review potential backward compatibility impact: unguarded historical writes now intentionally BLOCKED. Do not merge main.",
+          "title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression",
+          "base": "main",
+          "base_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+          "head": "candidate/legion-t18-sink-atomic-20261122-r1",
+          "head_sha": "832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+          "head_repo_id": 1401137531,
+          "head_repo_full_name": "lovemoganna/Org-Skills",
+          "merge_commit_sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+          "user": {
+            "login": "lovemoganna",
+            "name": "lovemoganna",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+            "id": 31183446
+          },
+          "requested_reviewers": null,
+          "requested_team_reviewers": null,
+          "diff": null,
+          "comments": null,
+          "created_at": "2026-11-22T15:54:33Z",
+          "updated_at": "2026-11-22T20:58:36Z",
+          "closed_at": "2026-11-22T20:57:38Z",
+          "merged_at": "2026-11-22T20:57:38Z",
+          "commits": 8,
+          "changed_files": 6,
+          "additions": 326,
+          "deletions": 4,
+          "display_url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+          "display_title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression"
+        },
+        "isError": false
+      }
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "args": {
+        "pr_number": 118,
+        "repository_full_name": "lovemoganna/Org-Skills"
+      },
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "url": "https://github.com/lovemoganna/Org-Skills/pull/118",
+          "number": 118,
+          "state": "open",
+          "merged": false,
+          "mergeable": true,
+          "draft": true,
+          "body": "## Released in PR #119\n\nWork Skill Router V2.0.0 was released through [PR #119](https://github.com/lovemoganna/Org-Skills/pull/119) at [`6777dc4`](https://github.com/lovemoganna/Org-Skills/commit/6777dc481487bc72cac219d4b58658009453bac1). The release branch used main as its base. This draft retains the original candidate evidence.\n\n## Work V2 stability evidence\n\nThe candidate meets the release-review gate for Work GitHub reads and bounded recovery. Three frozen tasks scored 5/5 across all three routing arms under independent blind review. A one-shot scheduled Work run completed two reads and both raw receipts were checked against pinned Git objects. [Raw evidence and verdict](https://github.com/lovemoganna/Org-Skills/tree/e856e1443058ce65d199bdf4fec5af912fd3c547/skills/loop/router_v2/evidence/stability-2026-11-21).\n\nThis commit adds evidence only. The release itself remains pending review and integration of the candidate base (#116). Production MetaLoop operation remains outside this tested scope.\n\n## Current candidate · Work execution verified on 2026-11-21\n\n- `work_host.js` runs inside Work and dispatches allowlisted reads, saves raw results and hands off selected Skills to the active model. The Python bridge manages requests and records. On a failed GitHub file read it allows one path correction within the original repository and revision.\n- [Three Work tasks and original evidence](https://github.com/lovemoganna/Org-Skills/tree/af94fbae23326e6ac9626bf525407fcaf59f7659/skills/loop/router_v2/evidence/work-2026-11-21). A reproduces the plan-only bridge and verifies the candidate handoff. B reconciles the N07 source data and produces a release checklist, with a replay that selected the second Skill after the causal output. C records a real 404 followed by a verified read of the corrected path.\n- [Independent review and counterexamples](https://github.com/lovemoganna/Org-Skills/tree/af94fbae23326e6ac9626bf525407fcaf59f7659/skills/loop/router_v2/evidence/work-2026-11-21/independent-review.json). The follow-up driver now checks typed connector responses and verifies Skill source bytes against the catalog and pinned Git object. Dedicated JS contract checks and all 58 local Python tests passed.\n- [Three-arm raw run archive](https://github.com/lovemoganna/Org-Skills/tree/af94fbae23326e6ac9626bf525407fcaf59f7659/skills/loop/router_v2/evidence/work-2026-11-21/three-arm-raw.zip). One frozen local task, three isolated model contexts, independent blind grading. Single, fixed and dynamic each scored 5/5. The dynamic arm routed directly. This comparison does not establish general superiority.\n- Remains Draft / DO_NOT_PROMOTE. The tested entrypoint uses the active Work session. It has no unattended native model launcher, and the historical MetaLoop hourly deployment was not repaired.\n\n<details>\n<summary>Earlier candidate history</summary>\n\n## Scope\nImplement an opt-in **Skill Router V2 candidate** on top of PR #116. Targets: P0 local execution receipt bridge; P1 discovery from `SKILL.md`; P2 evidence/permission checks. Stable `loop` and `main` untouched.\n\n## Concrete deliveries\n- `skills/loop/router_v2/engine.py`: discover, lexical candidate match, direct/chain plan, allowlisted local filesystem execution (read/write/replace/assert), SHA-256 receipts and append-only trace, local recheck.\n- `tests.py`: 21 deterministic and real-local test scenarios (not model A/B).\n- `demo_write.json` / `demo_replace.json`: two different real sandbox file tasks, without fabricated market or AML evidence.\n- `.github/workflows/skill-router-v2-candidate.yml`: run tests, execute two fixture tasks, test blocked unauthorized write, and upload raw artifact/trace/recheck JSON.\n- `README.md`: source/permission boundaries, run commands, roll-back, promotion gate.\n\n## Explicit limits\n- This **does not execute** arbitrary model Skills; discovered SKILL.md has execution_binding=UNREGISTERED. Required model Skills fail closed as BLOCKED_SKILL_EXECUTOR.\n- Human-readable natural language is **not** compiled automatically into TaskSpec. This candidate uses explicit structured JSON and simple lexical retrieval.\n- Local sandbox output can reach COMPLETED_UNVERIFIED, not VERIFIED. Independent goal verification and three-arm single/fixed/dynamic model A/B are **NOT_RUN**.\n- Passing CI does not establish business outcome or model efficacy. PR remains **Draft / DO_NOT_PROMOTE** pending independent real-task evidence.\n\n## Review points\n1. Confirm real file receipts and correct blocked/failed states from CI artifact.\n2. Check directory traversal and symlink handling; allowlisted ops only, no shell from TaskSpec.\n3. Do not merge before independent execution worker and trusted host authorization/broker implementation.\n\n## 2026-11-21 actual execution receipts (verified from GitHub)\n- Latest head: `bb446e8935a46c76edfa0dd5acf362fdc7e7eb4a`.\n- [21/21 unit/contract tests + two distinct sandbox file executions + unauthorized-write block: SUCCESS](https://github.com/lovemoganna/Org-Skills/actions/runs/44857855902).\n- [Skills regression: SUCCESS](https://github.com/lovemoganna/Org-Skills/actions/runs/44857855931).\n- [Raw CI artifact: 16 sandbox trace/report/plan/recheck/output files](https://github.com/lovemoganna/Org-Skills/actions/runs/44857855902/artifacts/14688457106).\n- Before final CI, found and fixed a false-positive verification risk: blocked runs could previously pass a local recheck if expected files already existed. Now recheck rejects noncompleted runs, missing/out-of-order receipts, or changed task manifest; two new tests added.\n- All live execution evidence here is local file IO under the runner, **not** autonomous execution of domain/model Skills or independent business outcome validation. Real model A/B = NOT_RUN. PR remains Draft / DO_NOT_PROMOTE.\n\n\n## 2026-11-21 P0 native-host bridge results\n\n- Candidate head: `06c23284dd275cf424eeecce6fd0b6faaee298e6`; still Draft / DO_NOT_PROMOTE.\n- New thin native-model entrypoint: `skills/skill-router/SKILL.md`. It instructs the current ChatGPT/Work host to translate the user goal into a HostPlan and call **actually available, authorized host tools**; there is no external model API.\n- `skills/loop/router_v2/host_bridge.py` provides allowlisted host capability names, dependency ordering, explicit write-authorization gating, step request digests, and recorded host receipts. **It cannot initiate calls into Work**; the host must perform them. Reported receipts are never authenticated by this script.\n- [Latest candidate workflow](https://github.com/lovemoganna/Org-Skills/actions/runs/44861778105): **21 existing + 19 host bridge contract tests PASS**, two real local sandbox file executions PASS, unauthorized write blocked, host protocol correctly stopped at `AWAITING_HOST_EXECUTION` (no mock external tool call misrepresented as live).\n- [Repository Skills Regression](https://github.com/lovemoganna/Org-Skills/actions/runs/44861778140): SUCCESS.\n- [Raw CI artifacts](https://github.com/lovemoganna/Org-Skills/actions/runs/44861778105/artifacts/14690296321): workflow trace/report/plan/recheck data, including host pre-execution request.\n- Final state for host-provided syntactic receipts is `RECEIPTS_RECORDED_UNVERIFIED`, not `COMPLETED` or `VERIFIED`. Host BLOCKED stays BLOCKED.\n\n### Blocking gaps to stable\n\n1. **No callable native Work model/skill executor is exposed to the Python bridge in this environment**. Current model can orchestrate connected tools in chat/Work but this is *host-mediated*, not autonomous Python Skill execution.\n2. Real natural-language semantic selection, multi-Skill live outputs and independently checked goal outcomes have not been evaluated as a cohort; earlier Skill Router A/B three-arm study remains **NOT_RUN**.\n3. Host receipt syntax checks are not external source authentication. Never promote a host-reported result without inspecting actual underlying tool records and goal-boundary evidence.\n\nNo merge to main, no claim of a complete P0 Work runtime integration.\n\n\n</details>",
+          "title": "Candidate: Skill Router V2 real-execution bridge and evidence gate",
+          "base": "candidate/failure-repair-v1-20261119",
+          "base_sha": "50f5645dec3b9a592900bafd8ac15896e175e2fa",
+          "head": "candidate/skill-router-v2-20261121",
+          "head_sha": "e856e1443058ce65d199bdf4fec5af912fd3c547",
+          "head_repo_id": 1401137531,
+          "head_repo_full_name": "lovemoganna/Org-Skills",
+          "merge_commit_sha": "16bdc5a6d2a24552cc21b60907af1f42b8a10512",
+          "user": {
+            "login": "lovemoganna",
+            "name": "lovemoganna",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+            "id": 31183446
+          },
+          "requested_reviewers": null,
+          "requested_team_reviewers": null,
+          "diff": null,
+          "comments": null,
+          "created_at": "2026-11-21T02:47:19Z",
+          "updated_at": "2026-11-21T07:06:17Z",
+          "closed_at": null,
+          "merged_at": null,
+          "commits": 22,
+          "changed_files": 72,
+          "additions": 4358,
+          "deletions": 0,
+          "display_url": "https://github.com/lovemoganna/Org-Skills/pull/118",
+          "display_title": "Candidate: Skill Router V2 real-execution bridge and evidence gate"
+        },
+        "isError": false
+      }
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "args": {
+        "pr_number": 120,
+        "repository_full_name": "lovemoganna/Org-Skills"
+      },
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "url": "https://github.com/lovemoganna/Org-Skills/pull/120",
+          "number": 120,
+          "state": "closed",
+          "merged": true,
+          "mergeable": false,
+          "draft": false,
+          "body": "## 目标 / Decision: ACCEPT\n在不覆盖稳定的 Skill Router V2.0.0 前提下，增加军团化跨工具执行候选：自然语言由 Work 宿主编译 Plan、独立工具步并行、Skill 步由原生模型执行并回填、每步回执与验收证据覆盖。\n\n## 实际修改\n- `skills/loop/router_v2/legion_host.js`：显式工具注册（GitHub、Google Sheets、Parallel），最多三路独立步骤并行，依赖门禁，写入审批回调，阶段性 checkpoint、错误阻断、原生 Skill 交接。\n- `skills/loop/router_v2/tests/test_legion.js`：7 个模拟适配器测试，含并行、跨域、模型步骤、失败、写权限与持久化回调。\n- `skills/loop/router_v2/LEGION.md`：调用协议、使用方法、边界和回滚。\n- `skills/skill-router/SKILL.md`、`README.md`：新增可选军团模式入口，不改动稳定路径。\n- `.github/workflows/legion-contract.yml`：候选与旧版回归 CI。\n\n## 验证\n- 本地 Node 22：7/7 mock contract tests 通过；不等于真实 Work E2E。\n- CI：已配置，等待 GitHub Actions 独立执行记录。\n- 真实 GitHub/Sheets connector 元数据：本次开发时分别完成读取，但**尚未使用 Legion 脚本驱动跨工具 Work E2E**。\n- 定时自动运行、自动故障恢复、跨模型自主调用：NOT_IMPLEMENTED / NOT_VERIFIED。\n\n## 兼容性、权限与剩余风险\n- 旧 V2 实现不改动。此 PR 不合并、不发布 Stable。\n- 主机实际授权、模型 Skill 输出真实性、checkpoint 安全存储由 Work 宿主负责。\n- 如需回滚：关闭军团模式，继续调用既有 `skills/loop/router_v2/work_host.js`。\n\n## 下一门槛\n运行真实同一 Work 会话中的 GitHub + Google Sheets 双适配器任务，保存原始回执并独立验收，再评估是否扩大可写工具与调度能力。\n\n## 新增实测（2026-11-22 UTC）\n- 在当前 Chat 代码宿主中从此分支取回 `legion_host.js`，校验固定 Git Blob SHA `4778905b6c53442f47210a3cd94dc1f850e96eb0` 后执行候选代码。\n- 同一任务并行调用两个**真实连接器**：GitHub 仓库元数据、Google Sheets 工作簿元数据；2/2 返回 SUCCESS，状态 `COMPLETED_UNVERIFIED`。\n- 通过直接重新读取相同资源，比对两处元数据字段，结果一致；这属于**同宿主自检**，不是独立评审，也不是 Work 原生模型 Skill 链 E2E。\n- 回执原文未写入公开仓库；控制台中的证据账本记录了执行结果和边界。当前演示的 checkpoint 为内存回调，不证明断点跨会话恢复。\n- 新增经审查的宿主适配器扩展和一次读取重试；本地 Node 9/9 测试通过，GitHub 最新 CI：Legion/Router/全仓均 success。\n",
+          "title": "feat(router): Legion Mode 通用跨工具编排候选",
+          "base": "main",
+          "base_sha": "6777dc481487bc72cac219d4b58658009453bac1",
+          "head": "feature/legion-mode-general-20261122",
+          "head_sha": "afd45cb8421899058c72319be110655283667c68",
+          "head_repo_id": 1401137531,
+          "head_repo_full_name": "lovemoganna/Org-Skills",
+          "merge_commit_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+          "user": {
+            "login": "lovemoganna",
+            "name": "lovemoganna",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+            "id": 31183446
+          },
+          "requested_reviewers": null,
+          "requested_team_reviewers": null,
+          "diff": null,
+          "comments": null,
+          "created_at": "2026-11-22T03:14:21Z",
+          "updated_at": "2026-11-22T15:17:39Z",
+          "closed_at": "2026-11-22T15:16:48Z",
+          "merged_at": "2026-11-22T15:16:48Z",
+          "commits": 11,
+          "changed_files": 7,
+          "additions": 514,
+          "deletions": 0,
+          "display_url": "https://github.com/lovemoganna/Org-Skills/pull/120",
+          "display_title": "feat(router): Legion Mode 通用跨工具编排候选"
+        },
+        "isError": false
+      }
+    },
+    {
+      "name": "mcp__legion__query_rows",
+      "args": {
+        "rows": [
+          {
+            "additions": 4358,
+            "changed_files": 72,
+            "deletions": 0
+          },
+          {
+            "additions": 514,
+            "changed_files": 7,
+            "deletions": 0
+          },
+          {
+            "additions": 326,
+            "changed_files": 6,
+            "deletions": 4
+          }
+        ],
+        "sql": "SELECT count(*) AS pr_count,sum(changed_files) AS file_appearances,sum(additions) AS additions,sum(deletions) AS deletions FROM input_rows"
+      },
+      "result": {
+        "engine": "SQLite 3.53.1",
+        "input_count": 3,
+        "columns": [
+          "pr_count",
+          "file_appearances",
+          "additions",
+          "deletions"
+        ],
+        "rows": [
+          {
+            "pr_count": 3,
+            "file_appearances": 85,
+            "additions": 5198,
+            "deletions": 4
+          }
+        ]
+      }
+    }
+  ],
+  "independent_git_reads": [
+    {
+      "number": 118,
+      "spec": "50f5645dec3b9a592900bafd8ac15896e175e2fa...e856e1443058ce65d199bdf4fec5af912fd3c547",
+      "raw": "86\t0\t.github/workflows/skill-router-v2-candidate.yml\n76\t0\tskills/loop/router_v2/README.md\n44\t0\tskills/loop/router_v2/demo_replace.json\n34\t0\tskills/loop/router_v2/demo_write.json\n331\t0\tskills/loop/router_v2/engine.py\n20\t0\tskills/loop/router_v2/evidence/stability-2026-11-21/README.md\n476\t0\tskills/loop/router_v2/evidence/stability-2026-11-21/blind-verdict.json\n-\t-\tskills/loop/router_v2/evidence/stability-2026-11-21/raw.zip\n63\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A-taskspec.json\n9\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/baseline-host.json\n7\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/diagnosis-1-report.json\n20\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/diagnosis-skill-output.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/lifecycle-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/lifecycle-1-report.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/planner-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/planner-1-report.json\n13\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/regression.json\n109\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/session.json\n4\t0\tskills/loop/router_v2/evidence/work-2026-11-21/A/trace.jsonl\n31\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-card-taskspec.json\n7\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-card/card-1-report.json\n21\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-card/card-skill-output.json\n57\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-card/session.json\n2\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-card/trace.jsonl\n68\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis-taskspec.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/baseline-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/baseline-1-report.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/candidate-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/candidate-1-report.json\n7\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/causes-1-report.json\n20\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/causes-skill-output.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/review-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/review-1-report.json\n124\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/session.json\n5\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-replay-diagnosis/trace.jsonl\n85\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B-taskspec.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/baseline-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/baseline-1-report.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/candidate-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/candidate-1-report.json\n7\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/card-1-report.json\n20\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/card-skill-output.json\n7\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/causes-1-report.json\n20\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/causes-skill-output.json\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/review-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/review-1-report.json\n152\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/session.json\n6\t0\tskills/loop/router_v2/evidence/work-2026-11-21/B/trace.jsonl\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay-taskspec.json\n35\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/read-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/read-1-report.json\n33\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/read-2-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/read-2-report.json\n71\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/session.json\n4\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-replay/trace.jsonl\n32\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C-taskspec.json\n35\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/read-1-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/read-1-report.json\n33\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/read-2-receipt.json\n8\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/read-2-report.json\n71\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/session.json\n4\t0\tskills/loop/router_v2/evidence/work-2026-11-21/C/trace.jsonl\n13\t0\tskills/loop/router_v2/evidence/work-2026-11-21/README.md\n736\t0\tskills/loop/router_v2/evidence/work-2026-11-21/independent-review.json\n-\t-\tskills/loop/router_v2/evidence/work-2026-11-21/three-arm-raw.zip\n289\t0\tskills/loop/router_v2/host_bridge.py\n43\t0\tskills/loop/router_v2/host_demo.json\n236\t0\tskills/loop/router_v2/test_host_bridge.py\n68\t0\tskills/loop/router_v2/test_work_host.js\n190\t0\tskills/loop/router_v2/tests.py\n111\t0\tskills/loop/router_v2/work_host.js\n39\t0\tskills/skill-router/SKILL.md\n",
+      "additions": 4358,
+      "deletions": 0,
+      "changed_files": 72
+    },
+    {
+      "number": 120,
+      "spec": "6777dc481487bc72cac219d4b58658009453bac1...afd45cb8421899058c72319be110655283667c68",
+      "raw": "29\t0\t.github/workflows/legion-contract.yml\n1\t0\tREADME.md\n70\t0\tskills/loop/router_v2/LEGION.md\n32\t0\tskills/loop/router_v2/evidence/recruitment-radar-repair-2026-11-22.md\n208\t0\tskills/loop/router_v2/legion_host.js\n163\t0\tskills/loop/router_v2/tests/test_legion.js\n11\t0\tskills/skill-router/SKILL.md\n",
+      "additions": 514,
+      "deletions": 0,
+      "changed_files": 7
+    },
+    {
+      "number": 121,
+      "spec": "041931bb2831508b29a1b7698b4600f33cde241c...832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+      "raw": "4\t0\t.github/workflows/legion-contract.yml\n28\t0\tskills/loop/router_v2/LEGION.md\n115\t0\tskills/loop/router_v2/lease_fenced_host.js\n25\t0\tskills/loop/router_v2/legion_host.js\n90\t0\tskills/loop/router_v2/tests/test_lease_fenced_host.js\n64\t4\tskills/loop/router_v2/tests/test_legion.js\n",
+      "additions": 326,
+      "deletions": 4,
+      "changed_files": 6
+    }
+  ],
+  "legion_status": "COMPLETED_UNVERIFIED",
+  "final_status": "VERIFIED",
+  "verification": {
+    "checks": [
+      {
+        "id": "matches_git_diff",
+        "passed": true,
+        "evidence": {
+          "expected": [
+            {
+              "pr_count": 3,
+              "file_appearances": 85,
+              "additions": 5198,
+              "deletions": 4
+            }
+          ],
+          "actual": [
+            {
+              "pr_count": 3,
+              "file_appearances": 85,
+              "additions": 5198,
+              "deletions": 4
+            }
+          ],
+          "refs": [
+            "50f5645dec3b9a592900bafd8ac15896e175e2fa...e856e1443058ce65d199bdf4fec5af912fd3c547",
+            "6777dc481487bc72cac219d4b58658009453bac1...afd45cb8421899058c72319be110655283667c68",
+            "041931bb2831508b29a1b7698b4600f33cde241c...832ceedc67dbc89f1501a8ae92a9232c67e69c04"
+          ]
+        }
+      }
+    ]
+  }
+}

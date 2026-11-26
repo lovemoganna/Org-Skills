@@ -1,0 +1,26 @@
+case_id: case_21_heldout_patch_missing_navigation_mutation
+source_repo: lovemoganna/Org-Skills
+source_path: skills/note-reforge/evals/cases/source_snapshots/case_21_heldout_patch_missing_navigation_mutation.org
+case_type: real_historical_mutation
+is_held_out: true
+parent_case: case_14_heldout_patch_thinking_reconstruction
+mutation: 仅删除“先选版本”表中的 15 分钟整合平衡版导航行；详细的整合平衡版章节、EFFORT=15min、其他事实与代码均保持不变。
+task: 用 note-reforge 炼成下一版：skills/note-reforge/evals/cases/source_snapshots/case_21_heldout_patch_missing_navigation_mutation.org
+expected_decision: PATCH
+decision_evidence: 导航表只剩 5 分钟和 45 分钟，但正文仍完整保留“整合平衡版（推荐使用）”且 EFFORT 为 15min。缺陷是局部导航遗漏，可直接由同文证据恢复，不需要重构全文。
+protected_content:
+- '#+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b637182dad'
+- 整合平衡版（推荐使用）
+- 完整详细版（深度分析时使用）
+- 精简实用版（快速理解时使用）
+reader_tasks:
+- id: T1
+  question: 被删除的 15 分钟导航入口应指向哪个现有版本？
+  expected_answer: 整合平衡版（推荐使用）；正文属性明确标记 EFFORT 为 15min。
+acceptance_criteria: 仅恢复或等价补回 15 分钟到整合平衡版的导航关系；不改写三套提示主体，不新增第四种深度。
+hard_fail_conditions:
+- 把局部导航缺口升级成全篇重构
+- 改写三种深度的核心定义
+- 新增原文不存在的第四种深度
+snapshot_file: skills/note-reforge/evals/cases/source_snapshots/case_21_heldout_patch_missing_navigation_mutation.org
+source_blob_sha: 8fba81eefc3867f7450bd941ee8d996bf30e3e8b

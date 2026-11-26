@@ -1,0 +1,321 @@
+{
+  "run_id": "candidate_keep_reforge_20261021_attempt03",
+  "prepared_at": "2026-10-21T03:06:59.570932+00:00",
+  "mode": "sealed_production_vs_candidate_six_case_regression",
+  "executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "production_commit": "7674cf109ecfd69b59f8aeb3843742a3d9897db5",
+  "production_skill_sha256": "abb0e6b4f0af4bb4f05e10da6fe732a6a405bb9b69edc7fc1182d49faaa73aad",
+  "candidate_skill_sha256": "75f62989b064fd200f940e4e83181860ebe6f71c8ebc61dc8efc6a6790b96994",
+  "cases": [
+    "case_06_heldout_keep_sql_blind_cases",
+    "case_14_heldout_patch_thinking_reconstruction",
+    "case_18_heldout_reforge_xianxia_talismans",
+    "case_20_heldout_block_irreconcilable_contradiction",
+    "case_21_heldout_patch_missing_navigation_mutation",
+    "case_22_heldout_reforge_flattened_atlas_mutation"
+  ],
+  "subject_requests_expected": 12,
+  "subject_requests_completed": 12,
+  "status": "EXECUTED_L1_ONLY",
+  "anti_leakage": [
+    "Subject prompts contain only Skill text, task text, and source document.",
+    "Expected decisions, reader-task answers, acceptance criteria, hard-fail conditions, prior outputs, and prior adjudications are excluded from subject prompts.",
+    "Production and candidate arms use separate COPILOT_HOME sessions."
+  ],
+  "limitations": [
+    "Copilot account default model is not pinned or independently identified.",
+    "case_21 and case_22 are deterministic mutations of real historical snapshots.",
+    "Semantic adjudication is performed only after raw subject outputs are preserved."
+  ],
+  "results": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 201,
+          "output_sha256": "df5b0ec95c7f021de5384d82207d9fb14094589bd99d73cc3e659ce5ddebee0c",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 182,
+          "output_sha256": "393426165c0b4f14714850640ef2975695a2f569166da48aaeb904d4ae794f53",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 8124,
+          "output_sha256": "d5e979190362299506dac9cbbde2cc4c40abd7f087cd3204b00b94435dbaee65",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": false,
+          "strict_delivery_pass": false,
+          "full_case_gate_pass": false,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected KEEP but model decided to rewrite/patch."
+            ],
+            "details": [
+              "Decision mismatch: expected KEEP, detected PATCH"
+            ]
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 157,
+          "output_sha256": "ddf0b1492f77a7b05327fb6c5c2b9df6c1fc358b2552a827759c0c6b17210933",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "expected_decision": "KEEP",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 186,
+          "output_sha256": "59c3edc889a4827e66f5f2572940f7b93458e90e5b5e558d94e059024e8d8306",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 167,
+          "output_sha256": "cd86c98bc9f568c32c0312f21a12002d6bd4cf8857a92ebeb20709bc90dde1bb",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "expected_decision": "BLOCK",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 603,
+          "output_sha256": "b63d2ad5fa0c263b4862dedaef48f4d31416e2da0e266bac31f69477f0d91bf4",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": false,
+          "strict_delivery_pass": false,
+          "full_case_gate_pass": false,
+          "l1": {
+            "pass": false,
+            "decision_detected": "PATCH",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [
+              "Expected BLOCK but model proceeded with execution."
+            ],
+            "details": [
+              "Decision mismatch: expected BLOCK, detected PATCH"
+            ]
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 118,
+          "output_sha256": "afcbafaa992c20c663591deb81c2c2d2151687d62e60d6eb8608972dc0a83b83",
+          "detected_decision": "BLOCK",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "BLOCK",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected_decision": "PATCH",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 7975,
+          "output_sha256": "9d6204bb62cefce5623b0ba7c1a4dcfde82c8518edc260e25796ef8775b14af2",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 7916,
+          "output_sha256": "cd67fd0299a50426d6be9f264e928e64bbd1c7f625d6cf3b215b5b25bfe58fcb",
+          "detected_decision": "PATCH",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "PATCH",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected_decision": "REFORGE",
+      "arms": {
+        "arm_a_production": {
+          "status": "EXECUTED",
+          "output_chars": 230,
+          "output_sha256": "b51ca377eb0e5114551967f8a2d06e49f41fe25af16a3e0288eb4c322de24fe3",
+          "detected_decision": "KEEP",
+          "decision_matches_expected": false,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": false,
+          "l1": {
+            "pass": true,
+            "decision_detected": "KEEP",
+            "decision_matched": false,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": [
+              "Decision mismatch: expected REFORGE, detected KEEP"
+            ]
+          }
+        },
+        "arm_b_candidate": {
+          "status": "EXECUTED",
+          "output_chars": 2232,
+          "output_sha256": "f4469c9a78c2ab9aedc64cf9560eb23e08189116b2f26bda3cfa01bf30c54d5a",
+          "detected_decision": "REFORGE",
+          "decision_matches_expected": true,
+          "strict_delivery_pass": true,
+          "full_case_gate_pass": true,
+          "l1": {
+            "pass": true,
+            "decision_detected": "REFORGE",
+            "decision_matched": true,
+            "headers_preserved": true,
+            "code_blocks_preserved": true,
+            "protected_content_intact": true,
+            "no_source_overwrite": true,
+            "hard_failures": [],
+            "details": []
+          }
+        }
+      }
+    }
+  ],
+  "completed_at": "2026-10-21T03:08:52.065385+00:00",
+  "errors": []
+}

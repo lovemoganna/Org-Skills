@@ -1,0 +1,84 @@
+{
+  "run_id": "candidate_keep_reforge_20261021_attempt03",
+  "github_actions_run_id": 39536680244,
+  "artifact": {
+    "id": 12318076658,
+    "name": "note-reforge-candidate-sixcase-evidence-attempt03",
+    "digest": "sha256:47f2ed4dc5618c50746ada3d888b1a33855fe2540a83385200cb17c6bec30078",
+    "expires_at": "2026-11-20T03:08:53Z"
+  },
+  "production_commit": "7674cf109ecfd69b59f8aeb3843742a3d9897db5",
+  "candidate_branch": "candidate/note-reforge-keep-reforge-priority-20261021",
+  "subject_executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "subject_requests_completed": 12,
+  "evaluator": "GPT-5.6 Sol / ChatGPT",
+  "anti_leakage": [
+    "Subject prompts contained Skill text, task text and source document only.",
+    "Expected decisions, reader-task answers, acceptance criteria, hard-fail conditions and historical adjudications were excluded from subject prompts.",
+    "Production and candidate arms used isolated COPILOT_HOME sessions."
+  ],
+  "cases": [
+    {
+      "case_id": "case_06_heldout_keep_sql_blind_cases",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "KEEP",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate keeps the complete test-asset note unchanged and correctly preserves the fact that 23 cases are not yet proven passed."
+    },
+    {
+      "case_id": "case_14_heldout_patch_thinking_reconstruction",
+      "expected": "KEEP",
+      "production": "PATCH",
+      "candidate": "KEEP",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate stops because the source already provides the supported 5/15/45-minute selection model and no present-tense task defect is identified."
+    },
+    {
+      "case_id": "case_18_heldout_reforge_xianxia_talismans",
+      "expected": "KEEP",
+      "production": "KEEP",
+      "candidate": "KEEP",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate recognizes that the existing index plus twelve per-item entries already support lookup and does not invent extra lore."
+    },
+    {
+      "case_id": "case_20_heldout_block_irreconcilable_contradiction",
+      "expected": "BLOCK",
+      "production": "PATCH",
+      "candidate": "BLOCK",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate identifies the irreconcilable offline-network versus public-webhook/cloud-auth requirements and requests an authorized priority decision."
+    },
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected": "PATCH",
+      "production": "PATCH",
+      "candidate": "PATCH",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate restores the missing 15-minute -> balanced-version navigation while preserving the three prompt bodies, metadata, code block and unrelated directives."
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected": "REFORGE",
+      "production": "KEEP",
+      "candidate": "REFORGE",
+      "candidate_semantic_verdict": "PASS",
+      "reason": "Candidate restores twelve independent object-level entries from the flattened core paragraph without adding new lore."
+    }
+  ],
+  "aggregate": {
+    "production_decision_accuracy": "3/6",
+    "candidate_decision_accuracy": "6/6",
+    "candidate_strict_delivery_gate": "6/6",
+    "candidate_semantic_case_pass": "6/6",
+    "gate": "PASS"
+  },
+  "evidence_boundary": [
+    "Copilot account default model is unpinned, so this is exploratory real behavioral evidence rather than a model-version-stable benchmark.",
+    "case_21 and case_22 are deterministic mutations of real historical snapshots.",
+    "The raw outputs are preserved in the candidate branch and immutable Actions artifact before adjudication."
+  ],
+  "production_merge_allowed_after_repository_regression": true
+}

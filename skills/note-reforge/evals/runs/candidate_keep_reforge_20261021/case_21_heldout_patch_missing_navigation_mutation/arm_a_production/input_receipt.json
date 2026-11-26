@@ -1,0 +1,8 @@
+{
+  "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+  "arm": "arm_a_production",
+  "source_path": "skills/note-reforge/evals/cases/source_snapshots/case_21_heldout_patch_missing_navigation_mutation.org",
+  "source_sha256": "f5eb6028060fe747c665b41b6014f1436cb8491900875e1580d38355109b3902",
+  "skill_sha256": "abb0e6b4f0af4bb4f05e10da6fe732a6a405bb9b69edc7fc1182d49faaa73aad",
+  "expected_decision_hidden_from_subject": true
+}

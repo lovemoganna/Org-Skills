@@ -1,0 +1,20 @@
+{
+  "request": {
+    "step_id": "causes",
+    "kind": "skill",
+    "target": "causal-net-loop",
+    "executor_binding": "NATIVE_HOST_MODEL_SKILL",
+    "side_effect_class": "host",
+    "args": {
+      "question": "Compare coverage gap vs grading artifact and isolate which causal claims the evidence supports."
+    },
+    "request_sha256": "2f368e20498c25cd7947a9a7d12aa612c38a8ff7b145b261636a903bdde78bba"
+  },
+  "source": {
+    "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+    "path": "skills/causal-net-loop/SKILL.md",
+    "blob": "893b581a23fc2474d6d4fad761ecb4d2965c163c"
+  },
+  "executor": "current Work model",
+  "output": "# N07 盲评差距复核\n\n观察结果：原报告记录第二轮 N07 基线 100 分、候选 80 分。原始基线回答为 CSV、权限、时区三类风险各给出可执行检查。候选详细说明 CSV 重放与读回，明确权限和时区应作为独立故障，但发布回归只落实到 CSV。\n\n主解释：候选把优先诊断的 CSV 案例当成了发布检查的全部范围，导致权限与时区只有分类，没有可运行验收。若是盲评误读，候选正文应含有授权/拒绝判据和时区转换的同一时刻判据；逐段核对未发现两项。两份回答均限制无根据重写，不能把架构建议归为差距来源。\n\n边界：这是模型回答的覆盖差异。原始回答与评分不能证明历史导出事故，也不能单独识别 Skill 文本变化对分差的因果效应。区分后者需要冻结模型、题目和评分器，重复随机化配对运行。\n\n交接：保留 CSV 的具体重放做法，把另外两类验收变成发布门槛；不得将三个风险合并成一个机制。"
+}

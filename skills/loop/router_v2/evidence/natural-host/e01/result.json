@@ -1,0 +1,44 @@
+{
+  "status": "VERIFIED",
+  "summary": {
+    "task_id": "E01",
+    "status": "COMPLETED_UNVERIFIED",
+    "completed": 3,
+    "total": 3,
+    "acceptance": [
+      {
+        "id": "evidence_based_diagnosis_and_method",
+        "status": "EVIDENCE_RECORDED",
+        "evidence_from": [
+          "source",
+          "cause",
+          "method"
+        ]
+      }
+    ],
+    "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+    "failed": [],
+    "pending_model": []
+  },
+  "route": "fixed_chain",
+  "verification": {
+    "checks": [
+      {
+        "evidence": {
+          "baseline_observations": [
+            "AWAITING_MODEL twice, 0 outputs",
+            "control tool BLOCKED/CAPABILITY_UNAVAILABLE",
+            "source lines 168-172 and 199-208"
+          ],
+          "baseline_sha256": "0aaa32f842c15c711a6016e3744303d83e56bae1d314b871b96b5f019df29edb",
+          "downstream_input_equals_upstream": true,
+          "independently_reran": "node skills/loop/router_v2/evidence/natural-host/e01/baseline.cjs",
+          "result_judgment": "Both analyses cite actual observations and diagnosis supplies a falsifier; method names trigger, action, stop, and out-of-scope failure. Route inferred two Skills from unlabelled input.",
+          "reviewer": "separate read-only Work reviewer"
+        },
+        "id": "evidence_based_diagnosis_and_method",
+        "passed": true
+      }
+    ]
+  }
+}

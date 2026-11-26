@@ -1,0 +1,152 @@
+{
+  "plan": {
+    "id": "B",
+    "request": "复核一场曾失败的评测。查原始盲评与两份回答，判断差距由什么遗漏造成，给出可执行、可迁移的验收卡。",
+    "goal": "Reconcile the N07 blind-evaluation result with the original outputs and produce a reusable release acceptance card",
+    "mode": "dynamic_chain",
+    "constraints": [
+      "Use original pinned sources only for the historical facts",
+      "No operational incident claims"
+    ],
+    "steps": [
+      {
+        "id": "review",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/Org-Skills",
+          "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/REPORT.md",
+          "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+        }
+      },
+      {
+        "id": "baseline",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/Org-Skills",
+          "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/baseline/N07.json",
+          "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+        }
+      },
+      {
+        "id": "candidate",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/Org-Skills",
+          "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/candidate/N07.json",
+          "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+        }
+      },
+      {
+        "id": "causes",
+        "kind": "skill",
+        "target": "causal-net-loop",
+        "depends_on": [
+          "review",
+          "baseline",
+          "candidate"
+        ],
+        "args": {
+          "question": "Compare coverage gap vs grading artifact and isolate which causal claims the evidence supports."
+        }
+      },
+      {
+        "id": "card",
+        "kind": "skill",
+        "target": "keypoint-loop",
+        "depends_on": [
+          "causes"
+        ],
+        "args": {
+          "question": "Turn the grounded distinction into a reusable, executable candidate acceptance card, without claiming production validation."
+        }
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "compare",
+        "criteria": "Compare CSV, authorization and timezone using all three sources",
+        "evidence_from": [
+          "review",
+          "baseline",
+          "candidate",
+          "causes"
+        ]
+      },
+      {
+        "id": "card",
+        "criteria": "Produce a release gate with a falsifiable check and limits",
+        "evidence_from": [
+          "card"
+        ]
+      }
+    ]
+  },
+  "plan_sha256": "fad739e69c87d016b42a86f294789c61dadfc29f1b39510b21097c596e6cffb5",
+  "skill_source_hashes": {
+    "causal-net-loop": "1d60c198baad6cb5cd7b02e8dd48619084559cb657f302e342f0c9983c07840c",
+    "keypoint-loop": "43f656f69a09a6aa777e27722751f4a9ebaca7efac81b6b61f8c9acb3dc707d3"
+  },
+  "host_declared_capabilities": [
+    "github.fetch_file",
+    "github.fetch_workflow_run_jobs",
+    "github.get_pr_info"
+  ],
+  "host_write_authorization_declared": false,
+  "read_retries": {},
+  "results": {
+    "review": {
+      "step_id": "review",
+      "request_sha256": "8f0098936f3f9dfe36d13239ecfaf4273852c2d64fc45940c0d1c3ea93518398",
+      "status": "SUCCESS",
+      "receipt_ref": "review-1-receipt.json",
+      "artifact_ref": "review-1-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:18.995984+00:00"
+    },
+    "baseline": {
+      "step_id": "baseline",
+      "request_sha256": "b3be2d3b56140abe8aea34c215a8ab7f52e7f03b1849255f0071ed6954eb0a3c",
+      "status": "SUCCESS",
+      "receipt_ref": "baseline-1-receipt.json",
+      "artifact_ref": "baseline-1-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:20.163486+00:00"
+    },
+    "candidate": {
+      "step_id": "candidate",
+      "request_sha256": "94623f2468cc14d1b9db481b3d3918c468daed24d0eab8e0d2542aca1702d86c",
+      "status": "SUCCESS",
+      "receipt_ref": "candidate-1-receipt.json",
+      "artifact_ref": "candidate-1-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:21.657848+00:00"
+    },
+    "causes": {
+      "step_id": "causes",
+      "request_sha256": "2f368e20498c25cd7947a9a7d12aa612c38a8ff7b145b261636a903bdde78bba",
+      "status": "SUCCESS",
+      "receipt_ref": "causes-skill-output.json",
+      "artifact_ref": "causes-skill-output.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:41:03.818643+00:00"
+    },
+    "card": {
+      "step_id": "card",
+      "request_sha256": "a91ccbb5779cab62e84a4a6717e41282d9a13fad48200a0e1d655d21be1a3ce3",
+      "status": "SUCCESS",
+      "receipt_ref": "card-skill-output.json",
+      "artifact_ref": "card-skill-output.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:41:04.964167+00:00"
+    }
+  },
+  "started_at": "2026-11-21T03:39:17.393253+00:00"
+}

@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "id": "effort-success",
+  "title": "为什么努力不一定成功",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "theme": {
+    "background": "#101a24",
+    "foreground": "#f4f0e8",
+    "accent": "#e8b86d"
+  },
+  "scenes": [
+    {
+      "type": "hook",
+      "seconds": 6,
+      "eyebrow": "一个值得重想的问题",
+      "title": "为什么努力\n不一定成功？",
+      "subtitle": "努力很重要，但它不是全部。",
+      "narration": "为什么努力不一定成功？因为决定结果的，不只有努力。",
+      "audio": "audio/yunxi-01.wav"
+    },
+    {
+      "type": "equation",
+      "seconds": 6,
+      "eyebrow": "01 / 看清影响因素",
+      "title": "结果，是多种因素共同作用",
+      "items": [
+        "努力",
+        "方向",
+        "方法",
+        "机会"
+      ],
+      "subtitle": "概念示意 · 不是可计算的成功公式",
+      "narration": "方向、方法和机会都很重要，投入多，不代表回报就多。",
+      "audio": "audio/yunxi-02.wav"
+    },
+    {
+      "type": "comparison",
+      "seconds": 6,
+      "eyebrow": "02 / 区分忙碌与进步",
+      "title": "同样的投入，不同的路径",
+      "items": [
+        "重复低效方法",
+        "根据反馈调整"
+      ],
+      "subtitle": "方向偏了，更多努力也可能只是原地打转。",
+      "narration": "方法不对，努力也可能原地打转，所以要及时调整。",
+      "audio": "audio/yunxi-03.wav"
+    },
+    {
+      "type": "steps",
+      "seconds": 6,
+      "eyebrow": "03 / 把努力变成有效行动",
+      "title": "用一个小循环，改善下一次",
+      "items": [
+        "设定小目标",
+        "获取反馈",
+        "调整再尝试"
+      ],
+      "subtitle": "看结果 → 找偏差 → 改一个动作",
+      "narration": "先设个小目标，再看看反馈，找到问题，调整下一步。",
+      "audio": "audio/yunxi-04.wav"
+    },
+    {
+      "type": "takeaway",
+      "seconds": 6,
+      "eyebrow": "带走这一句话",
+      "title": "努力提高可能性，\n不承诺必然性。",
+      "subtitle": "专注可控的行动，也给不确定性留一点空间。",
+      "narration": "努力提高成功的可能，却不保证结果。专注可控的事。",
+      "audio": "audio/yunxi-05.wav"
+    }
+  ],
+  "narrationEnabled": false
+}

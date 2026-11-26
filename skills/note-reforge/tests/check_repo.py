@@ -64,6 +64,54 @@ for clause in ("标准参考答案只是语义参照，不是逐项关键词清�
     assert clause in l3_validator, ("L3 semantic-equivalence contract missing", clause)
 assert "【文档内容】" in l3_validator and "document_text[:8000]" in l3_validator
 
+# Held-out key audit regressions: do not reintroduce unsupported answers/labels.
+case06 = (SKILL_ROOT / "evals" / "cases" / "case_06_heldout_keep_sql_blind_cases.yaml").read_text(encoding="utf-8")
+case14 = (SKILL_ROOT / "evals" / "cases" / "case_14_heldout_patch_thinking_reconstruction.yaml").read_text(encoding="utf-8")
+case18 = (SKILL_ROOT / "evals" / "cases" / "case_18_heldout_reforge_xianxia_talismans.yaml").read_text(encoding="utf-8")
+assert "已完备且通过测试" not in case06 and "D08 案例的测试基准" not in case06
+assert "expected_decision: KEEP" in case14
+assert "延迟敏感或下游仅需结构化提取" not in case14
+assert "expected_decision: KEEP" in case18
+assert "消耗大量真元" not in case18 and "需承受反冲" not in case18
+
+# Supplemental source-grounded PATCH/REFORGE mutations and adjudication.
+case21 = (SKILL_ROOT / "evals" / "cases" / "case_21_heldout_patch_missing_navigation_mutation.yaml").read_text(encoding="utf-8")
+case22 = (SKILL_ROOT / "evals" / "cases" / "case_22_heldout_reforge_flattened_atlas_mutation.yaml").read_text(encoding="utf-8")
+source21 = (SKILL_ROOT / "evals" / "cases" / "source_snapshots" / "case_21_heldout_patch_missing_navigation_mutation.org").read_text(encoding="utf-8")
+source22 = (SKILL_ROOT / "evals" / "cases" / "source_snapshots" / "case_22_heldout_reforge_flattened_atlas_mutation.org").read_text(encoding="utf-8")
+assert "expected_decision: PATCH" in case21 and "EFFORT 为 15min" in case21
+assert "| 15 分钟，形成结构化理解 |" not in source21
+assert "* 整合平衡版（推荐使用）" in source21 and ":EFFORT: 15min" in source21
+assert "expected_decision: REFORGE" in case22 and "* 十二神通原始记录" in source22
+assert "** 兔 · 一瞬万里" not in source22
+for _fact in ("鼠，化静为动", "兔，一瞬万里", "猪，神目冲虚"):
+    assert _fact in source22, ("supplemental reforge fact lost", _fact)
+assert "真元" not in source22 and "反冲" not in source22
+_supp = json.loads((
+    SKILL_ROOT / "evals" / "runs" / "supplemental_heldout_copilot_20261020" / "adjudication_20261020.json"
+).read_text(encoding="utf-8"))
+assert _supp["subject_requests_completed"] == 4
+assert _supp["cases"][0]["skill"]["detected_decision"] == "PATCH"
+assert _supp["cases"][0]["skill"]["delivery_verdict"] == "PASS"
+assert _supp["cases"][1]["skill"]["detected_decision"] == "KEEP"
+assert _supp["cases"][1]["skill"]["decision_verdict"] == "FAIL"
+assert _supp["defect_found"]["name"] == "REFORGE false negative caused by KEEP precedence"
+
+# KEEP produces no replacement document: the unchanged source is the effective artifact.
+from importlib.util import module_from_spec as _eval_module_from_spec, spec_from_file_location as _eval_spec_from_file_location
+_l1_spec = _eval_spec_from_file_location("note_reforge_l1", SKILL_ROOT / "evals" / "validators" / "l1_deterministic.py")
+assert _l1_spec and _l1_spec.loader
+_l1 = _eval_module_from_spec(_l1_spec)
+_l1_spec.loader.exec_module(_l1)
+_keep_source = "#+TITLE: Demo\n#+WIKI_ID: keep-id\n\n#+begin_src text\noriginal\n#+end_src\n"
+_keep_meta = {"expected_decision": "KEEP", "protected_content": ["#+WIKI_ID: keep-id"]}
+_keep_result = _l1.validate_l1(_keep_source, "**KEEP** — 原文保持不变，不生成 .next。", _keep_meta)
+assert _keep_result["pass"] is True
+assert _keep_result["decision_matched"] is True
+assert _keep_result["headers_preserved"] is True
+assert _keep_result["code_blocks_preserved"] is True
+assert _keep_result["protected_content_intact"] is True
+
 rejudge_path = SKILL_ROOT / "evals" / "runs" / "smoke_ab_01" / "rejudge_20261020.json"
 rejudge = json.loads(rejudge_path.read_text(encoding="utf-8"))
 for arm_name in ("arm_a_baseline", "arm_b_skill"):
@@ -104,6 +152,12 @@ assert "Start a new conversation with only:" in regression
 assert "same invocation string uses the new canonical behavior" in regression
 assert "Keep the note compact." in compact_regression
 assert "#### 终稿去冗余（跨章节语义检查）" in canonical
+# Reader comprehension is checked by retelling and transfer, not by shorter wording.
+reader_regression = (SKILL_ROOT / "tests" / "regression" / "reader-retell-and-transfer.md").read_text(encoding="utf-8")
+for clause in ("复述与迁移检查", "只改变原情景的一个关键条件", "KEEP 时以未改动的原稿执行检查", "不能删掉读者据以判断的事实"):
+    assert clause in canonical, ("reader comprehension contract missing", clause)
+for clause in ("Case 1", "Case 2", "Case 3", "未执行模型 A/B", "预期：能保留", "预期：不能"):
+    assert clause in reader_regression, ("reader transfer regression missing", clause)
 assert "10. **终稿去冗余验收:**" in canonical
 for clause in ("56f68e5", "0503bc8", "相同字词不构成冗余", "9/10", "两版都保留", "NOOP", "失败条件", "语义去冗余"):
     assert clause in semantic_dedup_regression, ("final semantic dedup regression missing", clause)

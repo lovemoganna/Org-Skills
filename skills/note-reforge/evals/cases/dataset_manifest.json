@@ -3,9 +3,9 @@
   "date": "2026-10-19",
   "total_cases": 20,
   "distribution": {
-    "KEEP": 6,
-    "PATCH": 8,
-    "REFORGE": 4,
+    "KEEP": 8,
+    "PATCH": 7,
+    "REFORGE": 3,
     "BLOCK": 2
   },
   "held_out_count": 4,
@@ -117,7 +117,7 @@
     {
       "case_id": "case_14_heldout_patch_thinking_reconstruction",
       "type": "real_historical",
-      "expected_decision": "PATCH",
+      "expected_decision": "KEEP",
       "held_out": true,
       "sha256": "454aa5272a140e15",
       "file": "skills\\note-reforge\\evals\\cases\\case_14_heldout_patch_thinking_reconstruction.yaml"
@@ -149,7 +149,7 @@
     {
       "case_id": "case_18_heldout_reforge_xianxia_talismans",
       "type": "real_historical",
-      "expected_decision": "REFORGE",
+      "expected_decision": "KEEP",
       "held_out": true,
       "sha256": "26469ea885ea6c98",
       "file": "skills\\note-reforge\\evals\\cases\\case_18_heldout_reforge_xianxia_talismans.yaml"

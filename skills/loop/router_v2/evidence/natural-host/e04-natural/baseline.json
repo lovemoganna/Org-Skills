@@ -1,0 +1,37 @@
+{
+  "task": "在新建的隔离测试分支上改进现有 sum 函数，让它支持负数、空数组和数字字符串；遇到非有限输入应抛错。只改现有求和模块，提交后独立运行测试并核对远端文件。",
+  "scope": {
+    "branch": "legion-e04-e05-natural-input-26b4049",
+    "path": "legion-test/sum.mjs",
+    "repository_full_name": "lovemoganna/Org-Skills"
+  },
+  "base": "996b1f7f57fdb587e74940f362443d66a6d54a47",
+  "provision": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "branch": "legion-e04-e05-natural-input-26b4049"
+    },
+    "isError": false
+  },
+  "original": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "content": "export const sum = values => values.reduce((a, b) => a + b, 0);\n",
+      "encoding": "utf-8",
+      "sha": "b51e5621efa3e1178a90b5f582e94c460913b710",
+      "display_url": "https://github.com/lovemoganna/Org-Skills/blob/996b1f7f57fdb587e74940f362443d66a6d54a47/legion-test/sum.mjs",
+      "display_title": "sum.mjs"
+    },
+    "isError": false
+  }
+}

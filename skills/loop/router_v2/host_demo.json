@@ -1,0 +1,43 @@
+{
+  "id": "metaloop-plan-vs-execution",
+  "goal": "Read PR evidence about MetaLoop plan-only failures and form a grounded repair hypothesis",
+  "steps": [
+    {
+      "id": "read_pr",
+      "kind": "tool",
+      "target": "github.get_pr_info",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "pr_number": 116
+      },
+      "depends_on": []
+    },
+    {
+      "id": "diagnose",
+      "kind": "skill",
+      "target": "loop-engineering-meta",
+      "args": {
+        "question": "Using observed PR #116 evidence, identify the earliest reason plans did not become executions. Separate evidence from conjecture.",
+        "requires_receipt": "read_pr"
+      },
+      "depends_on": [
+        "read_pr"
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "source_receipt",
+      "evidence_from": [
+        "read_pr"
+      ]
+    },
+    {
+      "id": "causal_boundary",
+      "evidence_from": [
+        "read_pr",
+        "diagnose"
+      ]
+    }
+  ]
+}

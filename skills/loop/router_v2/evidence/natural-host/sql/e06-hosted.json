@@ -1,0 +1,262 @@
+{
+  "state": {
+    "version": 1,
+    "plan": {
+      "id": "legion",
+      "goal": "使用 Skill Router V2 的军团模式执行：读取隔离核验清单 https://docs.google.com/spreadsheets/d/1ZPdXxmchdk9gKIodQFkhd5XV1lH6ZKKw_cUdNBeiY2o/edit#gid=2026112306 的 ReleaseChecklist_E06 页。第一行是标题，第二行 A、B 列分别是公开仓库名和 PR 编号。用这两个实值从 GitHub 查证这条记录，交付 PR 的标题、合并状态和合并提交，并独立核验。",
+      "steps": [
+        {
+          "id": "row",
+          "kind": "tool",
+          "target": "sheets.range",
+          "args": {
+            "range": "A2:B2",
+            "sheet_name": "ReleaseChecklist_E06",
+            "spreadsheet_id": "1ZPdXxmchdk9gKIodQFkhd5XV1lH6ZKKw_cUdNBeiY2o",
+            "value_render_option": "UNFORMATTED_VALUE"
+          },
+          "depends_on": []
+        },
+        {
+          "id": "pr",
+          "kind": "tool",
+          "target": "github.get_pr_info",
+          "args": {
+            "pr_number": {
+              "$from": "row",
+              "path": [
+                "raw",
+                "structuredContent",
+                "values",
+                0,
+                1
+              ]
+            },
+            "repository_full_name": {
+              "$from": "row",
+              "path": [
+                "raw",
+                "structuredContent",
+                "values",
+                0,
+                0
+              ]
+            }
+          },
+          "depends_on": [
+            "row"
+          ]
+        }
+      ],
+      "acceptance": [
+        {
+          "evidence_from": [
+            "pr"
+          ],
+          "id": "release_record"
+        }
+      ]
+    },
+    "original_plan": {
+      "id": "legion",
+      "goal": "使用 Skill Router V2 的军团模式执行：读取隔离核验清单 https://docs.google.com/spreadsheets/d/1ZPdXxmchdk9gKIodQFkhd5XV1lH6ZKKw_cUdNBeiY2o/edit#gid=2026112306 的 ReleaseChecklist_E06 页。第一行是标题，第二行 A、B 列分别是公开仓库名和 PR 编号。用这两个实值从 GitHub 查证这条记录，交付 PR 的标题、合并状态和合并提交，并独立核验。",
+      "steps": [
+        {
+          "id": "row",
+          "kind": "tool",
+          "target": "sheets.range",
+          "args": {
+            "range": "A2:B2",
+            "sheet_name": "ReleaseChecklist_E06",
+            "spreadsheet_id": "1ZPdXxmchdk9gKIodQFkhd5XV1lH6ZKKw_cUdNBeiY2o",
+            "value_render_option": "UNFORMATTED_VALUE"
+          },
+          "depends_on": []
+        },
+        {
+          "id": "pr",
+          "kind": "tool",
+          "target": "github.get_pr_info",
+          "args": {
+            "pr_number": {
+              "$from": "row",
+              "path": [
+                "raw",
+                "structuredContent",
+                "values",
+                0,
+                1
+              ]
+            },
+            "repository_full_name": {
+              "$from": "row",
+              "path": [
+                "raw",
+                "structuredContent",
+                "values",
+                0,
+                0
+              ]
+            }
+          },
+          "depends_on": [
+            "row"
+          ]
+        }
+      ],
+      "acceptance": [
+        {
+          "evidence_from": [
+            "pr"
+          ],
+          "id": "release_record"
+        }
+      ]
+    },
+    "results": {
+      "row": {
+        "id": "row",
+        "target": "sheets.range",
+        "kind": "tool",
+        "status": "SUCCESS",
+        "provider": "mcp__codex_apps__google_drive_get_spreadsheet_range",
+        "raw": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "range": "ReleaseChecklist_E06!A2:B2",
+            "majorDimension": "ROWS",
+            "values": [
+              [
+                "lovemoganna/Org-Skills",
+                121
+              ]
+            ]
+          },
+          "isError": false
+        }
+      },
+      "pr": {
+        "id": "pr",
+        "target": "github.get_pr_info",
+        "kind": "tool",
+        "status": "SUCCESS",
+        "provider": "mcp__codex_apps__github_get_pr_info",
+        "raw": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+            "number": 121,
+            "state": "closed",
+            "merged": true,
+            "mergeable": false,
+            "draft": false,
+            "body": "## Purpose\nFix the T18 demonstrated TOCTOU window: a worker may retain authorization after another worker becomes owner and append twice. Candidate only; **DO NOT MERGE / DO NOT PROMOTE** without independent regression and real sink evidence.\n\n## Scope\n- Fails closed with `SINK_ATOMIC_WRITE_REQUIRED` for unsupported non-idempotent writes.\n- Explicitly limits Sheets writes to one atomic batch creating a unique sheet and writing only that new sheet.\n- Requires deterministic path/version parameters for GitHub create/update.\n- Trusted host write adapters may opt in to sink atomic semantics; they must be separately reviewed.\n- Adds T18/T19 positive/negative tests plus documentation. No stable V2 path changes.\n\n## Evidence\n- Baseline: two independent old-engine unsafe appends caused two provider effects in controlled V8 fixture; historical T18 live test showed 2 matching rows.\n- Candidate V8 execution: 17/17 test callbacks passed; native Node 22 GitHub CI must be independently checked.\n- Real isolated Google Sheets sink-atomic patterns previously passed T19/T20; the new candidate code still needs fresh real connector verification.\n\n## Boundaries\nNo general exactly-once, fencing, lease takeover, or unrestricted arbitrary writes claim. Review potential backward compatibility impact: unguarded historical writes now intentionally BLOCKED. Do not merge main.",
+            "title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression",
+            "base": "main",
+            "base_sha": "041931bb2831508b29a1b7698b4600f33cde241c",
+            "head": "candidate/legion-t18-sink-atomic-20261122-r1",
+            "head_sha": "832ceedc67dbc89f1501a8ae92a9232c67e69c04",
+            "head_repo_id": 1401137531,
+            "head_repo_full_name": "lovemoganna/Org-Skills",
+            "merge_commit_sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+            "user": {
+              "login": "lovemoganna",
+              "name": "lovemoganna",
+              "email": null,
+              "avatar_url": "https://avatars.githubusercontent.com/u/31183446?v=4",
+              "id": 31183446
+            },
+            "requested_reviewers": null,
+            "requested_team_reviewers": null,
+            "diff": null,
+            "comments": null,
+            "created_at": "2026-11-22T15:54:33Z",
+            "updated_at": "2026-11-22T20:58:36Z",
+            "closed_at": "2026-11-22T20:57:38Z",
+            "merged_at": "2026-11-22T20:57:38Z",
+            "commits": 8,
+            "changed_files": 6,
+            "additions": 326,
+            "deletions": 4,
+            "display_url": "https://github.com/lovemoganna/Org-Skills/pull/121",
+            "display_title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression"
+          },
+          "isError": false
+        }
+      }
+    },
+    "trace": [
+      {
+        "event": "EXECUTED",
+        "step": "row",
+        "status": "SUCCESS",
+        "provider": "mcp__codex_apps__google_drive_get_spreadsheet_range"
+      },
+      {
+        "event": "EXECUTED",
+        "step": "pr",
+        "status": "SUCCESS",
+        "provider": "mcp__codex_apps__github_get_pr_info"
+      }
+    ],
+    "status": "COMPLETED_UNVERIFIED",
+    "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+    "natural_entry": 1,
+    "selected_skills": {},
+    "route": "direct",
+    "pending_model": []
+  },
+  "route": "direct",
+  "summary": {
+    "task_id": "legion",
+    "status": "COMPLETED_UNVERIFIED",
+    "completed": 2,
+    "total": 2,
+    "acceptance": [
+      {
+        "id": "release_record",
+        "status": "EVIDENCE_RECORDED",
+        "evidence_from": [
+          "pr"
+        ]
+      }
+    ],
+    "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+    "failed": [],
+    "pending_model": []
+  },
+  "status": "VERIFIED",
+  "verification": {
+    "checks": [
+      {
+        "evidence": {
+          "independent_reads": [
+            "google_drive_get_spreadsheet_cells",
+            "github_fetch_pr",
+            "git show --format=%H,%P,%s"
+          ],
+          "independent_reviewer": "/root reread ReleaseChecklist_E06!A2:B2 and GitHub PR; same title, merged true and same merge SHA.",
+          "merge_commit_sha": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+          "merged": true,
+          "title": "Candidate: fail-closed sink-atomic write gate for Legion T18 concurrency regression",
+          "typed_values": [
+            "lovemoganna/Org-Skills",
+            121
+          ]
+        },
+        "id": "release_record",
+        "passed": true
+      }
+    ]
+  }
+}

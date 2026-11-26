@@ -1,0 +1,20 @@
+{
+  "request": {
+    "step_id": "card",
+    "kind": "skill",
+    "target": "keypoint-loop",
+    "executor_binding": "NATIVE_HOST_MODEL_SKILL",
+    "side_effect_class": "host",
+    "args": {
+      "question": "Turn the grounded distinction into a reusable, executable candidate acceptance card, without claiming production validation."
+    },
+    "request_sha256": "a91ccbb5779cab62e84a4a6717e41282d9a13fad48200a0e1d655d21be1a3ce3"
+  },
+  "source": {
+    "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+    "path": "skills/keypoint-loop/SKILL.md",
+    "blob": "c1594cf7eb3234fe75cd9e84c11fcaf1fc5e2940"
+  },
+  "executor": "current Work model",
+  "output": "# 导出改动发布验收卡\n\n适用：改动可能影响现有导出入口的序列化、授权或时间转换。每个发布候选必须关联同一构建上的三份独立证据。\n\n| 门槛 | 执行与通过条件 | 必留证据 |\n|---|---|---|\n| CSV 往返 | 用两条历史转义样本走现有导出入口，再按产品 CSV 协议读回。逐字段、行列与原值一致才通过。分别保留两条结果。 | 脱敏输入、导出文件、解析断言与构建号 |\n| 权限 | 用授权用户、无权用户对同一范围各发一次真实导出请求。授权请求产生可用文件；无权请求被拒且无可取得的导出文件。 | 测试主体权限、请求状态、产物与审计记录 |\n| 时区 | 用已知 UTC 时刻和产品约定的目标时区，比较导出显示值与预期显示值。将导出值按约定时区反解，必须回到同一时刻。 | 输入时间、时区标识、期望/实际值与反解断言 |\n\n决策：任何未跑、结果缺失或断言失败都不给通过。某一类原始样本不可用时，将该项标待验，并记录需补的记录和责任人。一次失败只定位相应发布门槛；若两条 CSV 重放并非同一机制，分别修复，不扩大到平台重写。\n\n来源：同一固定提交下 N07 盲评报告、基线回答和候选回答。状态：从已观察到的模型回答覆盖缺口提炼出的候选验收卡，未使用实际业务导出服务验证。"
+}

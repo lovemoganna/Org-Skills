@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link "Bybit" [ref=e4] [cursor=pointer]:
+        - /url: https://partner.bybit.com/wsot106094
+        - img "Bybit" [ref=e5]
+        - generic: 🔥交易赛
+      - generic [ref=e6]:
+        - generic [ref=e7]: 10,000 U
+        - generic [ref=e8]: 初始本金
+      - generic [ref=e9]:
+        - generic [ref=e10]: 10,000.20 U
+        - generic [ref=e11]: 账户权益
+      - generic [ref=e12]:
+        - generic [ref=e13]: "+0.20"
+        - generic [ref=e14]: 本局盈亏
+      - generic [ref=e16]:
+        - generic [ref=e17]: 0/20
+        - generic [ref=e18]: 本场进度
+      - generic [ref=e19]:
+        - generic [ref=e20]: "0"
+        - generic [ref=e21]: 累计局数
+      - generic [ref=e22]:
+        - generic [ref=e23]: —
+        - generic [ref=e24]: 胜率
+      - generic [ref=e25]:
+        - generic [ref=e26]: —
+        - generic [ref=e27]: 累计盈亏
+      - generic [ref=e28]:
+        - generic [ref=e29]: "0.00"
+        - generic [ref=e30]: 累计手续费
+      - button "打开每日一题" [ref=e31] [cursor=pointer]: 每日一题
+      - button "好友PK" [ref=e32] [cursor=pointer]
+      - button "统计" [ref=e33] [cursor=pointer]
+      - button "设置" [ref=e34] [cursor=pointer]
+      - button "说明" [ref=e35] [cursor=pointer]
+      - link "← 主站" [ref=e36] [cursor=pointer]:
+        - /url: https://kking2020.com
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic: 1小时加密货币 · 标的、时间与价格轴已屏蔽 · 纵轴 = 开局那根收盘 100
+          - button "＋ 加指标" [ref=e63] [cursor=pointer]
+        - generic [ref=e44]:
+          - button "▶ 播放Space" [ref=e45] [cursor=pointer]
+          - button "下一根→" [ref=e46] [cursor=pointer]
+          - combobox "播放速度" [ref=e47]:
+            - option "3 秒/根" [selected]
+            - option "4 秒/根"
+            - option "5 秒/根"
+            - option "6 秒/根"
+            - option "8 秒/根"
+            - option "10 秒/根"
+            - option "自定义…"
+          - button "结束本局" [ref=e48] [cursor=pointer]
+          - button "换一段" [disabled] [ref=e49]
+          - button "揭示 300 根" [ref=e50] [cursor=pointer]
+          - generic [ref=e64]: 第 1 根 · 3 秒/根
+          - generic [ref=e51]:
+            - button "ƒx指标" [ref=e52] [cursor=pointer]
+            - button "光标" [pressed] [ref=e54] [cursor=pointer]
+            - button "趋势线" [ref=e55] [cursor=pointer]
+            - button "水平线" [ref=e56] [cursor=pointer]
+            - button "斐波那契" [ref=e57] [cursor=pointer]
+            - button "撤销" [ref=e59] [cursor=pointer]
+            - button "清空" [ref=e60] [cursor=pointer]
+            - button "适应" [ref=e61] [cursor=pointer]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - button "逐仓" [ref=e67] [cursor=pointer]
+          - button "1x" [ref=e68] [cursor=pointer]
+          - generic [ref=e69]: 盲测 · USDT 永续
+        - tablist [ref=e70]:
+          - tab "限价" [ref=e71] [cursor=pointer]
+          - tab "市价" [selected] [ref=e72] [cursor=pointer]
+        - generic [ref=e73]: 最新价 100.628
+        - generic [ref=e74]:
+          - generic [ref=e75]: 数量
+          - textbox "仓位价值" [ref=e76]
+          - emphasis [ref=e77]: USDT
+        - generic [ref=e78]:
+          - slider "按可用保证金百分比" [ref=e79]: "0"
+          - generic [ref=e80]: 0%
+        - generic [ref=e81]:
+          - button "10%" [ref=e82] [cursor=pointer]
+          - button "25%" [ref=e83] [cursor=pointer]
+          - button "50%" [ref=e84] [cursor=pointer]
+          - button "75%" [ref=e85] [cursor=pointer]
+          - button "100%" [ref=e86] [cursor=pointer]
+        - generic [ref=e87]:
+          - generic [ref=e88]: 可用
+          - generic [ref=e89]: 10,000.20 USDT
+        - generic [ref=e90] [cursor=pointer]:
+          - checkbox "止盈 / 止损" [ref=e91]
+          - generic [ref=e92]: 止盈 / 止损
+        - generic [ref=e93]:
+          - button "买入 / 做多" [ref=e94] [cursor=pointer]
+          - button "卖出 / 做空" [ref=e95] [cursor=pointer]
+        - generic [ref=e96]:
+          - generic [ref=e97]: 可开多 9,995 U
+          - generic [ref=e98]: 可开空 9,995 U
+          - generic [ref=e99]: 保证金 0.00 U
+          - generic [ref=e100]: 手续费 ≈ 0.00 U
+        - generic [ref=e101]: 持仓
+        - generic [ref=e103]: 没有持仓
+        - generic [ref=e105]: 当前委托
+        - generic [ref=e107]: 没有挂单
+        - generic [ref=e109]: 账户
+        - generic [ref=e270]:
+          - generic [ref=e271]:
+            - generic [ref=e272]: 钱包余额
+            - generic [ref=e273]: 10,000.20
+          - generic [ref=e274]:
+            - generic [ref=e275]: 未实现盈亏
+            - generic [ref=e276]: "0.00"
+          - generic [ref=e277]:
+            - generic [ref=e278]: 保证金余额
+            - generic [ref=e279]: 10,000.20
+          - generic [ref=e280]:
+            - generic [ref=e281]: 本局盈亏
+            - generic [ref=e282]: "+0.20"
+          - generic [ref=e283]:
+            - generic [ref=e284]: 本局手续费
+            - generic [ref=e285]: "0.04"
+          - generic [ref=e286]:
+            - generic [ref=e287]: 成交笔数
+            - generic [ref=e288]: "2"
+        - button "结束本局" [ref=e131] [cursor=pointer]
+  - generic: 拿不到币安合约成交量排行，先用内置的主流 30 个

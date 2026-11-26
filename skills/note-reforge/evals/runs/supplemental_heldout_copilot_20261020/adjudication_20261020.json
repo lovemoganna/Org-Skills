@@ -1,0 +1,83 @@
+{
+  "run_id": "supplemental_heldout_copilot_20261020",
+  "github_actions_run_id": 39368407816,
+  "artifact": {
+    "id": 12240268458,
+    "name": "note-reforge-heldout-copilot-evidence",
+    "digest": "sha256:208726d2be1a693b05320de8ad1605c1ba24d3ffe959b4ecfa4f7912a3684c59"
+  },
+  "evaluated_at": "2026-10-20",
+  "subject_executor": "GitHub Copilot CLI",
+  "subject_model": "ACCOUNT_DEFAULT_UNPINNED",
+  "subject_requests_completed": 4,
+  "evaluator": "GPT-5.6 Sol / ChatGPT",
+  "raw_output_sha256": {
+    "case_21_arm_a": "d01e5b2f81eea9ac48bb6c4b14b9bfee92ad6a0d341d0b81e1b31a6faf9cadec",
+    "case_21_arm_b": "9786f1b29c8666718d20228553f22b64d7541d606208c4106145b687ddb7e7b7",
+    "case_22_arm_a": "9079670fbb90e209bd7f7d24a34f4d51a6dfac5f3bb4ef348ca84d29d29082b2",
+    "case_22_arm_b": "3c99fcffae37c681d2b8523a2aade99d5f1be53fb9d3699a2ca62ea81da8ba30"
+  },
+  "cases": [
+    {
+      "case_id": "case_21_heldout_patch_missing_navigation_mutation",
+      "expected_decision": "PATCH",
+      "baseline": {
+        "detected_decision": "PATCH",
+        "decision_verdict": "PASS",
+        "task_verdict": "PASS",
+        "delivery_verdict": "FAIL",
+        "reason": "It identifies and locally restores the missing 15-minute navigation relation, but returns only a replacement snippet rather than the complete next document required by the note-reforge artifact contract; deterministic L1 reports lost original code/header content."
+      },
+      "skill": {
+        "detected_decision": "PATCH",
+        "decision_verdict": "PASS",
+        "task_verdict": "PASS",
+        "delivery_verdict": "PASS",
+        "reason": "It restores the missing 15-minute navigation entry, preserves the complete document and protected material, and does not broaden the task into a full rewrite."
+      }
+    },
+    {
+      "case_id": "case_22_heldout_reforge_flattened_atlas_mutation",
+      "expected_decision": "REFORGE",
+      "baseline": {
+        "detected_decision": "REFORGE",
+        "decision_verdict": "PASS",
+        "task_verdict": "PASS",
+        "delivery_verdict": "PASS",
+        "reason": "It reorganizes the collapsed twelve-entry paragraph into twelve independently scannable list records while preserving all twelve facts, images, identity metadata and scope."
+      },
+      "skill": {
+        "detected_decision": "KEEP",
+        "decision_verdict": "FAIL",
+        "task_verdict": "PASS",
+        "delivery_verdict": "PASS",
+        "reason": "It preserves facts but incorrectly treats factual completeness as sufficient for KEEP. The main twelve-record lookup structure is collapsed, so the source has a concrete usability defect requiring structural reorganization."
+      }
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "decision_accuracy": "2/2",
+      "downstream_task_accuracy": "2/2",
+      "full_delivery_accuracy": "1/2",
+      "overall_case_pass": "1/2"
+    },
+    "skill": {
+      "decision_accuracy": "1/2",
+      "downstream_task_accuracy": "2/2",
+      "full_delivery_accuracy": "2/2",
+      "overall_case_pass": "1/2"
+    }
+  },
+  "defect_found": {
+    "name": "REFORGE false negative caused by KEEP precedence",
+    "evidence": "Current Skill says KEEP when no evidence-backed new judgment is found, while separately saying REFORGE when structure blocks lookup/judgment/execution. On a fact-complete but structurally flattened atlas, the model chose KEEP.",
+    "narrow_fix_target": "Clarify that absence of new facts does not force KEEP when the existing structure itself measurably blocks lookup, comparison or execution. Distinguish a one-location mapping omission (PATCH) from primary-content structural collapse (REFORGE)."
+  },
+  "evidence_boundary": [
+    "The subject model is unpinned; results are exploratory behavioral evidence.",
+    "Case 21/22 are deterministic mutations of real historical snapshots, not untouched production notes.",
+    "Production note-reforge Skill was unchanged during this run.",
+    "The GitHub Actions evidence-commit step failed only because the evaluation branch advanced concurrently; raw evidence was preserved in the uploaded artifact and independently downloaded for adjudication."
+  ]
+}

@@ -22,7 +22,7 @@ ORG_NOTES_ROOT = REPO_ROOT.parent / "org-notes"
 SOURCE_COMMIT = "fd5e79c5586a11cb000f80f911ef1152cb90c847"
 
 CASES_DEF = [
-    # --- KEEP (6 cases: 5 real, 1 held-out real) ---
+    # --- KEEP (8 cases: 8 real, 3 held-out real after source audit) ---
     {
         "case_id": "case_01_keep_recursive_discovery",
         "source_repo": "lovemoganna/org-notes",
@@ -120,16 +120,16 @@ CASES_DEF = [
         "is_held_out": True,
         "task": "用 note-reforge 炼成下一版：notes/programming/sql-business-thinking/e1e502b9-f876-47d6-813f-e4d5ea51983a.org",
         "expected_decision": "KEEP",
-        "decision_evidence": "23个盲测案例索引与业务约束已完备且通过测试，无新测试数据前不改动。",
+        "decision_evidence": "23 个测试资产的索引、执行边界与未运行状态已经清楚；原文明确说明这些案例仍待执行，且没有新增执行证据，因此不应制造改写。",
         "protected_content": ["23个案例列表", "DuckDB测试边界", "#+WIKI_ID"],
         "reader_tasks": [
-            {"id": "T1", "question": "D08 案例的测试基准是什么？", "expected_answer": "真实基线状态算术与负向案例检查，不执行新业务 SQL。"}
+            {"id": "T1", "question": "这 23 个测试案例当前是否已经被本页证明通过？", "expected_answer": "没有。它们仍是待执行的测试需求；页面发布、提示词、旧报告或 Skill 状态都不能代替本轮真实执行回执。"}
         ],
         "acceptance_criteria": "保留全部案例结构，给出 KEEP 结论。",
         "hard_fail_conditions": ["删减案例", "引入未实测结论"]
     },
 
-    # --- PATCH (8 cases: 7 real, 1 held-out real) ---
+    # --- PATCH (7 cases: 7 real; no validated held-out case yet) ---
     {
         "case_id": "case_07_patch_project_operations",
         "source_repo": "lovemoganna/org-notes",
@@ -251,17 +251,17 @@ CASES_DEF = [
         "case_type": "real_historical",
         "is_held_out": True,
         "task": "用 note-reforge 炼成下一版：notes/knowledge/thinking-reconstruction/a43396bc-3822-4d8d-b0a0-87b637182dad.org",
-        "expected_decision": "PATCH",
-        "decision_evidence": "三种提示深度分析清晰，但缺少在上下文受限时的降级策略对比，局部补齐。",
+        "expected_decision": "KEEP",
+        "decision_evidence": "原文已经按可用时间、学习目标和问题复杂度提供 5/15/45 分钟三层选择，并明确三版边界；没有新增证据支持加入延迟敏感、结构化提取等额外降级规则，因此应保持原文。",
         "protected_content": ["三种深度层级对照", "#+WIKI_ID: a43396bc-3822-4d8d-b0a0-87b637182dad"],
         "reader_tasks": [
-            {"id": "T1", "question": "什么时候应当压缩思考链深度？", "expected_answer": "在延迟敏感或下游仅需结构化提取的低复杂度单步任务中。"}
+            {"id": "T1", "question": "原文用哪些因素选择 5、15、45 分钟三种提示深度？", "expected_answer": "根据可用时间、学习目标和问题复杂度选择；5 分钟建立方向，15 分钟形成结构化理解，45 分钟深挖可迁移知识。"}
         ],
-        "acceptance_criteria": "局部补充降级考量，不改变基础三层模型。",
-        "hard_fail_conditions": ["改写核心深度定义", "丢失对比分析表格"]
+        "acceptance_criteria": "给出 KEEP；不得凭空补入原文未提供依据的延迟、上下文窗口或结构化提取降级规则，保留三层模型。",
+        "hard_fail_conditions": ["无依据补造新的选择规则", "改写核心深度定义", "丢失对比分析表格"]
     },
 
-    # --- REFORGE (4 cases: 3 real, 1 held-out real) ---
+    # --- REFORGE (3 cases: 3 real; no validated held-out case yet) ---
     {
         "case_id": "case_15_reforge_agent_automations",
         "source_repo": "lovemoganna/org-notes",
@@ -320,14 +320,14 @@ CASES_DEF = [
         "case_type": "real_historical",
         "is_held_out": True,
         "task": "用 note-reforge 炼成下一版：notes/ideas/twelve-xianxia-talismans/9e15fa89-5e58-47a9-aebf-5784261806ad.org",
-        "expected_decision": "REFORGE",
-        "decision_evidence": "十二符咒草稿碎片化严重，设定交叉重叠，需重构为属性/效果/代价的结构化图鉴。",
+        "expected_decision": "KEEP",
+        "decision_evidence": "原文已经包含统一的十二图腾索引、十二个逐项神通条目和设定边界，结构可直接查阅；原文没有提供使用代价等新增设定，因此无依据重构或补造属性。",
         "protected_content": ["十二符咒原始名称与核心设定", "#+WIKI_ID: 9e15fa89-5e58-47a9-aebf-5784261806ad"],
         "reader_tasks": [
-            {"id": "T1", "question": "兔符咒的核心能力与使用代价分别是什么？", "expected_answer": "极速移动；消耗大量真元/需承受反冲。"}
+            {"id": "T1", "question": "原文对兔符咒的核心设定是什么？", "expected_answer": "一瞬万里，穿梭时空，遨游太虚。原文没有给出真元消耗或反冲等使用代价。"}
         ],
-        "acceptance_criteria": "重构为统一规范的图鉴条目，十二设定全量保留。",
-        "hard_fail_conditions": ["遗漏任一符咒", "擅自改变作者核心设定"]
+        "acceptance_criteria": "给出 KEEP；保留现有十二图腾索引、十二神通条目和设定边界，不凭空增加代价或其他作者未提供的设定。",
+        "hard_fail_conditions": ["无依据新增真元消耗、反冲或其他代价", "遗漏任一符咒", "擅自改变作者核心设定"]
     },
 
     # --- BLOCK (2 cases: 1 synthetic boundary, 1 held-out synthetic boundary) ---

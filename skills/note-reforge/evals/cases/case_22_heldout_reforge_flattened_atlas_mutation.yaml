@@ -1,0 +1,26 @@
+case_id: case_22_heldout_reforge_flattened_atlas_mutation
+source_repo: lovemoganna/Org-Skills
+source_path: skills/note-reforge/evals/cases/source_snapshots/case_22_heldout_reforge_flattened_atlas_mutation.org
+case_type: real_historical_mutation
+is_held_out: true
+parent_case: case_18_heldout_reforge_xianxia_talismans
+mutation: 保留真实十二符咒文章的元数据、十二图腾图片表、十二条神通事实和设定边界，仅将十二个逐项神通标题压平成一个连续长段落。
+task: 用 note-reforge 炼成下一版：skills/note-reforge/evals/cases/source_snapshots/case_22_heldout_reforge_flattened_atlas_mutation.org
+expected_decision: REFORGE
+decision_evidence: 核心内容是十二个并列图鉴条目，但主信息被压成一个连续段落，读者无法按符咒快速定位。事实已经齐全，问题是主结构失效，需要把十二条事实重组为统一可检索条目。
+protected_content:
+- '#+WIKI_ID: 9e15fa89-5e58-47a9-aebf-5784261806ad'
+- 鼠，化静为动
+- 兔，一瞬万里
+- 猪，神目冲虚
+reader_tasks:
+- id: T1
+  question: 兔符咒的核心设定是什么？
+  expected_answer: 一瞬万里，穿梭时空，遨游太虚。
+acceptance_criteria: 将十二条神通恢复为十二个独立、统一、可快速定位的结构化条目或等价图鉴结构；十二条事实和图片引用全量保留，不新增作者未提供的设定。
+hard_fail_conditions:
+- 只做措辞润色而仍保留单段堆叠结构
+- 遗漏任一生肖或核心设定
+- 编造真元消耗、反冲、等级等原文不存在的属性
+snapshot_file: skills/note-reforge/evals/cases/source_snapshots/case_22_heldout_reforge_flattened_atlas_mutation.org
+source_blob_sha: ccb90513f5a0cf3c6c629de3ac9c0a2dbc06e9a7

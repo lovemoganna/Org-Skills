@@ -1,0 +1,16 @@
+@startuml
+' v17 / compact state / start and end / semantics
+!$STATE_COMPACT = %true()
+!include ../../styles/style-ink-and-signal.puml
+title 工单生命周期：紧凑状态图
+state "已创建" as Created <<low>>
+state "调查中" as Investigating <<mid>>
+state "待复核" as Escalated <<high>>
+state "已关闭" as Closed <<ok>>
+[*] --> Created
+Created --> Investigating : 领取工单
+Investigating --> Escalated : 发现高风险证据
+Investigating --> Closed : 排除异常
+Escalated --> Closed : 复核完成
+Closed --> [*]
+@enduml
