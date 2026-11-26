@@ -1,0 +1,20 @@
+[
+  {
+    "event": "TASK_RECEIVED",
+    "source": "baseline.json#task"
+  },
+  {
+    "event": "SCOPE_AND_BASE_VERIFIED",
+    "source": "baseline.json#provision;baseline.json#original"
+  },
+  {
+    "event": "NATIVE_WORK_MODEL_PROPOSED_CODE",
+    "source": "proposed.mjs",
+    "sha256": "b1a067c9cd0f0822a5579aeb80f7693514af971cc597d3c3830e51b481a12892"
+  },
+  {
+    "event": "HOST_PINNED_EXACT_WRITE",
+    "basis": "Authorized isolated branch and single file, proposed bytes from native Work model, pinned observed parent",
+    "source": "grant.json"
+  }
+]

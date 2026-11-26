@@ -1,0 +1,71 @@
+{
+  "plan": {
+    "id": "C",
+    "request": "从候选提交读取 Router README。先用错误路径制造一次可逆缺失，定位失败后只纠正路径，再核验原始内容。",
+    "goal": "Recover from a real missing GitHub source while retaining both tool receipts",
+    "mode": "direct",
+    "constraints": [
+      "Same GitHub repository and pinned ref",
+      "Read only",
+      "Retry once"
+    ],
+    "steps": [
+      {
+        "id": "read",
+        "kind": "tool",
+        "target": "github.fetch_file",
+        "args": {
+          "repository_full_name": "lovemoganna/Org-Skills",
+          "path": "skills/loop/router_v2/README.missing.md",
+          "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6"
+        }
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "recovery",
+        "criteria": "Preserve not-found receipt and verify recovered README blob",
+        "evidence_from": [
+          "read"
+        ]
+      }
+    ]
+  },
+  "plan_sha256": "791c106ffdb8e196773cecc64fddd8966e64108e456a2cc88c46668e407cce47",
+  "skill_source_hashes": {},
+  "host_declared_capabilities": [
+    "github.fetch_file",
+    "github.fetch_workflow_run_jobs",
+    "github.get_pr_info"
+  ],
+  "host_write_authorization_declared": false,
+  "read_retries": {
+    "read": {
+      "path": "skills/loop/router_v2/README.md",
+      "reason": "GitHub returned file not found for the injected path; use the repository's existing README path at the same pinned revision.",
+      "failed_attempt": {
+        "step_id": "read",
+        "request_sha256": "16374bfe2894d84353ebf11b0b961ee5b9edf2966790ac7516cc539684e307d5",
+        "status": "FAILED",
+        "receipt_ref": "read-1-receipt.json",
+        "artifact_ref": null,
+        "host_observation": "",
+        "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/contents#get-repository-content\",\"status\":\"404\"}",
+        "recorded_at": "2026-11-21T03:39:18.972835+00:00"
+      }
+    }
+  },
+  "results": {
+    "read": {
+      "step_id": "read",
+      "request_sha256": "d8bdf415a242c6df49c866eac1a7114cc832403752def9f2bdb01ec01c77a93d",
+      "status": "SUCCESS",
+      "receipt_ref": "read-2-receipt.json",
+      "artifact_ref": "read-2-receipt.json",
+      "host_observation": "",
+      "error": null,
+      "recorded_at": "2026-11-21T03:39:35.444624+00:00"
+    }
+  },
+  "started_at": "2026-11-21T03:39:17.414526+00:00"
+}

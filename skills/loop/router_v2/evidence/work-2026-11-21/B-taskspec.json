@@ -1,0 +1,85 @@
+{
+  "id": "B",
+  "request": "复核一场曾失败的评测。查原始盲评与两份回答，判断差距由什么遗漏造成，给出可执行、可迁移的验收卡。",
+  "goal": "Reconcile the N07 blind-evaluation result with the original outputs and produce a reusable release acceptance card",
+  "mode": "dynamic_chain",
+  "constraints": [
+    "Use original pinned sources only for the historical facts",
+    "No operational incident claims"
+  ],
+  "steps": [
+    {
+      "id": "review",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/REPORT.md",
+        "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+      }
+    },
+    {
+      "id": "baseline",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/baseline/N07.json",
+        "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+      }
+    },
+    {
+      "id": "candidate",
+      "kind": "tool",
+      "target": "github.fetch_file",
+      "args": {
+        "repository_full_name": "lovemoganna/Org-Skills",
+        "path": "skills/causal-net-loop/evals/runs/work-2026-11-18/run-02/outputs/candidate/N07.json",
+        "ref": "ad7ac6dd7cffb0ab48d0c256fde2ed7967b34750"
+      }
+    },
+    {
+      "id": "causes",
+      "kind": "skill",
+      "target": "causal-net-loop",
+      "depends_on": [
+        "review",
+        "baseline",
+        "candidate"
+      ],
+      "args": {
+        "question": "Compare coverage gap vs grading artifact and isolate which causal claims the evidence supports."
+      }
+    },
+    {
+      "id": "card",
+      "kind": "skill",
+      "target": "keypoint-loop",
+      "depends_on": [
+        "causes"
+      ],
+      "args": {
+        "question": "Turn the grounded distinction into a reusable, executable candidate acceptance card, without claiming production validation."
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "compare",
+      "criteria": "Compare CSV, authorization and timezone using all three sources",
+      "evidence_from": [
+        "review",
+        "baseline",
+        "candidate",
+        "causes"
+      ]
+    },
+    {
+      "id": "card",
+      "criteria": "Produce a release gate with a falsifiable check and limits",
+      "evidence_from": [
+        "card"
+      ]
+    }
+  ]
+}

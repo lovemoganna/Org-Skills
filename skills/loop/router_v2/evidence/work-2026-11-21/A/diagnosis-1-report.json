@@ -1,0 +1,7 @@
+{
+  "status": "SUCCESS",
+  "receipt_ref": "diagnosis-skill-output.json",
+  "artifact_ref": "diagnosis-skill-output.json",
+  "step_id": "diagnosis",
+  "request_sha256": "2502b5878aa33e70de6c67cef3ecfefad6fe0eae0b0cf98f6e59cfa1f5441bee"
+}

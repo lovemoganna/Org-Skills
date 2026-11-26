@@ -1,0 +1,86 @@
+name: skill-router-v2-candidate
+on:
+  pull_request:
+    paths:
+      - 'skills/loop/router_v2/**'
+      - 'skills/skill-router/**'
+      - '.github/workflows/skill-router-v2-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  local-execution-and-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run deterministic and real-file tests
+        run: |
+          python3 skills/loop/router_v2/tests.py
+          python3 skills/loop/router_v2/test_host_bridge.py
+          node skills/loop/router_v2/test_work_host.js
+      - name: Execute two distinct local sandbox tasks and preserve receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENGINE=skills/loop/router_v2/engine.py
+          BASE=skills/loop/router_v2
+          OUT=/tmp/router-v2-artifacts
+          mkdir -p "$OUT"/{case1,case2,blocked} "$RUNNER_TEMP"/{router-case1,router-case2,router-blocked}
+          python3 "$ENGINE" discover --skills-root skills --query causal-net-loop > "$OUT/catalog.json"
+          python3 "$ENGINE" discover --skills-root skills --query skill-router > "$OUT/skill-router-catalog.json"
+          python3 skills/loop/router_v2/host_bridge.py init \
+            --plan "$BASE/host_demo.json" --skills-root skills \
+            --session "$OUT/host-protocol" \
+            --host-capabilities github.get_pr_info,github.fetch_file > "$OUT/host-init.json"
+          python3 skills/loop/router_v2/host_bridge.py next \
+            --session "$OUT/host-protocol" > "$OUT/host-next.json"
+          python3 "$ENGINE" plan --task "$BASE/demo_write.json" > "$OUT/case1/plan.json"
+          python3 "$ENGINE" run --task "$BASE/demo_write.json" \
+            --workspace "$RUNNER_TEMP/router-case1" --run-dir "$OUT/case1/run" \
+            --authorize-write > "$OUT/case1/result.json"
+          python3 "$ENGINE" recheck --task "$BASE/demo_write.json" \
+            --workspace "$RUNNER_TEMP/router-case1" --report "$OUT/case1/run/report.json" \
+            > "$OUT/case1/recheck.json"
+          python3 "$ENGINE" plan --task "$BASE/demo_replace.json" > "$OUT/case2/plan.json"
+          python3 "$ENGINE" run --task "$BASE/demo_replace.json" \
+            --workspace "$RUNNER_TEMP/router-case2" --run-dir "$OUT/case2/run" \
+            --authorize-write > "$OUT/case2/result.json"
+          python3 "$ENGINE" recheck --task "$BASE/demo_replace.json" \
+            --workspace "$RUNNER_TEMP/router-case2" --report "$OUT/case2/run/report.json" \
+            > "$OUT/case2/recheck.json"
+          if python3 "$ENGINE" run --task "$BASE/demo_write.json" \
+              --workspace "$RUNNER_TEMP/router-blocked" --run-dir "$OUT/blocked/run" \
+              > "$OUT/blocked/result.json"; then
+            echo 'ERROR: denied write was reported successful' >&2
+            exit 1
+          fi
+          python3 - "$OUT" <<'PY'
+          import json, pathlib, sys
+          out = pathlib.Path(sys.argv[1])
+          for case in ("case1", "case2"):
+              report = json.loads((out / case / "run/report.json").read_text())
+              check = json.loads((out / case / "recheck.json").read_text())
+              assert report["status"] == "COMPLETED_UNVERIFIED", report
+              assert report["independence"] == "self-check only"
+              assert check["status"] == "PASS_LOCAL_RECHECK", check
+          denied = json.loads((out / "blocked/result.json").read_text())
+          assert denied["status"] == "BLOCKED", denied
+          assert denied["reason"] == "WRITE_AUTHORIZATION_REQUIRED", denied
+          host = json.loads((out / "host-next.json").read_text())
+          assert host["phase"] == "AWAITING_HOST_EXECUTION", host
+          assert host["status"] == "PLANNED_NOT_RUN", host
+          assert host["pending_request"]["executor_binding"] == "mcp__GitHub__get_pr_info"
+          print("Two local-file executions passed; denied mutation blocked; host protocol correctly stops before external tool; independent model A/B NOT_RUN.")
+          PY
+          cp "$RUNNER_TEMP/router-case1/cases/risk-note.md" "$OUT/case1/artifact.md"
+          cp "$RUNNER_TEMP/router-case2/status.txt" "$OUT/case2/artifact.txt"
+      - name: Preserve raw local execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-router-v2-local-receipts
+          path: /tmp/router-v2-artifacts/
+          if-no-files-found: warn

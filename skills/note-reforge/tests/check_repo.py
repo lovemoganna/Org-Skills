@@ -152,6 +152,12 @@ assert "Start a new conversation with only:" in regression
 assert "same invocation string uses the new canonical behavior" in regression
 assert "Keep the note compact." in compact_regression
 assert "#### 终稿去冗余（跨章节语义检查）" in canonical
+# Reader comprehension is checked by retelling and transfer, not by shorter wording.
+reader_regression = (SKILL_ROOT / "tests" / "regression" / "reader-retell-and-transfer.md").read_text(encoding="utf-8")
+for clause in ("复述与迁移检查", "只改变原情景的一个关键条件", "KEEP 时以未改动的原稿执行检查", "不能删掉读者据以判断的事实"):
+    assert clause in canonical, ("reader comprehension contract missing", clause)
+for clause in ("Case 1", "Case 2", "Case 3", "未执行模型 A/B", "预期：能保留", "预期：不能"):
+    assert clause in reader_regression, ("reader transfer regression missing", clause)
 assert "10. **终稿去冗余验收:**" in canonical
 for clause in ("56f68e5", "0503bc8", "相同字词不构成冗余", "9/10", "两版都保留", "NOOP", "失败条件", "语义去冗余"):
     assert clause in semantic_dedup_regression, ("final semantic dedup regression missing", clause)

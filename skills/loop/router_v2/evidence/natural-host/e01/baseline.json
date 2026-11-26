@@ -1,0 +1,259 @@
+{
+  "base": "26b4049ee110e2860243c095e5bf1a76cf7f6ae5",
+  "source": "skills/loop/router_v2/legion_host.js",
+  "first": {
+    "state": {
+      "version": 1,
+      "plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "skill",
+            "target": "causal-net-loop",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "original_plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "skill",
+            "target": "causal-net-loop",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "results": {},
+      "trace": [],
+      "status": "AWAITING_MODEL",
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "pending_model": [
+        {
+          "id": "diagnose",
+          "target": "causal-net-loop",
+          "args": {},
+          "depends_on": []
+        }
+      ]
+    },
+    "summary": {
+      "task_id": "baseline",
+      "status": "AWAITING_MODEL",
+      "completed": 0,
+      "total": 1,
+      "acceptance": [
+        {
+          "id": "analysis",
+          "status": "NOT_MET",
+          "evidence_from": [
+            "diagnose"
+          ]
+        }
+      ],
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "failed": [],
+      "pending_model": [
+        {
+          "id": "diagnose",
+          "target": "causal-net-loop",
+          "args": {},
+          "depends_on": []
+        }
+      ]
+    }
+  },
+  "second": {
+    "state": {
+      "version": 1,
+      "plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "skill",
+            "target": "causal-net-loop",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "original_plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "skill",
+            "target": "causal-net-loop",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "results": {},
+      "trace": [],
+      "status": "AWAITING_MODEL",
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "pending_model": [
+        {
+          "id": "diagnose",
+          "target": "causal-net-loop",
+          "args": {},
+          "depends_on": []
+        }
+      ]
+    },
+    "summary": {
+      "task_id": "baseline",
+      "status": "AWAITING_MODEL",
+      "completed": 0,
+      "total": 1,
+      "acceptance": [
+        {
+          "id": "analysis",
+          "status": "NOT_MET",
+          "evidence_from": [
+            "diagnose"
+          ]
+        }
+      ],
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "failed": [],
+      "pending_model": [
+        {
+          "id": "diagnose",
+          "target": "causal-net-loop",
+          "args": {},
+          "depends_on": []
+        }
+      ]
+    }
+  },
+  "unavailable": {
+    "state": {
+      "version": 1,
+      "plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "tool",
+            "target": "github.fetch_file",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "original_plan": {
+        "id": "baseline",
+        "goal": "Check how a ready skill progresses",
+        "steps": [
+          {
+            "id": "diagnose",
+            "kind": "tool",
+            "target": "github.fetch_file",
+            "args": {},
+            "depends_on": []
+          }
+        ],
+        "acceptance": [
+          {
+            "id": "analysis",
+            "evidence_from": [
+              "diagnose"
+            ]
+          }
+        ]
+      },
+      "results": {
+        "diagnose": {
+          "id": "diagnose",
+          "target": "github.fetch_file",
+          "kind": "tool",
+          "status": "BLOCKED",
+          "error": "CAPABILITY_UNAVAILABLE"
+        }
+      },
+      "trace": [
+        {
+          "event": "EXECUTED",
+          "step": "diagnose",
+          "status": "BLOCKED",
+          "provider": null
+        }
+      ],
+      "status": "BLOCKED",
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "pending_model": []
+    },
+    "summary": {
+      "task_id": "baseline",
+      "status": "BLOCKED",
+      "completed": 0,
+      "total": 1,
+      "acceptance": [
+        {
+          "id": "analysis",
+          "status": "NOT_MET",
+          "evidence_from": [
+            "diagnose"
+          ]
+        }
+      ],
+      "trust": "HOST_REPORTED_NOT_INDEPENDENTLY_VERIFIED",
+      "failed": [
+        "diagnose"
+      ],
+      "pending_model": []
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "request": {
+    "step_id": "diagnosis",
+    "kind": "skill",
+    "target": "loop-engineering-meta",
+    "executor_binding": "NATIVE_HOST_MODEL_SKILL",
+    "side_effect_class": "host",
+    "args": {
+      "question": "Identify the earliest observed failure, distinguish scheduler history from the Work bridge, and validate only the candidate repair against real calls and regression tests."
+    },
+    "request_sha256": "2502b5878aa33e70de6c67cef3ecfefad6fe0eae0b0cf98f6e59cfa1f5441bee"
+  },
+  "source": {
+    "ref": "06c23284dd275cf424eeecce6fd0b6faaee298e6",
+    "path": "skills/loop-engineering-meta/SKILL.md",
+    "blob": "421cc91c587380635fd23cff3cf25f74376cc94e"
+  },
+  "executor": "current Work model",
+  "output": "# MetaLoop 计划停滞的根因与候选修复\n\n最早的执行缺口出在计划交给执行器这一边界。AgentComponent 的 lifecycle.py 在读取时的 Blob 为 2bed77e69dc98b3d53cf8c9a8fb6ad57f5184b8b。第 162–167、192–203 行显示，按小时挑选和优先轮换只生成待验证项，结果明示 PLANNED_NOT_RUN。PR #116 的 route.py 也只构建 ChainSpec 和证据门禁。它们都需要另一个有授权的宿主实际执行。\n\n候选基线实测：原始 host_bridge.py 对 A 的自然语言编译结果 init 再 next，仍停在同一个 GitHub 读取请求；状态文件没有任何工具回执。修复：Work 代码模式运行 work_host.js，让 advance 调用真实白名单读取，保存原始回执后继续推进，并把 Skill 步骤交还当前 Work 模型。本次候选确实读取了 AgentComponent lifecycle.py 和 PR #116 route.py，然后进入本分析步骤。\n\n核验：原桥接回放见 baseline-host.json；真实源文本与 Blob 对应 lifecycle-1-receipt.json、planner-1-receipt.json。回归日志见 regression.json，21 个本地引擎、23 个桥接、14 个 PR #116 契约测试通过。工具与模型两类结果均保留；桥接仍只标记回执已登记。\n\n这项修复覆盖 Work 交接。历史小时任务的实际部署配置和每次运行日志未读取，没有修改 AgentComponent，也没有启动或修复它的定时执行。现有证据已足以定位候选边界，故未再串行调用因果或关键点 Skill。"
+}
