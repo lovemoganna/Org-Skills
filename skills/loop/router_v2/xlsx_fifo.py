@@ -156,15 +156,18 @@ def build(source, destination, request):
         raise ValueError("source workbook changed during calculation")
     book.properties.identifier = f"legion-fifo:{request_id}"
     # Link is atomic and fails with EEXIST. A resumed worker never overwrites the sink.
-    with tempfile.NamedTemporaryFile(dir=destination.parent,suffix=".xlsx") as temporary:
-        book.save(temporary.name)
-        os.fsync(temporary.fileno())
-        os.link(temporary.name, destination)
-        fd = os.open(destination.parent, os.O_DIRECTORY)
-        try:
-            os.fsync(fd)
-        finally:
-            os.close(fd)
+    with tempfile.TemporaryDirectory(dir=destination.parent) as staging:
+        temporary = Path(staging) / "workbook.xlsx"
+        book.save(temporary)
+        with temporary.open("r+b") as saved:
+            os.fsync(saved.fileno())
+        os.link(temporary, destination)
+        if os.name != "nt":
+            fd = os.open(destination.parent, os.O_DIRECTORY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
     return report(source,destination,request)
 
 
