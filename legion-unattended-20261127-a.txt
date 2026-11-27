@@ -1,0 +1,2 @@
+Synthetic Legion crash-recovery fixture.
+Operation unattended-20261127-a
