@@ -40,21 +40,42 @@ jobs:
             --run --model "${MODEL}" --judge-model "${MODEL}" --repeat 1 \
             --ids 'ambiguous-schema,invalid-relation,runtime-contract-hard-boundary,rule-valid-composition-not-overrejected,complex-validation-no-new-dimensions,fixed-remote-function-no-staging' \
             --output ontology-model-eval/paired-results.json
+      - name: Summarize evaluation evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ontology-model-eval
+          if [ -f ontology-model-eval/receipt.json ]; then
+            exit 0
+          fi
           python - <<'PY'
           import json, pathlib
           path=pathlib.Path("ontology-model-eval/paired-results.json")
-          data=json.loads(path.read_text(encoding="utf-8"))
+          try:
+              data=json.loads(path.read_text(encoding="utf-8"))
+          except (OSError, ValueError):
+              data={"results": []}
           rows=data["results"]
           calls=[r.get(t,{}).get("usage",{}) for r in rows for t in ("subject_call","judge_call")]
           usage={k:sum(x[k] for x in calls if isinstance(x.get(k),int)) for k in ("input_tokens","output_tokens","total_tokens")}
-          output={"status":"EXECUTED_TEXT_ONLY_PROXY","model":data.get("model"),"subject_requests":len(rows),
-                  "graded":sum(isinstance(r.get("judge",{}).get("passed"),bool) for r in rows),
-                  "errors":sum(bool(r.get("error")) for r in rows),
+          judgments=[r.get("judge") for r in rows]
+          graded=sum(isinstance(j,dict) and isinstance(j.get("passed"),bool)
+                     and "raw_judge" not in j for j in judgments)
+          errors=sum(bool(r.get("error")) for r in rows)
+          subjects=sum("output_text" in r for r in rows)
+          pairs={(r["id"],r["variant"]) for r in rows}
+          complete=len(rows)==len(pairs)==subjects==graded==12 and not errors
+          output={"status":"EXECUTED_TEXT_ONLY_PROXY" if complete else "INCOMPLETE_MODEL_EVAL",
+                  "model":data.get("model"),"recorded_attempts":len(rows),
+                  "successful_subject_responses":subjects,"graded":graded,"errors":errors,
                   "usage":usage,"actual_skill_activation":"NOT_TESTED",
                   "tool_using_full_task":"NOT_TESTED",
                   "note":"A prompt-only Responses API eval cannot prove tool/SQL execution or runtime auto-trigger."}
           pathlib.Path("ontology-model-eval/receipt.json").write_text(json.dumps(output,indent=2)+"\n")
           print(json.dumps(output))
+          if not complete:
+              raise SystemExit(2)
           PY
       - name: Preserve independent evaluation evidence
         if: always()
